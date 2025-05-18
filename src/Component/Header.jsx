@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import classNames from 'classnames';
 import { Menu, X } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const Header = ({ isTransparent }) => {
   const [scrolled, setScrolled] = useState(false);
@@ -39,7 +40,7 @@ const Header = ({ isTransparent }) => {
   return (
     <header
       className={classNames(
-        'fixed top-0 left-0 w-full z-50 transition-colors duration-300 px-6 sm:px-8 py-4 sm:py-6 flex items-center justify-between',
+        'fixed top-0 left-0 w-full z-50 transition-colors duration-300 px-6 sm:px-8 py-2 sm:py-3 flex items-center justify-between',
         {
           'bg-blue-950 text-white shadow-md':
             (isTabletOrMobile && isMobileMenuOpen) || !isTransparent || scrolled,
@@ -57,13 +58,17 @@ const Header = ({ isTransparent }) => {
 
       <nav className="hidden lg:block">
         <ul className="flex space-x-6 font-medium">
-          <li className="hover:text-orange-400 cursor-pointer">HOME</li>
+          <li className="hover:text-orange-400 cursor-pointer">
+            <Link to="/">Home</Link>
+          </li>
           <li className="hover:text-orange-400 cursor-pointer">REFER AND EARN</li>
           <li className="hover:text-orange-400 cursor-pointer">EVENTS</li>
-          <li className="hover:text-orange-400 cursor-pointer">BLOGS</li>
+          <li className="hover:text-orange-400 cursor-pointer">
+            <Link to="/blogs">BLOGS</Link>
+          </li>
           <li className="hover:text-orange-400 cursor-pointer">OFFERS</li>
           <li className="hover:text-orange-400 cursor-pointer">PROJECTS</li>
-          <li className="hover:text-orange-400 cursor-pointer">Login</li>
+          <li className="hover:text-orange-400 cursor-pointer">LOGIN</li>
         </ul>
       </nav>
 
@@ -81,7 +86,9 @@ const Header = ({ isTransparent }) => {
             <li className="hover:text-orange-400 cursor-pointer">HOME</li>
             <li className="hover:text-orange-400 cursor-pointer">REFER AND EARN</li>
             <li className="hover:text-orange-400 cursor-pointer">EVENTS</li>
-            <li className="hover:text-orange-400 cursor-pointer">BLOGS</li>
+            <li className="hover:text-orange-400 cursor-pointer">
+              <Link to="/blogs" onClick={() => setIsMobileMenuOpen(false)}>BLOGS</Link>
+            </li>            
             <li className="hover:text-orange-400 cursor-pointer">OFFERS</li>
             <li className="hover:text-orange-400 cursor-pointer">PROJECTS</li>
             <li className="hover:text-orange-400 cursor-pointer">Login</li>
