@@ -3,7 +3,7 @@ import Card from '../Models/Card';
 
 const cardsData = [
     {
-      imageUrl: 'https://images.pexels.com/photos/9069469/pexels-photo-9069469.jpeg?auto=compress&cs=tinysrgb&w=1200',
+      imageUrl: 'https://cdn.loyalie.in/58039376.jpg',
       title: 'One Family Many Rewards',
       subtitle: 'An exclusive referral campaign, curated just for you!',
       description:
