@@ -19,8 +19,6 @@ function App() {
           <Route path="/about" element={<About />} />
           <Route path="/blogs" element={<Blog />} />
           <Route path="/events" element={<Event />} />
-
-          
         </Routes>
       </main>
       <Footer/>
