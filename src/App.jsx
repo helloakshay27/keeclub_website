@@ -10,7 +10,7 @@ import Projects from './Pages/Projects'
 
 function App() {
   const location = useLocation()
-  const isTransparent = location.pathname === '/' || location.pathname === '/blogs '
+  const isTransparent = location.pathname === '/' || location.pathname === '/blogs' || location.pathname === '/projects'
   return (
     <div className="app" style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       <Header isTransparent={isTransparent} />
