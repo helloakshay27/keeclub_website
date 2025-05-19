@@ -15,21 +15,21 @@ const slides = [
     id: 2,
     bgImage:
       'https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-    heading: 'FIND YOUR PERFECT SPACE,',
-    subheading: 'Every corner curated for your comfort.',
+    heading: 'HOMES ARE MEANT TO BE MORE,',
+    subheading: 'Because every apartment becomes a world by itself.',
     title: 'KEE CLUB',
-    description: 'A lifestyle experience like no other.',
-    buttonText: 'Explore Now',
+    description: 'A joint initiative by Piramal Realty and Reloy.',
+    buttonText: 'Refer Now ',
   },
   {
     id: 3,
     bgImage:
       'https://images.pexels.com/photos/261102/pexels-photo-261102.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-    heading: 'MORE THAN JUST A HOME,',
-    subheading: 'A destination for dreams.',
+    heading: 'HOMES ARE MEANT TO BE MORE,',
+    subheading: 'Because every apartment becomes a world by itself.',
     title: 'KEE CLUB',
-    description: 'Powered by Piramal Realty and Reloy',
-    buttonText: 'Join Us',
+    description: 'A joint initiative by Piramal Realty and Reloy.',
+    buttonText: 'Refer Now ',
   },
 ];
 
@@ -59,20 +59,23 @@ const HeroSection = () => {
               backgroundPosition: 'center',
             }}
           >
-            <div className="relative z-10 h-full w-full flex flex-col items-center text-center px-4 text-white pt-28 mt-36 md:pt-32 lg:pt-40">
-              <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold uppercase tracking-wide mb-4 drop-shadow-lg">
+            <div className="relative z-10 h-full w-full flex flex-col items-center text-center px-4 text-white pt-28 mt-36 md:pt-32 lg:pt-25">
+              <h1 className="text-[18px] sm:text-[32px] md:text-[40px] lg:text-[50px] font-semibold uppercase tracking-wide drop-shadow-lg">
                 {slide.heading}
               </h1>
-              <p className="text-base sm:text-lg md:text-xl mb-6 max-w-2xl drop-shadow-md px-2 sm:px-0">
+              <p className="text-[15px] sm:text-[15px] md:text-[15px] lg:text-[28px] font-light tracking-wide mb-6 max-w-4xl drop-shadow-md px-2 sm:px-0">
                 {slide.subheading}
               </p>
-              <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-widest mb-4 drop-shadow-lg">
+
+
+              <h2 className="text-4xl sm:text-[44px] md:text-5xl lg:text-6xl font-extrabold tracking-widest drop-shadow-lg">
                 {slide.title}
               </h2>
-              <p className="text-sm sm:text-base md:text-lg mb-6 drop-shadow-md max-w-xl px-4">
+              <p className="text-[13px] sm:text-[12px] md:text-[15px] mb-6 drop-shadow-md max-w-xl px-4">
                 {slide.description}
               </p>
-              <button className="bg-[#F24822] hover:bg-[#d93b18] px-6 sm:px-8 py-2 sm:py-3 rounded-md text-white text-base sm:text-lg font-semibold shadow-lg transition">
+
+              <button className="bg-[#fa4615] hover:bg-[#d93b18] px-6 sm:px-8 py-2 sm:py-3 rounded-[1px] text-white text-sm sm:text-sm font-normal shadow-lg transition">
                 {slide.buttonText}
               </button>
             </div>

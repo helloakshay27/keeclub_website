@@ -5,11 +5,11 @@ import About from './Pages/About'
 import Header from './Component/Header'
 import Footer from './Component/Footer'
 import Blog from './Pages/Blog'
+import Event from './Pages/Event'
 
 function App() {
   const location = useLocation()
-  const isTransparent = location.pathname === '/' || location.pathname === '/blogs'
-
+  const isTransparent = location.pathname === '/' || location.pathname === '/blogs '
   return (
     <div className="app" style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       <Header isTransparent={isTransparent} />
@@ -18,6 +18,9 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/blogs" element={<Blog />} />
+          <Route path="/events" element={<Event />} />
+
+          
         </Routes>
       </main>
       <Footer/>
