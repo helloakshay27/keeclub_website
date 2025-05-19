@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from "react";
 import PropertyCard from "./PropertyCard";
-import MapComponent from "./MapComponent";
 
 const ProjectsList = () => {
   const [properties, setProperties] = useState([]);
-  const [mapMarkers, setMapMarkers] = useState([]);
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -27,18 +25,6 @@ const ProjectsList = () => {
         }));
 
         setProperties(featuredProjects);
-
-        // Only include valid geolocation points
-        setMapMarkers(
-          featuredProjects.filter(p => p.latitude && p.longitude)
-            .map(p => ({
-              id: p.id,
-              name: p.name,
-              price: p.startingPrice,
-              latitude: parseFloat(p.latitude),
-              longitude: parseFloat(p.longitude),
-            }))
-        );
       } catch (error) {
         console.error("Error fetching projects:", error);
       }
@@ -48,17 +34,28 @@ const ProjectsList = () => {
   }, []);
 
   return (
-    <div className="mb-8">
-      <p className="font-Montserrat mb-4">
-        {properties.length} Projects listed here
-      </p>
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-4 md:mt-6 lg:mt-8">
+      {/* Left Side: Property List */}
+      <div className="flex flex-col">
+        <p className="font-Montserrat mb-4">{properties.length} Projects listed here</p>
 
-      {/* <MapComponent markers={mapMarkers} /> */}
+        <div className="overflow-y-auto max-h-[80vh] pr-2 custom-scrollbar">
+          {properties.map((property) => (
+            <PropertyCard key={property.id} property={property} />
+          ))}
+        </div>
+      </div>
 
-      <div className="flex flex-col gap-4 max-h-[500px] overflow-y-auto mt-4">
-        {properties.map((property) => (
-          <PropertyCard key={property.id} property={property} />
-        ))}
+      {/* Right Side: Sticky Map */}
+      <div className="h-[80vh] sticky top-24 rounded-xl overflow-hidden shadow-md">
+        <iframe
+          src="https://maps.google.com/maps?width=600&height=400&hl=en&q=Piramal Revanta Sales Office&t=&z=13&ie=UTF8&iwloc=B&output=embed"
+          title="Google Map"
+          className="w-full h-full border-0"
+          allowFullScreen
+          loading="lazy"
+          referrerPolicy="no-referrer-when-downgrade"
+        ></iframe>
       </div>
     </div>
   );

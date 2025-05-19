@@ -1,16 +1,11 @@
 import React from 'react';
-import HeroSection from '../Component/HeroSection';
 import ProjectsSection from '../Component/ProjectSection';
-import SearchFilter from '../Component/SearchFilter';
+import HeroSection from '../Component/homepage/HeroSection';
 
 const Projects = () => {
   return (
     <div>
-      {/* Hero Banner Section */}
       <HeroSection />
-      {/* <SearchFilter /> */}
-      
-      {/* Projects Section with Search, Listings and Map */}
       <ProjectsSection />
     </div>
   );

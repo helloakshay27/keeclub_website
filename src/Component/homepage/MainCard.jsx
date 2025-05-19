@@ -1,5 +1,5 @@
 import React from 'react';
-import Card from '../Models/Card';
+import Card from '../../Models/Card';
 
 const cardsData = [
     {

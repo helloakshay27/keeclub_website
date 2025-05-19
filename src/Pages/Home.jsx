@@ -1,7 +1,7 @@
 import React from 'react';
-import HeroSection from '../Component/HeroSection';
-import MainCard from '../Component/MainCard';
-import ProjectsCarousel from '../Component/ProjectsCarousel';
+import HeroSection from '../Component/homepage/HeroSection';
+import ProjectsCarousel from '../Component/homepage/ProjectsCarousel';
+import MainCard from '../Component/homepage/MainCard';
 
 const Home = () => {
   return (
