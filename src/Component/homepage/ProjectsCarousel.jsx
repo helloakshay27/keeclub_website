@@ -82,13 +82,13 @@ const ProjectsCarousel = () => {
       </h2>
       <div className="h-[2px] w-24 bg-[#FF4F12] mt-2 mb-12" />
 
-      <div className="relative w-full max-w-6xl px-4 sm:px-6">
+      <div className="relative w-full max-w-6xl px-4 sm:px-6 ">
         {/* Left Arrow */}
         <button
           onClick={() => scroll('left')}
-          className="absolute left-0 top-1/2 transform -translate-y-1/2 z-10 bg-white p-2 rounded-full shadow"
+          className="absolute left-0 top-1/2 transform -translate-y-1/2 z-10 bg-white p-2 rounded-full shadow cursor-pointer"
         >
-          <ChevronLeft className="w-7 h-7" />
+          <ChevronLeft className="w-7 h-7"/>
         </button>
 
         {/* Scrollable Content */}
@@ -108,7 +108,7 @@ const ProjectsCarousel = () => {
                   e.target.src =
                     'https://via.placeholder.com/300x200?text=No+Image';
                 }}
-                className="w-full object-contain h-40 sm:h-48 md:h-56 max-h-[224px]"
+                className="w-full object-contain h-40 sm:h-48 md:h-56 max-h-[150px]"
               />
             </div>
           ))}
@@ -117,7 +117,7 @@ const ProjectsCarousel = () => {
         {/* Right Arrow */}
         <button
           onClick={() => scroll('right')}
-          className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 bg-white p-2 rounded-full shadow"
+          className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 bg-white p-2 rounded-full shadow cursor-pointer"
         >
           <ChevronRight className="w-7 h-7" />
         </button>

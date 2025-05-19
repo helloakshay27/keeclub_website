@@ -1,6 +1,6 @@
 import React from 'react';
-import FeaturedPostSlider from '../Component/FeaturedPostSlider';
-import LatestPosts from '../Component/LatestPosts';
+import FeaturedPostSlider from '../Component/blogpage/FeaturedPostSlider';
+import LatestPosts from '../Component/blogpage/LatestPosts';
 
 const Blog = () => {
     const slide = {

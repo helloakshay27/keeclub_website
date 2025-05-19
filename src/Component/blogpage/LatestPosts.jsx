@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 
-// Posts data (with category)
 const allPosts = [
     {
         title: "Ace the Board Games Trivia: Win Exciting Rewards",
@@ -176,7 +175,7 @@ const LatestPosts = () => {
                         <button
                             key={i}
                             onClick={() => setCurrentPage(i + 1)}
-                            className={`px-4 py-2 font-semibold rounded-md ${
+                            className={`px-4 py-2 font-semibold cursor-pointer rounded-md ${
                                 currentPage === i + 1
                                     ? "bg-[#FF3C00] text-white"
                                     : "bg-gray-100 text-gray-800 hover:bg-gray-200"
