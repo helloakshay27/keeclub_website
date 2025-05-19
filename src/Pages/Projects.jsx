@@ -1,5 +1,5 @@
 import React from 'react';
-import ProjectsSection from '../Component/ProjectSection';
+import ProjectsSection from '../Component/projectpage/ProjectSection';
 
 const Projects = () => {
   const slide = {

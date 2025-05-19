@@ -14,7 +14,7 @@ const Card = ({
     <div
       className={`flex flex-col ${
         reverse ? 'md:flex-row-reverse' : 'md:flex-row'
-      } w-full max-w-7xl md:h-[80vh] overflow-hidden shadow-lg bg-white`}
+      } w-full max-w-8xl md:h-[80vh] overflow-hidden shadow-lg bg-white`}
     >
       {/* Left Image */}
       <div className="w-full md:w-1/2 h-64 md:h-full">

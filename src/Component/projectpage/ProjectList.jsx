@@ -1,43 +1,42 @@
 import React, { useEffect, useState } from "react";
 import PropertyCard from "./PropertyCard";
+import useApiFetch from "../../hooks/useApiFetch";
 
 const ProjectsList = () => {
+  const { data, loading, error } = useApiFetch(
+    "https://api-connect.panchshil.com/get_all_projects.json"
+  );
+
   const [properties, setProperties] = useState([]);
 
   useEffect(() => {
-    const fetchProjects = async () => {
-      try {
-        const response = await fetch(
-          "https://api-connect.panchshil.com/get_all_projects.json"
-        );
-        const data = await response.json();
+    if (data && data.featured) {
+      const featuredProjects = data.featured.map((project) => ({
+        id: project.id,
+        name: project.project_name,
+        location: project?.location?.city || "",
+        startingPrice: `₹${project.price} Cr`,
+        configurations: project.configurations
+          .map((cfg) => cfg.name)
+          .join(", "),
+        imageUrl: project.image_url,
+        mapUrl: project.map_url,
+      }));
 
-        const featuredProjects = data.featured.map((project) => ({
-          id: project.id,
-          name: project.project_name,
-          location: project?.location?.city || "",
-          startingPrice: `₹${project.price} Cr`,
-          configurations: project.configurations
-            .map((cfg) => cfg.name)
-            .join(", "),
-          imageUrl: project.image_url,
-          mapUrl: project.map_url,
-        }));
+      setProperties(featuredProjects);
+    }
+  }, [data]);
 
-        setProperties(featuredProjects);
-      } catch (error) {
-        console.error("Error fetching projects:", error);
-      }
-    };
-
-    fetchProjects();
-  }, []);
+  if (loading) return <p>Loading projects...</p>;
+  if (error) return <p>Error loading projects: {error}</p>;
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-4 md:mt-6 lg:mt-8">
       {/* Left Side: Property List */}
       <div className="flex flex-col">
-        <p className="font-Montserrat mb-4">{properties.length} Projects listed here</p>
+        <p className="font-Montserrat mb-4">
+          {properties.length} Projects listed here
+        </p>
 
         <div className="overflow-y-auto max-h-[80vh] pr-2 custom-scrollbar">
           {properties.map((property) => (

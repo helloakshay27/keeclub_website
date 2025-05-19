@@ -57,7 +57,7 @@ const Header = ({ isTransparent }) => {
             alt="Kclub Logo"
             className={classNames("w-auto transition-all duration-300", {
               'h-10 md:h-18': scrolled,
-              'h-12 md:h-22': !scrolled,
+              'h-12 md:h-28': !scrolled,
             })}
           />
 
@@ -95,7 +95,7 @@ const Header = ({ isTransparent }) => {
       </button>
 
       {isMobileMenuOpen && (
-        <div className="absolute top-full left-0 w-full bg-blue-950 text-white lg:hidden px-6 py-4 shadow-md">
+        <div className="absolute top-full left-0 w-full bg-[#24293c] text-white lg:hidden px-6 py-4 shadow-md">
           <ul className="flex flex-col space-y-4 font-medium text-sm">
             <li className="hover:text-[#fa4615] cursor-pointer">HOME</li>
             <li className="hover:text-[#fa4615] cursor-pointer">REFER AND EARN</li>
