@@ -6,6 +6,7 @@ import Header from './Component/Header'
 import Footer from './Component/Footer'
 import Blog from './Pages/Blog'
 import Event from './Pages/Event'
+import Projects from './Pages/Projects'
 
 function App() {
   const location = useLocation()
@@ -19,6 +20,9 @@ function App() {
           <Route path="/about" element={<About />} />
           <Route path="/blogs" element={<Blog />} />
           <Route path="/events" element={<Event />} />
+          <Route path="/projects" element={<Projects />} />
+
+         
         </Routes>
       </main>
       <Footer/>
