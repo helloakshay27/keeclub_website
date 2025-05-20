@@ -10,6 +10,8 @@ import EventDetail from './Component/eventpage/EventDetail'
 import Projects from './Pages/Projects'
 import TransactionStatus from './Pages/TransactionStatus'
 import { useMemo } from 'react'
+import ProjectDetail from './Pages/Project-Details'
+import Login from './Pages/Login'
 
 const routes = [
   { path: '/', element: <Home />, transparent: true },
@@ -19,6 +21,8 @@ const routes = [
   { path: '/event/:id', element: <EventDetail />, transparent: false },
   { path: '/projects', element: <Projects />, transparent: true },
   { path: '/transactionstatus', element: <TransactionStatus />, transparent: true },
+  { path: '/Project-Details/:id', element: <ProjectDetail />, transparent: false },
+  // { path: '/login', element: <Login />, transparent: true },
 ]
 
 function App() {

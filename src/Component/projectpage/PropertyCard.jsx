@@ -1,28 +1,53 @@
 import { HeartIcon, MapPinIcon } from "lucide-react";
 import React from "react";
+import { useNavigate } from "react-router-dom";
 // import { MapPinIcon, HeartIcon } from '@heroicons/react/24/solid';
 
 const PropertyCard = ({ property }) => {
-  const { name, location, startingPrice, configurations, imageUrl } = property;
+  const navigate = useNavigate();
+
+  // Extract all properties with proper fallbacks
+  const { 
+    name, 
+    location, 
+    startingPrice, 
+    configurations, 
+    imageUrl, 
+    projectId, 
+    id, 
+    project_id 
+  } = property || {};
+  
+  // Use whichever ID field is available (projectId, id, or project_id)
+  const propertyId = projectId || id || project_id;
+
+  const handleClick = () => {
+    if (propertyId) {
+      navigate(`/Project-Details/${propertyId}`);
+    } else {
+      console.error("No project ID available for navigation", property);
+    }
+  };
 
   return (
-    <div className="mb-4 w-full  ">
+    <div className="mb-4 w-full">
       <div className="flex bg-[#F7F9FC] rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-200 w-full">
         {/* Property Image */}
         <div className="md:w-1/3 relative">
           <img
             src={imageUrl}
             alt={name}
-            class="h-44 xl:h-44 2xl:h-52 3xl:h-56 rounded-xl  object-cover object-center"
+            className="h-44 xl:h-44 2xl:h-52 3xl:h-56 rounded-xl object-cover object-center"
           />
           <div className="absolute top-4 left-4">
             <div className="">
               <div
-                class="bg-red-500  flex mt-2 justify-between rounded-md"
+                className="bg-red-500 flex mt-2 justify-between rounded-md cursor-pointer"
                 aria-label="Under Construction"
+                onClick={handleClick}
               >
                 <svg
-                  class="m-2 "
+                  className="m-2"
                   id="Group_4"
                   data-name="Group 4"
                   xmlns="http://www.w3.org/2000/svg"
@@ -43,45 +68,42 @@ const PropertyCard = ({ property }) => {
         </div>
 
         {/* Property Details */}
-        <div class=" w-[60%] px-4 flex flex-col justify-between scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-300">
-          <div class=" pl-2 flex-1 flex flex-col justify-center">
-            <h1 class="font-Poppins text-[#3E4B54] truncate text-lg font-bold capitalize mt-2">
+        <div className="w-[60%] px-4 flex flex-col justify-between scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-300">
+          <div className="pl-2 flex-1 flex flex-col justify-center">
+            <h1 className="font-Poppins text-[#3E4B54] truncate text-lg font-bold capitalize mt-2">
               {name}
             </h1>
-            <p class="font-Montserrat text-[14px] text-[#838687] capitalize italic">
+            <p className="font-Montserrat text-[14px] text-[#838687] capitalize italic">
               {location}
             </p>
 
-            <div class="font-Montserrat">
-              <div class=" w-[60%] lg:w-full xl:w-[80%] flex flex-row justify-between mt-4">
+            <div className="font-Montserrat">
+              <div className="w-[60%] lg:w-full xl:w-[80%] flex flex-row justify-between mt-4">
                 <div>
-                  <p class="text-[13px] leading-4 uppercase tracking-wider font-Poppins text-[#838687]">
+                  <p className="text-[13px] leading-4 uppercase tracking-wider font-Poppins text-[#838687]">
                     Starting
                   </p>
-                  <h1 class=" self-end font-bold md:text-[16px]">
+                  <h1 className="self-end font-bold md:text-[16px]">
                     {startingPrice}
                   </h1>
                 </div>
 
                 <div>
-                  <p class="text-[13px] leading-4 uppercase tracking-wider text-[#838687]">
+                  <p className="text-[13px] leading-4 uppercase tracking-wider text-[#838687]">
                     Configurations
                   </p>
-                  <h1 class=" self-end font-bold  md:text-[16px]">
+                  <h1 className="self-end font-bold md:text-[16px]">
                     {configurations}
                   </h1>
                 </div>
               </div>
               <div className="flex items-center justify-between">
                 <button
-                  class="hidden lg:block text-[#F59E0B] falsetext-sm self-center text-right"
+                  className="hidden lg:block text-[#F59E0B] text-sm self-center text-right"
+                  onClick={handleClick}
                 >
                   View on map
                 </button>
-
-                {/* <button className="bg-orange-500 text-white px-4 py-2 rounded-lg text-sm hover:bg-orange-600 transition duration-200">
-              View Details
-            </button> */}
               </div>
             </div>
           </div>
