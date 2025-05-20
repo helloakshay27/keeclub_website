@@ -1,4 +1,3 @@
-// pages/EventDetail.jsx
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import useApiFetch from "../../hooks/useApiFetch";
@@ -13,9 +12,7 @@ const EventDetail = () => {
 
   if (!event) return <div className="text-center py-10 text-red-500">Event not found</div>;
 
-  const images = Array.isArray(event.attachfile)
-    ? event.attachfile.map(file => file.document_url)
-    : [event.attachfile?.document_url];
+  const images = [event.attachfile?.document_url];
 
   return (
     <div className="px-4 py-4 sm:py-6 md:py-10 max-w-7xl mx-auto">
