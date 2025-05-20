@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import useApiFetch from "../hooks/useApiFetch";
 
 const Event = () => {
@@ -26,7 +27,6 @@ const Event = () => {
                 <h2 className="text-center text-2xl sm:text-3xl font-bold text-orange-600 mb-3 uppercase">Past Events</h2>
                 <hr className="border-t-4 border-orange-600 w-12 mx-auto mb-6" />
 
-                {/* Category Filters (optional logic) */}
                 <div className="flex flex-wrap justify-center gap-4 sm:gap-6 mb-6 sm:mb-8">
                     <label className="flex items-center gap-2 text-base sm:text-lg">
                         <input type="checkbox" />
@@ -40,31 +40,29 @@ const Event = () => {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
                     {events.map((event, index) => (
-                        <div
-                            key={index}
-                            className="rounded shadow-md overflow-hidden relative border-b-2 border-orange-500"
-                        >
-                            {/* Date Badge */}
-                            <div className="absolute top-0 right-0 bg-black bg-opacity-80 text-white px-2 sm:px-3 py-1 sm:py-2 text-sm font-semibold z-10 rounded-bl-lg">
-                                <div className="text-base sm:text-lg font-bold leading-tight">
-                                    {formatDate(event.from_time).split(' ')[0]}
+                        <Link to={`/event/${index}`} key={index}>
+                            <div
+                                className="rounded shadow-md overflow-hidden relative border-b-2 border-orange-500"
+                            >
+                                <div className="absolute top-0 right-0 bg-black bg-opacity-80 text-white px-2 sm:px-3 py-1 sm:py-2 text-sm font-semibold z-10 rounded-bl-lg">
+                                    <div className="text-base sm:text-lg font-bold leading-tight">
+                                        {formatDate(event.from_time).split(' ')[0]}
+                                    </div>
+                                    <div className="text-xs">{formatDate(event.from_time).split(' ')[1]}</div>
                                 </div>
-                                <div className="text-xs">{formatDate(event.from_time).split(' ')[1]}</div>
-                            </div>
 
-                            {/* Image */}
-                            <img
-                                src={event.attachfile?.document_url || 'https://via.placeholder.com/400x300?text=No+Image'}
-                                alt={event.event_name}
-                                className="w-full h-52 sm:h-64 object-cover"
-                            />
-
-                            {/* Event Content */}
-                            <div className="p-3 sm:p-4 bg-white">
-                                <h3 className="text-base sm:text-lg font-bold mb-1 sm:mb-2">{event.event_name}</h3>
-                                <p className="text-sm sm:text-base text-gray-700">{event.project_name}</p>
+                                <img
+                                    src={event.attachfile?.document_url || 'https://via.placeholder.com/400x300?text=No+Image'}
+                                    alt={event.event_name}
+                                    className="w-full h-52 sm:h-64 object-cover"
+                                />
+                                <div className="p-3 sm:p-4 bg-white">
+                                    <h3 className="text-base sm:text-lg font-bold mb-1 sm:mb-2">{event.event_name}</h3>
+                                    <p className="text-sm sm:text-base text-gray-700">{event.project_name}</p>
+                                </div>
                             </div>
-                        </div>
+                        </Link>
+
                     ))}
                 </div>
             </div>

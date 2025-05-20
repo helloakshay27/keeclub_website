@@ -56,7 +56,7 @@ const Header = ({ isTransparent }) => {
             src="https://piramaluat.s3.ap-south-1.amazonaws.com/Website/Uploads/Piramal/Images/4192015.png"
             alt="Kclub Logo"
             className={classNames("w-auto transition-all duration-300", {
-              'h-10 md:h-18': scrolled,
+              'h-12 md:h-18': scrolled,
               'h-12 md:h-28': !scrolled,
             })}
           />
@@ -71,6 +71,10 @@ const Header = ({ isTransparent }) => {
             <Link to="/">HOME</Link>
           </li>
           <li className="hover:text-[#fa4615] cursor-pointer">REFER AND EARN</li>
+          <li className="hover:text-[#fa4615] cursor-pointer">
+            <Link to="/transactionstatus">TRANSACTION STATUS</Link>
+          </li>
+
           <li className="hover:text-[#fa4615] cursor-pointer">
             <Link to="/events">EVENTS</Link>
           </li>
@@ -99,6 +103,10 @@ const Header = ({ isTransparent }) => {
           <ul className="flex flex-col space-y-4 font-medium text-sm">
             <li className="hover:text-[#fa4615] cursor-pointer">HOME</li>
             <li className="hover:text-[#fa4615] cursor-pointer">REFER AND EARN</li>
+            <li className="hover:text-[#fa4615] cursor-pointer">
+              <Link to="/events" onClick={() => setIsMobileMenuOpen(false)}>TRANSACTION STATUS</Link>
+            </li>
+
             <li className="hover:text-[#fa4615] cursor-pointer">
               <Link to="/events" onClick={() => setIsMobileMenuOpen(false)}>EVENTS</Link>
             </li>
