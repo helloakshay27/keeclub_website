@@ -71,19 +71,20 @@ const TransactionStatus = () => {
                 </div>
             </section>
 
+
             <div className="w-full mt-10">
                 <div className="overflow-hidden max-w-6xl mx-auto">
                     <div
                         ref={scrollRef}
-                        className="flex transition-transform duration-500 ease-in-out overflow-x-hidden"
+                        className="flex transition-transform duration-500 ease-in-out overflow-x-auto sm:overflow-x-hidden scroll-smooth snap-x sm:snap-none no-scrollbar"
                         style={{ scrollBehavior: 'smooth' }}
                     >
                         {pointsData.map((item, index) => (
                             <div
                                 key={index}
-                                className="flex-shrink-0 w-[calc(100%/3)] px-4"
+                                className="flex-shrink-0 w-[90%] sm:w-[calc(100%/3)] px-4 snap-center"
                             >
-                                <div className="bg-white rounded-xl  text-center px-6 py-10 border border-gray-200">
+                                <div className="bg-white rounded-xl text-center px-6 py-10 border border-gray-200 h-[250px] md:h-auto flex flex-col justify-center">
                                     <div className="text-orange-400 text-4xl font-bold mb-3">
                                         {item.value}
                                     </div>
@@ -96,6 +97,7 @@ const TransactionStatus = () => {
                     </div>
                 </div>
             </div>
+
 
             <div className="px-4 py-8 sm:py-10 md:py-20 max-w-7xl mx-auto">
                 <h2 className="text-center text-2xl sm:text-3xl font-bold mb-3 uppercase">Activity Log</h2>
