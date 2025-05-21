@@ -3,15 +3,12 @@ import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import "./login.css";
-// import { baseURL } from "../baseurl/apiDomain";
-// import { LOGO_URL } from "../baseurl/apiDomain";
 
 const CreatePassword = () => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-  const email = queryParams.get("email"); // Get email from URL
-  const mobile = queryParams.get("mobile"); // Get mobile from URL
+  const email = queryParams.get("email");
+  const mobile = queryParams.get("mobile");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -26,26 +23,17 @@ const CreatePassword = () => {
   const navigate = useNavigate();
 
   const config = {
-    // baseURL: "https://panchshil-super.lockated.com/",
-    // baseURL: "http://localhost:3000/",
-
     baseURL: "https://api-connect.panchshil.com/",
     logoUrl: "https://panchshil.gophygital.work/uploads/pms/company_setup/logo/226/Panchshil_logo.png",
-    loginBgClass: "login_bg",
-    loginSecClass: "login-sec",
-    logoStyle: { width: 100, height: 100, margin: "auto" },
+    loginBgClass: "bg-[url('https://vendor.panchshil.com/assets/pan_logo-4e1c867e2fada5efc385ef5c565a0ad3b533cd396d1ed187a0bc7fdec161a35a.jpg')]",
     showRegisterButton: true,
-    formTextColor: "",
-    alignContent: "justify-content-center",
-    columnClass: "col-lg-7 col-md-7",
   };
 
   const handlePasswordReset = async (e) => {
     e.preventDefault();
-    setError(""); // Reset error state
+    setError("");
     setLoading(true);
 
-    // Password validation
     if (newPassword !== confirmPassword) {
       setError("Passwords do not match.");
       setLoading(false);
@@ -78,7 +66,7 @@ const CreatePassword = () => {
 
     try {
       const response = await axios.post(
-        `${baseURL}users/forgot_password.json`,
+        `${config.baseURL}users/forgot_password.json`,
         {
           user: {
             email_or_mobile: email,
@@ -93,7 +81,6 @@ const CreatePassword = () => {
         sessionStorage.setItem("email", response.data.email);
         sessionStorage.setItem("firstname", response.data.firstname);
 
-        // Redirect to the home page
         navigate("/password-success");
         toast.success("Password reset successfully!");
       } else {
@@ -108,51 +95,40 @@ const CreatePassword = () => {
 
   return (
     <div>
-      <main>
-        <section className="login_module">
-          <div className="container-fluid">
-            <div className="row align-items-center vh-100 login_bg justify-content-center">
-              <div className="col-lg-7 col-md-7 vh-100 d-flex align-items-center">
-                <div
-                  className="login-sec"
-                  style={{ padding: "6% 10%" }}
+      <main className="h-full w-full overflow-hidden">
+        <section className="">
+          <div className="container-fluid h-full">
+            <div className={`row items-center h-full bg-cover bg-center bg-[url('https://vendor.panchshil.com/assets/pan_logo-4e1c867e2fada5efc385ef5c565a0ad3b533cd396d1ed187a0bc7fdec161a35a.jpg')] justify-center`}>
+              <div className="col-lg-7 col-md-7 h-screen flex items-center">
+                <div 
+                  className="border border-[rgba(58,58,51,0.4)] shadow-[0px_3px_8px_0px_rgba(217,217,217,0.08)] p-[3%_7%] mx-auto flex flex-col backdrop-blur bg-[#291b117f]"
                   id="forgetPasswordContainer"
                 >
                   <img
-                    className="logo_img mb-2"
-                    style={config.logoStyle}
+                    className="w-[120px] h-[120px] md:w-[100px] md:h-[100px] mx-auto"
                     src={config.logoUrl}
                     alt="Logo"
                   />
                   <form
-                    className="create-new-password-content"
+                    className="w-full max-w-[380px]"
                     id="createPasswordForm"
                     onSubmit={handlePasswordReset}
                   >
-                    <div className="paganation-sec d-flex">
-                      {/* <div className="back-btn d-flex">
-                                                <a href="">
-                                                    {" "}
-                                                    &lt; <span> Back </span>
-                                                </a>
-                                            </div> */}
-                      {/* <div className="paganation d-flex">
-                                                <span> Step 3 of 3 </span>
-                                                <p>Forgot Password</p>
-                                            </div> */}
+                    <div className="flex justify-between items-baseline mb-4">
+                      {/* Back button and pagination can be added here if needed */}
                     </div>
-                    <h6 className="text-white">Create New Password</h6>
-                    <p className="mt-3 mb-3 text-white">
-                      Set a strong passwprd for your account
+                    <h6 className="text-white text-xl mb-3 mt-6">Create New Password</h6>
+                    <p className="text-white mb-3">
+                      Set a strong password for your account
                     </p>
-                    {/* New password field */}
-                    <div className="form-group position-relative">
-                      <label className="mb-1 text-white" htmlFor="newPassword">
+                    
+                    <div className="mb-3 relative">
+                      <label className="text-white mb-4" htmlFor="newPassword">
                         New Password
                       </label>
                       <input
                         type="password"
-                        className="form-control-panchshil"
+                        className="w-full px-3 py-2 rounded mb-2 bg-white placeholder-gray-400 text-black outline-none"
                         id="newPassword"
                         placeholder="Enter your new password"
                         value={newPassword}
@@ -160,67 +136,43 @@ const CreatePassword = () => {
                         required
                       />
                     </div>
-                    <div className="mark-indicator-rust mb-2">
-                      <div className="requirement-item">
-                        <span className="bullet-point">•</span>
-                        <p
-                          className={`requirement-text ${
-                            passwordRequirements.minLength
-                              ? "requirement-met"
-                              : ""
-                          }`}
-                        >
-                          Minimum 8 characters
-                        </p>
-                      </div>
-                      <div className="requirement-item">
-                        <span className="bullet-point">•</span>
-                        <p
-                          className={`requirement-text ${
-                            passwordRequirements.hasUppercase
-                              ? "requirement-met"
-                              : ""
-                          }`}
-                        >
-                          At least one uppercase letter
-                        </p>
-                      </div>
-                      <div className="requirement-item">
-                        <span className="bullet-point">•</span>
-                        <p
-                          className={`requirement-text ${
-                            passwordRequirements.hasNumber
-                              ? "requirement-met"
-                              : ""
-                          }`}
-                        >
-                          At least one number
-                        </p>
-                      </div>
-                      <div className="requirement-item">
-                        <span className="bullet-point">•</span>
-                        <p
-                          className={`requirement-text ${
-                            passwordRequirements.hasSpecial
-                              ? "requirement-met"
-                              : ""
-                          }`}
-                        >
-                          At least one special character (!@#$%)
-                        </p>
+                    
+                    <div className="mb-3">
+                      <div className="flex flex-col gap-1">
+                        <div className="flex items-center">
+                          <span className="text-white mr-2">•</span>
+                          <p className={`text-sm ${newPassword.length >= 8 ? 'text-green-500' : 'text-gray-300'}`}>
+                            Minimum 8 characters
+                          </p>
+                        </div>
+                        <div className="flex items-center">
+                          <span className="text-white mr-2">•</span>
+                          <p className={`text-sm ${/[A-Z]/.test(newPassword) ? 'text-green-500' : 'text-gray-300'}`}>
+                            At least one uppercase letter
+                          </p>
+                        </div>
+                        <div className="flex items-center">
+                          <span className="text-white mr-2">•</span>
+                          <p className={`text-sm ${/[0-9]/.test(newPassword) ? 'text-green-500' : 'text-gray-300'}`}>
+                            At least one number
+                          </p>
+                        </div>
+                        <div className="flex items-center">
+                          <span className="text-white mr-2">•</span>
+                          <p className={`text-sm ${/[!@#$%^&*]/.test(newPassword) ? 'text-green-500' : 'text-gray-300'}`}>
+                            At least one special character (!@#$%)
+                          </p>
+                        </div>
                       </div>
                     </div>
-                    {/* Confirm password field */}
-                    <div className="form-group position-relative">
-                      <label
-                        className="mb-1 text-white"
-                        htmlFor="confirmPassword"
-                      >
+                    
+                    <div className="mb-3 relative">
+                      <label className="text-white mb-4" htmlFor="confirmPassword">
                         Confirm Password
                       </label>
                       <input
                         type="password"
-                        className="form-control-panchshil"
+                        className="w-full px-3 py-2 rounded mb-2 bg-white placeholder-gray-400 text-black outline-none"
                         id="confirmPassword"
                         placeholder="Confirm your new password"
                         value={confirmPassword}
@@ -228,13 +180,12 @@ const CreatePassword = () => {
                         required
                       />
                     </div>
-
-                    {/* Error message */}
-                    {error && <div className="alert alert-danger">{error}</div>}
-                    {/* Submit button */}
+                    
+                    {error && <div className="text-red-500 mb-3">{error}</div>}
+                    
                     <button
                       type="submit"
-                      className="btn-panchshil btn-danger mt-3"
+                      className="w-3/4 h-11 bg-[#de7008] text-white py-2 px-4 rounded mt-2 mx-auto hover:bg-[#de7008] ml-11"
                       disabled={loading}
                     >
                       {loading ? "Resetting Password..." : "Reset Password"}

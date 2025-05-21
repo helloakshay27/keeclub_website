@@ -2,9 +2,6 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-import "./login.css";
-// import { baseURL } from "../baseurl/apiDomain";
-
 const Register = () => {
   const [email, setEmail] = useState("");
   const [mobile, setMobile] = useState("");
@@ -16,11 +13,13 @@ const Register = () => {
   const navigate = useNavigate();
   
   const baseURL = 'https://api-connect.panchshil.com/';
+  
   const handleMobileChange = (e) => {
     let value = e.target.value.replace(/\D/g, "");
     if (value.length > 10) return;
     setMobile(value);
   };
+  
   const handlePasswordLogin = async (e) => {
     e.preventDefault();
     setError(""); // Reset error state
@@ -79,81 +78,65 @@ const Register = () => {
   };
 
   return (
-    <div>
+    <div className="font-open-sans">
       <main>
-        <section className="login_module">
+        <section className="h-full w-full overflow-hidden">
           <div className="container-fluid">
-            <div className="row align-items-center vh-100 login_bg justify-content-center">
-              <div className="col-lg-7 col-md-7 vh-100 d-flex align-items-center">
+            <div className="row items-center h-screen justify-center bg-[url('https://vendor.panchshil.com/assets/pan_logo-4e1c867e2fada5efc385ef5c565a0ad3b533cd396d1ed187a0bc7fdec161a35a.jpg')] bg-cover bg-no-repeat">
+              <div className="col-lg-7 col-md-7 h-screen flex items-center">
                 <div
-                  className="login-sec"
-                  style={{ padding: "6% 10%" }}
+                  className="border border-[rgba(58,58,51,0.4)] shadow-[0px_3px_8px_0px_rgba(217,217,217,0.08)] p-[6%_10%] mx-auto flex flex-col backdrop-blur bg-[#291b117f]"
                   id="forgetPasswordContainer"
                 >
                   <img
-                    className="logo_img"
-                    style={{ width: 100, height: 100, margin: "auto" }}
+                    className="w-[100px] h-[100px] mx-auto"
                     src="https://panchshil.gophygital.work/uploads/pms/company_setup/logo/226/Panchshil_logo.png"
                     alt="Logo"
                   />
 
                   <form
                     onSubmit={handlePasswordLogin}
-                    className="mt-2 login-content "
-                    style={{ width: "100%" }}
+                    className="mt-2 w-full"
                   >
-                    <div className="form-group position-relative">
-                      <label className="mb-1 text-white" htmlFor="email">
+                    <div className="relative mb-4">
+                      <label className="mb-1 text-white block" htmlFor="email">
                         Full Name
                       </label>
                       <input
                         type="text"
                         id="email"
-                        className="form-control-panchshil mb-2"
+                        className="w-full px-3 py-2 mb-2 border border-gray-300"
                         placeholder="Enter fullname here..."
                         value={firstname}
                         onChange={(e) => setFirstname(e.target.value)}
                         required
                       />
                     </div>
-                    {/* <div className="form-group position-relative">
-                      <label className="mb-1" htmlFor="password">
-                        Last Name
-                      </label>
-                      <input
-                        type="text"
-                        id="password"
-                        className="form-control"
-                        placeholder="Enter lastname"
-                        value={lastname}
-                        onChange={(e) => setLastname(e.target.value)}
-                        required
-                      />
-                    </div> */}
-                    <div className="form-group position-relative">
-                      <label className="mb-1 text-white" htmlFor="Email">
+                    
+                    <div className="relative mb-4">
+                      <label className="mb-1 text-white block" htmlFor="Email">
                         Email ID
                       </label>
                       <input
                         type="Email"
                         id="password"
-                        className="form-control-panchshil mb-2"
+                        className="w-full px-3 py-2 mb-2 border border-gray-300"
                         placeholder="Enter email id here..."
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         required
                       />
                     </div>
-                    <div className="form-group position-relative">
-                      <label className="mb-1 text-white" htmlFor="mobile">
+                    
+                    <div className="relative mb-4">
+                      <label className="mb-1 text-white block" htmlFor="mobile">
                         Mobile Number
-                        {/* <span style={{ color: "#de7008" }}> *</span> */}
                       </label>
                       <input
                         type="text"
                         inputMode="numeric"
                         pattern="[0-9]{10}"
-                        className="form-control-panchshil mb-2"
+                        className="w-full px-3 py-2 mb-2 border border-gray-300 appearance-textfield"
                         placeholder="Enter mobile number here..."
                         id="mobile"
                         name="mobile"
@@ -161,28 +144,21 @@ const Register = () => {
                         maxLength={10}
                         onChange={handleMobileChange}
                         required
-                        style={{ appearance: "textfield" }}
                       />
                     </div>
 
-                    {error && <p className="text-danger">{error}</p>}
+                    {error && <p className="text-red-500">{error}</p>}
                     <button
                       type="submit"
-                      className="btn-panchshil btn-danger mt-2"
+                      className="w-[282px] max-w-[75%] py-2 px-4 mx-auto block text-white bg-[#de7008] mt-2"
                     >
                       {loading ? "Register in..." : "Register"}
                     </button>
-                    <div
-                      className="mt-4"
-                      style={{
-                        textAlign: "center",
-                        marginTop: "1rem",
-                        color: "white",
-                      }}
-                    >
+                    
+                    <div className="mt-4 text-center text-white">
                       Already have an account?{" "}
                       <span
-                        style={{ fontWeight: "bold", cursor: "pointer" }}
+                        className="font-bold cursor-pointer"
                         onClick={goToLoginPage}
                       >
                         LOGIN

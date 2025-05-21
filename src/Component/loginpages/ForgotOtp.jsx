@@ -2,9 +2,7 @@ import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import "./login.css";
-// import { baseURL } from "../baseurl/apiDomain";
-// import { LOGO_URL } from "../baseurl/apiDomain";
+import { toast } from "react-toastify";
 
 const ForgotOtp = () => {
   const [otp, setOtp] = useState("");
@@ -13,24 +11,16 @@ const ForgotOtp = () => {
   const [countdown, setCountdown] = useState(45);
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-  const email = queryParams.get("email"); // Get email from URL
-  const mobile = queryParams.get("mobile"); // Get mobile from URL
+  const email = queryParams.get("email");
+  const mobile = queryParams.get("mobile");
 
   const navigate = useNavigate();
 
   const config = {
-    // baseURL: "https://panchshil-super.lockated.com/",
-    // baseURL: "http://localhost:3000/",
-
     baseURL: "https://api-connect.panchshil.com/",
     logoUrl: "https://panchshil.gophygital.work/uploads/pms/company_setup/logo/226/Panchshil_logo.png",
-    loginBgClass: "login_bg",
-    loginSecClass: "login-sec",
-    logoStyle: { width: 100, height: 100, margin: "auto" },
+    loginBgClass: "bg-[url('https://vendor.panchshil.com/assets/pan_logo-4e1c867e2fada5efc385ef5c565a0ad3b533cd396d1ed187a0bc7fdec161a35a.jpg')]",
     showRegisterButton: true,
-    formTextColor: "",
-    alignContent: "justify-content-center",
-    columnClass: "col-lg-7 col-md-7",
   };
 
   const handleOtpChange = (e) => {
@@ -47,7 +37,6 @@ const ForgotOtp = () => {
       )}&mobile=${encodeURIComponent(mobile)}`
     );
 
-    // OTP validation (assuming 6-digit OTP)
     if (!/^[0-9]{6}$/.test(otp)) {
       setError("Please enter a valid 6-digit OTP.");
       setLoading(false);
@@ -55,7 +44,7 @@ const ForgotOtp = () => {
     }
 
     try {
-      const response = await axios.post(`${baseURL}verify-otp`, {
+      const response = await axios.post(`${config.baseURL}verify-otp`, {
         email,
         otp,
       });
@@ -84,51 +73,42 @@ const ForgotOtp = () => {
 
   return (
     <div>
-      <main>
-        <section className="login_module">
-          <div className="container-fluid">
-            <div className="row align-items-center vh-100 login_bg justify-content-center">
-              <div className="col-lg-7 col-md-7 vh-100 d-flex align-items-center">
-                <div
-                  className="login-sec"
-                  style={{ padding: "4% 10%" }}
+      <main className="h-full w-full overflow-hidden">
+        <section className="">
+          <div className="container-fluid h-full">
+            <div className={`row items-center h-full bg-cover bg-center bg-[url('https://vendor.panchshil.com/assets/pan_logo-4e1c867e2fada5efc385ef5c565a0ad3b533cd396d1ed187a0bc7fdec161a35a.jpg')] justify-center`}>
+              <div className="col-lg-7 col-md-7 h-screen flex items-center">
+                <div 
+                  className="border border-[rgba(58,58,51,0.4)] shadow-[0px_3px_8px_0px_rgba(217,217,217,0.08)] p-[3%_7%] mx-auto flex flex-col backdrop-blur bg-[#291b117f]"
                   id="forgetPasswordContainer"
                 >
                   <img
-                    className="logo_img mb-5"
-                    style={config.logoStyle}
+                    className="w-[120px] h-[120px] md:w-[100px] md:h-[100px] mx-auto"
                     src={config.logoUrl}
                     alt="Logo"
                   />
                   <form
-                    className="otp-content"
+                    className="mt-3 w-full max-w-[380px]"
                     id="otpForm"
                     onSubmit={handleOtpSubmit}
                   >
-                    <div className="paganation-sec d-flex">
-                      {/* <div className="back-btn d-flex">
-                                                <a href="/forgot-password">&lt; <span> Back </span></a>
-                                            </div> */}
-                      {/* <div className="paganation d-flex">
-                                                <span> Step 2 of 3 </span>
-                                                <p>Forgot Password</p>
-                                            </div> */}
+                    <div className="flex justify-between items-baseline mb-0 md:mb-4">
+                      {/* Back button and pagination can be added here if needed */}
                     </div>
-                    <h5 className="text-white">Enter OTP</h5>
-                    <p className="mt-3 mb-3 text-white">
+                    <h5 className="text-white text-xl mb-3 mt-6">Enter OTP</h5>
+                    <p className="text-white mb-6">
                       We've sent a 5-digit OTP to your mobile number.{" "}
-                      <span>{email}</span>
-                      {/* <br /> */}
+                      <span className="text-[#de7008]">{email}</span>
                       Enter it below to continue.
                     </p>
-                    {/* OTP field */}
-                    <div className="form-group position-relative">
-                      <label className="mb-1 text-white" htmlFor="otp">
+                    
+                    <div className="mb-4 relative">
+                      <label className="block text-white mb-2" htmlFor="otp">
                         OTP
                       </label>
                       <input
                         type="text"
-                        className="form-control-panchshil"
+                        className="w-full px-3 py-2 rounded mb-2 bg-white placeholder-gray-400 text-black outline-none"
                         id="otp"
                         placeholder="Enter 5-digit OTP..."
                         value={otp}
@@ -136,50 +116,38 @@ const ForgotOtp = () => {
                         maxLength={6}
                       />
                     </div>
-                    {error && <p className="text-danger">{error}</p>}
-                    {/* Submit button */}
+                    
+                    {error && <p className="text-red-500">{error}</p>}
+                    
                     <button
                       type="submit"
-                      className="btn-panchshil btn-danger mt-5"
+                      className="w-3/4 h-11 bg-[#de7008] text-white py-2 px-4 rounded mt-2 mx-auto hover:bg-[#de7008] ml-11"
                       disabled={loading}
                     >
                       {loading ? "Verifying..." : "VERIFY OTP"}
                     </button>
 
                     <div className="text-center mt-4">
-                      <p className="form-text-muted resend-timer mb-0">
+                      <p className="text-gray-300 mb-0">
                         Resend code in{" "}
-                        <span className="resend-time text-white">
+                        <span className="text-white font-medium">
                           {formatTime(countdown)}
                         </span>
                       </p>
                     </div>
 
                     <div className="text-center mt-5">
-                      <p className="form-text-muted mb-0 go-back-wrapper">
+                      <p className="text-gray-300 mb-0">
                         Entered wrong email id?
                         <button
                           type="button"
                           onClick={goBack}
-                          className="back-login-link"
+                          className="ml-1 font-bold text-white hover:text-[#de7008] transition-colors duration-300"
                         >
-                          <span
-                            style={{
-                              fontWeight: "bold",
-                              marginLeft: "5px",
-                              color: "white",
-                            }}
-                          >
-                            {" "}
-                            GO BACK
-                          </span>
+                          GO BACK
                         </button>
                       </p>
                     </div>
-                    {/* <p className="another-way">
-                                            Didn’t receive any email? Check spam or <br />
-                                            <a href="/resend-otp">Try another email address</a>
-                                        </p> */}
                   </form>
                 </div>
               </div>

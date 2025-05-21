@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import "./login.css";
 // import toast from "react-hot-toast";
 // import { baseURL } from "../baseurl/apiDomain";
 // import { LOGO_URL } from "../baseurl/apiDomain";
@@ -16,18 +15,11 @@ const Forgot = () => {
   const navigate = useNavigate();
 
   const config = {
-    // baseURL: "https://panchshil-super.lockated.com/",
-    // baseURL: "http://localhost:3000/",
-
     baseURL: "https://api-connect.panchshil.com/",
     logoUrl: "https://panchshil.gophygital.work/uploads/pms/company_setup/logo/226/Panchshil_logo.png",
-    loginBgClass: "login_bg",
-    loginSecClass: "login-sec",
+    loginBgClass: "bg-[url('https://vendor.panchshil.com/assets/pan_logo-4e1c867e2fada5efc385ef5c565a0ad3b533cd396d1ed187a0bc7fdec161a35a.jpg')]",
     logoStyle: { width: 100, height: 100, margin: "auto" },
     showRegisterButton: true,
-    formTextColor: "",
-    alignContent: "justify-content-center",
-    columnClass: "col-lg-7 col-md-7",
   };
 
   const handleSubmit = async (e) => {
@@ -58,62 +50,45 @@ const Forgot = () => {
     }
   };
 
-  const regiterPage = () => {
-    navigate("/login");
-  };
-
   const goToLoginPage = () => {
     navigate("/login");
   };
 
   return (
     <div>
-      <main>
-        <section className="login_module">
-          <div className="container-fluid">
-            <div className="row align-items-center vh-100 login_bg justify-content-center">
-              <div className="col-lg-7 col-md-7 vh-100 d-flex align-items-center">
-                <div
-                  className="login-sec"
-                  style={{ padding: "6% 10%" }}
-                  id="forgetPasswordContainer"
+      <main className="h-full w-full overflow-hidden">
+        <section className={`min-h-screen w-full bg-cover bg-no-repeat bg-center ${config.loginBgClass}`}>
+          <div className="container-fluid h-full">
+            <div className={`row items-center h-full bg-cover bg-center bg-[url('https://vendor.panchshil.com/assets/pan_logo-4e1c867e2fada5efc385ef5c565a0ad3b533cd396d1ed187a0bc7fdec161a35a.jpg')] justify-center`}>
+              <div className="col-lg-7 col-md-7 h-screen flex items-center">            
+                <div 
+                  className="border border-[rgba(58,58,51,0.4)] shadow-[0px_3px_8px_0px_rgba(217,217,217,0.08)] p-[3%_7%] mx-auto flex flex-col backdrop-blur bg-[#291b117f]"
+                  style={{ boxShadow: "0px 3px 8px 0px rgba(217, 217, 217, 0.08)" }}
                 >
                   <img
-                    className="logo_img mb-5"
+                    className="w-[120px] h-[120px] md:w-[100px] md:h-[100px] mx-auto"
                     style={config.logoStyle}
                     src={config.logoUrl}
                     alt="Logo"
                   />
                   <form
-                    className="forget-password-content"
+                    className="mt-3 w-full max-w-[380px]"
                     id="forgetPasswordForm"
                     onSubmit={handleSubmit}
                   >
-                    <div className="paganation-sec d-flex">
-                      {/* <div className="back-btn d-flex">
-                                                <a href="" onClick={regiterPage}>
-                                                    {" "}
-                                                    &lt; <span> Back </span>
-                                                </a>
-                                            </div> */}
-                      {/* <div className="paganation d-flex">
-                                                <span> Step 1 of 3 </span>
-                                                <p>Forgot Password</p>
-                                            </div> */}
-                    </div>
-                    {/* Email field */}
-                    <h5 className="text-white">Forgot Password?</h5>
-                    <p className="mt-3 mb-3 text-white">
+                    <h5 className="text-white text-xl mb-3 mt-6">Forgot Password?</h5>
+                    <p className="text-white mb-6">
                       Enter you registered email ID below and we'll send you the
                       OTP to reset your password.
                     </p>
-                    <div className="form-group position-relative">
-                      <label className="mb-1 text-white" htmlFor="forgetEmail">
+                    
+                    <div className="mb-4 relative">
+                      <label className="block text-white mb-2" htmlFor="forgetEmail">
                         Email ID
                       </label>
                       <input
                         type="text"
-                        className="form-control-panchshil"
+                        className="w-full px-3 py-2 rounded mb-2 bg-white placeholder-gray-400 text-black outline-none"
                         id="forgetEmail"
                         placeholder="Enter your registered email id..."
                         value={email || mobile || username}
@@ -125,31 +100,32 @@ const Forgot = () => {
                         }}
                       />
                     </div>
-                    {/* Error message */}
+                    
                     {error && (
-                      <div className="alert alert-danger mt-3">{error}</div>
+                      <div className="text-red-500 mt-3 font-medium">{error}</div>
                     )}
-                    {/* Submit button */}
+                    
                     <button
                       type="submit"
-                      className="btn-panchshil btn-danger mt-5"
+                      className="w-3/4 h-11 bg-[#de7008] text-white py-2 px-4 rounded mt-2 mx-auto hover:bg-[#de7008] ml-11"
                       disabled={loading}
                     >
                       {loading ? "Loading..." : "NEXT"}
                     </button>
                   </form>
 
-                  <div className="text-center mt-4">
+                  <div className="text-center mt-8">
                     <button
                       type="button"
                       onClick={goToLoginPage}
-                      className="back-login-link"
+                      className="text-white hover:text-[#de7008] transition-colors"
                     >
-                      Back to <span style={{ fontWeight: "bold" }}>LOGIN</span>
+                      Back to <span className="font-bold">LOGIN</span>
                     </button>
                   </div>
                 </div>
-              </div>
+                </div>
+              
             </div>
           </div>
         </section>
