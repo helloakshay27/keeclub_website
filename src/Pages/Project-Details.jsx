@@ -13,6 +13,7 @@ const ProjectDetail = () => {
   const [activeTab, setActiveTab] = useState('Gallery');
   const [selectedGalleryImage, setSelectedGalleryImage] = useState(null);
   const [showGalleryModal, setShowGalleryModal] = useState(false);
+   const [selectedBrochure, setSelectedBrochure] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -60,6 +61,10 @@ const ProjectDetail = () => {
 
   const closeGalleryModal = () => {
     setShowGalleryModal(false);
+  };
+
+   const openBrochure = (url) => {
+    setSelectedBrochure(url);
   };
 
   const handleShare = () => {
@@ -229,7 +234,7 @@ const ProjectDetail = () => {
           <h1 className="text-2xl font-bold mb-2">{project.project_name || project.name}</h1>
           <p className="text-gray-500 mb-6">{project.location?.city || 'Mumbai'}</p>
 
-          <h2 className="text-xl font-medium mb-3">Project Description</h2>
+          <h2 className="text-xl font-bold mb-3">Project Description</h2>
           <p className="text-gray-700 mb-8">
             {project.project_description || 
              'Located in a scenic setting that overlooks the Mahalaxmi Racecourse and the Arabian Sea. Piramal Mahalaxmi is the new address for luxury in maximum city Mumbai. The project has three landmark towers i.e. Tower I (South), Tower II (Central), and Tower III (North), each offering unique breathtaking views and unparalleled luxuries. Piramal Mahalaxmi project is a luxurious residential development like no other'}
@@ -237,85 +242,158 @@ const ProjectDetail = () => {
 
           {/* Gallery Section */}
           {activeTab === 'Gallery' && (
-            <div>
-              <h2 className="text-xl font-medium mb-4">Gallery</h2>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                {project.gallery_image?.flatMap((galleryItem, index) => 
-                  galleryItem.attachfiles?.map((file, fileIndex) => (
-                    <div 
-                      key={`${index}-${fileIndex}`} 
-                      className="relative h-40 rounded-lg overflow-hidden cursor-pointer"
-                      onClick={() => openGalleryModal(file.document_url)}
-                    >
-                      <img 
-                        src={file.document_url || "/api/placeholder/400/320"} 
-                        alt={`Gallery image ${index + 1}`}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  ))
-                ) || Array(6).fill(0).map((_, index) => (
+            <div className="mb-8">
+            <h2 className="text-xl font-bold mb-4">Gallery</h2>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+              {project.gallery_image?.flatMap((galleryItem, index) => 
+                galleryItem.attachfiles?.map((file, fileIndex) => (
                   <div 
-                    key={index} 
-                    className="relative h-40 rounded-lg overflow-hidden cursor-pointer"
-                    onClick={() => openGalleryModal(`/api/placeholder/400/320?text=Image${index+1}`)}
+                    key={`${index}-${fileIndex}`} 
+                    className="relative h-32 rounded overflow-hidden cursor-pointer"
+                    onClick={() => openGalleryModal(file.document_url)}
                   >
                     <img 
-                      src={`/api/placeholder/400/320?text=Image${index+1}`}
+                      src={file.document_url || "/api/placeholder/400/320"} 
                       alt={`Gallery image ${index + 1}`}
                       className="w-full h-full object-cover"
                     />
                   </div>
-                ))}
-              </div>
+                ))
+              ) || Array(6).fill(0).map((_, index) => (
+                <div 
+                  key={index} 
+                  className="relative h-32 rounded overflow-hidden cursor-pointer"
+                  onClick={() => openGalleryModal(`/api/placeholder/400/320?text=Image${index+1}`)}
+                >
+                  <img 
+                    src={`/api/placeholder/400/320?text=Image${index+1}`}
+                    alt={`Gallery image ${index + 1}`}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              ))}
             </div>
+          </div>
           )}
 
-          {/* Amenities Tab */}
-          {activeTab === 'Amenities' && (
-            <div>
-              <h2 className="text-xl font-medium mb-4">Amenities</h2>
-              <div className="grid grid-cols-3 md:grid-cols-4 gap-6">
-                {project.amenities?.map((amenity, index) => (
-                  <div key={index} className="flex flex-col items-center text-center">
-                    <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-2">
+            <div className="mt-8 flex flex-col">
+            <h2 className="z-10 text-xl text-[#130E2F] my-2 font-bold font-Poppins">Brochures</h2>
+            <div className="bg-gray-100 p-4 rounded">
+              <div className="mb-2">
+                <button 
+                  className="px-3 py-1 bg-red-500 text-white text-sm rounded mr-2"
+                  onClick={() => setSelectedBrochure(project.brochure?.document_url || null)}
+                >
+                  PDF
+                </button>
+                <button 
+                  className="px-3 py-1 bg-blue-500 text-white text-sm rounded"
+                  onClick={() => setSelectedBrochure(project.Project_PPT?.[0]?.attachfiles?.[0]?.document_url || null)}
+                >
+                  PPT
+                </button>
+              </div>
+              
+              <div className="border bg-white rounded overflow-hidden">
+                <div className="aspect-[4/3] bg-gray-50 relative">
+                  {selectedBrochure ? (
+                    <iframe 
+                      src={selectedBrochure}
+                      className="w-full h-full"
+                      title="Brochure preview"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
                       <img 
-                        src={amenity.icon_url || "/api/placeholder/32/32"} 
-                        alt={amenity.name} 
-                        className="w-6 h-6 object-contain"
+                        src="/api/placeholder/400/320?text=Brochure Preview" 
+                        alt="Brochure preview"
+                        className="max-w-full max-h-full"
                       />
                     </div>
-                    <p className="text-sm">{amenity.name}</p>
-                  </div>
-                )) || [
-                  'Swimming Pool', 'Gym', 'Garden', 'Children Play Area',
-                  'Club House', 'Security', 'Indoor Games', 'Jogging Track'
-                ].map((amenity, index) => (
-                  <div key={index} className="flex flex-col items-center text-center">
-                    <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-2">
-                      <img 
-                        src="/api/placeholder/32/32" 
-                        alt={amenity} 
-                        className="w-6 h-6 object-contain"
-                      />
-                    </div>
-                    <p className="text-sm">{amenity}</p>
-                  </div>
-                ))}
+                  )}
+                </div>
+                <div className="h-6 bg-gray-100 border-t flex items-center justify-center">
+                  <div className="w-1/2 h-2 bg-gray-300 rounded"></div>
+                </div>
               </div>
             </div>
-          )}
+          </div>
 
-          {/* Highlights Tab */}
+          <div className="mb-8">
+            <h2 className="text-xl font-bold mb-4">Amenities</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+              {project.amenities?.map((amenity, index) => (
+                <div 
+                  key={index} 
+                  className="border border-gray-100 rounded p-3 flex items-center space-x-3"
+                >
+                  <div className="w-8 h-8 bg-blue-50 rounded-full flex items-center justify-center">
+                    <img 
+                      src={amenity.icon_url || "/api/placeholder/32/32"} 
+                      alt={amenity.name} 
+                      className="w-4 h-4 object-contain"
+                    />
+                  </div>
+                  <span className="text-sm">{amenity.name}</span>
+                </div>
+              )) || [
+                { name: 'Jacuzzi', icon: '🛀' },
+                { name: 'Swimming Pool', icon: '🏊' },
+                { name: 'Climbing Wall', icon: '🧗' },
+                { name: 'Gym', icon: '🏋️' },
+                { name: 'Children\'s Play Area', icon: '🧒' },
+                { name: 'Garden', icon: '🌳' }
+              ].map((amenity, index) => (
+                <div 
+                  key={index} 
+                  className="border border-gray-100 rounded p-3 flex items-center space-x-3"
+                >
+                  <div className="w-8 h-8 bg-blue-50 rounded-full flex items-center justify-center">
+                    <span className="text-sm">{amenity.icon}</span>
+                  </div>
+                  <span className="text-sm">{amenity.name}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          
+          {/* Location Section */}
+          <div className="mb-8">
+            <h2 className="text-xl font-bold mb-4">Location</h2>
+            <div className="aspect-video bg-gray-100 rounded overflow-hidden">
+              {project.map_url ? (
+                <iframe 
+                  src={project.map_url} 
+                  width="100%" 
+                  height="100%" 
+                  frameBorder="0" 
+                  allowFullScreen 
+                  loading="lazy"
+                  title="Project location"
+                ></iframe>
+              ) : (
+                <img 
+                  src="/api/placeholder/600/400?text=Location Map"
+                  alt="Location map"
+                  className="w-full h-full object-cover"
+                />
+              )}
+            </div>
+            <p className="mt-2 text-gray-600 text-sm">
+              {project.location?.addressLine1 || ''} 
+              {project.location?.addressLine1 && project.location?.address_line_two ? ', ' : ''}
+              {project.location?.address_line_two || ''}
+              {(project.location?.addressLine1 || project.location?.address_line_two) && project.location?.city ? ', ' : ''}
+              {project.location?.city || ''}
+              {project.location?.pin_code ? ` - ${project.location.pin_code}` : ''}
+            </p>
+          </div>
+
+          {/* Highlights Tab Content */}
           {activeTab === 'Highlights' && (
             <div>
               <h2 className="text-xl font-medium mb-4">Highlights</h2>
-              <div className="space-y-4">
-                <p className="text-gray-700">
-                  {project.project_description || 
-                    'Located in a scenic setting that overlooks the Mahalaxmi Racecourse and the Arabian Sea. Piramal Mahalaxmi is the new address for luxury in maximum city Mumbai.'}
-                </p>
-                
+              <div className="space-y-4">                
                 <div className="mt-6">
                   <h3 className="font-medium mb-3">Project Information</h3>
                   <ul className="grid grid-cols-2 gap-x-6 gap-y-2 text-gray-600">
