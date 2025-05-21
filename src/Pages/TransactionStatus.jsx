@@ -1,4 +1,4 @@
-import React from 'react';
+import { useEffect, useRef, useState } from "react";
 
 const TransactionStatus = () => {
     const slide = {
@@ -6,32 +6,46 @@ const TransactionStatus = () => {
         heading: "TRANSACTION STATUS",
     };
 
-    const events = [
-        {
-            event_name: "Annual Maintenance Check",
-            project_name: "Sai Radhe Bund Garden",
-            from_time: "2025-05-01 10:00:00",
-            attachfile: {
-                document_url: "https://images.pexels.com/photos/3825585/pexels-photo-3825585.jpeg?auto=compress&cs=tinysrgb&w=1200",
-            },
-        },
-        {
-            event_name: "HVAC System Upgrade",
-            project_name: "Westport Baner",
-            from_time: "2025-05-05 14:30:00",
-            attachfile: {
-                document_url: "https://images.pexels.com/photos/256401/pexels-photo-256401.jpeg?auto=compress&cs=tinysrgb&w=1200",
-            },
-        },
-        {
-            event_name: "Fire Safety Audit",
-            project_name: "Peninsula Office",
-            from_time: "2025-05-10 09:00:00",
-            attachfile: {
-                document_url: "https://images.pexels.com/photos/2081105/pexels-photo-2081105.jpeg?auto=compress&cs=tinysrgb&w=1200",
-            },
-        },
+    const pointsData = [
+        { label: 'ALL THE POINTS EARNED', value: 0 },
+        { label: 'ALL THE POINTS REDEEMED', value: 0 },
+        { label: 'BALANCED POINTS', value: 0 },
+        { label: 'ALL THE POINTS REDEEMED', value: 0 },
+        { label: 'BALANCED POINTS', value: 0 },
     ];
+
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const visibleCards = 3;
+    const autoScrollInterval = 3000; // ms
+
+    const scrollRef = useRef(null);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setCurrentIndex(prev =>
+                (prev + 1) % (pointsData.length - visibleCards + 1)
+            );
+        }, autoScrollInterval);
+
+        return () => clearInterval(interval);
+    }, []);
+
+    useEffect(() => {
+        if (scrollRef.current) {
+            scrollRef.current.scrollTo({
+                left: scrollRef.current.scrollWidth * (currentIndex / pointsData.length),
+                behavior: 'smooth',
+            });
+        }
+    }, [currentIndex]);
+
+
+    const events = [
+        { date: "2025-05-01 10:00:00", transactionType: "Credit", points: 150 },
+        { date: "2025-05-05 14:30:00", transactionType: "Debit", points: 75 },
+        { date: "2025-05-10 09:00:00", transactionType: "Credit", points: 200 },
+    ];
+
 
     const formatDate = (dateString) => {
         const dateObj = new Date(dateString);
@@ -57,6 +71,34 @@ const TransactionStatus = () => {
                 </div>
             </section>
 
+
+            <div className="w-full mt-10">
+                <div className="overflow-hidden max-w-6xl mx-auto">
+                    <div
+                        ref={scrollRef}
+                        className="flex transition-transform duration-500 ease-in-out overflow-x-auto sm:overflow-x-hidden scroll-smooth snap-x sm:snap-none no-scrollbar"
+                        style={{ scrollBehavior: 'smooth' }}
+                    >
+                        {pointsData.map((item, index) => (
+                            <div
+                                key={index}
+                                className="flex-shrink-0 w-[90%] sm:w-[calc(100%/3)] px-4 snap-center"
+                            >
+                                <div className="bg-white rounded-xl text-center px-6 py-10 border border-gray-200 h-[250px] md:h-auto flex flex-col justify-center">
+                                    <div className="text-orange-400 text-4xl font-bold mb-3">
+                                        {item.value}
+                                    </div>
+                                    <div className="text-black font-semibold text-lg tracking-wide">
+                                        {item.label}
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+
+
             <div className="px-4 py-8 sm:py-10 md:py-20 max-w-7xl mx-auto">
                 <h2 className="text-center text-2xl sm:text-3xl font-bold mb-3 uppercase">Activity Log</h2>
                 <hr className="border-t-2 border-orange-600 w-12 mx-auto mb-6" />
@@ -65,34 +107,25 @@ const TransactionStatus = () => {
                     {events.map((event, index) => (
                         <div
                             key={index}
-                            className="rounded shadow-md overflow-hidden relative border-b-2 border-orange-500"
+                            className="rounded shadow-md overflow-hidden relative border-b-2 border-orange-500 bg-white p-6"
                         >
-                            {/* Date Badge */}
-                            <div className="absolute top-0 right-0 bg-black bg-opacity-80 text-white px-2 sm:px-3 py-1 sm:py-2 text-sm font-semibold z-10 rounded-bl-lg">
+                            <div className="absolute top-0 right-0 bg-black bg-opacity-80 text-white px-2 sm:px-3 py-1 sm:py-2 text-sm font-semibold z-10 rounded-bl-lg text-center">
                                 <div className="text-base sm:text-lg font-bold leading-tight">
-                                    {formatDate(event.from_time).split(' ')[0]}
+                                    {formatDate(event.date).split(' ')[0]}
                                 </div>
-                                <div className="text-xs">{formatDate(event.from_time).split(' ')[1]}</div>
+                                <div className="text-xs">{formatDate(event.date).split(' ')[1]}</div>
                             </div>
 
-                            {/* Image */}
-                            <img
-                                src={event.attachfile?.document_url || 'https://via.placeholder.com/400x300?text=No+Image'}
-                                alt={event.event_name}
-                                className="w-full h-52 sm:h-64 object-cover"
-                            />
+                            <h3 className="text-lg font-bold mb-3">{event.transactionType}</h3>
 
-                            {/* Event Content */}
-                            <div className="p-3 sm:p-4 bg-white">
-                                <h3 className="text-base sm:text-lg font-bold mb-1 sm:mb-2">{event.event_name}</h3>
-                                <p className="text-sm sm:text-base text-gray-700">{event.project_name}</p>
-                            </div>
+                            <p className="text-gray-700 text-xl font-semibold">{event.points}</p>
                         </div>
                     ))}
                 </div>
             </div>
+
         </div>
     );
-}
+};
 
 export default TransactionStatus;

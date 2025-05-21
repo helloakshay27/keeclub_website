@@ -10,6 +10,7 @@ import EventDetail from './Component/eventpage/EventDetail'
 import Projects from './Pages/Projects'
 import TransactionStatus from './Pages/TransactionStatus'
 import { useMemo } from 'react'
+
 import ProjectDetail from './Pages/Project-Details'
 // import Login from './Pages/Login'
 import SignIn from './Component/loginpages/signIn'
@@ -17,6 +18,9 @@ import Register from './Component/loginpages/register'
 import Forgot from './Component/loginpages/Forgot'
 import ForgotOtp from './Component/loginpages/ForgotOtp'
 import CreatePassword from './Component/loginpages/CreatePassword'
+
+import BlogDetailPage from './Component/blogpage/BlogDetailPage'
+
 
 const routes = [
   { path: '/', element: <Home />, transparent: true },
@@ -26,12 +30,17 @@ const routes = [
   { path: '/event/:id', element: <EventDetail />, transparent: false },
   { path: '/projects', element: <Projects />, transparent: true },
   { path: '/transactionstatus', element: <TransactionStatus />, transparent: true },
+
   { path: '/Project-Details/:id', element: <ProjectDetail />, transparent: false },
   { path: '/login', element: <SignIn />, transparent: true },
   {path: '/register', element: <Register />, transparent: true},
   {path: '/forgot-password', element: <Forgot />, transparent: true},
   {path: '/forgot-otp', element: <ForgotOtp />, transparent: true},
   {path: '/reset-password', element: <CreatePassword />, transparent: true},
+
+  { path :'/blog/:id', element : <BlogDetailPage />, transparent: true },
+
+
 
 ]
 
