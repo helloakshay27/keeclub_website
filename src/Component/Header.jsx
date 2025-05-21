@@ -86,7 +86,8 @@ const Header = ({ isTransparent }) => {
             <Link to="/projects">PROJECTS</Link>
           </li>
 
-          <li className="hover:text-[#fa4615] cursor-pointer">LOGIN</li>
+          <li className="hover:text-[#fa4615] cursor-pointer">
+           <Link to="/login" >LOGIN</Link></li>
         </ul>
       </nav>
 
