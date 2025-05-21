@@ -1,7 +1,9 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const allPosts = [
     {
+        id: 101,
         title: "Ace the Board Games Trivia: Win Exciting Rewards",
         description: "Play our Board Games Trivia Challenge and win exciting lifestyle vouchers!",
         date: "15th January 2025",
@@ -10,6 +12,7 @@ const allPosts = [
         category: "Contest",
     },
     {
+        id: 102,
         title: "Welcome to the Ultimate Christmas Treasure Hunt! 🎁✨",
         description: "Congratulations, you’re in the game! 🎄 This is the start of our Christmas Treasure Hunt",
         date: "19th December 2024",
@@ -18,6 +21,7 @@ const allPosts = [
         category: "Contest",
     },
     {
+        id: 103,
         title: "Children’s Day – Cartoon Quiz",
         description: "This Children’s Day let’s celebrate the joy and creativity of childhood with a fun Cartoon Quiz! 🧸✨",
         date: "14th November 2024",
@@ -26,6 +30,7 @@ const allPosts = [
         category: "Contest",
     },
     {
+        id: 104,
         title: "WORLD TOURISM DAY",
         description: "World Tourism Day on 27th September celebrates the cultural and economic impact of tourism.",
         date: "27th September 2024",
@@ -34,6 +39,7 @@ const allPosts = [
         category: "Contest",
     },
     {
+        id: 105,
         title: "INDEPENDENCE DAY TRIVIA",
         description: "How well do you know the Heroes of our Nation?",
         date: "13th August 2024",
@@ -42,6 +48,7 @@ const allPosts = [
         category: "Education",
     },
     {
+        id: 106,
         title: "WORLD MUSIC DAY TRIVIA",
         description: "There’s nothing like hearing your favourite song on a terrible day",
         date: "21st June 2024",
@@ -50,6 +57,7 @@ const allPosts = [
         category: "Health & Fitness",
     },
     {
+        id: 107,
         title: "WORLD MUSIC DAY TRIVIA",
         description: "There’s nothing like hearing your favourite song on a terrible day",
         date: "21st June 2024",
@@ -99,6 +107,13 @@ const LatestPosts = () => {
     const startIndex = (currentPage - 1) * POSTS_PER_PAGE;
     const currentPosts = filteredPosts.slice(startIndex, startIndex + POSTS_PER_PAGE);
 
+    const navigate = useNavigate();
+
+    const handleCardClick = (id) => {
+        navigate(`/blog/${id}`);
+    };
+
+
     return (
         <div className="max-w-[1200px] mx-auto px-4 py-12">
             <h1 className="text-center text-3xl sm:text-4xl font-bold mb-10">LATEST POSTS</h1>
@@ -118,7 +133,10 @@ const LatestPosts = () => {
                                 <div className="p-4 sm:p-5 flex flex-col flex-1">
                                     <h2 className="font-bold text-base sm:text-lg leading-snug mb-2">{post.title}</h2>
                                     <p className="text-gray-600 text-sm sm:text-[15px] mb-4 flex-1">{post.description}...</p>
-                                    <button className="bg-[#FF3C00] text-white px-4 py-2 rounded text-sm font-semibold w-fit mt-auto hover:bg-[#e53200] transition">
+                                    <button onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleCardClick(post.id);
+                                    }} className="bg-[#FF3C00] cursor-pointer text-white px-4 py-2 rounded text-sm font-semibold w-fit mt-auto hover:bg-[#e53200] transition">
                                         READ MORE →
                                     </button>
                                 </div>
@@ -143,9 +161,8 @@ const LatestPosts = () => {
                             return (
                                 <li
                                     key={i}
-                                    className={`cursor-pointer flex items-center gap-2 transition ${
-                                        isActive ? "text-[#FF3C00] font-semibold" : "text-gray-800"
-                                    }`}
+                                    className={`cursor-pointer flex items-center gap-2 transition ${isActive ? "text-[#FF3C00] font-semibold" : "text-gray-800"
+                                        }`}
                                     onClick={() => handleCategoryClick(cat)}
                                 >
                                     <span className="text-[#FF3C00]">›</span>
@@ -162,11 +179,10 @@ const LatestPosts = () => {
                 <div className="flex justify-center mt-10 gap-2 items-center text-sm sm:text-base">
                     <button
                         onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
-                        className={`px-3 py-2 rounded-md ${
-                            currentPage === 1
-                                ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-                                : "bg-white text-gray-800 border hover:bg-gray-100"
-                        }`}
+                        className={`px-3 py-2 rounded-md ${currentPage === 1
+                            ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                            : "bg-white text-gray-800 border hover:bg-gray-100"
+                            }`}
                         disabled={currentPage === 1}
                     >
                         «
@@ -175,22 +191,20 @@ const LatestPosts = () => {
                         <button
                             key={i}
                             onClick={() => setCurrentPage(i + 1)}
-                            className={`px-4 py-2 font-semibold cursor-pointer rounded-md ${
-                                currentPage === i + 1
-                                    ? "bg-[#FF3C00] text-white"
-                                    : "bg-gray-100 text-gray-800 hover:bg-gray-200"
-                            }`}
+                            className={`px-4 py-2 font-semibold cursor-pointer rounded-md ${currentPage === i + 1
+                                ? "bg-[#FF3C00] text-white"
+                                : "bg-gray-100 text-gray-800 hover:bg-gray-200"
+                                }`}
                         >
                             {String(i + 1).padStart(2, "0")}
                         </button>
                     ))}
                     <button
                         onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
-                        className={`px-3 py-2 rounded-md ${
-                            currentPage === totalPages
-                                ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-                                : "bg-white text-gray-800 border hover:bg-gray-100"
-                        }`}
+                        className={`px-3 py-2 rounded-md ${currentPage === totalPages
+                            ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                            : "bg-white text-gray-800 border hover:bg-gray-100"
+                            }`}
                         disabled={currentPage === totalPages}
                     >
                         »
