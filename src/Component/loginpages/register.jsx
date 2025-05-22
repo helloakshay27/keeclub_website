@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import logo from "../../assets/lockated-logo.png";
+
 
 const Register = () => {
   const [email, setEmail] = useState("");
@@ -12,7 +14,10 @@ const Register = () => {
 
   const navigate = useNavigate();
   
-  const baseURL = 'https://api-connect.panchshil.com/';
+  const config = {
+      baseURL: "https://api-connect.panchshil.com/",
+      logoUrl: logo,
+  }
   
   const handleMobileChange = (e) => {
     let value = e.target.value.replace(/\D/g, "");
@@ -79,20 +84,20 @@ const Register = () => {
 
   return (
     <div className="font-open-sans">
-      <main>
-        <section className="h-full w-full overflow-hidden">
-          <div className="container-fluid">
-            <div className="row items-center h-screen justify-center bg-[url('https://vendor.panchshil.com/assets/pan_logo-4e1c867e2fada5efc385ef5c565a0ad3b533cd396d1ed187a0bc7fdec161a35a.jpg')] bg-cover bg-no-repeat">
+      <main className="h-full w-full overflow-hidden">
+        <section className="">
+          <div className="container-fluid h-full">
+            <div className={`row items-center h-full bg-cover bg-center bg-[url('https://vendor.panchshil.com/assets/pan_logo-4e1c867e2fada5efc385ef5c565a0ad3b533cd396d1ed187a0bc7fdec161a35a.jpg')] justify-center`}>
               <div className="col-lg-7 col-md-7 h-screen flex items-center">
                 <div
-                  className="border border-[rgba(58,58,51,0.4)] shadow-[0px_3px_8px_0px_rgba(217,217,217,0.08)] p-[6%_10%] mx-auto flex flex-col backdrop-blur bg-[#291b117f]"
+                  className="border border-[rgba(58,58,51,0.4)] shadow-[0px_3px_8px_0px_rgba(217,217,217,0.08)] p-[3%_7%] mx-auto flex flex-col backdrop-blur bg-[#291b117f]"
                   id="forgetPasswordContainer"
                 >
-                  <img
-                    className="w-[100px] h-[100px] mx-auto"
-                    src="https://panchshil.gophygital.work/uploads/pms/company_setup/logo/226/Panchshil_logo.png"
-                    alt="Logo"
-                  />
+                   <img
+                  className="w-[120px] h-[120px] md:w-[220px] md:h-[70px] mx-auto"
+                  src={config.logoUrl}
+                  alt="Logo"
+                />
 
                   <form
                     onSubmit={handlePasswordLogin}
@@ -105,7 +110,7 @@ const Register = () => {
                       <input
                         type="text"
                         id="email"
-                        className="w-full px-3 py-2 mb-2 border border-gray-300"
+                        className="w-full px-3 py-2 rounded mb-2 bg-white placeholder-gray-400 text-black outline-none"
                         placeholder="Enter fullname here..."
                         value={firstname}
                         onChange={(e) => setFirstname(e.target.value)}
@@ -120,7 +125,7 @@ const Register = () => {
                       <input
                         type="Email"
                         id="password"
-                        className="w-full px-3 py-2 mb-2 border border-gray-300"
+                        className="w-full px-3 py-2 rounded mb-2 bg-white placeholder-gray-400 text-black outline-none"
                         placeholder="Enter email id here..."
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
@@ -136,7 +141,7 @@ const Register = () => {
                         type="text"
                         inputMode="numeric"
                         pattern="[0-9]{10}"
-                        className="w-full px-3 py-2 mb-2 border border-gray-300 appearance-textfield"
+                        className="w-full px-3 py-2 rounded mb-2 bg-white placeholder-gray-400 text-black outline-none"
                         placeholder="Enter mobile number here..."
                         id="mobile"
                         name="mobile"
@@ -150,7 +155,7 @@ const Register = () => {
                     {error && <p className="text-red-500">{error}</p>}
                     <button
                       type="submit"
-                      className="w-[282px] max-w-[75%] py-2 px-4 mx-auto block text-white bg-[#de7008] mt-2"
+                      className="w-[282px] max-w-[75%] py-2 px-4 mx-auto block text-white bg-[#de7008] mt-4 rounded mb-2"
                     >
                       {loading ? "Register in..." : "Register"}
                     </button>

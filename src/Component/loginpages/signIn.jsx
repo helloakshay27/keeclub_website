@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Eye, EyeOff } from "lucide-react";
+import logo from "../../assets/lockated-logo.png";
 
 const SignIn = () => {
   // State management
@@ -21,7 +22,7 @@ const SignIn = () => {
   // Configuration
   const config = {
     baseURL: "https://api-connect.panchshil.com/",
-    logoUrl: "https://panchshil.gophygital.work/uploads/pms/company_setup/logo/226/Panchshil_logo.png",
+    logoUrl: logo,
     showRegisterButton: true,
   };
 
@@ -287,7 +288,7 @@ const SignIn = () => {
             <div className="col-lg-7 col-md-7 h-screen flex items-center">
               <div className="border border-[rgba(58,58,51,0.4)] shadow-[0px_3px_8px_0px_rgba(217,217,217,0.08)] p-[3%_7%] mx-auto flex flex-col backdrop-blur bg-[#291b117f]">
                 <img
-                  className="w-[120px] h-[120px] md:w-[100px] md:h-[100px] mx-auto"
+                  className="w-[120px] h-[120px] md:w-[220px] md:h-[70px] mx-auto"
                   src={config.logoUrl}
                   alt="Logo"
                 />
