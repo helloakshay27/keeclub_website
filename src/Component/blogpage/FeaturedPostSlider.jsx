@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const posts = [
     {
-        id: 1,
+        id: 101,
         title: 'Ace the Board Games Trivia: Win Exciting Rewards',
         date: '15th January | 4 mins Read',
         description:
@@ -13,7 +14,7 @@ const posts = [
         subtitle: 'HAPPY WORLD TOURISM DAY',
     },
     {
-        id: 2,
+        id: 103,
         title: 'Children’s Day – Cartoon Quiz',
         date: '14th November | 4 mins Read',
         description:
@@ -22,7 +23,7 @@ const posts = [
             'https://loyalie-cms-dev.s3.ap-south-1.amazonaws.com/1731330888660_1731330887909_GenrBannerS.jpg',
     },
     {
-        id: 3,
+        id: 105,
         title: 'Independence Day Trivia',
         date: '13th August | 4 mins Read',
         description: 'How well do you know the Heroes of our Nation?',
@@ -30,7 +31,7 @@ const posts = [
             'https://loyalie-cms-dev.s3.ap-south-1.amazonaws.com/1723467963601_1723467962863_Independence.jpg',
     },
     {
-        id: 4,
+        id: 102,
         title: 'Welcome to the Ultimate Christmas Treasure Hunt! 🎁✨',
         date: '19th December | 4 mins Read',
         description:
@@ -39,7 +40,7 @@ const posts = [
             'https://loyalie-cms-dev.s3.ap-south-1.amazonaws.com/1734598376035_1734598374974_ChristmasblogGenricBannerV4.jpg',
     },
     {
-        id: 5,
+        id: 104,
         title: 'World Tourism Day',
         date: '27th September | 4 mins Read',
         description:
@@ -48,6 +49,7 @@ const posts = [
             'https://loyalie-cms-dev.s3.ap-south-1.amazonaws.com/1727246811696_1727246811459_Blo.jpg',
     },
 ];
+
 
 const FeaturedPostSlider = () => {
     const [current, setCurrent] = useState(0);
@@ -67,6 +69,12 @@ const FeaturedPostSlider = () => {
     const handleNext = () => {
         setCurrent((prev) => (prev === posts.length - 1 ? 0 : prev + 1));
     };
+
+    const navigate = useNavigate();
+
+const handleCardClick = (id) => {
+    navigate(`/blog/${id}`);
+};
 
     return (
         <div className="max-w-6xl mx-auto px-4 py-10 relative">
@@ -104,7 +112,7 @@ const FeaturedPostSlider = () => {
                                 <p className="font-semibold text-gray-700 mb-2">{post.date}</p>
                                 <p className="text-gray-700 text-lg mb-4">{post.description}</p>
 
-                                <button className="self-start bg-[#FD5E53] text-white px-5 py-2 rounded-lg shadow hover:opacity-90 transition">
+                                <button className="self-start bg-[#FD5E53] text-white px-5 py-2 rounded-lg shadow hover:opacity-90 transition" onClick={()=> handleCardClick(post.id)}>
                                     Read More &gt;
                                 </button>
                             </div>

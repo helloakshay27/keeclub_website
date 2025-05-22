@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     FaWhatsapp,
     FaFacebookF,
@@ -6,6 +6,7 @@ import {
     FaEnvelope,
     FaTwitter
 } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 
 const BlogDetailPage = () => {
 
@@ -42,13 +43,21 @@ const BlogDetailPage = () => {
         }
     ];
 
+    const [selectedPost, setSelectedPost] = useState(recentPosts[0]);
+    const naviagte = useNavigate()
+
+    useEffect(() => {
+        window.scrollTo({ top: 0 });
+    }, [selectedPost]);
+
+
     return (
         <div>
 
             <section
                 className="relative h-[70vh] md:min-h-[100vh] w-full text-white flex items-center justify-center px-4 sm:px-6 py-12 sm:py-20 bg-cover bg-center bg-no-repeat"
                 style={{
-                    backgroundImage: `linear-gradient(to right, rgba(18, 44, 59, 0.7), rgba(255, 71, 19, 0.3)), url(${slide.bgImage})`,
+                    backgroundImage: `linear-gradient(to right, rgba(18, 44, 59, 0.7), rgba(255, 71, 19, 0.3)), url(${selectedPost.img})`,
                 }}
             >
                 <div className="text-center max-w-[90%] sm:max-w-xl md:max-w-2xl lg:max-w-3xl">
@@ -61,12 +70,14 @@ const BlogDetailPage = () => {
 
             <div className="bg-white min-h-screen text-gray-800 p-4 md:p-10 font-sans">
 
-                <div className="text-red-500 text-2xl mb-4 cursor-pointer">&larr;</div>
+                <div className="text-red-500 text-2xl mb-4 cursor-pointer" onClick={()=> naviagte(-1)}>&larr;</div>
 
                 <div className="flex flex-col md:flex-row gap-10">
+
+                    {/* Content */}
                     <div className="flex-1 max-w-full md:max-w-none">
                         <h1 className="text-3xl md:text-3xl font-bold mb-3">
-                            Ace the Board Games Trivia: Win Exciting Rewards
+                            {selectedPost.title}
                         </h1>
                         <p className="font-semibold text-gray-600 text-sm mb-5">
                             Test your knowledge about board games from 15th to 19th January 2025 and win exciting lifestyle vouchers!
@@ -116,11 +127,12 @@ const BlogDetailPage = () => {
                         </div>
                     </div>
 
+                      {/* Recent Post */}
                     <div className="w-full md:w-1/4 space-y-7 max-w-full">
                         <h2 className="text-red-600 font-bold text-sm text-center md:text-left">RECENT POSTS</h2>
 
                         {recentPosts.map((post, i) => (
-                            <div key={i} className="flex gap-4 items-center">
+                            <div key={i} className="flex gap-4 items-center cursor-pointer" onClick={() => setSelectedPost(post)}>
                                 <img src={post.img} alt="post" className="w-20 h-14 object-cover rounded-md flex-shrink-0" />
                                 <div>
                                     <p className="font-semibold text-sm">{post.title}</p>
