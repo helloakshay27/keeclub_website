@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Eye, EyeOff } from "lucide-react";
@@ -34,51 +35,86 @@ const SignIn = () => {
     navigate("/register");
   };
 
+  // const handlePasswordLogin = async (e) => {
+  //   e.preventDefault();
+  //   setError("");
+  //   setLoading(true);
+
+  //   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  //   if (!emailRegex.test(email)) {
+  //     toast.error("Please enter a valid email address.");
+  //     setLoading(false);
+  //     return;
+  //   }
+
+  //   try {
+  //     const response = await axios.post(`${config.baseURL}/users/signin.json`, {
+  //       user: {
+  //         email,
+  //         password,
+  //       },
+  //     });
+      
+  //     if (response.data.access_token) {
+  //       localStorage.setItem("access_token", response.data?.access_token);
+  //       sessionStorage.setItem("email", response.data?.email);
+  //       sessionStorage.setItem("firstname", response.data?.firstname);
+  //       sessionStorage.setItem("lastname", response.data?.lastname);
+  //       sessionStorage.setItem("user_id", response.data?.id);
+  //       sessionStorage.setItem("profile_icon", response?.data?.profile_icon_url);
+
+  //       const lockRole = response?.data?.lock_role;
+  //       if (lockRole) {
+  //         localStorage.setItem("lock_role_name", lockRole.name);
+  //         localStorage.setItem("lock_role_permissions", lockRole.permissions_hash);
+  //       }
+        
+  //       navigate("/project-list");
+  //       toast.success("Login successful");
+  //     } else {
+  //       toast.error("Login failed. Please check your credentials.");
+  //     }
+  //   } catch (err) {
+  //     toast.error("Login failed. Please check your credentials.");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+
   const handlePasswordLogin = async (e) => {
     e.preventDefault();
     setError("");
     setLoading(true);
-
+  
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       toast.error("Please enter a valid email address.");
       setLoading(false);
       return;
     }
-
-    try {
-      const response = await axios.post(`${config.baseURL}/users/signin.json`, {
-        user: {
-          email,
-          password,
-        },
-      });
-      
-      if (response.data.access_token) {
-        localStorage.setItem("access_token", response.data?.access_token);
-        sessionStorage.setItem("email", response.data?.email);
-        sessionStorage.setItem("firstname", response.data?.firstname);
-        sessionStorage.setItem("lastname", response.data?.lastname);
-        sessionStorage.setItem("user_id", response.data?.id);
-        sessionStorage.setItem("profile_icon", response?.data?.profile_icon_url);
-
-        const lockRole = response?.data?.lock_role;
-        if (lockRole) {
-          localStorage.setItem("lock_role_name", lockRole.name);
-          localStorage.setItem("lock_role_permissions", lockRole.permissions_hash);
-        }
-        
-        navigate("/project-list");
-        toast.success("Login successful");
-      } else {
-        toast.error("Login failed. Please check your credentials.");
-      }
-    } catch (err) {
-      toast.error("Login failed. Please check your credentials.");
-    } finally {
-      setLoading(false);
+  
+    // Mock login (no API call)
+    if (email === "user@gmail.com" && password === "12345678") {
+      // ✅ Store a fake token so PrivateRoute recognizes the login
+      localStorage.setItem("authToken", "fake-token");
+    
+      // ✅ Continue with session info
+      sessionStorage.setItem("email", email);
+      sessionStorage.setItem("firstname", "Rahul");
+      sessionStorage.setItem("lastname", "Parihar");
+      sessionStorage.setItem("user_id", "mock-user-id");
+      sessionStorage.setItem("profile_icon", "https://via.placeholder.com/150");
+    
+      toast.success("Login successful!");
+      navigate("/dashboard");
+    } else {
+      toast.error("Invalid credentials. Please try again.");
     }
+  
+    setLoading(false);
   };
+  
 
   const handleSendOtp = async (e) => {
     e.preventDefault();
@@ -201,7 +237,7 @@ const SignIn = () => {
         <button
           onClick={handlePasswordLogin}
           type="submit"
-          className="w-3/4 h-11 bg-[#de7008] text-white py-2 px-4 rounded mt-2 mx-auto hover:bg-[#de7008] ml-11"
+          className="w-3/4 h-11 cursor-pointer bg-[#de7008] text-white py-2 px-4 rounded mt-2 mx-auto hover:bg-[#de7008] ml-11"
           disabled={loading}
         >
           {loading ? "Logging in..." : "LOGIN"}

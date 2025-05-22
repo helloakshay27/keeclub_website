@@ -1,4 +1,4 @@
-import { Routes, Route, useLocation, matchPath } from 'react-router-dom'
+import { Routes, Route, useLocation, matchPath, Navigate } from 'react-router-dom'
 import './App.css'
 import Home from './Pages/Home'
 import About from './Pages/About'
@@ -9,10 +9,8 @@ import Event from './Pages/Event'
 import EventDetail from './Component/eventpage/EventDetail'
 import Projects from './Pages/Projects'
 import TransactionStatus from './Pages/TransactionStatus'
-import { useMemo } from 'react'
 
 import ProjectDetail from './Pages/Project-Details'
-// import Login from './Pages/Login'
 import SignIn from './Component/loginpages/signIn'
 import Register from './Component/loginpages/register'
 import Forgot from './Component/loginpages/Forgot'
@@ -20,8 +18,13 @@ import ForgotOtp from './Component/loginpages/ForgotOtp'
 import CreatePassword from './Component/loginpages/CreatePassword'
 
 import BlogDetailPage from './Component/blogpage/BlogDetailPage'
+import RootLayout from './Pages/Layout/RootLayout'
+import TransactionStatuss from './Dashboard/TransactionStatuss'
+import PrivateRoute from './Dashboard/Pages/PrivateRoute'
+import PageNotFound from './Pages/PageNotFound'
+import Services from './Dashboard/Services'
 
-const routes = [
+const routeConfigs = [
   { path: '/', element: <Home />, transparent: true },
   { path: '/about', element: <About />, transparent: false },
   { path: '/blogs', element: <Blog />, transparent: true },
@@ -36,30 +39,35 @@ const routes = [
   { path: '/forgot-password', element: <Forgot />, transparent: true, hideLayout: true },
   { path: '/forgot-otp', element: <ForgotOtp />, transparent: true, hideLayout: true },
   { path: '/reset-password', element: <CreatePassword />, transparent: true, hideLayout: true },
-
   { path: '/blog/:id', element: <BlogDetailPage />, transparent: true },
-]
+  { path: '*', element: <PageNotFound />, transparent: true, hideLayout: true }
+];
+
 
 
 function App() {
   const location = useLocation()
-
-  const { isTransparent, hideLayout } = useMemo(() => {
-    const matchedRoute = routes.find(route => matchPath(route.path, location.pathname))
-    return {
-      isTransparent: matchedRoute?.transparent ?? false,
-      hideLayout: matchedRoute?.hideLayout ?? false,
-    }
-  }, [location.pathname])
+  const matchedRoute = routeConfigs.find(route => matchPath(route.path, location.pathname));
+  const isTransparent = matchedRoute?.transparent ?? false;
+  const hideLayout = matchedRoute?.hideLayout || location.pathname.startsWith('/dashboard');
 
   return (
     <div className="flex flex-col min-h-screen">
       {!hideLayout && <Header key={location.pathname} isTransparent={isTransparent} />}
-      <main className={`flex-1 ${!hideLayout && !isTransparent ? 'pt-20 sm:pt-28' : ''}`} style={{ flex: 1 }}>
+      <main className={`flex-1 ${!hideLayout && !isTransparent ? 'pt-20 sm:pt-28' : ''}`}>
         <Routes>
-          {routes.map(({ path, element }) => (
+          {routeConfigs.map(({ path, element }) => (
             <Route key={path} path={path} element={element} />
           ))}
+          {/* Dashboard layout with nested routes */}
+          <Route path="/dashboard" element={<PrivateRoute />}>
+            <Route element={<RootLayout />}>
+            <Route index element={<Navigate to="transactions" replace />} />
+            <Route path="transactions" element={<TransactionStatuss />} />
+              <Route path="services" element={<Services />} />
+            </Route>
+          </Route>
+
         </Routes>
       </main>
       {!hideLayout && <Footer />}
