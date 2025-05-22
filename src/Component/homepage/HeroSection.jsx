@@ -8,7 +8,7 @@ const slides = [
     heading: 'HOMES ARE MEANT TO BE MORE,',
     subheading: 'Because every apartment becomes a world by itself.',
     title: 'KEE CLUB',
-    description: 'A joint initiative by Piramal Realty and Reloy',
+    description: 'A joint initiative by Piramal Realty and Lockated',
     buttonText: 'Refer Now',
   },
   {
@@ -18,7 +18,7 @@ const slides = [
     heading: 'HOMES ARE MEANT TO BE MORE,',
     subheading: 'Because every apartment becomes a world by itself.',
     title: 'KEE CLUB',
-    description: 'A joint initiative by Piramal Realty and Reloy.',
+    description: 'A joint initiative by Piramal Realty and Lockated.',
     buttonText: 'Refer Now ',
   },
   {
@@ -28,7 +28,7 @@ const slides = [
     heading: 'HOMES ARE MEANT TO BE MORE,',
     subheading: 'Because every apartment becomes a world by itself.',
     title: 'KEE CLUB',
-    description: 'A joint initiative by Piramal Realty and Reloy.',
+    description: 'A joint initiative by Piramal Realty and Lockated.',
     buttonText: 'Refer Now ',
   },
 ];
