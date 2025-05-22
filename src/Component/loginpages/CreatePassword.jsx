@@ -3,6 +3,8 @@ import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import logo from "../../assets/lockated-logo.png";
+
 
 const CreatePassword = () => {
   const location = useLocation();
@@ -24,7 +26,7 @@ const CreatePassword = () => {
 
   const config = {
     baseURL: "https://api-connect.panchshil.com/",
-    logoUrl: "https://panchshil.gophygital.work/uploads/pms/company_setup/logo/226/Panchshil_logo.png",
+    logoUrl: logo,
     loginBgClass: "bg-[url('https://vendor.panchshil.com/assets/pan_logo-4e1c867e2fada5efc385ef5c565a0ad3b533cd396d1ed187a0bc7fdec161a35a.jpg')]",
     showRegisterButton: true,
   };
@@ -105,7 +107,7 @@ const CreatePassword = () => {
                   id="forgetPasswordContainer"
                 >
                   <img
-                    className="w-[120px] h-[120px] md:w-[100px] md:h-[100px] mx-auto"
+                    className="w-[120px] h-[120px] md:w-[220px] md:h-[70px] mx-auto"
                     src={config.logoUrl}
                     alt="Logo"
                   />

@@ -4,6 +4,8 @@ import axios from "axios";
 // import toast from "react-hot-toast";
 // import { baseURL } from "../baseurl/apiDomain";
 // import { LOGO_URL } from "../baseurl/apiDomain";
+import logo from "../../assets/lockated-logo.png";
+
 
 const Forgot = () => {
   const [email, setEmail] = useState("");
@@ -16,7 +18,7 @@ const Forgot = () => {
 
   const config = {
     baseURL: "https://api-connect.panchshil.com/",
-    logoUrl: "https://panchshil.gophygital.work/uploads/pms/company_setup/logo/226/Panchshil_logo.png",
+    logoUrl: logo,
     loginBgClass: "bg-[url('https://vendor.panchshil.com/assets/pan_logo-4e1c867e2fada5efc385ef5c565a0ad3b533cd396d1ed187a0bc7fdec161a35a.jpg')]",
     logoStyle: { width: 100, height: 100, margin: "auto" },
     showRegisterButton: true,
@@ -66,8 +68,8 @@ const Forgot = () => {
                   style={{ boxShadow: "0px 3px 8px 0px rgba(217, 217, 217, 0.08)" }}
                 >
                   <img
-                    className="w-[120px] h-[120px] md:w-[100px] md:h-[100px] mx-auto"
-                    style={config.logoStyle}
+                    className="w-[120px] h-[120px] md:w-[220px] md:h-[70px] mx-auto"
+                    // style={config.logoStyle}
                     src={config.logoUrl}
                     alt="Logo"
                   />
