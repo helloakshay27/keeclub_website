@@ -39,26 +39,27 @@ const Header = ({ isTransparent }) => {
 
   return (
     <header
-      className={classNames(
-        'fixed top-0 left-0 w-full z-50 transition-all duration-300 px-6 sm:px-8 flex items-center justify-between',
-        {
-          'bg-[#24293c] text-white shadow-md py-2 sm:py-1':
-            (isTabletOrMobile && isMobileMenuOpen) || !isTransparent || scrolled,
-          'bg-transparent text-white py-4 sm:py-5':
-            isTransparent && !scrolled && !(isTabletOrMobile && isMobileMenuOpen),
-        }
-      )}
-    >
+  className={classNames(
+    'fixed top-0 left-0 w-full z-50 transition-all duration-300 px-6 sm:px-8 flex items-center justify-between',
+    {
+      'bg-[#24293c] text-white shadow-md py-2 sm:py-1':
+        (isTabletOrMobile && isMobileMenuOpen) || !isTransparent || scrolled,
+      'bg-transparent text-white py-4 sm:py-5':
+        isTransparent && !scrolled && !(isTabletOrMobile && isMobileMenuOpen),
+    }
+  )}
+>
+
 
       <div className="flex items-center">
         <a href="/">
           <img
             src="https://piramaluat.s3.ap-south-1.amazonaws.com/Website/Uploads/Piramal/Images/4192015.png"
             alt="Kclub Logo"
-            className={classNames("w-auto transition-all duration-300", {
-              'h-12 md:h-18': scrolled,
-              'h-12 md:h-28': !scrolled,
-            })}
+            className={classNames(
+              "w-auto transition-all duration-300",
+              scrolled ? "h-10 md:h-16" : "h-16 md:h-24"
+            )}
           />
 
         </a>
@@ -87,7 +88,7 @@ const Header = ({ isTransparent }) => {
           </li>
 
           <li className="hover:text-[#fa4615] cursor-pointer">
-           <Link to="/login" >LOGIN</Link></li>
+            <Link to="/login" >LOGIN</Link></li>
         </ul>
       </nav>
 

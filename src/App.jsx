@@ -21,7 +21,6 @@ import CreatePassword from './Component/loginpages/CreatePassword'
 
 import BlogDetailPage from './Component/blogpage/BlogDetailPage'
 
-
 const routes = [
   { path: '/', element: <Home />, transparent: true },
   { path: '/about', element: <About />, transparent: false },
@@ -30,40 +29,43 @@ const routes = [
   { path: '/event/:id', element: <EventDetail />, transparent: false },
   { path: '/projects', element: <Projects />, transparent: true },
   { path: '/transactionstatus', element: <TransactionStatus />, transparent: true },
-
   { path: '/Project-Details/:id', element: <ProjectDetail />, transparent: false },
-  { path: '/login', element: <SignIn />, transparent: true },
-  {path: '/register', element: <Register />, transparent: true},
-  {path: '/forgot-password', element: <Forgot />, transparent: true},
-  {path: '/forgot-otp', element: <ForgotOtp />, transparent: true},
-  {path: '/reset-password', element: <CreatePassword />, transparent: true},
 
-  { path :'/blog/:id', element : <BlogDetailPage />, transparent: true },
+  { path: '/login', element: <SignIn />, transparent: true, hideLayout: true },
+  { path: '/register', element: <Register />, transparent: true, hideLayout: true },
+  { path: '/forgot-password', element: <Forgot />, transparent: true, hideLayout: true },
+  { path: '/forgot-otp', element: <ForgotOtp />, transparent: true, hideLayout: true },
+  { path: '/reset-password', element: <CreatePassword />, transparent: true, hideLayout: true },
 
-
-
+  { path: '/blog/:id', element: <BlogDetailPage />, transparent: true },
 ]
+
 
 function App() {
   const location = useLocation()
 
-  const isTransparent = useMemo(() => {
-    return routes.some(route => matchPath(route.path, location.pathname) && route.transparent)
+  const { isTransparent, hideLayout } = useMemo(() => {
+    const matchedRoute = routes.find(route => matchPath(route.path, location.pathname))
+    return {
+      isTransparent: matchedRoute?.transparent ?? false,
+      hideLayout: matchedRoute?.hideLayout ?? false,
+    }
   }, [location.pathname])
 
   return (
     <div className="flex flex-col min-h-screen">
-      <Header isTransparent={isTransparent} />
-      <main className={`flex-1 ${isTransparent ? 'pt-0' : 'pt-20 sm:pt-28'}`} style={{ flex: 1 }}>
+      {!hideLayout && <Header key={location.pathname} isTransparent={isTransparent} />}
+      <main className={`flex-1 ${!hideLayout && !isTransparent ? 'pt-20 sm:pt-28' : ''}`} style={{ flex: 1 }}>
         <Routes>
           {routes.map(({ path, element }) => (
             <Route key={path} path={path} element={element} />
           ))}
         </Routes>
       </main>
-      <Footer />
+      {!hideLayout && <Footer />}
     </div>
   )
 }
+
 
 export default App
