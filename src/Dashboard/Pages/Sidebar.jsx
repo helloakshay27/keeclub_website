@@ -30,7 +30,7 @@ const Sidebar = () => {
                     <NavLink to="/dashboard/transactions"
 
                         className={({ isActive }) =>
-                            `flex justify-between items-center p-3 rounded-lg hover:bg-gradient-to-r hover:from-[#d341a5] hover:to-[#2c001e] transition-colors ${isActive ? "bg-gradient-to-r from-[#e95420] to-[#2c001e] border-b border-[#e95420]" : ""
+                            `flex justify-between items-center p-3 rounded-lg hover:bg-gradient-to-r hover:from-[#e95420] hover:to-[#2c001e] transition-colors ${isActive ? "bg-gradient-to-r from-[#e95420] to-[#2c001e] border-b border-[#e95420]" : ""
                             }`
                         }
                     >
