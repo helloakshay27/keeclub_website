@@ -111,7 +111,10 @@ const Header = ({ isTransparent }) => {
             </li>
             <li className="hover:text-orange-[#fa4615] cursor-pointer">OFFERS</li>
             <li className="hover:text-orange-[#fa4615] cursor-pointer">PROJECTS</li>
-            <li className="hover:text-[#fa4615] cursor-pointer">Login</li>
+
+            <li className="hover:text-[#fa4615] cursor-pointer">
+            <Link to="/login" onClick={() => setIsMobileMenuOpen(false)}>LOGIN</Link>
+            </li>
           </ul>
         </div>
       )}
