@@ -100,7 +100,10 @@ const Header = ({ isTransparent }) => {
       {isMobileMenuOpen && (
         <div className="absolute top-full left-0 w-full bg-[#24293c] text-white lg:hidden px-6 py-4 shadow-md">
           <ul className="flex flex-col space-y-4 font-medium text-sm">
-            <li className="hover:text-[#fa4615] cursor-pointer">HOME</li>
+            <li className="hover:text-[#fa4615] cursor-pointer">
+            <Link to="/" onClick={() => setIsMobileMenuOpen(false)}>HOME</Link>
+
+            </li>
             <li className="hover:text-[#fa4615] cursor-pointer">REFER AND EARN</li>
 
             <li className="hover:text-[#fa4615] cursor-pointer">
@@ -110,7 +113,10 @@ const Header = ({ isTransparent }) => {
               <Link to="/blogs" onClick={() => setIsMobileMenuOpen(false)}>BLOGS</Link>
             </li>
             <li className="hover:text-orange-[#fa4615] cursor-pointer">OFFERS</li>
-            <li className="hover:text-orange-[#fa4615] cursor-pointer">PROJECTS</li>
+            <li className="hover:text-orange-[#fa4615] cursor-pointer">
+            <Link to="/projects" onClick={() => setIsMobileMenuOpen(false)}>PROJECTS</Link>
+
+            </li>
 
             <li className="hover:text-[#fa4615] cursor-pointer">
             <Link to="/login" onClick={() => setIsMobileMenuOpen(false)}>LOGIN</Link>
