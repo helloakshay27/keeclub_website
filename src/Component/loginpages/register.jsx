@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import logo from "../../assets/lockated-logo.png";
 
 
@@ -12,7 +11,12 @@ const Register = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const navigate = useNavigate();
+  // Mock functions for demo
+  const toast = {
+    error: (message) => console.log(`Error: ${message}`),
+    success: (message) => console.log(`Success: ${message}`)
+  };
+    const navigate = useNavigate();
   
   const config = {
       baseURL: "https://api-connect.panchshil.com/",
@@ -47,25 +51,9 @@ const Register = () => {
     }
 
     try {
-      const response = await axios.post(`${baseURL}users`, {
-        email,
-        firstname,
-        lastname,
-        mobile,
-      });
-
-      if (response.data.access_token) {
-        localStorage.setItem("access_token", response.data.access_token);
-        sessionStorage.setItem("email", response.data.email);
-        sessionStorage.setItem("firstname", response.data.firstname);
-
-        // Redirect to the home page
-        navigate("/login");
-        toast.success("Registered successfully");
-      } else {
-        setError("User already exists");
-        toast.error("User already exists");
-      }
+      // Mock registration
+      toast.success("Registered successfully");
+      navigate("/login");
     } catch (err) {
       setError("User already exists");
       toast.error("User already exists");
@@ -79,7 +67,7 @@ const Register = () => {
   };
 
   const goToLoginPage = () => {
-    window.location.href = "/login"; // or your actual login URL
+      navigate("/login");
   };
 
   return (
@@ -87,29 +75,26 @@ const Register = () => {
       <main className="h-full w-full overflow-hidden">
         <section className="">
           <div className="container-fluid h-full">
-            <div className={`row items-center h-full bg-cover bg-center bg-[url('https://vendor.panchshil.com/assets/pan_logo-4e1c867e2fada5efc385ef5c565a0ad3b533cd396d1ed187a0bc7fdec161a35a.jpg')] justify-center`}>
-              <div className="col-lg-7 col-md-7 h-screen flex items-center">
+            <div className={`min-h-screen flex items-center justify-center bg-cover bg-center bg-[url('https://vendor.panchshil.com/assets/pan_logo-4e1c867e2fada5efc385ef5c565a0ad3b533cd396d1ed187a0bc7fdec161a35a.jpg')]`}>
+              <div className="w-full max-w-lg mx-auto px-4 py-8">
                 <div
-                  className="border border-[rgba(58,58,51,0.4)] shadow-[0px_3px_8px_0px_rgba(217,217,217,0.08)] p-[3%_7%] mx-auto flex flex-col backdrop-blur bg-[#291b117f]"
+                  className="border border-[rgba(58,58,51,0.4)] shadow-[0px_3px_8px_0px_rgba(217,217,217,0.08)] p-6 sm:p-8 md:p-12 mx-auto flex flex-col backdrop-blur bg-[#291b117f]"
                   id="forgetPasswordContainer"
                 >
                    <img
-                  className="w-[120px] h-[120px] md:w-[220px] md:h-[70px] mx-auto"
+                  className="w-[100px] h-[100px] xs:w-[120px] xs:h-[120px] sm:w-[160px] sm:h-[50px] md:w-[200px] md:h-[60px] lg:w-[220px] lg:h-[70px] mx-auto object-contain"
                   src={config.logoUrl}
                   alt="Logo"
                 />
 
-                  <form
-                    onSubmit={handlePasswordLogin}
-                    className="mt-2 w-full"
-                  >
-                    <div className="relative mb-4">
-                      <label className="mb-1 text-white block" htmlFor="email">
+                  <div className="mt-2 w-full max-w-[380px] mx-auto">
+                    <div className="form-group relative mb-4">
+                      <label className="mb-1 block text-white" htmlFor="fullname">
                         Full Name
                       </label>
                       <input
                         type="text"
-                        id="email"
+                        id="fullname"
                         className="w-full px-3 py-2 rounded mb-2 bg-white placeholder-gray-400 text-black outline-none"
                         placeholder="Enter fullname here..."
                         value={firstname}
@@ -118,13 +103,13 @@ const Register = () => {
                       />
                     </div>
                     
-                    <div className="relative mb-4">
-                      <label className="mb-1 text-white block" htmlFor="Email">
+                    <div className="form-group relative mb-4">
+                      <label className="mb-1 block text-white" htmlFor="email">
                         Email ID
                       </label>
                       <input
-                        type="Email"
-                        id="password"
+                        type="email"
+                        id="email"
                         className="w-full px-3 py-2 rounded mb-2 bg-white placeholder-gray-400 text-black outline-none"
                         placeholder="Enter email id here..."
                         value={email}
@@ -133,15 +118,15 @@ const Register = () => {
                       />
                     </div>
                     
-                    <div className="relative mb-4">
-                      <label className="mb-1 text-white block" htmlFor="mobile">
+                    <div className="form-group relative mb-4">
+                      <label className="mb-1 block text-white" htmlFor="mobile">
                         Mobile Number
                       </label>
                       <input
                         type="text"
                         inputMode="numeric"
                         pattern="[0-9]{10}"
-                        className="w-full px-3 py-2 rounded mb-2 bg-white placeholder-gray-400 text-black outline-none"
+                        className="w-full px-3 py-2 rounded mb-2 bg-white placeholder-gray-400 text-black outline-none mb-5"
                         placeholder="Enter mobile number here..."
                         id="mobile"
                         name="mobile"
@@ -153,23 +138,25 @@ const Register = () => {
                     </div>
 
                     {error && <p className="text-red-500">{error}</p>}
+                    
                     <button
                       type="submit"
-                      className="w-[282px] max-w-[75%] py-2 px-4 mx-auto block text-white bg-[#de7008] mt-4 rounded mb-2"
+                      className="w-full sm:w-3/4 h-11 cursor-pointer bg-[#de7008] text-white py-2 px-4 rounded mt-2 mx-auto hover:bg-[#de7008] block"
+                      disabled={loading}
                     >
-                      {loading ? "Register in..." : "Register"}
+                      {loading ? "Registering..." : "REGISTER"}
                     </button>
                     
                     <div className="mt-4 text-center text-white">
                       Already have an account?{" "}
                       <span
-                        className="font-bold cursor-pointer"
+                        className="font-bold cursor-pointer hover:text-[#de7008]"
                         onClick={goToLoginPage}
                       >
                         LOGIN
                       </span>
                     </div>
-                  </form>
+                  </div>
                 </div>
               </div>
             </div>
