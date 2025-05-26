@@ -10,7 +10,7 @@ const SearchFilter = () => {
         <div className="relative">
           <input
             type="text"
-            className="w-120 border border-gray-300 rounded-lg py-2 pl-2 pr-4 text-sm outline-none focus:ring-2 focus:ring-orange-500"
+            className="w-full lg:w-120 border border-gray-300 rounded-lg py-2 pl-2 pr-4 text-sm outline-none focus:ring-2 focus:ring-orange-500"
             placeholder="Search"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -20,8 +20,9 @@ const SearchFilter = () => {
 
       {/* Filter + View Buttons */}
       <div className="flex items-center gap-3">
-        {/* Filter Button */}
-        {/* <button
+        {/* Filter Button (commented out) */}
+        {/*
+        <button
           type="button"
           className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 transition-all"
         >
@@ -34,7 +35,8 @@ const SearchFilter = () => {
             <path d="M4 7H3V2h1v5zm-1 7h1v-3H3v3zm5 0h1V8H8v6zm5 0h1v-2h-1v2zm1-12h-1v6h1V2zM9 2H8v2h1V2zM5 8H2c-.55 0-1 .45-1 1s.45 1 1 1h3c.55 0 1-.45 1-1s-.45-1-1-1zm5-3H7c-.55 0-1 .45-1 1s.45 1 1 1h3c.55 0 1-.45 1-1s-.45-1-1-1zm5 4h-3c-.55 0-1 .45-1 1s.45 1 1 1h3c.55 0 1-.45 1-1s-.45-1-1-1z" />
           </svg>
           <span className="text-sm font-medium">Filter</span>
-        </button> */}
+        </button>
+        */}
 
         {/* List View Button */}
         <button

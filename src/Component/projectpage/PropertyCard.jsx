@@ -7,17 +7,17 @@ const PropertyCard = ({ property }) => {
   const navigate = useNavigate();
 
   // Extract all properties with proper fallbacks
-  const { 
-    name, 
-    location, 
-    startingPrice, 
-    configurations, 
-    imageUrl, 
-    projectId, 
-    id, 
-    project_id 
+  const {
+    name,
+    location,
+    startingPrice,
+    configurations,
+    imageUrl,
+    projectId,
+    id,
+    project_id
   } = property || {};
-  
+
   // Use whichever ID field is available (projectId, id, or project_id)
   const propertyId = projectId || id || project_id;
 
@@ -31,13 +31,14 @@ const PropertyCard = ({ property }) => {
 
   return (
     <div className="mb-4 w-full">
-      <div className="flex bg-[#F7F9FC] rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-200 w-full">
+      <div className="flex flex-col md:flex-row bg-[#F7F9FC] rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-200 w-full">
+
         {/* Property Image */}
-        <div className="md:w-1/3 relative">
+        <div className="w-full md:w-1/3 relative">
           <img
             src={imageUrl}
             alt={name}
-            className="h-44 xl:h-44 2xl:h-52 3xl:h-56 rounded-xl object-cover object-center"
+            className="w-full h-52 sm:h-64 md:h-44 xl:h-44 2xl:h-52 3xl:h-56 object-cover object-center"
           />
           <div className="absolute top-4 left-4">
             <div className="">
@@ -46,6 +47,7 @@ const PropertyCard = ({ property }) => {
                 aria-label="Under Construction"
                 onClick={handleClick}
               >
+                {/* SVG icon */}
                 <svg
                   className="m-2"
                   id="Group_4"
@@ -68,38 +70,39 @@ const PropertyCard = ({ property }) => {
         </div>
 
         {/* Property Details */}
-        <div className="w-[60%] px-4 flex flex-col justify-between scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-300">
-          <div className="pl-2 flex-1 flex flex-col justify-center">
-            <h1 className="font-Poppins text-[#3E4B54] truncate text-lg font-bold capitalize mt-2">
+        <div className="w-full md:w-[60%] px-4 flex flex-col justify-between">
+          <div className="pl-0 md:pl-2 py-4 flex-1 flex flex-col justify-center">
+            <h1 className="font-Poppins text-[#3E4B54] text-lg md:text-lg font-bold capitalize">
               {name}
             </h1>
-            <p className="font-Montserrat text-[14px] text-[#838687] capitalize italic">
+            <p className="font-Montserrat text-sm md:text-[14px] text-[#838687] capitalize italic">
               {location}
             </p>
 
             <div className="font-Montserrat">
-              <div className="w-[60%] lg:w-full xl:w-[80%] flex flex-row justify-between mt-4">
+              <div className="w-full flex flex-col sm:flex-row justify-between gap-2 sm:gap-0 mt-4">
                 <div>
-                  <p className="text-[13px] leading-4 uppercase tracking-wider font-Poppins text-[#838687]">
+                  <p className="text-xs md:text-[13px] uppercase tracking-wider font-Poppins text-[#838687]">
                     Starting
                   </p>
-                  <h1 className="self-end font-bold md:text-[16px]">
+                  <h1 className="font-bold text-sm md:text-[16px]">
                     {startingPrice}
                   </h1>
                 </div>
 
                 <div>
-                  <p className="text-[13px] leading-4 uppercase tracking-wider text-[#838687]">
+                  <p className="text-xs md:text-[13px] uppercase tracking-wider text-[#838687]">
                     Configurations
                   </p>
-                  <h1 className="self-end font-bold md:text-[16px]">
+                  <h1 className="font-bold text-sm md:text-[16px]">
                     {configurations}
                   </h1>
                 </div>
               </div>
-              <div className="flex items-center justify-between">
+
+              <div className="flex items-center justify-between mt-2">
                 <button
-                  className="hidden lg:block text-[#F59E0B] text-sm self-center text-right"
+                  className="block text-[#F59E0B] text-sm"
                   onClick={handleClick}
                 >
                   View on map
@@ -110,6 +113,7 @@ const PropertyCard = ({ property }) => {
         </div>
       </div>
     </div>
+
   );
 };
 
