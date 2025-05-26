@@ -8,7 +8,6 @@ import Blog from './Pages/Blog'
 import Event from './Pages/Event'
 import EventDetail from './Component/eventpage/EventDetail'
 import Projects from './Pages/Projects'
-import TransactionStatus from './Pages/TransactionStatus'
 
 import ProjectDetail from './Pages/Project-Details'
 import SignIn from './Component/loginpages/signIn'
@@ -31,7 +30,6 @@ const routeConfigs = [
   { path: '/events', element: <Event />, transparent: false },
   { path: '/event/:id', element: <EventDetail />, transparent: false },
   { path: '/projects', element: <Projects />, transparent: true },
-  { path: '/transactionstatus', element: <TransactionStatus />, transparent: true },
   { path: '/Project-Details/:id', element: <ProjectDetail />, transparent: false },
 
   { path: '/login', element: <SignIn />, transparent: true, hideLayout: true },
