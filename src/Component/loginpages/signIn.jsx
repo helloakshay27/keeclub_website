@@ -16,7 +16,7 @@ const SignIn = () => {
   const [showOtpSection, setShowOtpSection] = useState(false);
   const [OtpSection, setOtpSection] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
 
   // Mock functions for demo
@@ -46,25 +46,27 @@ const SignIn = () => {
     e.preventDefault();
     setError("");
     setLoading(true);
-  
+
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       toast.error("Please enter a valid email address.");
       setLoading(false);
       return;
     }
-  
+
     // Mock login (no API call)
-    if (email === "user@gmail.com" && password === "12345678") {
+    if (email === "demo@gmail.com" && password === "12345678") {
+
+      localStorage.setItem("authToken", "demo-auth-token");
       toast.success("Login successful!");
       navigate("/dashboard");
     } else {
       toast.error("Invalid credentials. Please try again.");
     }
-  
+
     setLoading(false);
   };
-  
+
 
   const handleSendOtp = async (e) => {
     e.preventDefault();
@@ -169,7 +171,7 @@ const SignIn = () => {
         </button>
 
         {config.showRegisterButton && (
-          <button 
+          <button
             className="w-full sm:w-3/4 h-11 bg-transparent text-white border border-white rounded mt-6 mx-auto block uppercase hover:bg-white/10 hover:bg-opacity-10"
             onClick={regiterPage}
             disabled={loading}
@@ -228,8 +230,8 @@ const SignIn = () => {
       {error && <p className="text-red-500">{error}</p>}
 
       {showOtpSection && (
-        <button 
-          type="submit" 
+        <button
+          type="submit"
           className="w-full bg-[#8b0203] text-white py-2 px-4 rounded mt-2 hover:bg-[#9e2c2d]"
           disabled={loading}
         >
