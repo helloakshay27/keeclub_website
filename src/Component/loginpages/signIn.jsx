@@ -255,7 +255,7 @@ const SignIn = () => {
                 />
 
                 <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between w-full mt-4 px-0 sm:px-4">
-                  <div className="form-group">
+                  {/* <div className="form-group">
                     <div className="form-check flex items-center">
                       <input
                         className="w-5 h-5 rounded-full border-2 border-white appearance-none checked:border-white checked:before:w-2 checked:before:h-2 checked:before:bg-[#de7008] checked:before:rounded-full checked:before:absolute checked:before:top-1/2 checked:before:left-1/2 checked:before:transform checked:before:-translate-x-1/2 checked:before:-translate-y-1/2 relative mr-2"
@@ -269,8 +269,8 @@ const SignIn = () => {
                         Login with password
                       </label>
                     </div>
-                  </div>
-                  <div className="form-group">
+                  </div> */}
+                  {/* <div className="form-group">
                     <div className="form-check flex items-center">
                       <input
                         className="w-5 h-5 rounded-full border-2 border-white appearance-none checked:border-white checked:before:w-2 checked:before:h-2 checked:before:bg-[#de7008] checked:before:rounded-full checked:before:absolute checked:before:top-1/2 checked:before:left-1/2 checked:before:transform checked:before:-translate-x-1/2 checked:before:-translate-y-1/2 relative mr-2"
@@ -284,12 +284,12 @@ const SignIn = () => {
                         Login with OTP
                       </label>
                     </div>
-                  </div>
+                  </div> */}
                 </div>
 
                 <div className="flex justify-center w-full">
                   {selectedContent === "content1" && renderPasswordLogin()}
-                  {selectedContent === "content2" && renderOtpLogin()}
+                  {/* {selectedContent === "content2" && renderOtpLogin()} */}
                 </div>
               </div>
             </div>
