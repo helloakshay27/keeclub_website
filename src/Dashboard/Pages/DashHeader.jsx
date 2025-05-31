@@ -19,7 +19,7 @@ const DashHeader = () => {
   return (
     <>
       <header className="flex items-center justify-between px-8 h-20 bg-white shadow-md">
-        <div className="flex items-center space-x-10">
+        <div className="flex items-center space-x-10 bg-[#24293c] p-2 rounded-lg">
           <img
             src="https://piramaluat.s3.ap-south-1.amazonaws.com/Website/Uploads/Piramal/Images/4192015.png"
             alt="GoPhygital Logo"
