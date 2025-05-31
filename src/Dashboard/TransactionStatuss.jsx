@@ -44,26 +44,32 @@ const TransactionStatus = () => {
           <p className="text-2xl ">{pointsData.redeemed}</p>
         </div>
         <div className="p-6 text-center rounded-2xl" style={{ border: "1px solid #DFE2E6" }}>
-          <p className="text-xl ">{pointsData.balanced}</p>
           <p className="text-lg ">BALANCED POINTS</p>
+          <p className="text-xl ">{pointsData.balanced}</p>
         </div>
       </div>
 
-      <h2 className="text-orange-600 text-xl  mb-4">TRANSACTION STATUS</h2>
+      <h2 className="text-orange-600 text-xl mb-4">TRANSACTION STATUS</h2>
 
-      <div className="overflow-hidden">
-        <div className="grid grid-cols-3 bg-[#F6EFF5] text-center  py-2">
-          <div>Date</div>
-          <div>Transaction Type</div>
-          <div>Points</div>
-        </div>
-        {transactions.map((tx, idx) => (
-          <div key={idx} className="grid grid-cols-3 text-center py-4 border-b">
-            <div>{tx.date}</div>
-            <div>{tx.type}</div>
-            <div>{tx.points}</div>
-          </div>
-        ))}
+      <div className="overflow-x-auto">
+        <table className="min-w-full bg-white border border-[#DFE2E6] rounded-lg">
+          <thead>
+            <tr className="bg-[#F6EFF5] text-center">
+              <th className="py-2 px-4 border-b">Date</th>
+              <th className="py-2 px-4 border-b">Transaction Type</th>
+              <th className="py-2 px-4 border-b">Points</th>
+            </tr>
+          </thead>
+          <tbody>
+            {transactions.map((tx, idx) => (
+              <tr key={idx} className="text-center border-b hover:bg-gray-100">
+                <td className="py-3 px-4 border-r">{tx.date}</td>
+                <td className="py-3 px-4 border-r">{tx.type}</td>
+                <td className="py-3 px-4 border-r">{tx.points}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );
