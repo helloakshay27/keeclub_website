@@ -31,8 +31,15 @@ const PropertyCard = ({ property }) => {
 
   return (
     <div className="mb-4 w-full">
-      <div className="flex flex-col md:flex-row bg-[#F7F9FC] rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-200 w-full">
-
+      <div
+        className="flex flex-col md:flex-row bg-[#F7F9FC] rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-200 w-full cursor-pointer"
+        onClick={handleClick}
+        role="button"
+        tabIndex={0}
+        onKeyPress={e => {
+          if (e.key === "Enter" || e.key === " ") handleClick();
+        }}
+      >
         {/* Property Image */}
         <div className="w-full md:w-1/3 relative">
           <img
@@ -41,11 +48,10 @@ const PropertyCard = ({ property }) => {
             className="w-full h-52 sm:h-64 md:h-44 xl:h-44 2xl:h-52 3xl:h-56 object-cover object-center"
           />
           <div className="absolute top-4 left-4">
-            <div className="">
+            <div>
               <div
-                className="bg-red-500 flex mt-2 justify-between rounded-md cursor-pointer"
+                className="bg-red-500 flex mt-2 justify-between rounded-md"
                 aria-label="Under Construction"
-                onClick={handleClick}
               >
                 {/* SVG icon */}
                 <svg
@@ -101,19 +107,15 @@ const PropertyCard = ({ property }) => {
               </div>
 
               <div className="flex items-center justify-between mt-2">
-                <button
-                  className="block text-[#F59E0B] text-sm"
-                  onClick={handleClick}
-                >
+                <span className="block text-[#F59E0B] text-sm underline">
                   View on map
-                </button>
+                </span>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-
   );
 };
 
