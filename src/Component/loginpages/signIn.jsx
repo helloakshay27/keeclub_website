@@ -248,11 +248,11 @@ const SignIn = () => {
           <div className={`min-h-screen flex items-center justify-center bg-cover bg-center bg-[url('https://vendor.panchshil.com/assets/pan_logo-4e1c867e2fada5efc385ef5c565a0ad3b533cd396d1ed187a0bc7fdec161a35a.jpg')]`}>
             <div className="w-full max-w-lg mx-auto px-4 py-8">
               <div className="border border-[rgba(58,58,51,0.4)] shadow-[0px_3px_8px_0px_rgba(217,217,217,0.08)] p-6 sm:p-8 md:p-12 mx-auto flex flex-col backdrop-blur bg-[#291b117f]">
-                <img
-                  className="w-[100px] h-[100px] xs:w-[120px] xs:h-[120px] sm:w-[160px] sm:h-[50px] md:w-[200px] md:h-[60px] lg:w-[220px] lg:h-[70px] mx-auto object-contain"
-                  src={config.logoUrl}
+                {/* <img
+                  className="w-[120px] h-[100px] xs:w-[120px] xs:h-[120px] sm:w-[160px] sm:h-[50px] md:w-[200px] md:h-[60px] lg:w-[220px] lg:h-[70px] mx-auto object-contain"
+                  src="https://piramaluat.s3.ap-south-1.amazonaws.com/Website/Uploads/Piramal/Images/4192015.png"
                   alt="Logo"
-                />
+                /> */}
 
                 <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between w-full mt-4 px-0 sm:px-4">
                   {/* <div className="form-group">
