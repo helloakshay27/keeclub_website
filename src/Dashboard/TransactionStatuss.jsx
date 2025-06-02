@@ -32,13 +32,13 @@ const transactions = [
 const TransactionStatus = () => {
   return (
     <div className="mt-2 mb-2">
-      <p className="text-blue-600 hover:underline cursor-pointer mb-4">
+      {/* <p className="text-blue-600 hover:underline cursor-pointer mb-4 ps-3">
         <a href="/members">
           <span>Members</span>
         </a>
         <span className="mx-2">&gt;</span>
         <span className="text-gray-500">Member Details</span>
-      </p>
+      </p> */}
 
       {/* Personal Details */}
       <div className="bg-white shadow rounded-lg p-6 mb-6">
