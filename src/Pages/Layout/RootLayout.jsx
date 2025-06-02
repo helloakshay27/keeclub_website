@@ -15,9 +15,9 @@ export default function RootLayout() {
             <div className="flex-1">
               <Outlet />
             </div>
-            <footer className="bg-gray-800 text-white text-center py-4">
+            {/* <footer className="bg-gray-800 text-white text-center py-4">
              <DashFooter/>
-            </footer>
+            </footer> */}
           </div>
         </div>
       </div>
