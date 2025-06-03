@@ -1,7 +1,12 @@
 import React, { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
-import logo from "../../assets/lockated-logo.png";
+import logo from "../../assets/piramal_bg.png";
 import { useNavigate } from "react-router-dom";
+import logo_bg from "../../assets/bg_light.png";
+import logo_main from "../../assets/logo.png";
+
+
+
 
 
 const SignIn = () => {
@@ -112,7 +117,9 @@ const SignIn = () => {
   const renderPasswordLogin = () => {
     return (
       <div className="mt-2 w-full max-w-[380px]">
-        <div className="form-group relative mb-4">
+
+
+        <div className="form-group relative mb-2">
           <label className="mb-1 block text-white" htmlFor="email">
             Email ID
           </label>
@@ -153,32 +160,20 @@ const SignIn = () => {
             </button>
           </div>
         </div>
-        <div className="flex justify-end mt-2 mb-3 gap-2">
-          <a className="text-white hover:text-[#de7008]" href="/forgot-password">
-            Forgot password?
-          </a>
-        </div>
+
 
         {error && <p className="text-red-500">{error}</p>}
 
         <button
           onClick={handlePasswordLogin}
           type="submit"
-          className="w-full sm:w-3/4 h-11 cursor-pointer bg-[#de7008] text-white py-2 px-4 rounded mt-2 mx-auto hover:bg-[#de7008] block"
+          className="w-full  h-11 cursor-pointer bg-[#de7008] text-white py-2 px-4 rounded mt-2 mx-auto hover:bg-[#de7008] block"
           disabled={loading}
         >
           {loading ? "Logging in..." : "LOGIN"}
         </button>
 
-        {config.showRegisterButton && (
-          <button
-            className="w-full sm:w-3/4 h-11 bg-transparent text-white border border-white rounded mt-6 mx-auto block uppercase hover:bg-white/10 hover:bg-opacity-10"
-            onClick={regiterPage}
-            disabled={loading}
-          >
-            {loading ? "Register in..." : "REGISTER"}
-          </button>
-        )}
+
       </div>
     );
   };
@@ -201,7 +196,7 @@ const SignIn = () => {
           />
           <button
             type="button"
-            className="w-full sm:w-3/4 h-11 bg-[#de7008] text-white py-2 px-4 rounded mt-2 mx-auto hover:bg-[#de7008] block mt-4"
+            className="w-full  h-11 bg-[#de7008] text-white py-2 px-4 rounded mt-2 mx-auto hover:bg-[#de7008] block mt-4"
             onClick={handleSendOtp}
             disabled={loading}
           >
@@ -243,19 +238,26 @@ const SignIn = () => {
 
   return (
     <main className="h-full w-full overflow-hidden">
-      <section className="">
+      <section>
         <div className="container-fluid h-full">
-          <div className={`min-h-screen flex items-center justify-center bg-cover bg-center bg-[url('https://vendor.panchshil.com/assets/pan_logo-4e1c867e2fada5efc385ef5c565a0ad3b533cd396d1ed187a0bc7fdec161a35a.jpg')]`}>
-            <div className="w-full max-w-lg mx-auto px-4 py-8">
-              <div className="border border-[rgba(58,58,51,0.4)] shadow-[0px_3px_8px_0px_rgba(217,217,217,0.08)] p-6 sm:p-8 md:p-12 mx-auto flex flex-col backdrop-blur bg-[#291b117f]">
-                {/* <img
-                  className="w-[120px] h-[100px] xs:w-[120px] xs:h-[120px] sm:w-[160px] sm:h-[50px] md:w-[200px] md:h-[60px] lg:w-[220px] lg:h-[70px] mx-auto object-contain"
-                  src="https://piramaluat.s3.ap-south-1.amazonaws.com/Website/Uploads/Piramal/Images/4192015.png"
-                  alt="Logo"
-                /> */}
+          <div
+            className="min-h-screen flex items-center justify-center bg-cover bg-center bg-no-repeat"
+            style={{ backgroundImage: `url(${logo})` }}
+          >
 
-                <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between w-full mt-4 px-0 sm:px-4">
-                  {/* <div className="form-group">
+
+            <div className="w-full max-w-lg mx-auto px-4 ">
+
+              <div className=" p-6 sm:p-8 md:p-12 mx-auto flex flex-col ">
+
+                <img
+                  className="w-[300px] h-[180px] xs:w-[120px] xs:h-[120px] sm:w-[160px] sm:h-[50px] md:w-[200px] md:h-[60px] lg:w-[300px] lg:h-[95px] mx-auto object-contain"
+                  src={logo_main}
+                  alt="Logo"
+                />
+
+                <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-start justify-between w-full mt-4 px-0 sm:px-4">
+                  <div className="form-group">
                     <div className="form-check flex items-center">
                       <input
                         className="w-5 h-5 rounded-full border-2 border-white appearance-none checked:border-white checked:before:w-2 checked:before:h-2 checked:before:bg-[#de7008] checked:before:rounded-full checked:before:absolute checked:before:top-1/2 checked:before:left-1/2 checked:before:transform checked:before:-translate-x-1/2 checked:before:-translate-y-1/2 relative mr-2"
@@ -269,8 +271,8 @@ const SignIn = () => {
                         Login with password
                       </label>
                     </div>
-                  </div> */}
-                  {/* <div className="form-group">
+                  </div>
+                  <div className="form-group">
                     <div className="form-check flex items-center">
                       <input
                         className="w-5 h-5 rounded-full border-2 border-white appearance-none checked:border-white checked:before:w-2 checked:before:h-2 checked:before:bg-[#de7008] checked:before:rounded-full checked:before:absolute checked:before:top-1/2 checked:before:left-1/2 checked:before:transform checked:before:-translate-x-1/2 checked:before:-translate-y-1/2 relative mr-2"
@@ -284,12 +286,11 @@ const SignIn = () => {
                         Login with OTP
                       </label>
                     </div>
-                  </div> */}
+                  </div>
                 </div>
-
                 <div className="flex justify-center w-full">
                   {selectedContent === "content1" && renderPasswordLogin()}
-                  {/* {selectedContent === "content2" && renderOtpLogin()} */}
+                  {selectedContent === "content2" && renderOtpLogin()}
                 </div>
               </div>
             </div>

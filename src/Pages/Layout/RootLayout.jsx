@@ -9,7 +9,7 @@ export default function RootLayout() {
     <main className="h-screen flex flex-col">
       <DashHeader />
       <div className="flex flex-1 overflow-hidden">
-        <Sidebar />
+        {/* <Sidebar /> */}
         <div className="flex-1 h-[calc(100vh-9vh)] overflow-y-auto pb-4">
           <div className="flex flex-col min-h-full">
             <div className="flex-1">
