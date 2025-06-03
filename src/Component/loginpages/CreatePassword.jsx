@@ -5,7 +5,6 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import logo from "../../assets/lockated-logo.png";
 
-
 const CreatePassword = () => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
@@ -100,37 +99,37 @@ const CreatePassword = () => {
       <main className="h-full w-full overflow-hidden">
         <section className="">
           <div className="container-fluid h-full">
-            <div className={`row items-center h-full bg-cover bg-center bg-[url('https://vendor.panchshil.com/assets/pan_logo-4e1c867e2fada5efc385ef5c565a0ad3b533cd396d1ed187a0bc7fdec161a35a.jpg')] justify-center`}>
-              <div className="col-lg-7 col-md-7 h-screen flex items-center">
+            <div className={`min-h-screen flex items-center justify-center bg-cover bg-center bg-[url('https://vendor.panchshil.com/assets/pan_logo-4e1c867e2fada5efc385ef5c565a0ad3b533cd396d1ed187a0bc7fdec161a35a.jpg')]`}>
+              <div className="w-full max-w-lg mx-auto px-4 py-8">
                 <div 
-                  className="border border-[rgba(58,58,51,0.4)] shadow-[0px_3px_8px_0px_rgba(217,217,217,0.08)] p-[3%_7%] mx-auto flex flex-col backdrop-blur bg-[#291b117f]"
+                  className="border border-[rgba(58,58,51,0.4)] shadow-[0px_3px_8px_0px_rgba(217,217,217,0.08)] p-6 sm:p-8 md:p-12 mx-auto flex flex-col backdrop-blur bg-[#291b117f]"
                   id="forgetPasswordContainer"
                 >
                   <img
-                    className="w-[120px] h-[120px] md:w-[220px] md:h-[70px] mx-auto"
+                    className="w-[100px] h-[100px] xs:w-[120px] xs:h-[120px] sm:w-[160px] sm:h-[50px] md:w-[200px] md:h-[60px] lg:w-[220px] lg:h-[70px] mx-auto object-contain"
                     src={config.logoUrl}
                     alt="Logo"
                   />
                   <form
-                    className="w-full max-w-[380px]"
+                    className="w-full max-w-[380px] mx-auto"
                     id="createPasswordForm"
                     onSubmit={handlePasswordReset}
                   >
                     <div className="flex justify-between items-baseline mb-4">
                       {/* Back button and pagination can be added here if needed */}
                     </div>
-                    <h6 className="text-white text-xl mb-3 mt-6">Create New Password</h6>
+                    <h6 className="text-white text-xl mb-3 mt-3">Create New Password</h6>
                     <p className="text-white mb-3">
                       Set a strong password for your account
                     </p>
                     
-                    <div className="mb-3 relative">
-                      <label className="text-white mb-4" htmlFor="newPassword">
+                    <div className="mb-1 relative">
+                      <label className="text-white mb-1 block" htmlFor="newPassword">
                         New Password
                       </label>
                       <input
                         type="password"
-                        className="w-full px-3 py-2 rounded mb-2 bg-white placeholder-gray-400 text-black outline-none"
+                        className="w-full px-3 py-2 rounded mb-1 bg-white placeholder-gray-400 text-black outline-none"
                         id="newPassword"
                         placeholder="Enter your new password"
                         value={newPassword}
@@ -139,8 +138,8 @@ const CreatePassword = () => {
                       />
                     </div>
                     
-                    <div className="mb-3">
-                      <div className="flex flex-col gap-1">
+                    <div className="mb-1">
+                      <div className="flex flex-col">
                         <div className="flex items-center">
                           <span className="text-white mr-2">•</span>
                           <p className={`text-sm ${newPassword.length >= 8 ? 'text-green-500' : 'text-gray-300'}`}>
@@ -169,7 +168,7 @@ const CreatePassword = () => {
                     </div>
                     
                     <div className="mb-3 relative">
-                      <label className="text-white mb-4" htmlFor="confirmPassword">
+                      <label className="text-white mb-1 block" htmlFor="confirmPassword">
                         Confirm Password
                       </label>
                       <input
@@ -187,7 +186,7 @@ const CreatePassword = () => {
                     
                     <button
                       type="submit"
-                      className="w-3/4 h-11 bg-[#de7008] text-white py-2 px-4 rounded mt-2 mx-auto hover:bg-[#de7008] ml-11"
+                      className="w-full sm:w-3/4 h-11 bg-[#de7008] text-white py-2 px-4 rounded mt-2 mx-auto hover:bg-[#de7008] block"
                       disabled={loading}
                     >
                       {loading ? "Resetting Password..." : "Reset Password"}

@@ -1,9 +1,8 @@
 import React, { useState } from "react";
-import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import { Eye, EyeOff } from "lucide-react";
 import logo from "../../assets/lockated-logo.png";
+import { useNavigate } from "react-router-dom";
+
 
 const SignIn = () => {
   // State management
@@ -17,8 +16,15 @@ const SignIn = () => {
   const [showOtpSection, setShowOtpSection] = useState(false);
   const [OtpSection, setOtpSection] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
-
   const navigate = useNavigate();
+
+
+  // Mock functions for demo
+  const toast = {
+    error: (message) => console.log(`Error: ${message}`),
+    success: (message) => console.log(`Success: ${message}`)
+  };
+
 
   // Configuration
   const config = {
@@ -33,89 +39,34 @@ const SignIn = () => {
   };
 
   const regiterPage = () => {
-    navigate("/register");
+    navigate("/Register");
   };
-
-  // const handlePasswordLogin = async (e) => {
-  //   e.preventDefault();
-  //   setError("");
-  //   setLoading(true);
-
-  //   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  //   if (!emailRegex.test(email)) {
-  //     toast.error("Please enter a valid email address.");
-  //     setLoading(false);
-  //     return;
-  //   }
-
-  //   try {
-  //     const response = await axios.post(`${config.baseURL}/users/signin.json`, {
-  //       user: {
-  //         email,
-  //         password,
-  //       },
-  //     });
-      
-  //     if (response.data.access_token) {
-  //       localStorage.setItem("access_token", response.data?.access_token);
-  //       sessionStorage.setItem("email", response.data?.email);
-  //       sessionStorage.setItem("firstname", response.data?.firstname);
-  //       sessionStorage.setItem("lastname", response.data?.lastname);
-  //       sessionStorage.setItem("user_id", response.data?.id);
-  //       sessionStorage.setItem("profile_icon", response?.data?.profile_icon_url);
-
-  //       const lockRole = response?.data?.lock_role;
-  //       if (lockRole) {
-  //         localStorage.setItem("lock_role_name", lockRole.name);
-  //         localStorage.setItem("lock_role_permissions", lockRole.permissions_hash);
-  //       }
-        
-  //       navigate("/project-list");
-  //       toast.success("Login successful");
-  //     } else {
-  //       toast.error("Login failed. Please check your credentials.");
-  //     }
-  //   } catch (err) {
-  //     toast.error("Login failed. Please check your credentials.");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
 
   const handlePasswordLogin = async (e) => {
     e.preventDefault();
     setError("");
     setLoading(true);
-  
+
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       toast.error("Please enter a valid email address.");
       setLoading(false);
       return;
     }
-  
+
     // Mock login (no API call)
-    if (email === "user@gmail.com" && password === "12345678") {
-      // ✅ Store a fake token so PrivateRoute recognizes the login
-      localStorage.setItem("authToken", "fake-token");
-    
-      // ✅ Continue with session info
-      sessionStorage.setItem("email", email);
-      sessionStorage.setItem("firstname", "Rahul");
-      sessionStorage.setItem("lastname", "Parihar");
-      sessionStorage.setItem("user_id", "mock-user-id");
-      sessionStorage.setItem("profile_icon", "https://via.placeholder.com/150");
-    
+    if (email === "demo@gmail.com" && password === "12345678") {
+
+      localStorage.setItem("authToken", "demo-auth-token");
       toast.success("Login successful!");
       navigate("/dashboard");
     } else {
       toast.error("Invalid credentials. Please try again.");
     }
-  
+
     setLoading(false);
   };
-  
+
 
   const handleSendOtp = async (e) => {
     e.preventDefault();
@@ -127,9 +78,6 @@ const SignIn = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post(`${config.baseURL}/generate_code`, {
-        mobile,
-      });
       setOtpSection(false);
       toast.success("OTP Sent successfully");
       setShowOtpSection(true);
@@ -151,30 +99,8 @@ const SignIn = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post(`${config.baseURL}/verify_code.json`, {
-        mobile,
-        otp,
-      });
-
-      const { access_token } = response.data;
-      if (access_token) {
-        localStorage.setItem("access_token", access_token);
-        const lockRole = response.data?.lock_role;
-        if (lockRole) {
-          localStorage.setItem("lock_role_name", lockRole.name);
-          localStorage.setItem("lock_role_permissions", lockRole.permissions_hash);
-        }
-        sessionStorage.setItem("email", response.data?.email);
-        sessionStorage.setItem("firstname", response.data?.firstname);
-        sessionStorage.setItem("lastname", response.data?.lastname);
-        sessionStorage.setItem("user_id", response.data?.id);
-        sessionStorage.setItem("profile_icon", response?.data?.profile_icon_url);
-        localStorage.setItem("user_id", response.data?.id);
-        navigate("/project-list");
-        toast.success("Login successfully");
-      } else {
-        toast.error("Login failed. Please check your credentials.");
-      }
+      toast.success("Login successfully");
+      navigate("/project-list");
     } catch (err) {
       console.error(err);
       setError(err.response?.data?.message || "An error occurred during login. Please try again.");
@@ -238,16 +164,15 @@ const SignIn = () => {
         <button
           onClick={handlePasswordLogin}
           type="submit"
-          className="w-3/4 h-11 cursor-pointer bg-[#de7008] text-white py-2 px-4 rounded mt-2 mx-auto hover:bg-[#de7008] ml-11"
+          className="w-full sm:w-3/4 h-11 cursor-pointer bg-[#de7008] text-white py-2 px-4 rounded mt-2 mx-auto hover:bg-[#de7008] block"
           disabled={loading}
         >
           {loading ? "Logging in..." : "LOGIN"}
         </button>
 
         {config.showRegisterButton && (
-          <button 
-            className="w-3/4 h-11 bg-transparent text-white border border-white rounded mt-6 mx-auto block uppercase hover:bg-white/10
- hover:bg-opacity-10"
+          <button
+            className="w-full sm:w-3/4 h-11 bg-transparent text-white border border-white rounded mt-6 mx-auto block uppercase hover:bg-white/10 hover:bg-opacity-10"
             onClick={regiterPage}
             disabled={loading}
           >
@@ -262,13 +187,13 @@ const SignIn = () => {
     <form onSubmit={handleVerifyOtp} className="mt-3 w-full max-w-[380px]">
       {OtpSection && (
         <div className="form-group relative mb-4">
-          <label className="mb-1 block text-white" htmlFor="mobile">
+          <label className="mb-1 block text-white mt-4" htmlFor="mobile">
             Mobile Number
           </label>
           <input
             type="tel"
             id="mobile"
-            className="w-full px-3 py-2 rounded mb-2 bg-white placeholder-gray-400 text-black outline-none"
+            className="w-full px-3 py-2 rounded mb-2 bg-white placeholder-gray-400 text-black outline-none "
             placeholder="Enter registered mobile number..."
             value={mobile}
             onChange={(e) => setMobile(e.target.value)}
@@ -276,7 +201,7 @@ const SignIn = () => {
           />
           <button
             type="button"
-            className="w-3/4 h-11 bg-[#de7008] text-white py-2 px-4 rounded mt-2 mx-auto hover:bg-[#de7008] ml-11"
+            className="w-full sm:w-3/4 h-11 bg-[#de7008] text-white py-2 px-4 rounded mt-2 mx-auto hover:bg-[#de7008] block mt-4"
             onClick={handleSendOtp}
             disabled={loading}
           >
@@ -305,8 +230,8 @@ const SignIn = () => {
       {error && <p className="text-red-500">{error}</p>}
 
       {showOtpSection && (
-        <button 
-          type="submit" 
+        <button
+          type="submit"
           className="w-full bg-[#8b0203] text-white py-2 px-4 rounded mt-2 hover:bg-[#9e2c2d]"
           disabled={loading}
         >
@@ -320,17 +245,17 @@ const SignIn = () => {
     <main className="h-full w-full overflow-hidden">
       <section className="">
         <div className="container-fluid h-full">
-          <div className={`row items-center h-full bg-cover bg-center bg-[url('https://vendor.panchshil.com/assets/pan_logo-4e1c867e2fada5efc385ef5c565a0ad3b533cd396d1ed187a0bc7fdec161a35a.jpg')] justify-center`}>
-            <div className="col-lg-7 col-md-7 h-screen flex items-center">
-              <div className="border border-[rgba(58,58,51,0.4)] shadow-[0px_3px_8px_0px_rgba(217,217,217,0.08)] p-[3%_7%] mx-auto flex flex-col backdrop-blur bg-[#291b117f]">
-                <img
-                  className="w-[120px] h-[120px] md:w-[220px] md:h-[70px] mx-auto"
-                  src={config.logoUrl}
+          <div className={`min-h-screen flex items-center justify-center bg-cover bg-center bg-[url('https://vendor.panchshil.com/assets/pan_logo-4e1c867e2fada5efc385ef5c565a0ad3b533cd396d1ed187a0bc7fdec161a35a.jpg')]`}>
+            <div className="w-full max-w-lg mx-auto px-4 py-8">
+              <div className="border border-[rgba(58,58,51,0.4)] shadow-[0px_3px_8px_0px_rgba(217,217,217,0.08)] p-6 sm:p-8 md:p-12 mx-auto flex flex-col backdrop-blur bg-[#291b117f]">
+                {/* <img
+                  className="w-[120px] h-[100px] xs:w-[120px] xs:h-[120px] sm:w-[160px] sm:h-[50px] md:w-[200px] md:h-[60px] lg:w-[220px] lg:h-[70px] mx-auto object-contain"
+                  src="https://piramaluat.s3.ap-south-1.amazonaws.com/Website/Uploads/Piramal/Images/4192015.png"
                   alt="Logo"
-                />
+                /> */}
 
-                <div className="flex gap-3 items-center justify-between w-full mt-4 px-4">
-                  <div className="form-group">
+                <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between w-full mt-4 px-0 sm:px-4">
+                  {/* <div className="form-group">
                     <div className="form-check flex items-center">
                       <input
                         className="w-5 h-5 rounded-full border-2 border-white appearance-none checked:border-white checked:before:w-2 checked:before:h-2 checked:before:bg-[#de7008] checked:before:rounded-full checked:before:absolute checked:before:top-1/2 checked:before:left-1/2 checked:before:transform checked:before:-translate-x-1/2 checked:before:-translate-y-1/2 relative mr-2"
@@ -340,12 +265,12 @@ const SignIn = () => {
                         checked={selectedContent === "content1"}
                         onChange={() => toggleContent("content1")}
                       />
-                      <label className="text-white cursor-pointer">
+                      <label className="text-white cursor-pointer text-sm sm:text-base">
                         Login with password
                       </label>
                     </div>
-                  </div>
-                  <div className="form-group">
+                  </div> */}
+                  {/* <div className="form-group">
                     <div className="form-check flex items-center">
                       <input
                         className="w-5 h-5 rounded-full border-2 border-white appearance-none checked:border-white checked:before:w-2 checked:before:h-2 checked:before:bg-[#de7008] checked:before:rounded-full checked:before:absolute checked:before:top-1/2 checked:before:left-1/2 checked:before:transform checked:before:-translate-x-1/2 checked:before:-translate-y-1/2 relative mr-2"
@@ -355,15 +280,17 @@ const SignIn = () => {
                         checked={selectedContent === "content2"}
                         onChange={() => toggleContent("content2")}
                       />
-                      <label className="text-white cursor-pointer">
+                      <label className="text-white cursor-pointer text-sm sm:text-base">
                         Login with OTP
                       </label>
                     </div>
-                  </div>
+                  </div> */}
                 </div>
 
-                {selectedContent === "content1" && renderPasswordLogin()}
-                {selectedContent === "content2" && renderOtpLogin()}
+                <div className="flex justify-center w-full">
+                  {selectedContent === "content1" && renderPasswordLogin()}
+                  {/* {selectedContent === "content2" && renderOtpLogin()} */}
+                </div>
               </div>
             </div>
           </div>
