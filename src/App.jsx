@@ -25,6 +25,7 @@ import Services from './Dashboard/Services'
 import HotelList from './Dashboard/HotelList'
 import HotelCheckout from './Dashboard/HotelCheckout'
 import HotelBooks from './Dashboard/HotelBooks'
+import HotelDetails from './Dashboard/HotelDetails'
 
 const routeConfigs = [
   { path: '/', element: <Home />, transparent: true },
@@ -68,6 +69,7 @@ function App() {
               <Route path="hotel-list" element={<HotelList />} />
               <Route path="hotel-checkout" element={<HotelCheckout />} />
               <Route path="hotel-books" element={<HotelBooks />} />
+              <Route path="hotel-details" element={<HotelDetails />} />
               {/* Add more dashboard routes here */}
 
             </Route>
