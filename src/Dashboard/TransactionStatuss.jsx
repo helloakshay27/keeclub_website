@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import hotel1 from "../assets/Hotel/hotel1.jpg";
 import hotel2 from "../assets/Hotel/hotel2.jpg";
 import hotel3 from "../assets/Hotel/hotel3.jpg";
+import { Link } from "react-router-dom";
 
 const TransactionStatuss = () => {
   const [selectedTab, setSelectedTab] = useState("redemptions");
@@ -138,7 +139,11 @@ const TransactionStatuss = () => {
       {selectedTab === "redemptions" && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
           {redemptionsCards.map((card, index) => (
-            <div key={index} className="rounded overflow-hidden shadow-sm relative group">
+            <Link
+              to="/dashboard/hotel-list"
+              key={index}
+              className="rounded overflow-hidden shadow-sm relative group block"
+            >
               <div
                 className="h-48 bg-cover bg-center relative"
                 style={{ backgroundImage: `url('${card.image}')` }}
@@ -154,7 +159,7 @@ const TransactionStatuss = () => {
                   </div>
                 </div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       )}
