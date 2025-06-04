@@ -22,6 +22,7 @@ import TransactionStatuss from './Dashboard/TransactionStatuss'
 import PrivateRoute from './Dashboard/Pages/PrivateRoute'
 import PageNotFound from './Pages/PageNotFound'
 import Services from './Dashboard/Services'
+import HotelList from './Dashboard/HotelList'
 
 const routeConfigs = [
   { path: '/', element: <Home />, transparent: true },
@@ -62,7 +63,8 @@ function App() {
             <Route element={<RootLayout />}>
             <Route index element={<Navigate to="transactions" replace />} />
             <Route path="transactions" element={<TransactionStatuss />} />
-              <Route path="services" element={<Services />} />
+              <Route path="hotellist" element={<HotelList />} />
+
             </Route>
           </Route>
 
