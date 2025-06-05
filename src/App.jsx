@@ -25,7 +25,7 @@ import Services from './Dashboard/Services'
 import HotelList from './Dashboard/HotelList'
 import HotelCheckout from './Dashboard/HotelCheckout'
 import HotelBooks from './Dashboard/HotelBooks'
-import HotelDetails from './Dashboard/HotelDetails'
+// import HotelDetails from './Dashboard/HotelDetails'
 
 const routeConfigs = [
   { path: '/', element: <Home />, transparent: true },
