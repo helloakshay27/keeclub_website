@@ -1,40 +1,48 @@
 import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { useParams, Link } from "react-router-dom";
+
 import hotel1 from "../assets/Hotel/hotel1.jpg";
 import hotel2 from "../assets/Hotel/hotel2.jpg";
 import hotel3 from "../assets/Hotel/hotel3.jpg";
-import { Link } from "react-router-dom";
 
 const TransactionStatuss = () => {
+  const { id } = useParams();
   const [selectedTab, setSelectedTab] = useState("redemptions");
-
-
-  const [memeberData, setMemberData] = useState([])
-
-  const fetchAPI = async () => {
-    const response = fetch("https://piramal-loyalty-dev.lockated.com/loyalty/members");
-    const data = (await response).json();
-    setMemberData(data)
-  }
+  const [memberData, setMemberData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchAPI()
-  }, [])
+    const fetchMemberData = async () => {
+      try {
+        const response = await axios.get(
+          `https://piramal-loyalty-dev.lockated.com/loyalty/members/${id}.json`
+        );
+        setMemberData(response.data);
+      } catch (error) {
+        console.error("Error fetching member data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  console.log(memeberData)
+    fetchMemberData();
+  }, [id]);
+
+  if (loading) return <div className="text-center mt-8">Loading...</div>;
+  if (!memberData) return <div className="text-center mt-8 text-red-500">Member not found.</div>;
+
+
+
 
 
   const summaryCards = [
-    { title: "Loyalty Points", value: 1600 },
-    { title: "Earned Points", value: 700 },
-    { title: "Redeemed Points", value: 900 },
+    { title: "Loyalty Points", value: memberData.current_loyalty_points || 0 },
+    { title: "Earned Points", value: memberData.earned_points || 0 },
+    { title: "Redeemed Points", value: memberData.reedem_points || 0 },
   ];
 
-  const transactions = [
-    { date: "12/02/2024", type: "Credit", name: "Hotel" },
-    { date: "12/02/2024", type: "Debit", name: "F&B" },
-    { date: "12/02/2024", type: "Debit", name: "Ticket" },
-    { date: "12/02/2024", type: "Credit", name: "Ticket" },
-  ]
+  const transactions = memberData.member_transactions || [];
 
   const redemptionsCards = [
     {
@@ -57,14 +65,12 @@ const TransactionStatuss = () => {
     },
   ];
 
-
   const referralsCards = [
     { date: "12/02/2024", name: "Priya Mehra", status: "Registered", points: "+250 pts" },
     { date: "12/02/2024", name: "Rahul Ghosh", status: "Registered", points: "+500 pts" },
     { date: "12/02/2024", name: "Ankit Sharma", status: "In Progress", points: "..." },
     { date: "12/02/2024", name: "Tanya Roy", status: "Joined Event", points: "+100 pts" },
-  ]
-
+  ];
 
   return (
     <div className="max-w-7xl mx-auto p-4">
@@ -193,15 +199,19 @@ const TransactionStatuss = () => {
               </tr>
             </thead>
             <tbody className="text-gray-700">
-              {transactions.map((item, index) => (
+              {transactions.length > 0 ? transactions.map((item, index) => (
                 <tr key={index}>
-                  <td className="px-4 py-3">{item.date}</td>
-                  <td className="px-4 py-3">{item.type}</td>
-                  <td className="px-4 py-3">{item.name}</td>
+                  <td className="px-4 py-3">{item.date || "--"}</td>
+                  <td className="px-4 py-3">{item.type || "--"}</td>
+                  <td className="px-4 py-3">{item.name || "--"}</td>
                   <td className="px-4 py-3">...</td>
                   <td className="px-4 py-3">...</td>
                 </tr>
-              ))}
+              )) : (
+                <tr>
+                  <td colSpan="5" className="px-4 py-4 text-center text-gray-500">No transactions available.</td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
