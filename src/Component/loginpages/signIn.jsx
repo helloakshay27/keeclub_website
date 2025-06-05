@@ -4,6 +4,7 @@ import logo from "../../assets/piramal_bg.png";
 import { useNavigate } from "react-router-dom";
 import logo_bg from "../../assets/bg_light.png";
 import logo_main from "../../assets/logo.png";
+import axios from "axios";
 
 
 
@@ -59,14 +60,30 @@ const SignIn = () => {
       return;
     }
 
-    // Mock login (no API call)
-    if (email === "demo@gmail.com" && password === "12345678") {
+    try {
+      const response = await axios.post(
+        `https://piramal-loyalty-dev.lockated.com/api/users/sign_in`,
+        null, // No body
+        {
+          params: {
+            email,
+            password
+          }
+        }
+      );
 
-      localStorage.setItem("authToken", "demo-auth-token");
-      toast.success("Login successful!");
-      navigate("/dashboard");
-    } else {
-      toast.error("Invalid credentials. Please try again.");
+      const data = response.data;
+
+      if (data.access_token) {
+        localStorage.setItem("authToken", data.access_token);
+        toast.success("Login successful!");
+        navigate(`/dashboard/transactions/${data.id}`);
+      } else {
+        toast.error("Invalid credentials. Please try again.");
+      }
+    } catch (error) {
+      toast.error("Login failed. Please try again.");
+      console.error("Login error:", error);
     }
 
     setLoading(false);

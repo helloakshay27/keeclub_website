@@ -65,7 +65,7 @@ function App() {
           <Route path="/dashboard" element={<PrivateRoute />}>
             <Route element={<RootLayout />}>
               <Route index element={<Navigate to="transactions" replace />} />
-              <Route path="transactions" element={<TransactionStatuss />} />
+              <Route path="transactions/:id" element={<TransactionStatuss />} />
               <Route path="hotel-list" element={<HotelList />} />
               <Route path="/dashboard/hotel-details/hotel-checkout" element={<HotelCheckout />} />
               <Route path="/dashboard/hotel-details/hotel-checkout/hotel-book" element={<HotelBooks />} />
