@@ -41,10 +41,16 @@ const Overview = () => {
         navigate("/hotel-checkout");
     };
 
-    const PropertyDetails = [{
-        name: "24/7 front desk",
-        img: desk
-    }, {
+    const PropertyDetails = [
+        
+        
+    //     {
+    //     name: "24/7 front desk",
+    //     img: desk
+    // },
+    
+    
+    {
         name: "Parking Included",
         img: Parking
     }, {
