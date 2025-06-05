@@ -4,7 +4,7 @@ import Hotel1_1 from "../assets/Hotel/Hotel1_1.png"
 import Hotel1_2 from "../assets/Hotel/Hotel1_2.png"
 import Hotel1_3 from "../assets/Hotel/Hotel1_3.png"
 import Hotel1_4 from "../assets/Hotel/Hotel1_4.png"
-// import check from "../assets/Hotel/icons/check.png"
+import check from "../assets/Hotel/icons/check.png"
 import desk from "../assets/Hotel/icons/desk.png"
 import Parking from "../assets/Hotel/icons/Parking.png"
 import restraunt from "../assets/Hotel/icons/restraunt.png"
@@ -41,16 +41,10 @@ const Overview = () => {
         navigate("/hotel-checkout");
     };
 
-    const PropertyDetails = [
-        
-        
-    //     {
-    //     name: "24/7 front desk",
-    //     img: desk
-    // },
-    
-    
-    {
+    const PropertyDetails = [{
+        name: "24/7 front desk",
+        img: desk
+    }, {
         name: "Parking Included",
         img: Parking
     }, {
@@ -60,10 +54,10 @@ const Overview = () => {
         name: "Free Wifi",
         img: Wifi
     },
-    // {
-    //     name: "Housekeeping",
-    //     img: check
-    // }
+    {
+        name: "Housekeeping",
+        img: check
+    }
     ]
     const RoomDetails = [{
         name: "Free Self Parking",
@@ -81,12 +75,10 @@ const Overview = () => {
         name: "1 King Bed",
         img: bed
     },
-    // {
-    //     name: "Reserve now, pay later",
-    //     img: check
-    // },
-    
     {
+        name: "Reserve now, pay later",
+        img: check
+    }, {
         name: "Free Wifi",
         img: Wifi
     }

@@ -25,7 +25,7 @@ import Services from './Dashboard/Services'
 import HotelList from './Dashboard/HotelList'
 import HotelCheckout from './Dashboard/HotelCheckout'
 import HotelBooks from './Dashboard/HotelBooks'
-// import HotelDetails from './Dashboard/HotelDetails'
+import HotelDetails from './Dashboard/HotelDetails'
 
 const routeConfigs = [
   { path: '/', element: <Home />, transparent: true },
@@ -63,13 +63,13 @@ function App() {
           ))}
           {/* Dashboard layout with nested routes */}
           <Route path="/dashboard" element={<PrivateRoute />}>
-            <Route element={<RootLayout />}>``
+            <Route element={<RootLayout />}>
               <Route index element={<Navigate to="transactions" replace />} />
               <Route path="transactions/:id" element={<TransactionStatuss />} />
               <Route path="hotel-list" element={<HotelList />} />
               <Route path="/dashboard/hotel-details/hotel-checkout" element={<HotelCheckout />} />
               <Route path="/dashboard/hotel-details/hotel-checkout/hotel-book" element={<HotelBooks />} />
-              {/* <Route path="hotel-details" element={<HotelDetails />} /> */}
+              <Route path="hotel-details" element={<HotelDetails />} />
             </Route>
           </Route>
 
