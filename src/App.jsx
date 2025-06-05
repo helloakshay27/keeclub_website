@@ -63,7 +63,7 @@ function App() {
           ))}
           {/* Dashboard layout with nested routes */}
           <Route path="/dashboard" element={<PrivateRoute />}>
-            <Route element={<RootLayout />}>
+            <Route element={<RootLayout />}>``
               <Route index element={<Navigate to="transactions" replace />} />
               <Route path="transactions/:id" element={<TransactionStatuss />} />
               <Route path="hotel-list" element={<HotelList />} />
