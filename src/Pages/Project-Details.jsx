@@ -23,10 +23,10 @@ const ProjectDetail = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `https://api-connect.panchshil.com/get_all_projects.json`,
+          `https://piramal-loyalty-dev.lockated.com/get_all_projects.json`,
           {
             headers: {
-              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+              // Authorization: `Bearer ${localStorage.getItem("access_token")}`,
               "Content-Type": "application/json",
             },
           }

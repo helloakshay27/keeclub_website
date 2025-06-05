@@ -26,6 +26,7 @@ import HotelList from './Dashboard/HotelList'
 import HotelCheckout from './Dashboard/HotelCheckout'
 import HotelBooks from './Dashboard/HotelBooks'
 import HotelDetails from './Dashboard/HotelDetails'
+import ReferNow from './Pages/refer_now'
 
 const routeConfigs = [
   { path: '/', element: <Home />, transparent: true },
@@ -41,6 +42,8 @@ const routeConfigs = [
   { path: '/forgot-password', element: <Forgot />, transparent: true, hideLayout: true },
   { path: '/forgot-otp', element: <ForgotOtp />, transparent: true, hideLayout: true },
   { path: '/reset-password', element: <CreatePassword />, transparent: true, hideLayout: true },
+  { path: '/refer-now', element: <ReferNow />, transparent: true },
+
   { path: '/blog/:id', element: <BlogDetailPage />, transparent: true },
   { path: '*', element: <PageNotFound />, transparent: true, hideLayout: true }
 ];

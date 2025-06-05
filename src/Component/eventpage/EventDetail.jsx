@@ -5,7 +5,7 @@ import useApiFetch from "../../hooks/useApiFetch";
 const EventDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { data } = useApiFetch("https://api-connect.panchshil.com/events.json");
+  const { data } = useApiFetch("https://piramal-loyalty-dev.lockated.com/events.json");
 
   const events = data?.events || [];
   const event = events[parseInt(id)];

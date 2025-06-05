@@ -4,7 +4,7 @@ import useApiFetch from "../../hooks/useApiFetch";
 
 const ProjectsList = () => {
   const { data, loading, error } = useApiFetch(
-    "https://api-connect.panchshil.com/get_all_projects.json"
+    "https://piramal-loyalty-dev.lockated.com/get_all_projects.json"
   );
 
   const [properties, setProperties] = useState([]);

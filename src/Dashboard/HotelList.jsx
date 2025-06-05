@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { Search } from "lucide-react";
-import card1 from "../assets/Hotel/Card1.png";
-import card2 from "../assets/Hotel/Card2.png";
-import card3 from "../assets/Hotel/Card3.png";
-import Image1 from "../assets/Hotel/Image1.png";
-import Image2 from "../assets/Hotel/Image2.png";
-import Image3 from "../assets/Hotel/Image3.png";
+import card1 from "../assets/Hotel/card1.png";
+import card2 from "../assets/Hotel/card2.png";
+import card3 from "../assets/Hotel/card3.png";
+import Image1 from "../assets/Hotel/image1.png";
+import Image2 from "../assets/Hotel/image2.png";
+import Image3 from "../assets/Hotel/image3.png";
 import { Link } from "react-router-dom";
 
 // Separate arrays for each section
