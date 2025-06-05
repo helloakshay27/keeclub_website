@@ -1,18 +1,15 @@
 import React, { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
-import logo from "../../assets/piramal_bg.png";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { toast } from "react-toastify";
+
+import logo from "../../assets/piramal_bg.png";
 import ComLogo from "../../assets/ComLogo.png";
 import logo_bg from "../../assets/bg_light.png";
 import logo_main from "../../assets/logo.png";
-import axios from "axios";
-
-
-
-
 
 const SignIn = () => {
-  // State management
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [mobile, setMobile] = useState("");
@@ -25,28 +22,13 @@ const SignIn = () => {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
-
-  // Mock functions for demo
-  const toast = {
-    error: (message) => console.log(`Error: ${message}`),
-    success: (message) => console.log(`Success: ${message}`)
-  };
-
-
-  // Configuration
-  const config = {
-    baseURL: "https://api-connect.panchshil.com/",
-    logoUrl: logo,
-    showRegisterButton: true,
-  };
-
   const toggleContent = (content) => {
     setSelectedContent(content);
     setError("");
   };
 
   const regiterPage = () => {
-    navigate("/Register");
+    navigate("/register");
   };
 
   const handlePasswordLogin = async (e) => {
@@ -64,12 +46,12 @@ const SignIn = () => {
     try {
       const response = await axios.post(
         `https://piramal-loyalty-dev.lockated.com/api/users/sign_in`,
-        null, // No body
+        null,
         {
           params: {
             email,
-            password
-          }
+            password,
+          },
         }
       );
 
@@ -77,6 +59,10 @@ const SignIn = () => {
 
       if (data.access_token && data.member_id) {
         localStorage.setItem("authToken", data.access_token);
+        localStorage.setItem("member_id", data.member_id);
+        localStorage.setItem("firstName", data.first_name);
+        localStorage.setItem("lastName", data.last_name);
+        localStorage.setItem("email", data.email);
         toast.success("Login successful!");
         navigate(`/dashboard/transactions/${data.member_id}`);
       } else {
@@ -90,23 +76,32 @@ const SignIn = () => {
     setLoading(false);
   };
 
-
   const handleSendOtp = async (e) => {
     e.preventDefault();
+
     if (!mobile || !/^\d{10}$/.test(mobile)) {
       toast.error("Please enter a valid 10-digit mobile number.");
       return;
     }
+
     setError("");
     setLoading(true);
 
     try {
-      setOtpSection(false);
-      toast.success("OTP Sent successfully");
-      setShowOtpSection(true);
+      const response = await axios.post(
+        `https://piramal-loyalty-dev.lockated.com/generate_code?mobile=${mobile}`
+      );
+
+      if (response.status === 200) {
+        toast.success("OTP sent successfully");
+        setOtpSection(false);
+        setShowOtpSection(true);
+      } else {
+        toast.error("Failed to send OTP. Please try again.");
+      }
     } catch (err) {
-      toast.error(err.response?.data?.error || "An error occurred to Send OTP");
-      console.error(err);
+      toast.error(err.response?.data?.error || "An error occurred while sending OTP");
+      console.error("OTP Error:", err);
     } finally {
       setLoading(false);
     }
@@ -114,19 +109,41 @@ const SignIn = () => {
 
   const handleVerifyOtp = async (e) => {
     e.preventDefault();
-    if (!otp) {
-      toast.error("Please enter a valid OTP.");
+
+    if (!otp || otp.length !== 5) {
+      toast.error("Please enter a valid 5-digit OTP.");
       return;
     }
+
+    if (!mobile || !/^\d{10}$/.test(mobile)) {
+      toast.error("Invalid mobile number. Please go back and enter again.");
+      return;
+    }
+
     setError("");
     setLoading(true);
 
     try {
-      toast.success("Login successfully");
-      navigate("/project-list");
+      const response = await axios.post(
+        `https://piramal-loyalty-dev.lockated.com/verify_code?mobile=${mobile}&otp=${otp}`
+      );
+      const data = response.data;
+
+      if (data.access_token) {
+        localStorage.setItem("authToken", data.access_token);
+        localStorage.setItem("member_id", data.member_id);
+        localStorage.setItem("firstName", data.first_name);
+        localStorage.setItem("lastName", data.last_name);
+        localStorage.setItem("email", data.email);
+        toast.success("Login successful!");
+        navigate(`/dashboard/transactions/${data.member_id}`);
+      } else {
+        toast.error("Invalid credentials. Please try again.");
+      }
     } catch (err) {
       console.error(err);
-      setError(err.response?.data?.message || "An error occurred during login. Please try again.");
+      toast.error(err.response?.data?.error || "OTP verification failed.");
+      setError(err.response?.data?.error || "OTP verification failed.");
     } finally {
       setLoading(false);
     }
@@ -257,6 +274,7 @@ const SignIn = () => {
   return (
     <main className="h-full w-full overflow-hidden">
       <section>
+
         <div className="container-fluid h-full">
           <div
             className="min-h-screen flex items-center justify-center bg-cover bg-center bg-no-repeat"
@@ -272,6 +290,7 @@ const SignIn = () => {
                   src={ComLogo}
                   alt="Logo"
                 />
+
 
                 <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-start justify-between w-full mt-4 px-0 sm:px-4">
                   <div className="form-group">

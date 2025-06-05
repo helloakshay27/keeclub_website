@@ -40,16 +40,16 @@ const Header = ({ isTransparent }) => {
 
   return (
     <header
-  className={classNames(
-    'fixed top-0 left-0 w-full z-50 transition-all duration-300 px-6 sm:px-8 flex items-center justify-between',
-    {
-      'bg-[#24293c] text-white shadow-md py-2 sm:py-1':
-        (isTabletOrMobile && isMobileMenuOpen) || !isTransparent || scrolled,
-      'bg-transparent text-white py-4 sm:py-5':
-        isTransparent && !scrolled && !(isTabletOrMobile && isMobileMenuOpen),
-    }
-  )}
->
+      className={classNames(
+        'fixed top-0 left-0 w-full z-50 transition-all duration-300 px-6 sm:px-8 flex items-center justify-between',
+        {
+          'bg-[#24293c] text-white shadow-md py-2 sm:py-1':
+            (isTabletOrMobile && isMobileMenuOpen) || !isTransparent || scrolled,
+          'bg-transparent text-white py-4 sm:py-5':
+            isTransparent && !scrolled && !(isTabletOrMobile && isMobileMenuOpen),
+        }
+      )}
+    >
 
 
       <div className="flex items-center">
@@ -102,7 +102,7 @@ const Header = ({ isTransparent }) => {
         <div className="absolute top-full left-0 w-full bg-[#24293c] text-white lg:hidden px-6 py-4 shadow-md">
           <ul className="flex flex-col space-y-4 font-medium text-sm">
             <li className="hover:text-[#fa4615] cursor-pointer">
-            <Link to="/" onClick={() => setIsMobileMenuOpen(false)}>HOME</Link>
+              <Link to="/" onClick={() => setIsMobileMenuOpen(false)}>HOME</Link>
 
             </li>
             <li className="hover:text-[#fa4615] cursor-pointer">REFER AND EARN</li>
@@ -115,12 +115,12 @@ const Header = ({ isTransparent }) => {
             </li>
             <li className="hover:text-orange-[#fa4615] cursor-pointer">OFFERS</li>
             <li className="hover:text-orange-[#fa4615] cursor-pointer">
-            <Link to="/projects" onClick={() => setIsMobileMenuOpen(false)}>PROJECTS</Link>
+              <Link to="/projects" onClick={() => setIsMobileMenuOpen(false)}>PROJECTS</Link>
 
             </li>
 
             <li className="hover:text-[#fa4615] cursor-pointer">
-            <Link to="/login" onClick={() => setIsMobileMenuOpen(false)}>LOGIN</Link>
+              <Link to="/login" onClick={() => setIsMobileMenuOpen(false)}>LOGIN</Link>
             </li>
           </ul>
         </div>
