@@ -1,6 +1,7 @@
 import React from 'react';
 import card3 from "../assets/Hotel/Card3.png";
 import { CalendarDays } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 
 
@@ -137,7 +138,9 @@ const HotelCheckout = () => {
                             <span>₹10810.00</span>
                         </div>
                         <p className="text-sm text-[#FA4615] mt-1 underline">Use a coupon credit or promotion code</p>
-                        <button className="w-full mt-4 bg-black text-white rounded p-2">Confirm Booking</button>
+                        <Link to="/dashboard/hotel-details/hotel-checkout/hotel-book">
+                            <button className="w-full cursor-pointer mt-4 bg-black text-white rounded p-2">Confirm Booking</button>
+                        </Link>
                     </div>
                 </div>
             </div>

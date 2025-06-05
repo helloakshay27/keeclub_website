@@ -6,6 +6,7 @@ import card3 from "../assets/Hotel/Card3.png";
 import Image1 from "../assets/Hotel/Image1.png";
 import Image2 from "../assets/Hotel/Image2.png";
 import Image3 from "../assets/Hotel/Image3.png";
+import { Link } from "react-router-dom";
 
 // Separate arrays for each section
 const popularHotels = [card1, card2, card3, card1, card2];
@@ -13,15 +14,17 @@ const weekendHotels = [Image1, Image2, Image3, Image1, Image3];
 
 // HotelCard component
 const HotelCard = ({ img }) => (
-    <div className="min-w-[400px] flex-shrink-0 mr-4">
-        <img
-            src={img}
-            alt="hotel"
-            className="w-full h-50 rounded-md object-cover"
-        />
-        <div className="mt-2 font-semibold">Hotel Royal</div>
-        <div className="text-sm text-gray-600">₹10,000 for 4 nights</div>
-    </div>
+    <Link to="/dashboard/hotel-details" className="min-w-[400px] flex-shrink-0 mr-4">
+        <div>
+            <img
+                src={img}
+                alt="hotel"
+                className="w-full h-50 rounded-md object-cover"
+            />
+            <div className="mt-2 font-semibold">Hotel Royal</div>
+            <div className="text-sm text-gray-600">₹10,000 for 4 nights</div>
+        </div>
+    </Link>
 );
 
 // ScrollSection component
