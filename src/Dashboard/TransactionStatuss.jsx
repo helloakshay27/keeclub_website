@@ -11,6 +11,7 @@ const TransactionStatuss = () => {
   const [selectedTab, setSelectedTab] = useState("redemptions");
   const [memberData, setMemberData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [referrals, setReferrals] = useState([]);
 
   useEffect(() => {
     const fetchMemberData = async () => {
@@ -29,12 +30,27 @@ const TransactionStatuss = () => {
     fetchMemberData();
   }, [id]);
 
+  useEffect(() => {
+    const fetchReferrals = async () => {
+      try {
+
+       const token=  localStorage.getItem('authToken');
+        const response = await axios.get(
+          `https://piramal-loyalty-dev.lockated.com/referrals.json?access_token=${token}`
+        );
+        setReferrals(response.data.referrals || []);
+      } catch (error) {
+        console.error("Error fetching referrals:", error);
+      }
+    };
+
+    if (selectedTab === "referrals") {
+      fetchReferrals();
+    }
+  }, [selectedTab]);
+
   if (loading) return <div className="text-center mt-8">Loading...</div>;
   if (!memberData) return <div className="text-center mt-8 text-red-500">Member not found.</div>;
-
-
-
-
 
   const summaryCards = [
     { title: "Loyalty Points", value: memberData.current_loyalty_points || 0 },
@@ -48,7 +64,7 @@ const TransactionStatuss = () => {
     {
       title: "Hotels",
       subtitle: "Exclusive stays unlocked",
-      action: "View Reward ",
+      action: "View Reward",
       image: hotel1,
     },
     {
@@ -63,13 +79,6 @@ const TransactionStatuss = () => {
       action: "View Discount",
       image: hotel3,
     },
-  ];
-
-  const referralsCards = [
-    { date: "12/02/2024", name: "Priya Mehra", status: "Registered", points: "+250 pts" },
-    { date: "12/02/2024", name: "Rahul Ghosh", status: "Registered", points: "+500 pts" },
-    { date: "12/02/2024", name: "Ankit Sharma", status: "In Progress", points: "..." },
-    { date: "12/02/2024", name: "Tanya Roy", status: "Joined Event", points: "+100 pts" },
   ];
 
   return (
@@ -157,7 +166,7 @@ const TransactionStatuss = () => {
         </div>
       </div>
 
-      {/* Tab Content */}
+      {/* Redemptions Tab */}
       {selectedTab === "redemptions" && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
           {redemptionsCards.map((card, index) => (
@@ -186,6 +195,7 @@ const TransactionStatuss = () => {
         </div>
       )}
 
+      {/* Transactions Tab */}
       {selectedTab === "transactions" && (
         <div className="overflow-x-auto mt-6">
           <table className="min-w-full text-sm text-left">
@@ -217,6 +227,7 @@ const TransactionStatuss = () => {
         </div>
       )}
 
+      {/* Referrals Tab */}
       {selectedTab === "referrals" && (
         <div className="overflow-x-auto mt-6">
           <table className="min-w-full text-sm text-left">
@@ -230,19 +241,22 @@ const TransactionStatuss = () => {
               </tr>
             </thead>
             <tbody className="text-gray-700">
-              {referralsCards.map((item, index) => (
-                <tr key={index}>
-                  <td className="px-4 py-3">{item.date}</td>
-                  <td className="px-4 py-3">{item.name}</td>
-                  <td className="px-4 py-3">{item.status}</td>
-                  <td className="px-4 py-3">{item.points}</td>
-                  <td className="px-4 py-3">
-                    <a href="#" className="underline ">
-                      Refer and earn
-                    </a>
+              {referrals.length > 0 ? (
+                referrals.map((item, index) => (
+                  <tr key={index}>
+                    <td className="px-4 py-3">{item.date || "--"}</td>
+                    <td className="px-4 py-3">{item.name || "--"}</td>
+                    <td className="px-4 py-3">{item.status || "--"}</td>
+
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="5" className="px-4 py-4 text-center text-gray-500">
+                    No referrals available.
                   </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>

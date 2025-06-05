@@ -75,10 +75,10 @@ const SignIn = () => {
 
       const data = response.data;
 
-      if (data.access_token) {
+      if (data.access_token && data.member_id) {
         localStorage.setItem("authToken", data.access_token);
         toast.success("Login successful!");
-        navigate(`/dashboard/transactions/${data.id}`);
+        navigate(`/dashboard/transactions/${data.member_id}`);
       } else {
         toast.error("Invalid credentials. Please try again.");
       }
