@@ -34,7 +34,7 @@ const TransactionStatuss = () => {
     const fetchReferrals = async () => {
       try {
 
-       const token=  localStorage.getItem('authToken');
+        const token = localStorage.getItem('authToken');
         const response = await axios.get(
           `https://piramal-loyalty-dev.lockated.com/referrals.json?access_token=${token}`
         );
@@ -87,7 +87,10 @@ const TransactionStatuss = () => {
       <div className="flex justify-between items-center">
         <p className="text-lg font-semibold">
           You are on the{" "}
-          <span className="text-orange-500 font-bold">Bronze</span> Tier!
+          <span className="text-orange-500 font-bold capitalize">
+            {memberData?.member_status?.tier_level || "--"}
+          </span>{" "}
+          Tier!
         </p>
         <a href="#" className="text-sm text-orange-600 font-semibold">
           REFER & EARN
@@ -101,15 +104,30 @@ const TransactionStatuss = () => {
             <div className="text-sm mb-3 font-medium text-gray-900 uppercase">
               YOU NEED 750 POINTS TO UPGRADE ON NEXT TIER!
             </div>
-            <div className="flex text-sm mb-1">
-              <span className="text-lg font-bold text-gray-900">25</span>
-              <span className="text-sm text-gray-500 ml-1">/100 POINTS</span>
+            <div className="flex text-sm mb-1 align-center">
+              <span className="text-lg font-bold text-gray-900">
+                {memberData?.current_loyalty_points || 0}
+              </span>
+              <span className="text-sm text-gray-500 ml-1">/750 POINTS</span>
             </div>
           </div>
+
+          {/* Progress Bar */}
           <div className="relative w-full h-2 bg-gray-200 rounded-full">
-            <div className="absolute top-[-6px] left-[25%] w-4 h-4 bg-red-600 rounded-full border-2 border-white"></div>
-            <div className="h-2 bg-red-600 rounded-full" style={{ width: "25%" }}></div>
+            <div
+              className="absolute top-[-6px] bg-red-600 rounded-full border-2 border-white"
+              style={{
+                left: `${memberData?.member_status?.tier_progression || 0}`,
+                width: "1rem",
+                height: "1rem",
+              }}
+            ></div>
+            <div
+              className="h-2 bg-red-600 rounded-full"
+              style={{ width: `${memberData?.member_status?.tier_progression || 0}` }}
+            ></div>
           </div>
+
           <div className="flex justify-between text-sm mt-3 text-gray-700">
             <span>Bronze</span>
             <span>Silver</span>
@@ -124,6 +142,7 @@ const TransactionStatuss = () => {
           </button>
         </div>
       </div>
+
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6">
@@ -209,17 +228,25 @@ const TransactionStatuss = () => {
               </tr>
             </thead>
             <tbody className="text-gray-700">
-              {transactions.length > 0 ? transactions.map((item, index) => (
-                <tr key={index}>
-                  <td className="px-4 py-3">{item.date || "--"}</td>
-                  <td className="px-4 py-3">{item.type || "--"}</td>
-                  <td className="px-4 py-3">{item.name || "--"}</td>
-                  <td className="px-4 py-3">...</td>
-                  <td className="px-4 py-3">...</td>
-                </tr>
-              )) : (
+              {transactions.length > 0 ? (
+                transactions.map((item, index) => (
+                  <tr key={index}>
+                    <td className="px-4 py-3">{item.created_at ? new Date(item.created_at).toLocaleDateString() : "--"}</td>
+                    <td className="px-4 py-3 capitalize">{item.transaction_type || "--"}</td>
+                    <td className="px-4 py-3">{item.remarks || "--"}</td>
+                    <td className="px-4 py-3">
+                      {item.transaction_type === "credit" ? item.points : "--"}
+                    </td>
+                    <td className="px-4 py-3">
+                      {item.transaction_type === "debit" ? item.points : "--"}
+                    </td>
+                  </tr>
+                ))
+              ) : (
                 <tr>
-                  <td colSpan="5" className="px-4 py-4 text-center text-gray-500">No transactions available.</td>
+                  <td colSpan="5" className="px-4 py-4 text-center text-gray-500">
+                    No transactions available.
+                  </td>
                 </tr>
               )}
             </tbody>
@@ -236,15 +263,15 @@ const TransactionStatuss = () => {
                 <th className="px-4 py-3">Date</th>
                 <th className="px-4 py-3">Name referred</th>
                 <th className="px-4 py-3">Status</th>
-                <th className="px-4 py-3">Points Earned</th>
-                <th className="px-4 py-3">Refer Someone</th>
+                {/* <th className="px-4 py-3">Points Earned</th>
+                <th className="px-4 py-3">Refer Someone</th> */}
               </tr>
             </thead>
             <tbody className="text-gray-700">
               {referrals.length > 0 ? (
                 referrals.map((item, index) => (
                   <tr key={index}>
-                    <td className="px-4 py-3">{item.date || "--"}</td>
+                    <td className="px-4 py-3">{item.created_at ? new Date(item.created_at).toLocaleDateString() : "--"}</td>
                     <td className="px-4 py-3">{item.name || "--"}</td>
                     <td className="px-4 py-3">{item.status || "--"}</td>
 
