@@ -60,6 +60,9 @@ const SignIn = () => {
       if (data.access_token && data.member_id) {
         localStorage.setItem("authToken", data.access_token);
         localStorage.setItem("member_id", data.member_id);
+        localStorage.setItem("id", data.id);
+
+
         localStorage.setItem("firstName", data.first_name);
         localStorage.setItem("lastName", data.last_name);
         localStorage.setItem("email", data.email);
@@ -132,6 +135,8 @@ const SignIn = () => {
       if (data.access_token) {
         localStorage.setItem("authToken", data.access_token);
         localStorage.setItem("member_id", data.member_id);
+                localStorage.setItem("id", data.id);
+
         localStorage.setItem("firstName", data.first_name);
         localStorage.setItem("lastName", data.last_name);
         localStorage.setItem("email", data.email);
