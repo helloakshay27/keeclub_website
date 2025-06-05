@@ -274,10 +274,10 @@ const TransactionStatuss = () => {
                     <td className="px-4 py-3 capitalize">{item.transaction_type || "--"}</td>
                     <td className="px-4 py-3">{item.remarks || "--"}</td>
                     <td className="px-4 py-3">
-                      {item.transaction_type === "credit" ? item.balanced_points : "--"}
+                      { item.balanced_points || "--"}
                     </td>
                     <td className="px-4 py-3">
-                      {item.transaction_type === "debit" ? item.points : "--"}
+                      { item.points || "--"}
                     </td>
                   </tr>
                 ))

@@ -27,6 +27,7 @@ import HotelCheckout from './Dashboard/HotelCheckout'
 import HotelBooks from './Dashboard/HotelBooks'
 // import HotelDetails from './Dashboard/HotelDetails'
 import ReferNow from './Pages/refer_now'
+import { ToastContainer } from 'react-toastify'
 
 const routeConfigs = [
   { path: '/', element: <Home />, transparent: true },
@@ -77,6 +78,18 @@ function App() {
           </Route>
 
         </Routes>
+        <ToastContainer
+          position="top-right"
+          autoClose={4000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+        />
       </main>
       {!hideLayout && <Footer />}
     </div>

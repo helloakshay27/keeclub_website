@@ -72,7 +72,7 @@ const Header = ({ isTransparent }) => {
           <li className="hover:text-[#fa4615] cursor-pointer">
             <Link to="/">HOME</Link>
           </li>
-          <li className="hover:text-[#fa4615] cursor-pointer">REFER AND EARN</li>
+          <Link to="/refer-now" className="hover:text-[#fa4615] cursor-pointer">REFER AND EARN</Link>
 
           <li className="hover:text-[#fa4615] cursor-pointer">
             <Link to="/events">EVENTS</Link>

@@ -10,8 +10,9 @@ const cardsData = [
       'Piramal Realty knows what it means to build model communities that care for each other, and with One Family Many Rewards, we intend to reward every member who helps build the Piramal family. We bring you the opportunity to include your loved ones in the Piramal family and win exclusive rewards for yourselves and the referred basis various slabs. To know more, please refer to the attached e-brochures.',
     highlightColor: '#FF4F12',
     buttonText: 'Know More',
-    onButtonClick: () => alert('Know More clicked'),
-    reverse: false,
+    onButtonClick: () => {
+      window.location.href = '/refer-now'; // Navigate to the refer page
+    }, reverse: false,
   },
   {
     imageUrl: 'https://images.pexels.com/photos/20809163/pexels-photo-20809163/free-photo-of-black-volkswagen-golf-gti.jpeg?auto=compress&cs=tinysrgb&w=1200',
@@ -58,7 +59,9 @@ const cardsData = [
     ),
     highlightColor: '#FF4F12',
     buttonText: 'Avail Now',
-    onButtonClick: () => alert('Avail Now clicked'),
+    onButtonClick: () => {
+      window.location.href = '/login'; // Navigate to the refer page
+    },
     reverse: false,
   },
   {
@@ -77,7 +80,9 @@ const cardsData = [
     ),
     highlightColor: '#FF4F12',
     buttonText: 'View Past Events',
-    onButtonClick: () => alert('View Past Events clicked'),
+    onButtonClick: () => {
+      window.location.href = '/events'; // Navigate to the refer page
+    },
     reverse: true,
   },
 
@@ -97,8 +102,9 @@ const cardsData = [
     ),
     highlightColor: '#FF4F12',
     buttonText: 'Read Now',
-    onButtonClick: () => alert('Read Now clicked'),
-    reverse: false,
+    onButtonClick: () => {
+      window.location.href = '/refer-now'; // Navigate to the refer page
+    }, reverse: false,
   },
 ];
 
