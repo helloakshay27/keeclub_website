@@ -70,8 +70,6 @@ function App() {
               <Route path="/dashboard/hotel-details/hotel-checkout" element={<HotelCheckout />} />
               <Route path="/dashboard/hotel-details/hotel-checkout/hotel-book" element={<HotelBooks />} />
               <Route path="hotel-details" element={<HotelDetails />} />
-              {/* Add more dashboard routes here */}
-
             </Route>
           </Route>
 

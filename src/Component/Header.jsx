@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import classNames from 'classnames';
 import { Menu, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import ComLogo from "../assets/ComLogo.png"
 
 const Header = ({ isTransparent }) => {
   const [scrolled, setScrolled] = useState(false);
@@ -54,7 +55,7 @@ const Header = ({ isTransparent }) => {
       <div className="flex items-center">
         <a href="/">
           <img
-            src="https://piramaluat.s3.ap-south-1.amazonaws.com/Website/Uploads/Piramal/Images/4192015.png"
+            src={ComLogo}
             alt="Kclub Logo"
             className={classNames(
               "w-auto transition-all duration-300",

@@ -2,8 +2,7 @@ import React, { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import logo from "../../assets/piramal_bg.png";
 import { useNavigate } from "react-router-dom";
-import logo_bg from "../../assets/bg_light.png";
-import logo_main from "../../assets/logo.png";
+import ComLogo from "../../assets/ComLogo.png";
 
 
 
@@ -249,10 +248,9 @@ const SignIn = () => {
             <div className="w-full max-w-lg mx-auto px-4 ">
 
               <div className=" p-6 sm:p-8 md:p-12 mx-auto flex flex-col ">
-
                 <img
-                  className="w-[300px] h-[180px] xs:w-[120px] xs:h-[120px] sm:w-[160px] sm:h-[50px] md:w-[200px] md:h-[60px] lg:w-[300px] lg:h-[95px] mx-auto object-contain"
-                  src={logo_main}
+                  className="w-[200px] h-[120px] xs:w-[120px] xs:h-[80px] sm:w-[160px] sm:h-[100px] md:w-[200px] md:h-[120px] lg:w-[320px] lg:h-[180px] xl:w-[200px] xl:h-[150px] mx-auto object-contain"
+                  src={ComLogo}
                   alt="Logo"
                 />
 

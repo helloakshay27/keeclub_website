@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import hotel1 from "../assets/Hotel/hotel1.jpg";
 import hotel2 from "../assets/Hotel/hotel2.jpg";
 import hotel3 from "../assets/Hotel/hotel3.jpg";
@@ -6,6 +6,22 @@ import { Link } from "react-router-dom";
 
 const TransactionStatuss = () => {
   const [selectedTab, setSelectedTab] = useState("redemptions");
+
+
+  const [memeberData, setMemberData] = useState([])
+
+  const fetchAPI = async () => {
+    const response = fetch("https://piramal-loyalty-dev.lockated.com/loyalty/members");
+    const data = (await response).json();
+    setMemberData(data)
+  }
+
+  useEffect(() => {
+    fetchAPI()
+  }, [])
+
+  console.log(memeberData)
+
 
   const summaryCards = [
     { title: "Loyalty Points", value: 1600 },

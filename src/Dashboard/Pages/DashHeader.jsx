@@ -2,6 +2,7 @@ import React from "react";
 import { FaSearch } from "react-icons/fa";
 import { ChevronDown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import ComLogo from "../../assets/ComLogo.png"
 
 const DashHeader = () => {
   const firstName = sessionStorage.getItem("firstname") || "Guest";
@@ -21,7 +22,7 @@ const DashHeader = () => {
       <header className="flex items-center justify-between px-8 h-20 bg-white shadow-md">
         <div className="flex items-center space-x-10 bg-[#24293c] p-2 rounded-lg">
           <img
-            src="https://piramaluat.s3.ap-south-1.amazonaws.com/Website/Uploads/Piramal/Images/4192015.png"
+            src={ComLogo}
             alt="GoPhygital Logo"
             className="h-15 w-auto cursor-pointer"
             onClick={() => navigate("/")}
