@@ -69,7 +69,7 @@ function App() {
             <Route element={<RootLayout />}>
               <Route index element={<Navigate to="transactions" replace />} />
               <Route path="transactions/:id" element={<TransactionStatuss />} />
-              <Route path="hotel-list" element={<HotelList />} />
+              {/* <Route path="hotel-list" element={<HotelList />} /> */}
               <Route path="/dashboard/hotel-details/hotel-checkout" element={<HotelCheckout />} />
               <Route path="/dashboard/hotel-details/hotel-checkout/hotel-book" element={<HotelBooks />} />
               {/* <Route path="hotel-details" element={<HotelDetails />} /> */}
