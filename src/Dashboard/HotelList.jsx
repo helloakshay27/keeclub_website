@@ -5,12 +5,11 @@ import card2 from "../assets/Hotel/Card2.png";
 import card3 from "../assets/Hotel/Card3.png";
 import Image1 from "../assets/Hotel/Image1.png";
 import Image2 from "../assets/Hotel/Image2.png";
-import Image3 from "../assets/Hotel/Image3.png";
 import { Link } from "react-router-dom";
 
 // Separate arrays for each section
 const popularHotels = [card1, card2, card3, card1, card2];
-const weekendHotels = [Image1, Image2, Image3, Image1, Image3];
+const weekendHotels = [Image1, Image2, Image1];
 
 // HotelCard component
 const HotelCard = ({ img }) => (
