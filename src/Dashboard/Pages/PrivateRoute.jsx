@@ -1,8 +1,12 @@
-// components/PrivateRoute.jsx
-import { Navigate, Outlet } from 'react-router-dom';
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
 
 export default function PrivateRoute() {
-  const isAuthenticated = Boolean(localStorage.getItem('authToken')); // Replace with real auth check
+  const isAuthenticated = Boolean(localStorage.getItem('authToken'));
+  const location = useLocation();
 
-  return isAuthenticated ? <Outlet /> : <Navigate to="/login"  />;
+  return isAuthenticated ? (
+    <Outlet />
+  ) : (
+    <Navigate to="/login" state={{ from: location.pathname }} replace />
+  );
 }

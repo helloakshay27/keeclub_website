@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 
@@ -21,7 +21,7 @@ const SignIn = () => {
   const [OtpSection, setOtpSection] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
-
+  const location = useLocation();
   const toggleContent = (content) => {
     setSelectedContent(content);
     setError("");
@@ -67,7 +67,8 @@ const SignIn = () => {
         localStorage.setItem("lastName", data.last_name);
         localStorage.setItem("email", data.email);
         toast.success("Login successful!");
-        navigate(`/dashboard/transactions/${data.member_id}`);
+        const from = location.state?.from || `/dashboard/transactions/${data.member_id}`;
+        navigate(from);
       } else {
         toast.error("Invalid credentials. Please try again.");
       }
@@ -110,6 +111,10 @@ const SignIn = () => {
     }
   };
 
+
+
+
+
   const handleVerifyOtp = async (e) => {
     e.preventDefault();
 
@@ -135,13 +140,14 @@ const SignIn = () => {
       if (data.access_token) {
         localStorage.setItem("authToken", data.access_token);
         localStorage.setItem("member_id", data.member_id);
-                localStorage.setItem("id", data.id);
+        localStorage.setItem("id", data.id);
 
         localStorage.setItem("firstName", data.first_name);
         localStorage.setItem("lastName", data.last_name);
         localStorage.setItem("email", data.email);
         toast.success("Login successful!");
-        navigate(`/dashboard/transactions/${data.member_id}`);
+        const from = location.state?.from || `/dashboard/transactions/${data.member_id}`;
+        navigate(from);
       } else {
         toast.error("Invalid credentials. Please try again.");
       }

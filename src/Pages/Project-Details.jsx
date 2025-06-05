@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from "react";
 import { ArrowLeft, Share2 } from "lucide-react";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
+import EnquiryModal from "../Models/EnquiryModal";
+import SiteVisitModal from "../Models/SiteVisitModal";
 
 const ProjectDetail = () => {
   const { id } = useParams();
@@ -17,7 +19,54 @@ const ProjectDetail = () => {
   const [selectedGalleryImage, setSelectedGalleryImage] = useState(null);
   const [showGalleryModal, setShowGalleryModal] = useState(false);
   const [selectedVideoUrl, setSelectedVideoUrl] = useState(null);
-  const Navigate = useNavigate();
+  const navigate = useNavigate();
+  const [showEnquiryModal, setShowEnquiryModal] = useState(false);
+  const [showSiteVisitModal, setShowSiteVisitModal] = useState(false);
+
+  const handleEnquireClick = () => {
+    if (localStorage.getItem("authToken")) {
+      setShowEnquiryModal(true);
+    } else {
+          navigate("/login", { state: { from: location.pathname } });
+
+    }
+  };
+
+  const handleSiteVisitClick = () => {
+    if (localStorage.getItem("authToken")) {
+      setShowSiteVisitModal(true);
+    } else {
+    navigate("/login", { state: { from: location.pathname } });
+    }
+  };
+  const handleEnquirySubmit = async (formData) => {
+    try {
+      console.log("Submitting enquiry:", formData);
+
+      const response = await axios.post(
+        "https://piramal-loyalty-dev.lockated.com/enquiry_forms.json",
+        formData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + localStorage.getItem("authToken"),
+          }
+          // withCredentials: true, // if cookies needed
+        }
+      );
+
+      console.log("Enquiry response:", response.data);
+      setShowEnquiryModal(false);
+    } catch (error) {
+      console.error("Error submitting enquiry:", error);
+      // Show error message if needed
+    }
+  };
+
+  const handleSiteVisitSubmit = (formData) => {
+    console.log("Site visit booked:", formData);
+    setShowSiteVisitModal(false);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -82,9 +131,8 @@ const ProjectDetail = () => {
       navigator
         .share({
           title: project.project_name || project.name,
-          text: `Check out ${project.project_name || project.name} in ${
-            project.location?.city || "Mumbai"
-          }`,
+          text: `Check out ${project.project_name || project.name} in ${project.location?.city || "Mumbai"
+            }`,
           url: window.location.href,
         })
         .catch((error) => console.log("Error sharing", error));
@@ -216,8 +264,8 @@ const ProjectDetail = () => {
               <p className="font-bold text-base">
                 {project.configurations && project.configurations.length > 0
                   ? project.configurations
-                      .map((config) => config.name)
-                      .join(", ")
+                    .map((config) => config.name)
+                    .join(", ")
                   : "2, 3 & 4 BHK"}
               </p>
             </div>
@@ -236,11 +284,10 @@ const ProjectDetail = () => {
         {/* Tabs */}
         <div className="grid grid-cols-3 gap-4 mb-4">
           <button
-            className={`cursor-pointer text-center py-2 ${
-              activeTab === "Gallery"
-                ? "text-indigo-700 font-medium"
-                : "text-gray-500"
-            }`}
+            className={`cursor-pointer text-center py-2 ${activeTab === "Gallery"
+              ? "text-indigo-700 font-medium"
+              : "text-gray-500"
+              }`}
             onClick={() => {
               setActiveTab("Gallery");
               scrollWithOffset(galleryRef);
@@ -249,11 +296,10 @@ const ProjectDetail = () => {
             Gallery
           </button>
           <button
-            className={`cursor-pointer text-center py-2 ${
-              activeTab === "Amenities"
-                ? "text-indigo-700 font-medium"
-                : "text-gray-500"
-            }`}
+            className={`cursor-pointer text-center py-2 ${activeTab === "Amenities"
+              ? "text-indigo-700 font-medium"
+              : "text-gray-500"
+              }`}
             onClick={() => {
               setActiveTab("Amenities");
               scrollWithOffset(amenitiesRef);
@@ -262,11 +308,10 @@ const ProjectDetail = () => {
             Amenities
           </button>
           <button
-            className={` cursor-pointer text-center py-2 ${
-              activeTab === "Highlights"
-                ? "text-indigo-700 font-medium"
-                : "text-gray-500"
-            }`}
+            className={` cursor-pointer text-center py-2 ${activeTab === "Highlights"
+              ? "text-indigo-700 font-medium"
+              : "text-gray-500"
+              }`}
             onClick={() => {
               setActiveTab("Highlights");
               scrollWithOffset(highlightsRef);
@@ -280,16 +325,34 @@ const ProjectDetail = () => {
 
         {/* Action Buttons */}
         <div className="flex gap-4 mb-6">
-          <button className="flex-1 bg-orange-500 text-white py-2 rounded-md font-medium">
+          <button
+            onClick={handleEnquireClick}
+            className="flex-1 bg-orange-500 text-white py-2 rounded-md font-medium"
+          >
             Enquire Now
           </button>
+
           <button
+            onClick={handleSiteVisitClick}
             className="flex-1 border-2 border-gray-200 py-2 rounded-md cursor-pointer text-gray-600 hover:bg-gray-100 transition duration-200"
-            onClick={() => Navigate("/login")}
           >
             Book A Site Visit
           </button>
         </div>
+        <EnquiryModal
+          isOpen={showEnquiryModal}
+          onClose={() => setShowEnquiryModal(false)}
+          onSubmit={handleEnquirySubmit}
+          projectId={id}
+
+        />
+
+        <SiteVisitModal
+          isOpen={showSiteVisitModal}
+          onClose={() => setShowSiteVisitModal(false)}
+          onSubmit={handleSiteVisitSubmit}
+          projectId={id}
+        />
 
         {/* RERA Details */}
         <div className="border-2 border-gray-200 rounded p-3 text-gray-600">
@@ -298,7 +361,7 @@ const ProjectDetail = () => {
             {project.rera_number_multiple?.length > 0
               ? project.rera_number_multiple.join(" | ")
               : project.rera_number ||
-                "P51900015854 | P51900016482 | P51900021057"}
+              "P51900015854 | P51900016482 | P51900021057"}
           </p>
           <p className="text-sm break-all">
             {project.rera_url || "https://maharera.mahaonline.gov.in/"}
@@ -307,7 +370,7 @@ const ProjectDetail = () => {
       </div>
 
       {/* Right Panel (Content) */}
-      <div className="lg:w-2/3 mr-5">
+      <div className="lg:w-2/3 mr-5" style={{ zIndex: -1 }}>
         {/* Main Project Image */}
         <div className="w-full h-64 sm:h-96 md:h-[300px] relative">
           <img
@@ -475,50 +538,50 @@ const ProjectDetail = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
               {project.amenities?.length > 0
                 ? project.amenities.map((amenity, index) => (
-                    <div
-                      key={index}
-                      className="p-2 flex items-center space-x-3 rounded-lg"
-                      style={{ border: "2px solid #e4e7ec" }}
-                    >
-                      <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
-                        <img
-                          src={amenity.icon_url || "/api/placeholder/32/32"}
-                          alt={amenity.name}
-                          className="w-6 h-6 object-contain"
-                        />
-                      </div>
-                      <span className="text-base text-gray-800 font-medium">
-                        {amenity.name}
-                      </span>
+                  <div
+                    key={index}
+                    className="p-2 flex items-center space-x-3 rounded-lg"
+                    style={{ border: "2px solid #e4e7ec" }}
+                  >
+                    <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
+                      <img
+                        src={amenity.icon_url || "/api/placeholder/32/32"}
+                        alt={amenity.name}
+                        className="w-6 h-6 object-contain"
+                      />
                     </div>
-                  ))
+                    <span className="text-base text-gray-800 font-medium">
+                      {amenity.name}
+                    </span>
+                  </div>
+                ))
                 : [
-                    "Swimming Pool",
-                    "Gym",
-                    "Garden",
-                    "Children Play Area",
-                    "Club House",
-                    "Security",
-                    "Indoor Games",
-                    "Jogging Track",
-                  ].map((name, index) => (
-                    <div
-                      key={index}
-                      className="p-2 flex items-center space-x-3 rounded-lg"
-                      style={{ border: "2px solid #e4e7ec" }}
-                    >
-                      <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
-                        <img
-                          src="/api/placeholder/32/32"
-                          alt={name}
-                          className="w-6 h-6 object-contain"
-                        />
-                      </div>
-                      <span className="text-base text-gray-800 font-medium">
-                        {name}
-                      </span>
+                  "Swimming Pool",
+                  "Gym",
+                  "Garden",
+                  "Children Play Area",
+                  "Club House",
+                  "Security",
+                  "Indoor Games",
+                  "Jogging Track",
+                ].map((name, index) => (
+                  <div
+                    key={index}
+                    className="p-2 flex items-center space-x-3 rounded-lg"
+                    style={{ border: "2px solid #e4e7ec" }}
+                  >
+                    <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
+                      <img
+                        src="/api/placeholder/32/32"
+                        alt={name}
+                        className="w-6 h-6 object-contain"
+                      />
                     </div>
-                  ))}
+                    <span className="text-base text-gray-800 font-medium">
+                      {name}
+                    </span>
+                  </div>
+                ))}
             </div>
           </div>
 

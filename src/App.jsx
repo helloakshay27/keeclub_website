@@ -42,7 +42,7 @@ const routeConfigs = [
   { path: '/forgot-password', element: <Forgot />, transparent: true, hideLayout: true },
   { path: '/forgot-otp', element: <ForgotOtp />, transparent: true, hideLayout: true },
   { path: '/reset-password', element: <CreatePassword />, transparent: true, hideLayout: true },
-  { path: '/refer-now', element: <ReferNow />, transparent: true },
+  { path: '/refer-now', element: <ReferNow />, transparent: false },
 
   { path: '/blog/:id', element: <BlogDetailPage />, transparent: true },
   { path: '*', element: <PageNotFound />, transparent: true, hideLayout: true }
@@ -59,7 +59,7 @@ function App() {
   return (
     <div className="flex flex-col min-h-screen">
       {!hideLayout && <Header key={location.pathname} isTransparent={isTransparent} />}
-      <main className={`flex-1 ${!hideLayout && !isTransparent ? 'pt-20 sm:pt-28' : ''}`}>
+      <main className={`flex-1 `}>
         <Routes>
           {routeConfigs.map(({ path, element }) => (
             <Route key={path} path={path} element={element} />
