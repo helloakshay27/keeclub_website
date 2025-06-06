@@ -41,8 +41,6 @@ const ProjectDetail = () => {
   };
   const handleEnquirySubmit = async (formData) => {
     try {
-      console.log("Submitting enquiry:", formData);
-
       const response = await axios.post(
         "https://piramal-loyalty-dev.lockated.com/enquiry_forms.json",
         formData,
@@ -54,8 +52,6 @@ const ProjectDetail = () => {
           // withCredentials: true, // if cookies needed
         }
       );
-
-      console.log("Enquiry response:", response.data);
       setShowEnquiryModal(false);
     } catch (error) {
       console.error("Error submitting enquiry:", error);
@@ -221,7 +217,7 @@ const ProjectDetail = () => {
   };
 
   return (
-    <div className="flex flex-col lg:flex-row min-h-screen">
+    <div className="flex flex-col lg:flex-row min-h-screen pt-30">
       <div className="lg:w-1/3 lg:h-screen lg:sticky lg:top-0 p-6">
         <div className="absolute top-6 left-6 z-10">
           <button

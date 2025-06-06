@@ -20,11 +20,11 @@ const DashHeader = () => {
   return (
     <>
       <header className="flex items-center justify-between px-8 h-20 bg-white shadow-md">
-        <div className="flex items-center space-x-10 bg-[#24293c] p-2 rounded-lg">
+        <div className="flex items-center space-x-10 bg-[#24293c] p-2 rounded-sm">
           <img
             src={ComLogo}
             alt="GoPhygital Logo"
-            className="h-15 w-auto cursor-pointer"
+            className="h-13 w-auto cursor-pointer"
             onClick={() => navigate("/")}
           />
           {/* ... */}

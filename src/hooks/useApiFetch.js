@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-const useApiFetch = (url) => {
+const useApiFetch = (url, token = null) => {
   const [data, setData] = useState(null);     // fetched data
   const [loading, setLoading] = useState(true); // loading state
   const [error, setError] = useState(null);     // error state
@@ -11,11 +11,25 @@ const useApiFetch = (url) => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const response = await fetch(url);
+        const headers = {
+          'Content-Type': 'application/json',
+        };
+
+        if (token) {
+          headers['Authorization'] = `Bearer ${token}`;
+        }
+
+        const response = await fetch(url, {
+          method: 'GET',
+          headers,
+        });
+
         if (!response.ok) {
           throw new Error('Failed to fetch data');
         }
+
         const result = await response.json();
+
         if (isMounted) {
           setData(result);
           setLoading(false);
@@ -33,7 +47,7 @@ const useApiFetch = (url) => {
     return () => {
       isMounted = false; // avoid setting state if component is unmounted
     };
-  }, [url]);
+  }, [url, token]);
 
   return { data, loading, error };
 };

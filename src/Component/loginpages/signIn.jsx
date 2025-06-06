@@ -6,8 +6,6 @@ import { toast } from "react-toastify";
 
 import logo from "../../assets/piramal_bg.png";
 import ComLogo from "../../assets/ComLogo.png";
-import logo_bg from "../../assets/bg_light.png";
-import logo_main from "../../assets/logo.png";
 
 const SignIn = () => {
   const [email, setEmail] = useState("");

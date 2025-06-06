@@ -103,7 +103,6 @@ const SiteVisitModal = ({ isOpen, onClose, onSubmit, projectId }) => {
             }
 
             const data = await res.json();
-            console.log("Site visit scheduled:", data);
             toast.success("Site visit booked successfully!");
             setLoading(false);
             onSubmit(data);

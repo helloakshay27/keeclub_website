@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import useApiFetch from "../hooks/useApiFetch";
 
 const Event = () => {
-    const { data } = useApiFetch('https://api-connect.panchshil.com/events.json');
+    const { data } = useApiFetch('https://piramal-loyalty-dev.lockated.com/events.json', );
 
     const events = data?.events || [];
 
@@ -40,7 +40,7 @@ const Event = () => {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
                     {events.map((event, index) => (
-                        <Link to={`/event/${index}`} key={index}>
+                        <Link to={`/event/${event.id}`} key={index}>
                             <div
                                 className="rounded shadow-md overflow-hidden relative border-b-2 border-orange-500"
                             >
