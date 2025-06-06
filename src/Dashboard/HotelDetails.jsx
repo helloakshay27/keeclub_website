@@ -4,13 +4,13 @@ import Hotel1_1 from "../assets/Hotel/Hotel1_1.png"
 import Hotel1_2 from "../assets/Hotel/Hotel1_2.png"
 import Hotel1_3 from "../assets/Hotel/Hotel1_3.png"
 import Hotel1_4 from "../assets/Hotel/Hotel1_4.png"
-import check from "../assets/Hotel/icons/check.png"
-import desk from "../assets/Hotel/icons/desk.png"
+import Check from "../assets/Hotel/icons/Check.png"
+import Desk from "../assets/Hotel/icons/Desk.png"
 import Parking from "../assets/Hotel/icons/Parking.png"
-import restraunt from "../assets/Hotel/icons/restraunt.png"
-import sq_ft from "../assets/Hotel/icons/sq_ft.png"
-import bed from "../assets/Hotel/icons/bed.png"
-import person from "../assets/Hotel/icons/person.png"
+import Restraunt from "../assets/Hotel/icons/Restraunt.png"
+import Sqft from "../assets/Hotel/icons/Sqft.png"
+import Bed from "../assets/Hotel/icons/Bed.png"
+import Person from "../assets/Hotel/icons/Person.png"
 import Wifi from "../assets/Hotel/icons/Wifi.png"
 import HotelBed from "../assets/Hotel/HotelBed.png"
 
@@ -36,20 +36,20 @@ const Accessibility=()=>{
 const Overview=()=>{
     const PropertyDetails=[{
         name:"24/7 front desk",
-        img:desk
+        img:Desk
     },{
         name:"Parking Included",
         img:Parking
     },{
         name:"Restraunt",
-        img:restraunt
+        img:Restraunt
     },{
         name:"Free Wifi",
         img:Wifi
     },
     {
         name:"Housekeeping",
-        img:check
+        img:Check
     }
 ]
 const RoomDetails=[{
@@ -58,19 +58,19 @@ const RoomDetails=[{
 },
 {
      name:"250 sq ft",
-    img:sq_ft
+    img:Sqft
 },
 {
     name:"Sleeps 3",
-    img:person
+    img:Person
 },
 {
     name:"1 King Bed",
-    img:bed
+    img:Bed
 },
 {
      name:"Reserve now, pay later",
-    img:check
+    img:Check
 },{
     name:"Free Wifi",
     img:Wifi

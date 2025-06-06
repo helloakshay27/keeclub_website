@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import { Search } from "lucide-react";
-import card1 from "../assets/Hotel/Card1.png";
-import card2 from "../assets/Hotel/Card2.png";
-import card3 from "../assets/Hotel/Card3.png";
+import Card1 from "../assets/Hotel/Card1.png";
+import Card2 from "../assets/Hotel/Card2.png";
+import Card3 from "../assets/Hotel/Card3.png";
 import Image1 from "../assets/Hotel/Image1.png";
 import Image2 from "../assets/Hotel/Image2.png";
 import Image3 from "../assets/Hotel/Image3.png";
 
 // Separate arrays for each section
-const popularHotels = [card1, card2, card3, card1, card2];
+const popularHotels = [Card1, Card2, Card3, Card1, Card2];
 const weekendHotels = [Image1, Image2, Image3, Image1, Image3];
 
 // HotelCard component
