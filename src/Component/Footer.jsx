@@ -43,24 +43,19 @@ const Footer = () => {
           </div>
         </div>
 
-
-
-        {/* Newsletter */}
         <div className="space-y-2">
-  <h4 className="text-sm text-gray-400">Subscribe to our newsletter</h4>
-  <div className="flex w-full max-w-md mx-auto">
-  <input
-    type="email"
-    placeholder="Enter your E-mail"
-    className="flex-grow px-4 py-2 text-black bg-white outline-none placeholder:text-sm rounded-l"
-  />
-  <button className="bg-[#F9461C] text-white px-5 py-2 rounded-r">
-    Subscribe
-  </button>
-</div>
-
-</div>
-
+          <h4 className="text-sm text-gray-400">Subscribe to our newsletter</h4>
+          <div className="flex w-full max-w-md mx-auto">
+            <input
+              type="email"
+              placeholder="Enter your E-mail"
+              className="flex-grow px-4 py-2 text-black bg-white outline-none placeholder:text-sm rounded-l max-sm:w-[60%]"
+            />
+            <button className="bg-[#F9461C] text-white px-5 py-2 rounded-r max-sm:w-[40%]">
+              Subscribe
+            </button>
+          </div>
+        </div>
       </div>
 
       {/* Bottom Bar */}

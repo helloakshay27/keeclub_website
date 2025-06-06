@@ -46,7 +46,10 @@ const Event = () => {
             {/* Events Section */}
             <div className="px-4 py-8 sm:py-10 md:py-12 max-w-7xl mx-auto">
                 <h2 className="text-center text-2xl sm:text-3xl font-bold text-orange-600 mb-3 uppercase">Past Events</h2>
-                <hr className="border-t-4 border-orange-600 w-12 mx-auto mb-6" />
+                <hr className="border-t-2 border-orange-600 w-[200px] mx-auto mb-6" />
+                <p className="text-center text-base sm:text-lg md:text-xl lg:text-2xl font-extralight">
+                    BROWSE EVENT CATEGORIES
+                </p>
 
                 {/* Category Toggle */}
                 <div className="flex justify-center mt-10 mb-12">
