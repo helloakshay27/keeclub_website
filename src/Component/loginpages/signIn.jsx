@@ -1,16 +1,15 @@
 import React, { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
+import { useNavigate, useLocation } from "react-router-dom";
+import axios from "axios";
+import { toast } from "react-toastify";
+
 import logo from "../../assets/piramal_bg.png";
-import { useNavigate } from "react-router-dom";
+import ComLogo from "../../assets/ComLogo.png";
 import logo_bg from "../../assets/bg_light.png";
 import logo_main from "../../assets/logo.png";
 
-
-
-
-
 const SignIn = () => {
-  // State management
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [mobile, setMobile] = useState("");
@@ -22,29 +21,14 @@ const SignIn = () => {
   const [OtpSection, setOtpSection] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
-
-
-  // Mock functions for demo
-  const toast = {
-    error: (message) => console.log(`Error: ${message}`),
-    success: (message) => console.log(`Success: ${message}`)
-  };
-
-
-  // Configuration
-  const config = {
-    baseURL: "https://api-connect.panchshil.com/",
-    logoUrl: logo,
-    showRegisterButton: true,
-  };
-
+  const location = useLocation();
   const toggleContent = (content) => {
     setSelectedContent(content);
     setError("");
   };
 
   const regiterPage = () => {
-    navigate("/Register");
+    navigate("/register");
   };
 
   const handlePasswordLogin = async (e) => {
@@ -59,56 +43,118 @@ const SignIn = () => {
       return;
     }
 
-    // Mock login (no API call)
-    if (email === "demo@gmail.com" && password === "12345678") {
+    try {
+      const response = await axios.post(
+        `https://piramal-loyalty-dev.lockated.com/api/users/sign_in`,
+        null,
+        {
+          params: {
+            email,
+            password,
+          },
+        }
+      );
 
-      localStorage.setItem("authToken", "demo-auth-token");
-      toast.success("Login successful!");
-      navigate("/dashboard");
-    } else {
-      toast.error("Invalid credentials. Please try again.");
+      const data = response.data;
+
+      if (data.access_token && data.member_id) {
+        localStorage.setItem("authToken", data.access_token);
+        localStorage.setItem("member_id", data.member_id);
+        localStorage.setItem("id", data.id);
+
+
+        localStorage.setItem("firstName", data.first_name);
+        localStorage.setItem("lastName", data.last_name);
+        localStorage.setItem("email", data.email);
+        toast.success("Login successful!");
+        const from = location.state?.from || `/dashboard/transactions/${data.member_id}`;
+        navigate(from);
+      } else {
+        toast.error("Invalid credentials. Please try again.");
+      }
+    } catch (error) {
+      toast.error("Login failed. Please try again.");
+      console.error("Login error:", error);
     }
 
     setLoading(false);
   };
 
-
   const handleSendOtp = async (e) => {
     e.preventDefault();
+
     if (!mobile || !/^\d{10}$/.test(mobile)) {
       toast.error("Please enter a valid 10-digit mobile number.");
       return;
     }
+
     setError("");
     setLoading(true);
 
     try {
-      setOtpSection(false);
-      toast.success("OTP Sent successfully");
-      setShowOtpSection(true);
+      const response = await axios.post(
+        `https://piramal-loyalty-dev.lockated.com/generate_code?mobile=${mobile}`
+      );
+
+      if (response.status === 200) {
+        toast.success("OTP sent successfully");
+        setOtpSection(false);
+        setShowOtpSection(true);
+      } else {
+        toast.error("Failed to send OTP. Please try again.");
+      }
     } catch (err) {
-      toast.error(err.response?.data?.error || "An error occurred to Send OTP");
-      console.error(err);
+      toast.error(err.response?.data?.error || "An error occurred while sending OTP");
+      console.error("OTP Error:", err);
     } finally {
       setLoading(false);
     }
   };
 
+
+
+
+
   const handleVerifyOtp = async (e) => {
     e.preventDefault();
-    if (!otp) {
-      toast.error("Please enter a valid OTP.");
+
+    if (!otp || otp.length !== 5) {
+      toast.error("Please enter a valid 5-digit OTP.");
       return;
     }
+
+    if (!mobile || !/^\d{10}$/.test(mobile)) {
+      toast.error("Invalid mobile number. Please go back and enter again.");
+      return;
+    }
+
     setError("");
     setLoading(true);
 
     try {
-      toast.success("Login successfully");
-      navigate("/project-list");
+      const response = await axios.post(
+        `https://piramal-loyalty-dev.lockated.com/verify_code?mobile=${mobile}&otp=${otp}`
+      );
+      const data = response.data;
+
+      if (data.access_token) {
+        localStorage.setItem("authToken", data.access_token);
+        localStorage.setItem("member_id", data.member_id);
+        localStorage.setItem("id", data.id);
+
+        localStorage.setItem("firstName", data.first_name);
+        localStorage.setItem("lastName", data.last_name);
+        localStorage.setItem("email", data.email);
+        toast.success("Login successful!");
+        const from = location.state?.from || `/dashboard/transactions/${data.member_id}`;
+        navigate(from);
+      } else {
+        toast.error("Invalid credentials. Please try again.");
+      }
     } catch (err) {
       console.error(err);
-      setError(err.response?.data?.message || "An error occurred during login. Please try again.");
+      toast.error(err.response?.data?.error || "OTP verification failed.");
+      setError(err.response?.data?.error || "OTP verification failed.");
     } finally {
       setLoading(false);
     }
@@ -239,6 +285,7 @@ const SignIn = () => {
   return (
     <main className="h-full w-full overflow-hidden">
       <section>
+
         <div className="container-fluid h-full">
           <div
             className="min-h-screen flex items-center justify-center bg-cover bg-center bg-no-repeat"
@@ -249,12 +296,12 @@ const SignIn = () => {
             <div className="w-full max-w-lg mx-auto px-4 ">
 
               <div className=" p-6 sm:p-8 md:p-12 mx-auto flex flex-col ">
-
                 <img
-                  className="w-[300px] h-[180px] xs:w-[120px] xs:h-[120px] sm:w-[160px] sm:h-[50px] md:w-[200px] md:h-[60px] lg:w-[300px] lg:h-[95px] mx-auto object-contain"
-                  src={logo_main}
+                  className="w-[200px] h-[120px] xs:w-[120px] xs:h-[80px] sm:w-[160px] sm:h-[100px] md:w-[200px] md:h-[120px] lg:w-[320px] lg:h-[180px] xl:w-[200px] xl:h-[150px] mx-auto object-contain"
+                  src={ComLogo}
                   alt="Logo"
                 />
+
 
                 <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-start justify-between w-full mt-4 px-0 sm:px-4">
                   <div className="form-group">

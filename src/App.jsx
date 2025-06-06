@@ -22,10 +22,12 @@ import TransactionStatuss from './Dashboard/TransactionStatuss'
 import PrivateRoute from './Dashboard/Pages/PrivateRoute'
 import PageNotFound from './Pages/PageNotFound'
 import Services from './Dashboard/Services'
-import HotelList from './Dashboard/HotelList'
+// import HotelList from './Dashboard/HotelList'
 import HotelCheckout from './Dashboard/HotelCheckout'
 import HotelBooks from './Dashboard/HotelBooks'
-import HotelDetails from './Dashboard/HotelDetails'
+// import HotelDetails from './Dashboard/HotelDetails'
+import ReferNow from './Pages/refer_now'
+import { ToastContainer } from 'react-toastify'
 
 const routeConfigs = [
   { path: '/', element: <Home />, transparent: true },
@@ -41,6 +43,8 @@ const routeConfigs = [
   { path: '/forgot-password', element: <Forgot />, transparent: true, hideLayout: true },
   { path: '/forgot-otp', element: <ForgotOtp />, transparent: true, hideLayout: true },
   { path: '/reset-password', element: <CreatePassword />, transparent: true, hideLayout: true },
+  { path: '/refer-now', element: <ReferNow />, transparent: false },
+
   { path: '/blog/:id', element: <BlogDetailPage />, transparent: true },
   { path: '*', element: <PageNotFound />, transparent: true, hideLayout: true }
 ];
@@ -56,7 +60,7 @@ function App() {
   return (
     <div className="flex flex-col min-h-screen">
       {!hideLayout && <Header key={location.pathname} isTransparent={isTransparent} />}
-      <main className={`flex-1 ${!hideLayout && !isTransparent ? 'pt-20 sm:pt-28' : ''}`}>
+      <main className={`flex-1 `}>
         <Routes>
           {routeConfigs.map(({ path, element }) => (
             <Route key={path} path={path} element={element} />
@@ -70,11 +74,24 @@ function App() {
               <Route path="hotel-checkout" element={<HotelCheckout />} />
               <Route path="hotel-books" element={<HotelBooks />} />
               <Route path="hotel-details" element={<HotelDetails />} />
+              {/* Add more dashboard routes here */}
 
             </Route>
           </Route>
 
         </Routes>
+        <ToastContainer
+          position="top-right"
+          autoClose={4000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+        />
       </main>
       {!hideLayout && <Footer />}
     </div>
