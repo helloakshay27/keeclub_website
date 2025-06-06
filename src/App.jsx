@@ -34,7 +34,7 @@ const routeConfigs = [
   { path: '/', element: <Home />, transparent: true },
   { path: '/about', element: <About />, transparent: false },
   { path: '/blogs', element: <Blog />, transparent: true },
-  { path: '/events', element: <Event />, transparent: false },
+  { path: '/events', element: <Event />, transparent: true },
   { path: '/event/:id', element: <EventDetail />, transparent: false },
   { path: '/projects', element: <Projects />, transparent: true },
   { path: '/Project-Details/:id', element: <ProjectDetail />, transparent: false },
