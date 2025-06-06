@@ -9,7 +9,7 @@ import Event from './Pages/Event'
 import EventDetail from './Component/eventpage/EventDetail'
 import Projects from './Pages/Projects'
 
-import ProjectDetail from './Pages/Project-Details'
+import ProjectDetail from './Pages/ProjectDetails'
 import SignIn from './Component/loginpages/signIn'
 import Register from './Component/loginpages/register'
 import Forgot from './Component/loginpages/Forgot'
@@ -68,12 +68,14 @@ function App() {
           {/* Dashboard layout with nested routes */}
           <Route path="/dashboard" element={<PrivateRoute />}>
             <Route element={<RootLayout />}>
-              <Route index element={<Navigate to="transactions" replace />} />
+            <Route index element={<Navigate to="transactions" replace />} />
               <Route path="transactions/:id" element={<TransactionStatuss />} />
               <Route path="hotel-list" element={<HotelList />} />
-              <Route path="/dashboard/hotel-details/hotel-checkout" element={<HotelCheckout />} />
-              <Route path="/dashboard/hotel-details/hotel-checkout/hotel-book" element={<HotelBooks />} />
+              <Route path="hotel-checkout" element={<HotelCheckout />} />
+              <Route path="hotel-books" element={<HotelBooks />} />
               <Route path="hotel-details" element={<HotelDetails />} />
+              {/* Add more dashboard routes here */}
+
             </Route>
           </Route>
 
