@@ -54,9 +54,14 @@ function App() {
   const location = useLocation();
 
   // Match the current route config based on pathname
+  // const matchedRoute = routeConfigs.find(route =>
+  //   matchPath({ path: route.path, end: false }, location.pathname)
+  // );
+
   const matchedRoute = routeConfigs.find(route =>
-    matchPath({ path: route.path, end: false }, location.pathname)
+    matchPath(route.path, location.pathname)
   );
+  
 
   const isTransparent = matchedRoute?.transparent ?? false;
   const hideLayout = matchedRoute?.hideLayout || location.pathname.startsWith('/dashboard');

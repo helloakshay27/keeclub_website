@@ -8,9 +8,8 @@ const EventDetail = () => {
   const navigate = useNavigate();
   const { data } = useApiFetch(`https://piramal-loyalty-dev.lockated.com/events/${id}.json`, token);
 
-  const events = data?.event_images || [];
-  const event = events[parseInt(id)];
-  const images = [data?.event_images];
+  const event = data && data.id;
+  const images = [data?.attachfile];
 
 
   if (!event) return <div className="text-center py-10 text-red-500">Event not found</div>;
@@ -32,7 +31,7 @@ const EventDetail = () => {
         {images.map((img, i) => (
           <img
             key={i}
-            src={img.document_url || "https://via.placeholder.com/400x300?text=No+Image"}
+            src={img.document_url}
             alt={`Event ${i + 1}`}
             className="w-full h-auto max-h-[320px] object-cover rounded shadow"
           />
