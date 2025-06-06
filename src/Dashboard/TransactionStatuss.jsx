@@ -278,7 +278,7 @@ const TransactionStatuss = () => {
                 <th className="px-4 py-3">Date</th>
                 <th className="px-4 py-3">Transaction Type</th>
                 <th className="px-4 py-3">Transaction Name</th>
-                <th className="px-4 py-3">Balanced Points</th>
+                {/* <th className="px-4 py-3">Balanced Points</th> */}
                 <th className="px-4 py-3">Earned Points</th>
               </tr>
             </thead>
@@ -295,7 +295,7 @@ const TransactionStatuss = () => {
                       {item.transaction_type || "--"}
                     </td>
                     <td className="px-4 py-3">{item.remarks || "--"}</td>
-                    <td className="px-4 py-3">{item.balanced_points || "--"}</td>
+                    {/* <td className="px-4 py-3">{item.balanced_points || "--"}</td> */}
                     <td className="px-4 py-3">{item.points || "--"}</td>
                   </tr>
                 ))
