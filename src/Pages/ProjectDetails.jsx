@@ -27,7 +27,7 @@ const ProjectDetail = () => {
     if (localStorage.getItem("authToken")) {
       setShowEnquiryModal(true);
     } else {
-          navigate("/login", { state: { from: location.pathname } });
+      navigate("/login", { state: { from: location.pathname } });
 
     }
   };
@@ -36,7 +36,7 @@ const ProjectDetail = () => {
     if (localStorage.getItem("authToken")) {
       setShowSiteVisitModal(true);
     } else {
-    navigate("/login", { state: { from: location.pathname } });
+      navigate("/login", { state: { from: location.pathname } });
     }
   };
   const handleEnquirySubmit = async (formData) => {
@@ -366,7 +366,7 @@ const ProjectDetail = () => {
       </div>
 
       {/* Right Panel (Content) */}
-      <div className="lg:w-2/3 mr-5" style={{ zIndex: -1 }}>
+      <div className="lg:w-2/3 mr-5 ml-5" style={{ zIndex: -1 }}>
         {/* Main Project Image */}
         <div className="w-full h-64 sm:h-96 md:h-[300px] relative">
           <img

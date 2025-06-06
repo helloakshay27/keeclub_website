@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Routes, Route, useLocation, matchPath, Navigate } from 'react-router-dom';
 import './App.css';
 
@@ -52,37 +52,43 @@ const routeConfigs = [
 
 function App() {
   const location = useLocation();
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
 
-  // Match the current route config based on pathname
-  // const matchedRoute = routeConfigs.find(route =>
-  //   matchPath({ path: route.path, end: false }, location.pathname)
-  // );
+  // Update isMobile on resize
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 1024);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const matchedRoute = routeConfigs.find(route =>
     matchPath(route.path, location.pathname)
   );
-  
 
   const isTransparent = matchedRoute?.transparent ?? false;
   const hideLayout = matchedRoute?.hideLayout || location.pathname.startsWith('/dashboard');
 
-  // Scroll to top on route change
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [location.pathname]);
 
+  const isSpecialMobilePage =
+    (matchPath('/event/:id', location.pathname) || matchPath('/Project-Details/:id', location.pathname)) &&
+    isMobile;
+
+  const headerHeightPx = hideLayout ? 0 : isSpecialMobilePage ? 120 : isMobile ? 0 : 0;
+
   return (
     <div className="flex flex-col min-h-screen">
       {!hideLayout && <Header key={location.pathname} isTransparent={isTransparent} />}
-
-      <main className="flex-1">
+      <main
+        className="flex-1"
+        style={{ paddingTop: hideLayout ? 0 : `${headerHeightPx}px` }}
+      >
         <Routes>
-          {/* Public Routes */}
           {routeConfigs.map(({ path, element }) => (
             <Route key={path} path={path} element={element} />
           ))}
-
-          {/* Protected Dashboard Routes */}
           <Route path="/dashboard" element={<PrivateRoute />}>
             <Route element={<RootLayout />}>
               <Route index element={<Navigate to="transactions" replace />} />
@@ -96,7 +102,6 @@ function App() {
           </Route>
         </Routes>
 
-        {/* Toast Notifications */}
         <ToastContainer
           position="top-right"
           autoClose={4000}
@@ -109,9 +114,8 @@ function App() {
           pauseOnHover
           theme="light"
         />
+        {!hideLayout && <Footer />}
       </main>
-
-      {!hideLayout && <Footer />}
     </div>
   );
 }
