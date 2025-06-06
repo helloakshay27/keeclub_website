@@ -138,7 +138,7 @@ const HotelCheckout = () => {
                             <span>₹10810.00</span>
                         </div>
                         <p className="text-sm text-[#FA4615] mt-1 underline">Use a coupon credit or promotion code</p>
-                        <Link to="/dashboard/hotel-details/hotel-checkout/hotel-book">
+                        <Link to="/dashboard/hotel-book">
                             <button className="w-full cursor-pointer mt-4 bg-black text-white rounded p-2">Confirm Booking</button>
                         </Link>
                     </div>

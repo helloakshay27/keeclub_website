@@ -7,6 +7,7 @@ import Card3 from "../assets/Hotel/Card3.png";
 import Image1 from "../assets/Hotel/Image1.png";
 import Image2 from "../assets/Hotel/Image2.png";
 import Image3 from "../assets/Hotel/Image3.png";
+import { Link } from "react-router-dom";
 
 // Separate arrays for each section
 const popularHotels = [Card1, Card2, Card3, Card1, Card2];
