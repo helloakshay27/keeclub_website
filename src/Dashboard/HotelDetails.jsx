@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import React from 'react'
 import Card3 from "../assets/Hotel/Card3.png"
 import Hotel1_1 from "../assets/Hotel/Hotel1_1.png"
@@ -14,30 +13,11 @@ import Bed from "../assets/Hotel/icons/Bed.png"
 import Person from "../assets/Hotel/icons/Person.png"
 import Wifi from "../assets/Hotel/icons/Wifi.png"
 import HotelBed from "../assets/Hotel/HotelBed.png"
-=======
-// import React from 'react'
-// import Card3 from "../assets/hotel/Card3.png"
-// import Hotel1_1 from "../assets/hotel/Hotel1_1.png"
-// import Hotel1_2 from "../assets/hotel/Hotel1_2.png"
-// import Hotel1_3 from "../assets/hotel/Hotel1_3.png"
-// import Hotel1_4 from "../assets/hotel/Hotel1_4.png"
-// import check from "../assets/hotel/icons/check.png"
-// import desk from "../assets/hotel/icons/desk.png"
-// import Parking from "../assets/hotel/icons/Parking.png"
-// import restraunt from "../assets/hotel/icons/restraunt.png"
-// import sq_ft from "../assets/hotel/icons/sq_ft.png"
-// import bed from "../assets/hotel/icons/bed.png"
-// import person from "../assets/hotel/icons/person.png"
-// import Wifi from "../assets/hotel/icons/Wifi.png"
-// import HotelBed from "../assets/hotel/HotelBed.png"
-// import { Link, useNavigate } from 'react-router-dom'
->>>>>>> 84d7bc49a7c36436a59236a10d0ada2f192ad0c0
 
 
 
 
 
-<<<<<<< HEAD
 const About=()=>{
     return(
         <div>About</div>
@@ -187,25 +167,6 @@ const HotelDetails = () => {
     </div>
   )
 }
-=======
-// const About = () => {
-//     return (
-//         <div>About</div>
-//     );
-// }
-// const Rooms = () => {
-//     return (
-//         <div>Rooms</div>
-//     );
-// }
-// const Accessibility = () => {
-//     return (
-//         <div>Accessibility</div>
-//     );
-// }
-// const Overview = () => {
-//     const navigate = useNavigate();
->>>>>>> 84d7bc49a7c36436a59236a10d0ada2f192ad0c0
 
 //     const handleBooking = () => {
 //         navigate("/hotel-checkout");
