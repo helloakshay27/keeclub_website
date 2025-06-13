@@ -10,7 +10,6 @@ import Piramal_Vaikunth from "../../assets/ProjectImg/Piramal_Vaikunth.png"
 const projects = [
   Piramal_Aranya,
   Piramal_Mahalaxmi,
-  Piramal_Relaty,
   Piramal_Revanta,
   Piramal_Vaikunth
 ];

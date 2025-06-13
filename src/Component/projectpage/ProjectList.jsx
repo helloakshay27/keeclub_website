@@ -9,9 +9,11 @@ const ProjectsList = () => {
 
   const [properties, setProperties] = useState([]);
 
+  console.log(data)
+
   useEffect(() => {
     if (data && data.featured) {
-      const featuredProjects = data.featured.map((project) => ({
+      const featuredProjects = data.projects.map((project) => ({
         id: project.id,
         name: project.project_name,
         location: project?.location?.city || "",
