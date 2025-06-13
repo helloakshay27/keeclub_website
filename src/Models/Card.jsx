@@ -14,10 +14,14 @@ const Card = ({
     <div
       className={`flex flex-col ${
         reverse ? 'md:flex-row-reverse' : 'md:flex-row'
-      } w-full max-w-8xl md:h-[80vh] overflow-hidden shadow-lg bg-white`}
+      } w-full max-w-8xl shadow-lg bg-white`}
+      style={{
+        minHeight: '70vh',   // Ensures good height at 100%
+        maxHeight: 'none',   // Allows content to grow with zoom
+      }}
     >
       {/* Left Image */}
-      <div className="w-full md:w-1/2 h-64 md:h-full">
+      <div className="w-full md:w-1/2 h-64 md:h-auto">
         <img
           src={imageUrl}
           alt="Card Visual"
@@ -49,7 +53,7 @@ const Card = ({
         {onButtonClick && (
           <button
             onClick={onButtonClick}
-            className="mt-6 md:mt-8 w-max px-5 py-2 md:px-6 md:py-3 text-white font-semibold"
+            className="mt-6 md:mt-8 w-max px-5 py-2 md:px-6 md:py-3 text-white font-semibold transition-colors duration-300"
             style={{ backgroundColor: highlightColor }}
             onMouseOver={(e) =>
               (e.currentTarget.style.backgroundColor = '#e5430a')

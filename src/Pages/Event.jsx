@@ -114,37 +114,38 @@ const Event = () => {
 
                 {/* Event Cards */}
                 <div className="max-w-7xl mx-auto px-2 sm:px-4">
-  {/* Event Cards Grid */}
-  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-    {events.map((event, index) => (
-      <Link to={`/event/${event.id}`} key={index}>
-        <div className="rounded shadow-md overflow-hidden relative border-b-2 border-orange-500 w-full">
-          {/* Date Badge */}
-          <div className="absolute top-0 right-0 bg-black bg-opacity-80 text-white px-2 sm:px-3 py-1 sm:py-2 text-xs sm:text-sm font-semibold z-10 rounded-bl-lg">
-            <div className="text-sm sm:text-base font-bold leading-tight">
-              {formatDate(event.from_time).split(" ")[0]}
-            </div>
-            <div className="text-xs sm:text-sm">{formatDate(event.from_time).split(" ")[1]}</div>
-          </div>
+                    {/* Event Cards Grid */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                        {events.map((event, index) => (
+                            <Link to={`/event/${event.id}`} key={index}>
+                                <div className="rounded shadow-md overflow-hidden relative border-b-2 border-orange-500 w-full h-80 flex flex-col">
+                                    {/* Date Badge */}
+                                    <div className="absolute top-0 right-0 bg-black bg-opacity-80 text-white px-2 sm:px-3 py-1 sm:py-2 text-xs sm:text-sm font-semibold z-10 rounded-bl-lg">
+                                        <div className="text-sm sm:text-base font-bold leading-tight">
+                                            {formatDate(event.from_time).split(" ")[0]}
+                                        </div>
+                                        <div className="text-xs sm:text-sm">{formatDate(event.from_time).split(" ")[1]}</div>
+                                    </div>
 
-          {/* Event Image */}
-          <img
-            src={event.attachfile?.document_url || "https://via.placeholder.com/400x300?text=No+Image"}
-            alt={event.event_name}
-            className="w-full h-44 sm:h-52 md:h-64 object-cover"
-            loading="lazy"
-          />
+                                    {/* Event Image */}
+                                    <img
+                                        src={event.attachfile?.document_url || "https://via.placeholder.com/400x300?text=No+Image"}
+                                        alt={event.event_name}
+                                        className="w-full h-44 sm:h-48 object-cover"
+                                        loading="lazy"
+                                    />
 
-          {/* Event Info */}
-          <div className="p-3 sm:p-4 bg-white">
-            <h3 className="text-sm sm:text-base md:text-lg font-bold mb-1 sm:mb-2">{event.event_name}</h3>
-            <p className="text-xs sm:text-sm md:text-base text-gray-700">{event.project_name}</p>
-          </div>
-        </div>
-      </Link>
-    ))}
-  </div>
-</div>
+                                    {/* Event Info */}
+                                    <div className="p-3 sm:p-4 bg-white flex-grow">
+                                        <h3 className="text-sm sm:text-base md:text-lg font-bold mb-1 sm:mb-2">{event.event_name}</h3>
+                                        <p className="text-xs sm:text-sm md:text-base text-gray-700">{event.project_name}</p>
+                                    </div>
+                                </div>
+
+                            </Link>
+                        ))}
+                    </div>
+                </div>
 
             </div>
         </div>
