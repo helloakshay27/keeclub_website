@@ -1,11 +1,18 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import Piramal_Aranya from "../../assets/ProjectImg/Piramal_Aranya.png"
+import Piramal_Mahalaxmi from "../../assets/ProjectImg/Piramal_Mahalaxmi.png"
+import Piramal_Relaty from "../../assets/ProjectImg/Piramal_Relaty.png"
+import Piramal_Revanta from "../../assets/ProjectImg/Piramal_Revanta.png"
+import Piramal_Vaikunth from "../../assets/ProjectImg/Piramal_Vaikunth.png"
+
 
 const projects = [
-  'https://cdn.loyalie.in/21060060.png',
-  'https://cdn.loyalie.in/89999699.png',
-  'https://cdn.loyalie.in/38253813.png',
-  'https://cdn.loyalie.in/38253813.png',
+  Piramal_Aranya,
+  Piramal_Mahalaxmi,
+  Piramal_Relaty,
+  Piramal_Revanta,
+  Piramal_Vaikunth
 ];
 
 const ProjectsCarousel = () => {
@@ -108,7 +115,7 @@ const ProjectsCarousel = () => {
                   e.target.src =
                     'https://via.placeholder.com/300x200?text=No+Image';
                 }}
-                className="w-full object-contain h-40 sm:h-48 md:h-56 max-h-[150px]"
+                className="w-full object-contain h-40 sm:h-48 md:h-56 max-h-[180px]"
               />
             </div>
           ))}

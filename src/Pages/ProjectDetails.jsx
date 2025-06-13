@@ -580,7 +580,7 @@ const ProjectDetail = () => {
                 ))}
             </div>
           </div>
-
+``
           {/* Location Highlights Section */}
           <div className="flex gap-6 mb-7" ref={highlightsRef}>
             <div className="w-full">
