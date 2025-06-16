@@ -39,17 +39,18 @@ const TransactionStatuss = () => {
     fetchPiramlaData();
   }, []);
 
+  const fetchMemberData = async () => {
+    try {
+      const response = await axios.get(`https://piramal-loyalty-dev.lockated.com/loyalty/members/${id}.json`);
+      setMemberData(response.data);
+    } catch (error) {
+      console.error("Error fetching member data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchMemberData = async () => {
-      try {
-        const response = await axios.get(`https://piramal-loyalty-dev.lockated.com/loyalty/members/${id}.json`);
-        setMemberData(response.data);
-      } catch (error) {
-        console.error("Error fetching member data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchMemberData();
   }, [id]);
 
@@ -94,7 +95,8 @@ const TransactionStatuss = () => {
       );
 
       if (response.status === 201) {
-        fetchReferrals();
+        await fetchReferrals();
+        await fetchMemberData(); 
         const newReferralData = response.data.referral;
         setReferrals((prev) => [...prev, newReferralData]);
         setNewReferral({});

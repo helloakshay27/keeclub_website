@@ -1,12 +1,10 @@
 import { HeartIcon, MapPinIcon } from "lucide-react";
 import React from "react";
 import { useNavigate } from "react-router-dom";
-// import { MapPinIcon, HeartIcon } from '@heroicons/react/24/solid';
 
-const PropertyCard = ({ property }) => {
+const PropertyCard = ({ property, onViewMap }) => {
   const navigate = useNavigate();
 
-  // Extract all properties with proper fallbacks
   const {
     name,
     location,
@@ -15,10 +13,10 @@ const PropertyCard = ({ property }) => {
     imageUrl,
     projectId,
     id,
-    project_id
+    project_id,
+    mapUrl, // make sure this is passed
   } = property || {};
 
-  // Use whichever ID field is available (projectId, id, or project_id)
   const propertyId = projectId || id || project_id;
 
   const handleClick = () => {
@@ -53,22 +51,17 @@ const PropertyCard = ({ property }) => {
                 className="bg-red-500 flex mt-2 justify-between rounded-md"
                 aria-label="Under Construction"
               >
-                {/* SVG icon */}
                 <svg
                   className="m-2"
-                  id="Group_4"
-                  data-name="Group 4"
                   xmlns="http://www.w3.org/2000/svg"
                   width="18.774"
                   height="15.675"
                   viewBox="0 0 18.774 15.675"
                 >
                   <path
-                    id="Shape"
-                    d="M17.772,15.675H11.666a1.3,1.3,0,0,1-.547-.182.72.72,0,0,1-.548.182H4.465a1.016,1.016,0,0,1-1-1V11.984H1a1.016,1.016,0,0,1-1-1v-2.6a1.016,1.016,0,0,1,1-1h2.46V4.6H1a1.016,1.016,0,0,1-1-1V1A1.016,1.016,0,0,1,1,0H7.108a1.3,1.3,0,0,1,.547.182A.722.722,0,0,1,8.2,0h6.106a1.016,1.016,0,0,1,1,1V3.691h2.462a1.016,1.016,0,0,1,1,1v2.6a1.016,1.016,0,0,1-1,1H15.31v2.779h2.462a1.016,1.016,0,0,1,1,1v2.6A1.016,1.016,0,0,1,17.772,15.675ZM4.465,12.121a.1.1,0,0,0-.091.091v2.6a.1.1,0,0,0,.091.091h6.106a.067.067,0,0,0,.062-.038.048.048,0,0,0-.016-.053v-2.6a.1.1,0,0,0-.091-.091H4.465Zm7.2-.046a.1.1,0,0,0-.091.091v2.6a.1.1,0,0,0,.091.091h6.106a.1.1,0,0,0,.091-.091v-2.6a.1.1,0,0,0-.091-.091H11.666ZM1,8.385a.1.1,0,0,0-.091.091v2.6A.1.1,0,0,0,1,11.164H7.108a.1.1,0,0,0,.091-.091v-2.6a.1.1,0,0,0-.091-.091H1Zm7.245-.046a.1.1,0,0,0-.091.091v2.6a.1.1,0,0,0,.091.092h6.06a.1.1,0,0,0,.091-.092V8.43a.1.1,0,0,0-.091-.091H8.248Zm3.418-3.691a.1.1,0,0,0-.091.091v2.6a.1.1,0,0,0,.091.091h6.106a.1.1,0,0,0,.091-.091v-2.6a.1.1,0,0,0-.091-.091H11.666Zm-7.2,0a.1.1,0,0,0-.091.091v2.6a.1.1,0,0,0,.091.091h6.061a.1.1,0,0,0,.091-.091v-2.6a.1.1,0,0,0-.091-.091H4.465ZM1,.911A.1.1,0,0,0,.911,1V3.6A.1.1,0,0,0,1,3.691H7.108A.1.1,0,0,0,7.2,3.6V1A.1.1,0,0,0,7.108.911ZM8.2.865A.066.066,0,0,0,8.141.9a.05.05,0,0,0,.016.056v2.6a.1.1,0,0,0,.091.091h6.06a.1.1,0,0,0,.091-.091V.957a.1.1,0,0,0-.091-.092Z"
-                    transform="translate(0 0)"
+                    d="M17.772,15.675H11.666a1.3,1.3,0,0,1-.547-.182.72.72,0,0,1-.548.182H4.465a1.016,1.016,0,0,1-1-1V11.984H1a1.016,1.016,0,0,1-1-1v-2.6a1.016,1.016,0,0,1,1-1h2.46V4.6H1a1.016,1.016,0,0,1-1-1V1A1.016,1.016,0,0,1,1,0H7.108a1.3,1.3,0,0,1,.547.182A.722.722,0,0,1,8.2,0h6.106a1.016,1.016,0,0,1,1,1V3.691h2.462a1.016,1.016,0,0,1,1,1v2.6a1.016,1.016,0,0,1-1,1H15.31v2.779h2.462a1.016,1.016,0,0,1,1,1v2.6A1.016,1.016,0,0,1,17.772,15.675Z"
                     fill="#fff"
-                  ></path>
+                  />
                 </svg>
               </div>
             </div>
@@ -107,9 +100,17 @@ const PropertyCard = ({ property }) => {
               </div>
 
               <div className="flex items-center justify-between mt-2">
-                <span className="block text-[#F59E0B] text-sm underline">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation(); // to prevent navigation
+                    if (onViewMap && typeof onViewMap === "function") {
+                      onViewMap();
+                    }
+                  }}
+                  className="text-[#F59E0B] text-sm underline cursor-pointer"
+                >
                   View on map
-                </span>
+                </button>
               </div>
             </div>
           </div>

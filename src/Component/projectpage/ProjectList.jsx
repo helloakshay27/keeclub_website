@@ -8,8 +8,9 @@ const ProjectsList = () => {
   );
 
   const [properties, setProperties] = useState([]);
-
-  console.log(data)
+  const [selectedMapUrl, setSelectedMapUrl] = useState(
+    "https://maps.google.com/maps?width=600&height=400&hl=en&q=Piramal Revanta Sales Office&t=&z=13&ie=UTF8&iwloc=B&output=embed"
+  );
 
   useEffect(() => {
     if (data && data.featured) {
@@ -42,7 +43,11 @@ const ProjectsList = () => {
 
         <div className="overflow-y-auto max-h-[80vh] pr-2 custom-scrollbar">
           {properties.map((property) => (
-            <PropertyCard key={property.id} property={property} />
+            <PropertyCard
+              key={property.id}
+              property={property}
+              onViewMap={() => setSelectedMapUrl(property.mapUrl)}
+            />
           ))}
         </div>
       </div>
@@ -50,7 +55,7 @@ const ProjectsList = () => {
       {/* Right Side: Sticky Map (hidden on small screens) */}
       <div className="hidden lg:block h-[80vh] sticky top-24 rounded-xl overflow-hidden shadow-md">
         <iframe
-          src="https://maps.google.com/maps?width=600&height=400&hl=en&q=Piramal Revanta Sales Office&t=&z=13&ie=UTF8&iwloc=B&output=embed"
+          src={selectedMapUrl}
           title="Google Map"
           className="w-full h-full border-0"
           allowFullScreen
