@@ -2,10 +2,10 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams, Link } from "react-router-dom";
 import { X } from "lucide-react";
-
 import hotel1 from "../assets/Hotel/hotel1.jpg";
 import hotel2 from "../assets/Hotel/hotel2.jpg";
 import hotel3 from "../assets/Hotel/hotel3.jpg";
+import { toast } from "react-toastify";
 
 const TransactionStatuss = () => {
   const { id } = useParams();
@@ -16,20 +16,22 @@ const TransactionStatuss = () => {
   const [showModal, setShowModal] = useState(false);
   const [newReferral, setNewReferral] = useState({});
   const [pirmalData, setPirmalData] = useState([]);
+  const [errors, setErrors] = useState({});
+  const [touched, setTouched] = useState({});
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   const tabs = [
-    { key: 'redemptions', label: 'My Redemptions' },
-    { key: 'transactions', label: 'My Transactions' },
-    { key: 'referrals', label: 'My Referrals' },
+    { key: "redemptions", label: "My Redemptions" },
+    { key: "transactions", label: "My Transactions" },
+    { key: "referrals", label: "My Referrals" },
   ];
   const getTabIndex = (key) => tabs.findIndex((tab) => tab.key === key);
-
 
   useEffect(() => {
     const fetchPiramlaData = async () => {
       try {
-        const response = await axios.get(`https://piramal-loyalty-dev.lockated.com//get_all_projects.json`);
-        setPirmalData(response.data?.projects);
+        const response = await axios.get(`https://piramal-loyalty-dev.lockated.com/get_all_projects.json`);
+        setPirmalData(response.data?.projects || []);
       } catch (error) {
         console.error("Error fetching project data:", error);
       } finally {
@@ -42,9 +44,10 @@ const TransactionStatuss = () => {
   const fetchMemberData = async () => {
     try {
       const response = await axios.get(`https://piramal-loyalty-dev.lockated.com/loyalty/members/${id}.json`);
-      setMemberData(response.data);
+      setMemberData(response.data || null);
     } catch (error) {
       console.error("Error fetching member data:", error);
+      setMemberData(null);
     } finally {
       setLoading(false);
     }
@@ -70,8 +73,42 @@ const TransactionStatuss = () => {
     if (selectedTab === "referrals") fetchReferrals();
   }, [selectedTab]);
 
+  useEffect(() => {
+    if (showModal) {
+      setNewReferral({});
+      setTouched({});
+      setErrors({});
+      setIsSubmitted(false);
+    }
+  }, [showModal]);
+
+  useEffect(() => {
+    const validationErrors = validateReferral(newReferral);
+    const filteredErrors = {};
+    Object.keys(validationErrors).forEach((key) => {
+      if (touched[key] || isSubmitted) {
+        filteredErrors[key] = validationErrors[key];
+      }
+    });
+    setErrors(filteredErrors);
+  }, [newReferral, touched, isSubmitted]);
+
   const handleAddReferral = async () => {
+    setIsSubmitted(true);
+    const validationErrors = validateReferral(newReferral);
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      setTouched({
+        projectId: true,
+        name: true,
+        phone: true,
+        date: true,
+      });
+      return;
+    }
+
     const token = localStorage.getItem("authToken");
+
     try {
       const payload = {
         customer_code: memberData.user_id,
@@ -96,16 +133,43 @@ const TransactionStatuss = () => {
 
       if (response.status === 201) {
         await fetchReferrals();
-        await fetchMemberData(); 
-        const newReferralData = response.data.referral;
-        setReferrals((prev) => [...prev, newReferralData]);
+        await fetchMemberData();
+        setReferrals((prev) => [...prev, response.data.referral]);
         setNewReferral({});
         setShowModal(false);
+        setErrors({});
+        setTouched({});
+        setIsSubmitted(false);
       }
     } catch (error) {
-      console.error("Error adding referral:", error);
-      alert("Failed to add referral. Please try again.");
+      toast.error("Failed to add referral. Please try again.");
     }
+  };
+
+  const validateReferral = (referral) => {
+    const errors = {};
+
+    if (!referral.projectId) {
+      errors.projectId = "Please select a project.";
+    }
+
+    if (!referral.name || referral.name.trim().length < 2) {
+      errors.name = "Name must be at least 2 characters long.";
+    }
+
+    if (!referral.phone || !/^\d{10}$/.test(referral.phone)) {
+      errors.phone = "Phone number must be 10 digits.";
+    }
+
+    if (!referral.date) {
+      errors.date = "Please select a date.";
+    }
+
+    return errors;
+  };
+
+  const handleBlur = (field) => {
+    setTouched((prev) => ({ ...prev, [field]: true }));
   };
 
   if (loading) return <div className="text-center mt-8">Loading...</div>;
@@ -117,7 +181,7 @@ const TransactionStatuss = () => {
     { title: "Redeemed Points", value: memberData.reedem_points || 0 },
   ];
 
-  const transactions = memberData.member_transactions || [];
+  const transactions = Array.isArray(memberData.member_transactions) ? memberData.member_transactions : [];
 
   const redemptionsCards = [
     {
@@ -161,7 +225,7 @@ const TransactionStatuss = () => {
       </div>
 
       {/* Progress Section */}
-      <div className="bg-white border border-gray-300  rounded-lg mt-4 p-5 sm:p-7 shadow-sm flex flex-col md:flex-row gap-9 md:gap-40">
+      <div className="bg-white border border-gray-300 rounded-lg mt-4 p-5 sm:p-7 shadow-sm flex flex-col md:flex-row gap-9 md:gap-40">
         <div className="w-full md:w-[70%]">
           <div className="flex justify-between text-sm text-gray-700 flex-wrap">
             <div className="mb-3 font-medium text-gray-900 uppercase">
@@ -220,7 +284,7 @@ const TransactionStatuss = () => {
       </div>
 
       <div className="flex justify-center mt-10">
-        <div className="relative bg-[#FAFAFA]  border border-gray-300 rounded-full s flex p-2 w-[320px] sm:w-[800px]">
+        <div className="relative bg-[#FAFAFA] border border-gray-300 rounded-full flex p-2 w-[320px] sm:w-[800px]">
           <div
             className="absolute top-1 left-1 h-[90%] bg-[#F9461C] rounded-full transition-all duration-300"
             style={{
@@ -232,7 +296,7 @@ const TransactionStatuss = () => {
             <button
               key={tab.key}
               onClick={() => setSelectedTab(tab.key)}
-              className={`relative z-10 cursor-pointer flex-1 py-2 text-sm sm:text-base rounded-full font-normal transition-colors duration-300 ${selectedTab === tab.key ? 'text-white' : 'text-black'
+              className={`relative z-10 cursor-pointer flex-1 py-2 text-sm sm:text-base rounded-full font-normal transition-colors duration-300 ${selectedTab === tab.key ? "text-white" : "text-black"
                 }`}
             >
               {tab.label}
@@ -240,7 +304,6 @@ const TransactionStatuss = () => {
           ))}
         </div>
       </div>
-
 
       {/* Redemptions */}
       {selectedTab === "redemptions" && (
@@ -279,7 +342,6 @@ const TransactionStatuss = () => {
                 <th className="px-4 py-3">Date</th>
                 <th className="px-4 py-3">Transaction Type</th>
                 <th className="px-4 py-3">Transaction Name</th>
-                {/* <th className="px-4 py-3">Balanced Points</th> */}
                 <th className="px-4 py-3">Earned Points</th>
               </tr>
             </thead>
@@ -288,21 +350,24 @@ const TransactionStatuss = () => {
                 transactions.map((item, index) => (
                   <tr key={index}>
                     <td className="px-4 py-3">
-                      {item.created_at
+                      {item && item.created_at
                         ? new Date(item.created_at).toLocaleDateString()
                         : "--"}
                     </td>
                     <td className="px-4 py-3 capitalize">
-                      {item.transaction_type || "--"}
+                      {item && item.transaction_type ? item.transaction_type : "--"}
                     </td>
-                    <td className="px-4 py-3">{item.remarks || "--"}</td>
-                    {/* <td className="px-4 py-3">{item.balanced_points || "--"}</td> */}
-                    <td className="px-4 py-3">{item.points || "--"}</td>
+                    <td className="px-4 py-3">
+                      {item && item.remarks ? item.remarks : "--"}
+                    </td>
+                    <td className="px-4 py-3">
+                      {item && item.points ? item.points : "--"}
+                    </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan="5" className="text-center text-gray-500 px-4 py-4">
+                  <td colSpan="4" className="text-center text-gray-500 px-4 py-4">
                     No transactions available.
                   </td>
                 </tr>
@@ -329,18 +394,18 @@ const TransactionStatuss = () => {
                 referrals.map((item, index) => (
                   <tr key={index}>
                     <td className="px-4 py-3">
-                      {item.created_at
+                      {item && item.created_at
                         ? new Date(item.created_at).toLocaleDateString()
                         : "--"}
                     </td>
-                    <td className="px-4 py-3">{item.name || "--"}</td>
-                    <td className="px-4 py-3">{item.status || "--"}</td>
-                    <td className="px-4 py-3">{item.mobile || "--"}</td>
+                    <td className="px-4 py-3">{item && item.name ? item.name : "--"}</td>
+                    <td className="px-4 py-3">{item && item.status ? item.status : "--"}</td>
+                    <td className="px-4 py-3">{item && item.mobile ? item.mobile : "--"}</td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan="5" className="text-center text-gray-500 px-4 py-4">
+                  <td colSpan="4" className="text-center text-gray-500 px-4 py-4">
                     No referrals available.
                   </td>
                 </tr>
@@ -362,11 +427,12 @@ const TransactionStatuss = () => {
             </button>
             <h2 className="text-lg font-semibold mb-4">Refer Someone</h2>
             <select
-              value={newReferral.projectId}
+              value={newReferral.projectId || ""}
               onChange={(e) =>
                 setNewReferral({ ...newReferral, projectId: e.target.value })
               }
-              className="w-full mb-3 p-2 border rounded"
+              onBlur={() => handleBlur("projectId")}
+              className="w-full mb-4 p-2 border rounded"
             >
               <option value="">Select Project</option>
               {pirmalData.map((option) => (
@@ -375,6 +441,8 @@ const TransactionStatuss = () => {
                 </option>
               ))}
             </select>
+            {errors.projectId && <p className="text-sm text-red-500 mb-2">{errors.projectId}</p>}
+
             <input
               type="text"
               placeholder="Name"
@@ -382,8 +450,11 @@ const TransactionStatuss = () => {
               onChange={(e) =>
                 setNewReferral({ ...newReferral, name: e.target.value })
               }
-              className="w-full mb-3 p-2 border rounded"
+              onBlur={() => handleBlur("name")}
+              className="w-full mb-4 p-2 border rounded"
             />
+            {errors.name && <p className="text-sm text-red-500 mb-2">{errors.name}</p>}
+
             <input
               type="tel"
               placeholder="Phone Number"
@@ -391,16 +462,22 @@ const TransactionStatuss = () => {
               onChange={(e) =>
                 setNewReferral({ ...newReferral, phone: e.target.value })
               }
-              className="w-full mb-3 p-2 border rounded"
+              onBlur={() => handleBlur("phone")}
+              className="w-full mb-4 p-2 border rounded"
             />
+            {errors.phone && <p className="text-sm text-red-500 mb-2">{errors.phone}</p>}
+
             <input
               type="date"
               value={newReferral.date || ""}
               onChange={(e) =>
                 setNewReferral({ ...newReferral, date: e.target.value })
               }
+              onBlur={() => handleBlur("date")}
               className="w-full mb-4 p-2 border rounded"
             />
+            {errors.date && <p className="text-sm text-red-500 mb-2">{errors.date}</p>}
+
             <div className="flex justify-end gap-2">
               <button
                 className="px-4 cursor-pointer py-2 bg-gray-300 text-gray-800 rounded"

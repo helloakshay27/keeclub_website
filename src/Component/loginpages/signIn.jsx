@@ -229,9 +229,18 @@ const SignIn = () => {
   //   );
   // };
 
+  const handleBackToMobileInput = () => {
+    setShowOtpSection(false);   // hide OTP input section
+    setOtpSection(true);        // show mobile input section
+    setOtp("");                 // clear OTP input
+    setError("");               // (optional) clear error
+  };
+  
   const renderOtpLogin = () => (
     <form onSubmit={handleVerifyOtp} className="mt-3 w-full max-w-[380px]">
-      {OtpSection && (
+  
+      {/* Mobile Number Input */}
+      {OtpSection && !showOtpSection && (
         <div className="form-group relative mb-4">
           <label className="mb-1 block text-white mt-4" htmlFor="mobile">
             Mobile Number
@@ -239,7 +248,7 @@ const SignIn = () => {
           <input
             type="tel"
             id="mobile"
-            className="w-full px-3 py-2 rounded mb-2 bg-white placeholder-gray-400 text-black outline-none "
+            className="w-full px-3 py-2 rounded mb-2 bg-white placeholder-gray-400 text-black outline-none"
             placeholder="Enter registered mobile number..."
             value={mobile}
             onChange={(e) => setMobile(e.target.value)}
@@ -247,7 +256,7 @@ const SignIn = () => {
           />
           <button
             type="button"
-            className="w-full cursor-pointer  h-11 bg-[#de7008] text-white py-2 px-4 rounded mt-2 mx-auto hover:bg-[#de7008] block mt-4"
+            className="w-full cursor-pointer h-11 bg-[#de7008] text-white py-2 px-4 rounded mt-2 mx-auto hover:bg-[#de7008] block"
             onClick={handleSendOtp}
             disabled={loading}
           >
@@ -255,37 +264,49 @@ const SignIn = () => {
           </button>
         </div>
       )}
-
+  
+      {/* OTP Input Section */}
       {showOtpSection && (
-        <div className="form-group relative mb-4">
-          <label className="mb-1 block text-white" htmlFor="otp">
-            Enter OTP
-          </label>
-          <input
-            type="text"
-            id="otp"
-            className="w-full px-3 py-2 rounded mb-2 bg-white placeholder-gray-400 text-black outline-none"
-            placeholder="Enter OTP"
-            value={otp}
-            onChange={(e) => setOtp(e.target.value)}
-            required
-          />
-        </div>
+        <>
+          <div className="form-group relative mb-4">
+            <label className="mb-1 block text-white" htmlFor="otp">
+              Enter OTP
+            </label>
+            <input
+              type="text"
+              id="otp"
+              className="w-full px-3 py-2 rounded mb-2 bg-white placeholder-gray-400 text-black outline-none"
+              placeholder="Enter OTP"
+              value={otp}
+              onChange={(e) => setOtp(e.target.value)}
+              required
+            />
+          </div>
+  
+          <div className="flex justify-between gap-4">
+            <button
+              type="button"
+              className="w-1/2 cursor-pointer bg-gray-300 text-black py-2 px-4 rounded hover:bg-gray-400"
+              onClick={handleBackToMobileInput}
+            >
+              Back
+            </button>
+  
+            <button
+              type="submit"
+              className="w-1/2 cursor-pointer bg-[#8b0203] text-white py-2 px-4 rounded hover:bg-[#9e2c2d]"
+              disabled={loading}
+            >
+              Verify OTP
+            </button>
+          </div>
+        </>
       )}
-
-      {error && <p className="text-red-500">{error}</p>}
-
-      {showOtpSection && (
-        <button
-          type="submit"
-          className="w-full cursor-pointer bg-[#8b0203] text-white py-2 px-4 rounded mt-2 hover:bg-[#9e2c2d]"
-          disabled={loading}
-        >
-          Verify OTP
-        </button>
-      )}
+  
+      {error && <p className="text-red-500 mt-2">{error}</p>}
     </form>
   );
+  
 
   return (
     <main className="h-full w-full overflow-hidden">
