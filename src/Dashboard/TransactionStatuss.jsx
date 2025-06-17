@@ -204,6 +204,8 @@ const TransactionStatuss = () => {
     },
   ];
 
+  console.log()
+
   return (
     <div className="max-w-7xl mx-auto p-4">
       {/* Header */}
@@ -235,7 +237,7 @@ const TransactionStatuss = () => {
               <span className="text-lg font-bold text-gray-900">
                 {memberData?.current_loyalty_points || 0}
               </span>
-              <span className="text-sm text-gray-500 ml-1">/750 POINTS</span>
+              <span className="text-sm text-gray-500 ml-1">/{memberData.member_status.total_tier_points}</span>
             </div>
           </div>
           <div className="relative w-full h-2 bg-gray-200 rounded-full mt-2">
