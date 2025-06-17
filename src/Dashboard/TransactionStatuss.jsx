@@ -161,9 +161,9 @@ const TransactionStatuss = () => {
       errors.phone = "Phone number must be 10 digits.";
     }
 
-    if (!referral.date) {
-      errors.date = "Please select a date.";
-    }
+    // if (!referral.date) {
+    //   errors.date = "Please select a date.";
+    // }
 
     return errors;
   };
@@ -467,7 +467,7 @@ const TransactionStatuss = () => {
             />
             {errors.phone && <p className="text-sm text-red-500 mb-2">{errors.phone}</p>}
 
-            <input
+            {/* <input
               type="date"
               value={newReferral.date || ""}
               onChange={(e) =>
@@ -476,7 +476,7 @@ const TransactionStatuss = () => {
               onBlur={() => handleBlur("date")}
               className="w-full mb-4 p-2 border rounded"
             />
-            {errors.date && <p className="text-sm text-red-500 mb-2">{errors.date}</p>}
+            {errors.date && <p className="text-sm text-red-500 mb-2">{errors.date}</p>} */}
 
             <div className="flex justify-end gap-2">
               <button
