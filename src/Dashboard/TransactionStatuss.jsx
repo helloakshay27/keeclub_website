@@ -231,8 +231,9 @@ const TransactionStatuss = () => {
         <div className="w-full md:w-[70%]">
           <div className="flex justify-between text-sm text-gray-700 flex-wrap">
             <div className="mb-3 font-medium text-gray-900 uppercase">
-              YOU NEED 750 POINTS TO UPGRADE ON NEXT TIER!
+              YOU NEED {memberData.member_status.total_tier_points} POINTS TO UPGRADE ON NEXT TIER!
             </div>
+
             <div className="flex items-center text-sm mb-1">
               <span className="text-lg font-bold text-gray-900">
                 {memberData?.current_loyalty_points || 0}
