@@ -15,7 +15,7 @@ const cardsData = [
     }, reverse: false,
   },
   {
-    imageUrl: 'https://images.pexels.com/photos/20809163/pexels-photo-20809163/free-photo-of-black-volkswagen-golf-gti.jpeg?auto=compress&cs=tinysrgb&w=1200',
+    imageUrl: 'https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&w=1200',
     title: 'Referrals and Earning',
     subtitle: 'Turn your network into your net worth!',
     description: (

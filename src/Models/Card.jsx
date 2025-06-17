@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 const Card = ({
   imageUrl,
@@ -10,11 +10,29 @@ const Card = ({
   onButtonClick,
   reverse = false,
 }) => {
+  const [isZoomedIn, setIsZoomedIn] = useState(false);
+
+  useEffect(() => {
+    const checkZoom = () => {
+      const zoomLevel = window.outerWidth / window.innerWidth;
+      setIsZoomedIn(zoomLevel > 1.05); // ~125% zoom
+    };
+
+    checkZoom();
+    window.addEventListener('resize', checkZoom);
+
+    return () => {
+      window.removeEventListener('resize', checkZoom);
+    };
+  }, []);
+
   return (
     <div
       className={`flex flex-col ${
         reverse ? 'md:flex-row-reverse' : 'md:flex-row'
-      } w-full max-w-8xl md:h-[80vh] overflow-hidden shadow-lg bg-white`}
+      } w-full max-w-8xl ${
+        isZoomedIn ? 'md:h-[110vh]' : 'md:h-[80vh]'
+      } overflow-hidden shadow-lg bg-white`}
     >
       {/* Left Image */}
       <div className="w-full md:w-1/2 h-64 md:h-full">
