@@ -17,6 +17,8 @@ const PropertyCard = ({ property, onViewMap }) => {
     mapUrl, // make sure this is passed
   } = property || {};
 
+  console.log("Property:", property);
+
   const propertyId = projectId || id || project_id;
 
   const handleClick = () => {

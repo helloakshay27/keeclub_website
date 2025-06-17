@@ -114,7 +114,7 @@ const TransactionStatuss = () => {
         customer_code: memberData?.user_id,
         ref_name: newReferral.name,
         ref_phone: newReferral.phone,
-        status: "Registered",
+        status: "Open",
         project_id: newReferral.projectId,
         referred_on: newReferral.date,
         referral_mode: "Dashboard Static",
@@ -257,7 +257,7 @@ const TransactionStatuss = () => {
                     height: "1rem",
                   }}
                 ></div>
-          
+
                 {/* Fill Bar */}
                 <div
                   className="h-2 bg-red-600 rounded-full transition-all"
@@ -312,9 +312,8 @@ const TransactionStatuss = () => {
             <button
               key={tab.key}
               onClick={() => setSelectedTab(tab.key)}
-              className={`relative z-10 cursor-pointer flex-1 py-2 text-sm sm:text-base rounded-full font-normal transition-colors duration-300 ${
-                selectedTab === tab.key ? "text-white" : "text-black"
-              }`}
+              className={`relative z-10 cursor-pointer flex-1 py-2 text-sm sm:text-base rounded-full font-normal transition-colors duration-300 ${selectedTab === tab.key ? "text-white" : "text-black"
+                }`}
             >
               {tab.label}
             </button>

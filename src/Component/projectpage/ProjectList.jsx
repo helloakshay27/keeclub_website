@@ -12,13 +12,15 @@ const ProjectsList = () => {
     "https://maps.google.com/maps?width=600&height=400&hl=en&q=Piramal Revanta Sales Office&t=&z=13&ie=UTF8&iwloc=B&output=embed"
   );
 
+  console.log("new properties", properties);
+
   useEffect(() => {
     if (data && data.featured) {
       const featuredProjects = data.projects.map((project) => ({
         id: project.id,
         name: project.project_name,
         location: project?.location?.city || "",
-        startingPrice: `₹${project.price} Cr`,
+        startingPrice: `₹${project.price}`,
         configurations: project.configurations
           .map((cfg) => cfg.name)
           .join(", "),
