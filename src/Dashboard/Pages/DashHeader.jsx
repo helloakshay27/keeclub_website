@@ -52,10 +52,10 @@ const DashHeader = () => {
           <div className="bg-white rounded-lg shadow-lg p-6 min-w-[300px]">
             <h2 className="text-lg font-semibold mb-4">Sign Out</h2>
             <div className="mb-4">
-              <div className="font-medium"> {localStorage.getItem("firstName")} {localStorage.getItem("lastName")}</div>
-              <div className="text-gray-500 text-sm">
+              {/* <div className="font-medium"> {localStorage.getItem("firstName")} {localStorage.getItem("lastName")}</div> */}
+              {/* <div className="text-gray-500 text-sm">
                 {localStorage.getItem("email") || "No email"}
-              </div>
+              </div> */}
             </div>
             <p className="mb-6">Are you sure you want to sign out?</p>
             <div className="flex justify-end space-x-3">
