@@ -111,7 +111,7 @@ const TransactionStatuss = () => {
 
     try {
       const payload = {
-        customer_code: memberData.user_id,
+        customer_code: memberData?.user_id,
         ref_name: newReferral.name,
         ref_phone: newReferral.phone,
         status: "Registered",
@@ -176,12 +176,12 @@ const TransactionStatuss = () => {
   if (!memberData) return <div className="text-center mt-8 text-red-500">Member not found.</div>;
 
   const summaryCards = [
-    { title: "Loyalty Points", value: memberData.current_loyalty_points || 0 },
-    { title: "Earned Points", value: memberData.earned_points || 0 },
-    { title: "Redeemed Points", value: memberData.reedem_points || 0 },
+    { title: "Loyalty Points", value: memberData?.current_loyalty_points || 0 },
+    { title: "Earned Points", value: memberData?.earned_points || 0 },
+    { title: "Redeemed Points", value: memberData?.reedem_points || 0 },
   ];
 
-  const transactions = Array.isArray(memberData.member_transactions) ? memberData.member_transactions : [];
+  const transactions = Array.isArray(memberData?.member_transactions) ? memberData.member_transactions : [];
 
   const redemptionsCards = [
     {
@@ -203,8 +203,6 @@ const TransactionStatuss = () => {
       image: hotel3,
     },
   ];
-
-  console.log()
 
   return (
     <div className="max-w-7xl mx-auto p-4">
@@ -231,36 +229,51 @@ const TransactionStatuss = () => {
         <div className="w-full md:w-[70%]">
           <div className="flex justify-between text-sm text-gray-700 flex-wrap">
             <div className="mb-3 font-medium text-gray-900 uppercase">
-              YOU NEED {memberData.member_status.total_tier_points} POINTS TO UPGRADE ON NEXT TIER!
+              YOU NEED {memberData?.member_status?.total_tier_points || 0} POINTS TO UPGRADE ON NEXT TIER!
             </div>
 
             <div className="flex items-center text-sm mb-1">
               <span className="text-lg font-bold text-gray-900">
                 {memberData?.current_loyalty_points || 0}
               </span>
-              <span className="text-sm text-gray-500 ml-1">/{memberData.member_status.total_tier_points}</span>
+              <span className="text-sm text-gray-500 ml-1">/{memberData?.member_status?.total_tier_points || 0}</span>
             </div>
           </div>
-          <div className="relative w-full h-2 bg-gray-200 rounded-full mt-2">
-            <div
-              className="absolute top-[-6px] bg-red-600 rounded-full border-2 border-white"
-              style={{
-                left: `${memberData?.member_status?.tier_progression || 0}`,
-                width: "1rem",
-                height: "1rem",
-              }}
-            ></div>
-            <div
-              className="h-2 bg-red-600 rounded-full"
-              style={{ width: `${memberData?.member_status?.tier_progression || 0}` }}
-            ></div>
-          </div>
+
+          {/* Tier bar */}
+          {(() => {
+            const currentPoints = memberData?.current_loyalty_points || 0;
+            const totalPoints = memberData?.member_status?.total_tier_points || 2000;
+            const progress = Math.min((currentPoints / totalPoints) * 100, 100);
+
+            return (
+              <div className="relative w-full h-2 bg-gray-200 rounded-full mt-2">
+                {/* Dot Marker */}
+                <div
+                  className="absolute top-[-6px] bg-red-600 rounded-full border-2 border-white transition-all"
+                  style={{
+                    left: `calc(${progress}% - 0.5rem)`,
+                    width: "1rem",
+                    height: "1rem",
+                  }}
+                ></div>
+          
+                {/* Fill Bar */}
+                <div
+                  className="h-2 bg-red-600 rounded-full transition-all"
+                  style={{ width: `${progress}%` }}
+                ></div>
+              </div>
+            );
+          })()}
+
           <div className="flex justify-between text-sm mt-3 text-gray-700">
             <span>Bronze</span>
             <span>Silver</span>
             <span>Gold</span>
           </div>
         </div>
+
         <div className="flex items-center justify-start md:justify-end">
           <button className="bg-gray-900 text-white px-4 py-3 md:py-4 rounded text-sm font-medium uppercase">
             VIEW TIER BENEFITS
@@ -299,8 +312,9 @@ const TransactionStatuss = () => {
             <button
               key={tab.key}
               onClick={() => setSelectedTab(tab.key)}
-              className={`relative z-10 cursor-pointer flex-1 py-2 text-sm sm:text-base rounded-full font-normal transition-colors duration-300 ${selectedTab === tab.key ? "text-white" : "text-black"
-                }`}
+              className={`relative z-10 cursor-pointer flex-1 py-2 text-sm sm:text-base rounded-full font-normal transition-colors duration-300 ${
+                selectedTab === tab.key ? "text-white" : "text-black"
+              }`}
             >
               {tab.label}
             </button>
@@ -314,7 +328,7 @@ const TransactionStatuss = () => {
           {redemptionsCards.map((card, index) => (
             <Link
               key={index}
-               to="/dashboard/hotel-list"
+              to="/dashboard/hotel-list"
               className="rounded overflow-hidden shadow-sm relative group block"
             >
               <div
@@ -354,19 +368,15 @@ const TransactionStatuss = () => {
                 transactions.map((item, index) => (
                   <tr key={index}>
                     <td className="px-4 py-3">
-                      {item && item.created_at
+                      {item?.created_at
                         ? new Date(item.created_at).toLocaleDateString()
                         : "--"}
                     </td>
                     <td className="px-4 py-3 capitalize">
-                      {item && item.transaction_type ? item.transaction_type : "--"}
+                      {item?.transaction_type || "--"}
                     </td>
-                    <td className="px-4 py-3">
-                      {item && item.remarks ? item.remarks : "--"}
-                    </td>
-                    <td className="px-4 py-3">
-                      {item && item.points ? item.points : "--"}
-                    </td>
+                    <td className="px-4 py-3">{item?.remarks || "--"}</td>
+                    <td className="px-4 py-3">{item?.points || "--"}</td>
                   </tr>
                 ))
               ) : (
@@ -398,13 +408,13 @@ const TransactionStatuss = () => {
                 referrals.map((item, index) => (
                   <tr key={index}>
                     <td className="px-4 py-3">
-                      {item && item.created_at
+                      {item?.created_at
                         ? new Date(item.created_at).toLocaleDateString()
                         : "--"}
                     </td>
-                    <td className="px-4 py-3">{item && item.name ? item.name : "--"}</td>
-                    <td className="px-4 py-3">{item && item.status ? item.status : "--"}</td>
-                    <td className="px-4 py-3">{item && item.mobile ? item.mobile : "--"}</td>
+                    <td className="px-4 py-3">{item?.name || "--"}</td>
+                    <td className="px-4 py-3">{item?.status || "--"}</td>
+                    <td className="px-4 py-3">{item?.mobile || "--"}</td>
                   </tr>
                 ))
               ) : (
