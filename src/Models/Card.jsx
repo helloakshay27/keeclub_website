@@ -15,7 +15,7 @@ const Card = ({
   useEffect(() => {
     const checkZoom = () => {
       const zoomLevel = window.outerWidth / window.innerWidth;
-      setIsZoomedIn(zoomLevel > 1.05); // ~125% zoom
+      setIsZoomedIn(zoomLevel > 1.05); // ~125% zoom or more
     };
 
     checkZoom();
@@ -31,11 +31,11 @@ const Card = ({
       className={`flex flex-col ${
         reverse ? 'md:flex-row-reverse' : 'md:flex-row'
       } w-full max-w-8xl ${
-        isZoomedIn ? 'md:h-[110vh]' : 'md:h-[80vh]'
+        isZoomedIn ? 'md:min-h-[110vh]' : 'md:min-h-[80vh]'
       } overflow-hidden shadow-lg bg-white`}
     >
       {/* Left Image */}
-      <div className="w-full md:w-1/2 h-64 md:h-full">
+      <div className="w-full md:w-1/2 h-64 md:h-auto max-h-full">
         <img
           src={imageUrl}
           alt="Card Visual"
