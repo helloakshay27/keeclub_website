@@ -314,6 +314,7 @@ const TransactionStatuss = () => {
           {redemptionsCards.map((card, index) => (
             <Link
               key={index}
+               to="/dashboard/hotel-list"
               className="rounded overflow-hidden shadow-sm relative group block"
             >
               <div
