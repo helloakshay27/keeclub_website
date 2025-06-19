@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import FeaturedPostSlider from '../Component/blogpage/FeaturedPostSlider';
 import LatestPosts from '../Component/blogpage/LatestPosts';
 
@@ -9,6 +9,16 @@ const Blog = () => {
         subheading: 'Bringing together information and entertainment for you.',
         buttonText: 'Read More',
     };
+
+    // Add state for featured posts
+    const [featuredPosts, setFeaturedPosts] = useState([]);
+
+    useEffect(() => {
+        fetch('https://piramal-loyalty-dev.lockated.com/blog_posts.json')
+            .then((res) => res.json())
+            .then((data) => setFeaturedPosts(data))
+            .catch(() => setFeaturedPosts([]));
+    }, []);
 
     return (
         <div className="w-full">
@@ -32,7 +42,7 @@ const Blog = () => {
                 </div>
             </section>
             <div className="px-4 sm:px-6 lg:px-8 py-10">
-                <FeaturedPostSlider />
+                <FeaturedPostSlider posts={featuredPosts} />
                 <LatestPosts/>
             </div>
         </div>

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const SearchFilter = () => {
+const SearchFilter = ({ view, setView }) => {
   const [searchQuery, setSearchQuery] = useState("");
 
   return (
@@ -20,28 +20,15 @@ const SearchFilter = () => {
 
       {/* Filter + View Buttons */}
       <div className="flex items-center gap-3">
-        {/* Filter Button (commented out) */}
-        {/*
-        <button
-          type="button"
-          className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 transition-all"
-        >
-          <svg
-            className="w-5 h-5 text-gray-700"
-            fill="currentColor"
-            viewBox="0 0 16 16"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path d="M4 7H3V2h1v5zm-1 7h1v-3H3v3zm5 0h1V8H8v6zm5 0h1v-2h-1v2zm1-12h-1v6h1V2zM9 2H8v2h1V2zM5 8H2c-.55 0-1 .45-1 1s.45 1 1 1h3c.55 0 1-.45 1-1s-.45-1-1-1zm5-3H7c-.55 0-1 .45-1 1s.45 1 1 1h3c.55 0 1-.45 1-1s-.45-1-1-1zm5 4h-3c-.55 0-1 .45-1 1s.45 1 1 1h3c.55 0 1-.45 1-1s-.45-1-1-1z" />
-          </svg>
-          <span className="text-sm font-medium">Filter</span>
-        </button>
-        */}
-
         {/* List View Button */}
         <button
-          className="p-2 rounded-lg text-white bg-[#FF4713] hover:bg-orange-600 transition-all"
+          className={`p-2 rounded-lg ${
+            view === "list"
+              ? "text-white bg-[#FF4713]"
+              : "text-black border border-gray-300 bg-white"
+          } hover:bg-orange-600 transition-all`}
           title="List View"
+          onClick={() => setView("list")}
         >
           <svg
             className="h-5 w-5"
@@ -59,8 +46,13 @@ const SearchFilter = () => {
 
         {/* Grid View Button */}
         <button
-          className="p-2 rounded-lg text-black border border-gray-300 bg-white hover:bg-gray-100 transition-all"
+          className={`p-2 rounded-lg ${
+            view === "grid"
+              ? "text-white bg-[#FF4713]"
+              : "text-black border border-gray-300 bg-white"
+          } hover:bg-orange-600 transition-all`}
           title="Grid View"
+          onClick={() => setView("grid")}
         >
           <svg
             className="h-5 w-5"
