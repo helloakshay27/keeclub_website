@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import FeaturedPostSlider from '../Component/blogpage/FeaturedPostSlider';
 import LatestPosts from '../Component/blogpage/LatestPosts';
+import BASE_URL from '../Confi/baseurl';
 
 const Blog = () => {
     const slide = {
@@ -14,7 +15,7 @@ const Blog = () => {
     const [featuredPosts, setFeaturedPosts] = useState([]);
 
     useEffect(() => {
-        fetch('https://piramal-loyalty-dev.lockated.com/blog_posts.json')
+        fetch(`${BASE_URL}blog_posts.json`)
             .then((res) => res.json())
             .then((data) => setFeaturedPosts(data))
             .catch(() => setFeaturedPosts([]));

@@ -1,12 +1,13 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import useApiFetch from "../../hooks/useApiFetch";
+import BASE_URL from "../../Confi/baseurl"
 
 const EventDetail = () => {
   const token = localStorage.getItem("authToken");
   const { id } = useParams();
   const navigate = useNavigate();
-  const { data } = useApiFetch(`https://piramal-loyalty-dev.lockated.com/events/${id}.json`, token);
+  const { data } = useApiFetch(`${BASE_URL}events/${id}.json`, token);
 
   const event = data && data.id;
   const images = [data?.attachfile];

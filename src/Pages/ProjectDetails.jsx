@@ -4,6 +4,7 @@ import { Navigate, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import EnquiryModal from "../Models/EnquiryModal";
 import SiteVisitModal from "../Models/SiteVisitModal";
+import BASE_URL from "../Confi/baseurl";
 
 const ProjectDetail = () => {
   const { id } = useParams();
@@ -42,7 +43,7 @@ const ProjectDetail = () => {
   const handleEnquirySubmit = async (formData) => {
     try {
       const response = await axios.post(
-        "https://piramal-loyalty-dev.lockated.com/enquiry_forms.json",
+        `${BASE_URL}enquiry_forms.json`,
         formData,
         {
           headers: {
@@ -68,7 +69,7 @@ const ProjectDetail = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `https://piramal-loyalty-dev.lockated.com/get_all_projects.json`,
+          `${BASE_URL}get_all_projects.json`,
           {
             headers: {
               // Authorization: `Bearer ${localStorage.getItem("access_token")}`,

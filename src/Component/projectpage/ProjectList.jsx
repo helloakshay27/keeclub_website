@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import PropertyCard from "./PropertyCard";
 import useApiFetch from "../../hooks/useApiFetch";
+import BASE_URL from "../../Confi/baseurl"
 
 const ProjectsList = ({ view = "list" }) => {
   const { data, loading, error } = useApiFetch(
-    "https://piramal-loyalty-dev.lockated.com/get_all_projects.json"
+    `${BASE_URL}get_all_projects.json`
   );
 
   const [properties, setProperties] = useState([]);

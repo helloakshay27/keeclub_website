@@ -6,6 +6,7 @@ import hotel1 from "../assets/Hotel/hotel1.jpg";
 import hotel2 from "../assets/Hotel/hotel2.jpg";
 import hotel3 from "../assets/Hotel/hotel3.jpg";
 import { toast } from "react-toastify";
+import BASE_URL from "../Confi/baseurl"
 
 const TransactionStatuss = () => {
   const { id } = useParams();
@@ -30,7 +31,7 @@ const TransactionStatuss = () => {
   useEffect(() => {
     const fetchPiramlaData = async () => {
       try {
-        const response = await axios.get(`https://piramal-loyalty-dev.lockated.com/get_all_projects.json`);
+        const response = await axios.get(`${BASE_URL}get_all_projects.json`);
         setPirmalData(response.data?.projects || []);
       } catch (error) {
         console.error("Error fetching project data:", error);
@@ -43,7 +44,7 @@ const TransactionStatuss = () => {
 
   const fetchMemberData = async () => {
     try {
-      const response = await axios.get(`https://piramal-loyalty-dev.lockated.com/loyalty/members/${id}.json`);
+      const response = await axios.get(`${BASE_URL}loyalty/members/${id}.json`);
       setMemberData(response.data || null);
     } catch (error) {
       console.error("Error fetching member data:", error);
@@ -61,7 +62,7 @@ const TransactionStatuss = () => {
     try {
       const token = localStorage.getItem("authToken");
       const response = await axios.get(
-        `https://piramal-loyalty-dev.lockated.com/referrals.json?access_token=${token}`
+        `${BASE_URL}referrals.json?access_token=${token}`
       );
       setReferrals(response.data.referrals || []);
     } catch (error) {
@@ -121,7 +122,7 @@ const TransactionStatuss = () => {
       };
 
       const response = await axios.post(
-        `https://piramal-loyalty-dev.lockated.com/add_referral.json?access_token=${token}`,
+        `${BASE_URL}add_referral.json?access_token=${token}`,
         payload,
         {
           headers: {

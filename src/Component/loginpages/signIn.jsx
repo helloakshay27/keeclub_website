@@ -3,7 +3,7 @@ import { Eye, EyeOff } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
-
+import BASE_URL from "../../Confi/baseurl"
 import logo from "../../assets/piramal_bg.png";
 import ComLogo from "../../assets/ComLogo.png";
 
@@ -99,7 +99,7 @@ const SignIn = () => {
 
     try {
       const response = await axios.get(
-        `https://piramal-loyalty-dev.lockated.com/get_otps/generate_otp?mobile=${mobile}`
+        `${BASE_URL}get_otps/generate_otp?mobile=${mobile}`
       );
 
       if (response.status === 200) {
@@ -135,7 +135,7 @@ const SignIn = () => {
 
     try {
       const response = await axios.get(
-        `https://piramal-loyalty-dev.lockated.com/get_otps/verify_otp?mobile=${mobile}&otp=${otp}`
+        `${BASE_URL}get_otps/verify_otp?mobile=${mobile}&otp=${otp}`
       );
 
       const data = response.data;

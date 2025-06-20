@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import BASE_URL from "../../Confi/baseurl"
 
 const categories = [
     "All",
@@ -22,7 +23,7 @@ const LatestPosts = () => {
 
     useEffect(() => {
         setLoading(true);
-        fetch('https://piramal-loyalty-dev.lockated.com/blog_posts.json')
+        fetch(`${BASE_URL}blog_posts.json`)
             .then(res => res.json())
             .then(data => {
                 // Use only posts with tag_type 'latest'

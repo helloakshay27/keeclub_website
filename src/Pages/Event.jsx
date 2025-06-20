@@ -2,9 +2,10 @@ import { Link } from "react-router-dom";
 import useApiFetch from "../hooks/useApiFetch";
 import { useEffect, useRef, useState } from "react";
 import event_image from "../assets/main_event.jpg";
+import BASE_URL from "../Confi/baseurl";
 
 const Event = () => {
-    const { data } = useApiFetch("https://piramal-loyalty-dev.lockated.com/events.json");
+    const { data } = useApiFetch(`${BASE_URL}events.json`);
     const categories = ["Entertainment", "Lifestyle"];
     // Use array for multiple selected categories
     const [selectedCategories, setSelectedCategories] = useState(categories);

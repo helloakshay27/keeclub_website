@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
+import BASE_URL from "../Confi/baseurl"
 
 const SiteVisitModal = ({ isOpen, onClose, onSubmit, projectId }) => {
     const [siteSchedules, setSiteSchedules] = useState([]);
@@ -40,7 +41,7 @@ const SiteVisitModal = ({ isOpen, onClose, onSubmit, projectId }) => {
                 const formattedDate = new Date(value).toLocaleDateString("en-GB"); // "dd/mm/yyyy"
 
                 const response = await fetch(
-                    `https://piramal-loyalty-dev.lockated.com/site_schedules.json?q[project_id_null]=${projectId}&q[start_date_null]=${formattedDate}&q[end_date_null]=${formattedDate}`,
+                    `${BASE_URL}site_schedules.json?q[project_id_null]=${projectId}&q[start_date_null]=${formattedDate}&q[end_date_null]=${formattedDate}`,
                     {
                         method: "GET",
                         headers: {
@@ -87,7 +88,7 @@ const SiteVisitModal = ({ isOpen, onClose, onSubmit, projectId }) => {
 
         try {
             const res = await fetch(
-                "https://piramal-loyalty-dev.lockated.com/site_schedule_requests",
+                `${BASE_URL}site_schedule_requests`,
                 {
                     method: "POST",
                     headers: {
