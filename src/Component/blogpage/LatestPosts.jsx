@@ -1,71 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-
-const allPosts = [
-    {
-        id: 101,
-        title: "Ace the Board Games Trivia: Win Exciting Rewards",
-        description: "Play our Board Games Trivia Challenge and win exciting lifestyle vouchers!",
-        date: "15th January 2025",
-        comments: "No comments",
-        image: "https://loyalie-cms-dev.s3.ap-south-1.amazonaws.com/1736847736952_1736847736629_BlogBannersAllClients.jpg",
-        category: "Contest",
-    },
-    {
-        id: 102,
-        title: "Welcome to the Ultimate Christmas Treasure Hunt! 🎁✨",
-        description: "Congratulations, you’re in the game! 🎄 This is the start of our Christmas Treasure Hunt",
-        date: "19th December 2024",
-        comments: "9 comments",
-        image: "https://loyalie-cms-dev.s3.ap-south-1.amazonaws.com/1734598376035_1734598374974_ChristmasblogGenricBannerV4.jpg",
-        category: "Contest",
-    },
-    {
-        id: 103,
-        title: "Children’s Day – Cartoon Quiz",
-        description: "This Children’s Day let’s celebrate the joy and creativity of childhood with a fun Cartoon Quiz! 🧸✨",
-        date: "14th November 2024",
-        comments: "No comments",
-        image: "https://loyalie-cms-dev.s3.ap-south-1.amazonaws.com/1731330888660_1731330887909_GenrBannerS.jpg",
-        category: "Contest",
-    },
-    {
-        id: 104,
-        title: "WORLD TOURISM DAY",
-        description: "World Tourism Day on 27th September celebrates the cultural and economic impact of tourism.",
-        date: "27th September 2024",
-        comments: "No comments",
-        image: "https://loyalie-cms-dev.s3.ap-south-1.amazonaws.com/1727246811696_1727246811459_Blo.jpg",
-        category: "Contest",
-    },
-    {
-        id: 105,
-        title: "INDEPENDENCE DAY TRIVIA",
-        description: "How well do you know the Heroes of our Nation?",
-        date: "13th August 2024",
-        comments: "No comments",
-        image: "https://loyalie-cms-dev.s3.ap-south-1.amazonaws.com/1723467963601_1723467962863_Independence.jpg",
-        category: "Education",
-    },
-    {
-        id: 106,
-        title: "WORLD MUSIC DAY TRIVIA",
-        description: "There’s nothing like hearing your favourite song on a terrible day",
-        date: "21st June 2024",
-        comments: "No comments",
-        image: "https://loyalie-cms-dev.s3.ap-south-1.amazonaws.com/1718716595685_1718716594614_Music.jpg",
-        category: "Health & Fitness",
-    },
-    {
-        id: 107,
-        title: "WORLD MUSIC DAY TRIVIA",
-        description: "There’s nothing like hearing your favourite song on a terrible day",
-        date: "21st June 2024",
-        comments: "No comments",
-        image: "https://loyalie-cms-dev.s3.ap-south-1.amazonaws.com/1718716595685_1718716594614_Music.jpg",
-        category: "Health & Fitness",
-    },
-];
 
 const categories = [
     "All",
@@ -83,6 +17,38 @@ const POSTS_PER_PAGE = 6;
 const LatestPosts = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [selectedCategories, setSelectedCategories] = useState([]);
+    const [allPosts, setAllPosts] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        setLoading(true);
+        fetch('https://piramal-loyalty-dev.lockated.com/blog_posts.json')
+            .then(res => res.json())
+            .then(data => {
+                // Use only posts with tag_type 'latest'
+                const latest = Array.isArray(data)
+                    ? data.filter(post => post.tag_type && post.tag_type.toLowerCase() === "latest")
+                    : (Array.isArray(data.latest) ? data.latest : []);
+                // Map API data to expected format
+                const mapped = latest.map(post => ({
+                    id: post.id,
+                    title: post.heading,
+                    description: post.summary,
+                    date: post.publish_date
+                        ? new Date(post.publish_date).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })
+                        : "",
+                    comments: post.comments_count === 0 || post.comments_count === null ? "No comments" : `${post.comments_count} comments`,
+                    image: post.image_url,
+                    category: post.tag_type || "Other",
+                }));
+                setAllPosts(mapped);
+                setLoading(false);
+            })
+            .catch(() => {
+                setAllPosts([]);
+                setLoading(false);
+            });
+    }, []);
 
     const handleCategoryClick = (cat) => {
         if (cat === "All") {
@@ -119,7 +85,9 @@ const LatestPosts = () => {
             <h1 className="text-center text-3xl sm:text-4xl font-bold mb-10">LATEST POSTS</h1>
             <div className="flex flex-col lg:flex-row gap-10">
                 <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {currentPosts.length === 0 ? (
+                    {loading ? (
+                        <p className="col-span-full text-center text-gray-500">Loading...</p>
+                    ) : currentPosts.length === 0 ? (
                         <p className="col-span-full text-center text-gray-500">No posts found in selected categories.</p>
                     ) : (
                         currentPosts.map((post, index) => (
