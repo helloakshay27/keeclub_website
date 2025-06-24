@@ -54,17 +54,22 @@ const EventDetail = () => {
                 backgroundColor: "rgba(255, 255, 255, 0.8)",
                 padding: "5px",
                 borderRadius: "5px",
+                fontWeight: "medium",
               }}
             >
-              <span className="font-semibold">From:</span> {data.from_time}
+              {data.from_time
+                ? new Date(data.from_time).toLocaleDateString("en-US", {
+                    weekday: "short",
+                    day: "2-digit",
+                    month: "long",
+                  }) + " Onwards"
+                : ""}
             </p>
             <div className="mt-2">
-              <p className="text-xl font-medium text-gray-700">
+              <p className="text-xl font-medium ">
                 {data.event_name}
               </p>
-              <p className="text-md text-gray-700">
-                {data.event_at}
-              </p>
+              <p className="text-md ">{data.event_at}</p>
             </div>
           </div>
         ))}
