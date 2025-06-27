@@ -75,7 +75,7 @@ const HeroSection = () => {
                 {slide.description}
               </p>
 
-              <button className="bg-[#fa4615] hover:bg-[#d93b18] px-6 sm:px-8 py-2 sm:py-3 rounded-[1px] text-white text-sm sm:text-sm font-normal shadow-lg transition" onClick={() => window.location.href = '/refer-now'}>
+              <button className="bg-[#fa4615] hover:bg-[#d93b18] px-6 sm:px-8 py-2 sm:py-3 rounded-[1px] text-white text-sm sm:text-sm font-normal shadow-lg transition" onClick={() => window.location.href = '/login'}>
                 {slide.buttonText}
               </button>
             </div>
