@@ -6,7 +6,7 @@ import hotel1 from "../assets/Hotel/hotel1.jpg";
 import hotel2 from "../assets/Hotel/hotel2.jpg";
 import hotel3 from "../assets/Hotel/hotel3.jpg";
 import { toast } from "react-toastify";
-import BASE_URL from "../Confi/baseurl"
+import BASE_URL from "../Confi/baseurl";
 
 const TransactionStatuss = () => {
   const { id } = useParams();
@@ -174,7 +174,10 @@ const TransactionStatuss = () => {
   };
 
   if (loading) return <div className="text-center mt-8">Loading...</div>;
-  if (!memberData) return <div className="text-center mt-8 text-red-500">Member not found.</div>;
+  if (!memberData)
+    return (
+      <div className="text-center mt-8 text-red-500">Member not found.</div>
+    );
 
   const summaryCards = [
     { title: "Loyalty Points", value: memberData?.current_loyalty_points || 0 },
@@ -182,7 +185,9 @@ const TransactionStatuss = () => {
     { title: "Redeemed Points", value: memberData?.reedem_points || 0 },
   ];
 
-  const transactions = Array.isArray(memberData?.member_transactions) ? memberData.member_transactions : [];
+  const transactions = Array.isArray(memberData?.member_transactions)
+    ? memberData.member_transactions
+    : [];
 
   const redemptionsCards = [
     {
@@ -205,17 +210,37 @@ const TransactionStatuss = () => {
     },
   ];
 
+  const currentPoints = memberData?.current_loyalty_points || 0;
+  const allTiers = memberData?.tier_progress?.all_tiers || [];
+
+  let currentTier = "--";
+
+  // Loop through all tiers and find the highest tier where currentPoints >= exit_points
+  for (let i = 0; i < allTiers.length; i++) {
+    const tier = allTiers[i];
+    if (currentPoints >= tier.exit_points) {
+      currentTier = tier.name;
+    }
+  }
+
   return (
     <div className="max-w-7xl mx-auto p-4">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0">
         <p className="text-lg font-semibold">
-          You are on the{" "}
-          <span className="text-orange-500 font-bold capitalize">
-            {memberData?.member_status?.tier_level || "--"}
-          </span>{" "}
-          Tier!
-        </p>
+  {currentTier === "--" ? (
+    "You are not in any tier"
+  ) : (
+    <>
+      You are on the{" "}
+      <span className="text-orange-500 font-bold capitalize">
+        {currentTier}
+      </span>{" "}
+      Tier!
+    </>
+  )}
+</p>
+
         <button
           href="#"
           onClick={() => setShowModal(true)}
@@ -228,51 +253,147 @@ const TransactionStatuss = () => {
       {/* Progress Section */}
       <div className="bg-white border border-gray-300 rounded-lg mt-4 p-5 sm:p-7 shadow-sm flex flex-col md:flex-row gap-9 md:gap-40">
         <div className="w-full md:w-[70%]">
-          <div className="flex justify-between text-sm text-gray-700 flex-wrap">
-            <div className="mb-3 font-medium text-gray-900 uppercase">
-              YOU NEED {memberData?.member_status?.total_tier_points || 0} POINTS TO UPGRADE ON NEXT TIER!
-            </div>
-
-            <div className="flex items-center text-sm mb-1">
-              <span className="text-lg font-bold text-gray-900">
-                {memberData?.current_loyalty_points || 0}
-              </span>
-              <span className="text-sm text-gray-500 ml-1">/{memberData?.member_status?.total_tier_points || 0}</span>
-            </div>
-          </div>
-
-          {/* Tier bar */}
           {(() => {
-            const currentPoints = memberData?.current_loyalty_points || 0;
-            const totalPoints = memberData?.member_status?.total_tier_points || 2000;
-            const progress = Math.min((currentPoints / totalPoints) * 100, 100);
+            const tierProgressData = memberData?.tier_progress;
+            if (
+              !tierProgressData ||
+              !tierProgressData.all_tiers ||
+              tierProgressData.all_tiers.length === 0
+            ) {
+              return (
+                <div className="text-center text-gray-500">
+                  Tier information not available.
+                </div>
+              );
+            }
+
+            const allTiers = tierProgressData.all_tiers;
+            const currentPoints = memberData.current_loyalty_points || 0;
+            const maxPoints = allTiers[allTiers.length - 1].exit_points;
+
+            const progress =
+              maxPoints > 0
+                ? Math.min((currentPoints / maxPoints) * 100, 100)
+                : 0;
+
+            let lastExitPoint = 0;
+            const tierSegments = allTiers.map((tier) => {
+              const start = lastExitPoint;
+              const range = tier.exit_points - lastExitPoint;
+              lastExitPoint = tier.exit_points;
+              return {
+                name: tier.name,
+                start,
+                end: tier.exit_points,
+                range,
+              };
+            });
+
+            // Find current tier index or default to last
+            const currentTierIndex =
+              tierSegments.findIndex(
+                (segment) => currentPoints < segment.end
+              ) !== -1
+                ? tierSegments.findIndex(
+                    (segment) => currentPoints < segment.end
+                  )
+                : tierSegments.length - 1;
+
+            const pointsNeeded = maxPoints - currentPoints;
 
             return (
-              <div className="relative w-full h-2 bg-gray-200 rounded-full mt-2">
-                {/* Dot Marker */}
-                <div
-                  className="absolute top-[-6px] bg-red-600 rounded-full border-2 border-white transition-all"
-                  style={{
-                    left: `calc(${progress}% - 0.5rem)`,
-                    width: "1rem",
-                    height: "1rem",
-                  }}
-                ></div>
+              <>
+                {/* Top Text & Points */}
+                <div className="flex justify-between text-sm text-gray-700 flex-wrap">
+                  <div className="mb-3 font-medium text-gray-900 uppercase">
+                    {pointsNeeded > 0
+                      ? `YOU NEED ${pointsNeeded} POINTS TO REACH THE HIGHEST TIER!`
+                      : "You are in the highest tier!"}
+                  </div>
 
-                {/* Fill Bar */}
-                <div
-                  className="h-2 bg-red-600 rounded-full transition-all"
-                  style={{ width: `${progress}%` }}
-                ></div>
-              </div>
+                  <div className="flex items-center text-sm mb-1">
+                    <span className="text-lg font-bold text-gray-900">
+                      {currentPoints}
+                    </span>
+                    <span className="text-sm text-gray-500 ml-1">
+                      /{maxPoints}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Tier Bar */}
+                <div className="relative w-full h-2 bg-gray-200 rounded-full mt-2 flex">
+                  {tierSegments.map((segment, index) => {
+                    const segmentProgress =
+                      index === currentTierIndex
+                        ? ((currentPoints - segment.start) / segment.range) *
+                          100
+                        : index < currentTierIndex
+                        ? 100
+                        : 0;
+
+                    return (
+                      <div
+                        key={index}
+                        style={{
+                          width: `${(segment.range / maxPoints) * 100}%`,
+                        }}
+                        className="relative h-full"
+                      >
+                        <div
+                          className={`h-full ${
+                            segmentProgress > 0
+                              ? "bg-red-600"
+                              : "bg-transparent"
+                          } transition-all`}
+                          style={{
+                            width: `${segmentProgress}%`,
+                          }}
+                        ></div>
+                      </div>
+                    );
+                  })}
+
+                  {/* Progress dot */}
+                  <div
+                    className="absolute top-1/2 -translate-y-1/2 bg-red-600 rounded-full border-2 border-white transition-all"
+                    style={{
+                      left: `calc(${progress}% - 8px)`,
+                      width: "16px",
+                      height: "16px",
+                    }}
+                  ></div>
+                </div>
+
+                {/* Tier Labels */}
+                <div className="flex text-xs mt-3 text-gray-700 w-full">
+                  {tierSegments.map((segment, index) => (
+                    <div
+                      key={index}
+                      style={{
+                        flexBasis: `${(segment.range / maxPoints) * 100}%`,
+                        textAlign:
+                          index === 0
+                            ? "left"
+                            : index === tierSegments.length - 1
+                            ? "right"
+                            : "center",
+                      }}
+                      className="relative"
+                    >
+                      <span className="cursor-default group relative inline-block">
+                        {/* Tooltip on hover of span only */}
+                        <div className="absolute -top-6 left-1/2 -translate-x-1/2 whitespace-nowrap px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                          {segment.end.toLocaleString()} pts
+                        </div>
+                        {segment.name}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </>
             );
           })()}
-
-          <div className="flex justify-between text-sm mt-3 text-gray-700">
-            <span>Bronze</span>
-            <span>Silver</span>
-            <span>Gold</span>
-          </div>
         </div>
 
         <div className="flex items-center justify-start md:justify-end">
@@ -313,8 +434,9 @@ const TransactionStatuss = () => {
             <button
               key={tab.key}
               onClick={() => setSelectedTab(tab.key)}
-              className={`relative z-10 cursor-pointer flex-1 py-2 text-sm sm:text-base rounded-full font-normal transition-colors duration-300 ${selectedTab === tab.key ? "text-white" : "text-black"
-                }`}
+              className={`relative z-10 cursor-pointer flex-1 py-2 text-sm sm:text-base rounded-full font-normal transition-colors duration-300 ${
+                selectedTab === tab.key ? "text-white" : "text-black"
+              }`}
             >
               {tab.label}
             </button>
@@ -381,7 +503,10 @@ const TransactionStatuss = () => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan="4" className="text-center text-gray-500 px-4 py-4">
+                  <td
+                    colSpan="4"
+                    className="text-center text-gray-500 px-4 py-4"
+                  >
                     No transactions available.
                   </td>
                 </tr>
@@ -419,7 +544,10 @@ const TransactionStatuss = () => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan="4" className="text-center text-gray-500 px-4 py-4">
+                  <td
+                    colSpan="4"
+                    className="text-center text-gray-500 px-4 py-4"
+                  >
                     No referrals available.
                   </td>
                 </tr>
@@ -455,7 +583,9 @@ const TransactionStatuss = () => {
                 </option>
               ))}
             </select>
-            {errors.projectId && <p className="text-sm text-red-500 mb-2">{errors.projectId}</p>}
+            {errors.projectId && (
+              <p className="text-sm text-red-500 mb-2">{errors.projectId}</p>
+            )}
 
             <input
               type="text"
@@ -467,7 +597,9 @@ const TransactionStatuss = () => {
               onBlur={() => handleBlur("name")}
               className="w-full mb-4 p-2 border rounded"
             />
-            {errors.name && <p className="text-sm text-red-500 mb-2">{errors.name}</p>}
+            {errors.name && (
+              <p className="text-sm text-red-500 mb-2">{errors.name}</p>
+            )}
 
             <input
               type="tel"
@@ -479,7 +611,9 @@ const TransactionStatuss = () => {
               onBlur={() => handleBlur("phone")}
               className="w-full mb-4 p-2 border rounded"
             />
-            {errors.phone && <p className="text-sm text-red-500 mb-2">{errors.phone}</p>}
+            {errors.phone && (
+              <p className="text-sm text-red-500 mb-2">{errors.phone}</p>
+            )}
 
             {/* <input
               type="date"
