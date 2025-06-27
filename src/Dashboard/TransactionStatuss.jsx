@@ -219,7 +219,7 @@ const TransactionStatuss = () => {
         <button
           href="#"
           onClick={() => setShowModal(true)}
-          className="text-sm text-orange-600 font-semibold"
+          className="text-sm font-semibold bg-orange-600 text-white px-4 py-2 rounded-md hover:bg-orange-700 transition-colors"
         >
           REFER & EARN
         </button>
@@ -357,7 +357,7 @@ const TransactionStatuss = () => {
           <table className="min-w-full text-sm text-left">
             <thead className="bg-red-100 text-gray-600 uppercase text-xs">
               <tr>
-                <th className="px-4 py-3">Date</th>
+                <th className="px-4 py-3">Date & Time</th>
                 <th className="px-4 py-3">Transaction Type</th>
                 <th className="px-4 py-3">Transaction Name</th>
                 <th className="px-4 py-3">Earned Points</th>
@@ -365,11 +365,11 @@ const TransactionStatuss = () => {
             </thead>
             <tbody className="text-gray-700">
               {transactions.length > 0 ? (
-                transactions.map((item, index) => (
+                [...transactions].reverse().map((item, index) => (
                   <tr key={index}>
                     <td className="px-4 py-3">
                       {item?.created_at
-                        ? new Date(item.created_at).toLocaleDateString()
+                        ? new Date(item.created_at).toLocaleString()
                         : "--"}
                     </td>
                     <td className="px-4 py-3 capitalize">
