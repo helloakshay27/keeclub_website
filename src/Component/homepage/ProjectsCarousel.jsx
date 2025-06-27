@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import Piramal_Aranya from "../../assets/ProjectImg/Piramal_Aranya.png"
 import Piramal_Mahalaxmi from "../../assets/ProjectImg/Piramal_Mahalaxmi.png"
 import Piramal_Relaty from "../../assets/ProjectImg/Piramal_Relaty.png"
@@ -107,10 +108,8 @@ const ProjectsCarousel = () => {
               key={index}
               className="min-w-[80%] sm:min-w-[45%] md:min-w-[33.33%] flex-shrink-0 flex justify-center items-center"
             >
-              <a 
-                href={`https://loyalty.lockated.com/project-list?s[name_cont]=${encodeURIComponent(project.name)}`} 
-                target="_blank" 
-                rel="noopener noreferrer"
+              <Link
+                to={`/projects?name=${encodeURIComponent(project.name)}`}
                 className="w-full"
               >
                 <img
@@ -122,7 +121,7 @@ const ProjectsCarousel = () => {
                   }}
                   className="w-full object-contain h-40 sm:h-48 md:h-56 max-h-[180px]"
                 />
-              </a>
+              </Link>
             </div>
           ))}
         </div>

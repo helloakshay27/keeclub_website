@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import PropertyCard from "./PropertyCard";
 import useApiFetch from "../../hooks/useApiFetch";
 import BASE_URL from "../../Confi/baseurl"
@@ -7,6 +8,7 @@ const ProjectsList = ({ view = "list" }) => {
   const { data, loading, error } = useApiFetch(
     `${BASE_URL}get_all_projects.json`
   );
+  const location = useLocation();
 
   const [properties, setProperties] = useState([]);
   const [selectedMapUrl, setSelectedMapUrl] = useState(
@@ -14,8 +16,8 @@ const ProjectsList = ({ view = "list" }) => {
   );
 
   useEffect(() => {
-    if (data && data.featured) {
-      const featuredProjects = data.projects.map((project) => ({
+    if (data && data.projects) {
+      let allProjects = data.projects.map((project) => ({
         id: project.id,
         name: project.project_name,
         location: project?.location?.city || "",
@@ -27,9 +29,23 @@ const ProjectsList = ({ view = "list" }) => {
         mapUrl: project.map_url,
       }));
 
-      setProperties(featuredProjects);
+      const params = new URLSearchParams(location.search);
+      const projectNameFromUrl = params.get("name");
+
+      if (projectNameFromUrl) {
+        allProjects = allProjects.filter(
+          (project) =>
+            project.name.toLowerCase() === projectNameFromUrl.toLowerCase()
+        );
+      }
+
+      setProperties(allProjects);
+
+      if (allProjects.length > 0 && allProjects[0].mapUrl) {
+        setSelectedMapUrl(allProjects[0].mapUrl);
+      }
     }
-  }, [data]);
+  }, [data, location.search]);
 
   if (loading) return <p className="text-center py-8">Loading projects...</p>;
   if (error) return <p className="text-center py-8 text-red-500">Error loading projects: {error}</p>;
