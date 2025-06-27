@@ -8,10 +8,10 @@ import Piramal_Vaikunth from "../../assets/ProjectImg/Piramal_Vaikunth.png"
 
 
 const projects = [
-  Piramal_Aranya,
-  Piramal_Mahalaxmi,
-  Piramal_Revanta,
-  Piramal_Vaikunth
+  { name: 'Piramal Aranya', image: Piramal_Aranya },
+  { name: 'Piramal Mahalaxmi', image: Piramal_Mahalaxmi },
+  { name: 'Piramal Revanta', image: Piramal_Revanta },
+  { name: 'Piramal Vaikunth', image: Piramal_Vaikunth }
 ];
 
 const ProjectsCarousel = () => {
@@ -102,20 +102,27 @@ const ProjectsCarousel = () => {
           ref={scrollRef}
           className="flex gap-6 overflow-hidden scroll-smooth transition-all duration-500"
         >
-          {projects.map((image, index) => (
+          {projects.map((project, index) => (
             <div
               key={index}
               className="min-w-[80%] sm:min-w-[45%] md:min-w-[33.33%] flex-shrink-0 flex justify-center items-center"
             >
-              <img
-                src={image}
-                alt={`Project ${index}`}
-                onError={(e) => {
-                  e.target.src =
-                    'https://via.placeholder.com/300x200?text=No+Image';
-                }}
-                className="w-full object-contain h-40 sm:h-48 md:h-56 max-h-[180px]"
-              />
+              <a 
+                href={`https://loyalty.lockated.com/project-list?s[name_cont]=${encodeURIComponent(project.name)}`} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="w-full"
+              >
+                <img
+                  src={project.image}
+                  alt={project.name}
+                  onError={(e) => {
+                    e.target.src =
+                      'https://via.placeholder.com/300x200?text=No+Image';
+                  }}
+                  className="w-full object-contain h-40 sm:h-48 md:h-56 max-h-[180px]"
+                />
+              </a>
             </div>
           ))}
         </div>

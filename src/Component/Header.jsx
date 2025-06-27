@@ -72,7 +72,7 @@ const Header = ({ isTransparent }) => {
           <li className="hover:text-[#fa4615] cursor-pointer">
             <Link to="/">HOME</Link>
           </li>
-          <Link to="/refer-now" className="hover:text-[#fa4615] cursor-pointer">REFER AND EARN</Link>
+          <Link to="/login" className="hover:text-[#fa4615] cursor-pointer">REFER AND EARN</Link>
 
           <li className="hover:text-[#fa4615] cursor-pointer">
             <Link to="/events">EVENTS</Link>
@@ -105,7 +105,11 @@ const Header = ({ isTransparent }) => {
               <Link to="/" onClick={() => setIsMobileMenuOpen(false)}>HOME</Link>
 
             </li>
-            <li className="hover:text-[#fa4615] cursor-pointer">REFER AND EARN</li>
+            <li className="hover:text-[#fa4615] cursor-pointer">
+              <Link to="/login" onClick={() => setIsMobileMenuOpen(false)}>
+                REFER AND EARN nkkmmk
+              </Link>
+            </li>
 
             <li className="hover:text-[#fa4615] cursor-pointer">
               <Link to="/events" onClick={() => setIsMobileMenuOpen(false)}>EVENTS</Link>
