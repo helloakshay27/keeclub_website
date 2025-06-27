@@ -2,7 +2,22 @@ import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import PropertyCard from "./PropertyCard";
 import useApiFetch from "../../hooks/useApiFetch";
-import BASE_URL from "../../Confi/baseurl"
+import BASE_URL from "../../Confi/baseurl";
+
+const toEmbedUrl = (url) => {
+  if (!url || url.includes("output=embed") || url.includes("/embed")) {
+    return url;
+  }
+  if (url.includes("/place/")) {
+    const parts = url.split("/place/");
+    if (parts.length > 1) {
+      const placeAndRest = parts[1];
+      const place = placeAndRest.split("/@")[0];
+      return `https://maps.google.com/maps?q=${place}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
+    }
+  }
+  return url;
+};
 
 const ProjectsList = ({ view = "list" }) => {
   const { data, loading, error } = useApiFetch(
@@ -26,7 +41,7 @@ const ProjectsList = ({ view = "list" }) => {
           .map((cfg) => cfg.name)
           .join(", "),
         imageUrl: project.image_url,
-        mapUrl: project.map_url,
+        mapUrl: toEmbedUrl(project.map_url),
       }));
 
       const params = new URLSearchParams(location.search);
@@ -40,7 +55,8 @@ const ProjectsList = ({ view = "list" }) => {
       }
 
       setProperties(allProjects);
-
+      console.log("allProjects:-",allProjects);
+      
       if (allProjects.length > 0 && allProjects[0].mapUrl) {
         setSelectedMapUrl(allProjects[0].mapUrl);
       }

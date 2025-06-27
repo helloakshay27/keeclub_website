@@ -216,13 +216,13 @@ const TransactionStatuss = () => {
           </span>{" "}
           Tier!
         </p>
-        <a
+        <button
           href="#"
           onClick={() => setShowModal(true)}
           className="text-sm text-orange-600 font-semibold"
         >
           REFER & EARN
-        </a>
+        </button>
       </div>
 
       {/* Progress Section */}
