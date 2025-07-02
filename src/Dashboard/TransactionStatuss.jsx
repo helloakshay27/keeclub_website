@@ -218,7 +218,9 @@ const TransactionStatuss = () => {
   // Loop through all tiers and find the highest tier where currentPoints >= exit_points
   for (let i = 0; i < allTiers.length; i++) {
     const tier = allTiers[i];
+    console.log(`Current Points: ${currentPoints}, Tier: ${tier.name}, Exit Points: ${tier.exit_points}`);
     if (currentPoints >= tier.exit_points) {
+      
       currentTier = tier.name;
     }
   }
@@ -269,35 +271,30 @@ const TransactionStatuss = () => {
 
             const allTiers = tierProgressData.all_tiers;
             const currentPoints = memberData.current_loyalty_points || 0;
-            const maxPoints = allTiers[allTiers.length - 1].exit_points;
+            const numTiers = allTiers.length;
+            const maxPoints = allTiers[numTiers - 1].exit_points;
 
-            const progress =
-              maxPoints > 0
-                ? Math.min((currentPoints / maxPoints) * 100, 100)
-                : 0;
+            // Find current segment index
+            let currentTierIndex = 0;
+            for (let i = 0; i < numTiers; i++) {
+              if (currentPoints < allTiers[i].exit_points) {
+                currentTierIndex = i;
+                break;
+              }
+              if (i === numTiers - 1) {
+                currentTierIndex = numTiers - 1;
+              }
+            }
 
-            let lastExitPoint = 0;
-            const tierSegments = allTiers.map((tier) => {
-              const start = lastExitPoint;
-              const range = tier.exit_points - lastExitPoint;
-              lastExitPoint = tier.exit_points;
-              return {
-                name: tier.name,
-                start,
-                end: tier.exit_points,
-                range,
-              };
-            });
+            // Calculate points range for current segment
+            const prevExit = currentTierIndex === 0 ? 0 : allTiers[currentTierIndex - 1].exit_points;
+            const nextExit = allTiers[currentTierIndex].exit_points;
+            const segmentRange = nextExit - prevExit;
+            const segmentProgress = segmentRange > 0 ? (currentPoints - prevExit) / segmentRange : 0.0;
 
-            // Find current tier index or default to last
-            const currentTierIndex =
-              tierSegments.findIndex(
-                (segment) => currentPoints < segment.end
-              ) !== -1
-                ? tierSegments.findIndex(
-                    (segment) => currentPoints < segment.end
-                  )
-                : tierSegments.length - 1;
+            // Calculate dot position: center of current segment
+            const segmentWidthPercent = 100 / numTiers;
+            const dotLeftPercent = currentTierIndex * segmentWidthPercent + segmentWidthPercent / 2;
 
             const pointsNeeded = maxPoints - currentPoints;
 
@@ -322,74 +319,120 @@ const TransactionStatuss = () => {
                 </div>
 
                 {/* Tier Bar */}
-                <div className="relative w-full h-2 bg-gray-200 rounded-full mt-2 flex">
-                  {tierSegments.map((segment, index) => {
-                    const segmentProgress =
-                      index === currentTierIndex
-                        ? ((currentPoints - segment.start) / segment.range) *
-                          100
-                        : index < currentTierIndex
-                        ? 100
-                        : 0;
+                <div className="relative w-full h-2.5 bg-gray-200 rounded-full mt-2 flex items-center" style={{ borderRadius: '999px' }}>
+                  {allTiers.map((tier, index) => {
+                    // Fill color for completed segments
+                    let fill = "bg-transparent";
+                    if (index < currentTierIndex) fill = "bg-red-600";
+                    if (index === currentTierIndex) fill = "bg-red-600";
+
+                    // Remove right border-radius for filled segments except the last one
+                    const isFilled = index < currentTierIndex;
+                    const isCurrent = index === currentTierIndex;
+                    const isFirst = index === 0;
+
+                    let borderRadiusStyle = {};
+                    if (isFirst) {
+                      // Only the very first segment has full left rounding
+                      borderRadiusStyle = {
+                        borderTopLeftRadius: '999px',
+                        borderBottomLeftRadius: '999px',
+                        borderTopRightRadius: 0,
+                        borderBottomRightRadius: 0,
+                      };
+                    } else {
+                      // All other segments have no rounding
+                      borderRadiusStyle = {
+                        borderRadius: 0,
+                      };
+                    }
 
                     return (
                       <div
                         key={index}
                         style={{
-                          width: `${(segment.range / maxPoints) * 100}%`,
+                          width: `${segmentWidthPercent}%`,
+                          borderRadius: '0px',
                         }}
-                        className="relative h-full"
+                        className="relative h-full overflow-hidden"
                       >
                         <div
-                          className={`h-full ${
-                            segmentProgress > 0
-                              ? "bg-red-600"
-                              : "bg-transparent"
-                          } transition-all`}
+                          className={`h-full ${fill} transition-all`}
                           style={{
-                            width: `${segmentProgress}%`,
+                            width:
+                              index < currentTierIndex
+                                ? "100%"
+                                : index === currentTierIndex
+                                ? "50%"
+                                : "0%",
+                            ...borderRadiusStyle,
                           }}
                         ></div>
                       </div>
                     );
                   })}
-
-                  {/* Progress dot */}
+                  {/* Progress dot centered in current segment with tooltip */}
                   <div
-                    className="absolute top-1/2 -translate-y-1/2 bg-red-600 rounded-full border-2 border-white transition-all"
+                    className="absolute top-1/2 -translate-y-1/2 bg-red-600 rounded-full border-2 border-white shadow-lg transition-all group"
                     style={{
-                      left: `calc(${progress}% - 8px)`,
-                      width: "16px",
-                      height: "16px",
+                      left: `calc(${dotLeftPercent}% - 10px)`,
+                      width: "20px",
+                      height: "20px",
+                      boxShadow: "0 2px 8px 0 rgba(250,70,22,0.25)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
                     }}
-                  ></div>
+                  >
+                    <div className="absolute left-1/2 -translate-x-1/2 -top-8 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
+                      {currentPoints} pts
+                    </div>
+                  </div>
                 </div>
 
                 {/* Tier Labels */}
-                <div className="flex text-xs mt-3 text-gray-700 w-full">
-                  {tierSegments.map((segment, index) => (
+                <div className="flex text-xs mt-3 text-gray-700 w-full relative">
+                  {/* Empty space for 0-point start */}
+                  <div
+                    style={{
+                      flexBasis: `${100 / allTiers.length / 2}%`,
+                      textAlign: "left",
+                    }}
+                  ></div>
+                  {allTiers.map((tier, index) => (
                     <div
                       key={index}
                       style={{
-                        flexBasis: `${(segment.range / maxPoints) * 100}%`,
+                        flexBasis: `${100 / allTiers.length}%`,
                         textAlign:
                           index === 0
                             ? "left"
-                            : index === tierSegments.length - 1
+                            : index === allTiers.length - 1
                             ? "right"
                             : "center",
+                        position: index === allTiers.length - 1 ? "absolute" : "relative",
+                        right: index === allTiers.length - 1 ? 0 : undefined,
+                        left: index === 0 ? `calc(${100 / allTiers.length / 2}% - 0.5rem)` : undefined,
+                        transform: index === allTiers.length - 1 ? "translateX(50%)" : undefined,
                       }}
                       className="relative"
                     >
                       <span className="cursor-default group relative inline-block">
                         {/* Tooltip on hover of span only */}
                         <div className="absolute -top-6 left-1/2 -translate-x-1/2 whitespace-nowrap px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity z-10">
-                          {segment.end.toLocaleString()} pts
+                          {tier.exit_points.toLocaleString()} pts
                         </div>
-                        {segment.name}
+                        {tier.name}
                       </span>
                     </div>
                   ))}
+                  {/* Empty space for end alignment */}
+                  <div
+                    style={{
+                      flexBasis: `${100 / allTiers.length / 2}%`,
+                      textAlign: "right",
+                    }}
+                  ></div>
                 </div>
               </>
             );
