@@ -23,10 +23,19 @@ const ProjectDetail = () => {
   const navigate = useNavigate();
   const [showEnquiryModal, setShowEnquiryModal] = useState(false);
   const [showSiteVisitModal, setShowSiteVisitModal] = useState(false);
+  const [enquireDisabled, setEnquireDisabled] = useState(false);
+
+  useEffect(() => {
+    if (sessionStorage.getItem("enquireClicked")) {
+      setEnquireDisabled(true);
+    }
+  }, []);
 
   const handleEnquireClick = () => {
     if (localStorage.getItem("authToken")) {
       setShowEnquiryModal(true);
+      sessionStorage.setItem("enquireClicked", "true");
+      setEnquireDisabled(true);
     } else {
       navigate("/login", { state: { from: location.pathname } });
 
@@ -325,6 +334,7 @@ const ProjectDetail = () => {
           <button
             onClick={handleEnquireClick}
             className="flex-1 bg-orange-500 text-white py-2 rounded-md font-medium"
+            disabled={enquireDisabled}
           >
             Enquire Now
           </button>
@@ -581,7 +591,7 @@ const ProjectDetail = () => {
                 ))}
             </div>
           </div>
-``
+
           {/* Location Highlights Section */}
           <div className="flex gap-6 mb-7" ref={highlightsRef}>
             <div className="w-full">
