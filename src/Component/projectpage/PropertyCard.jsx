@@ -23,7 +23,7 @@ const PropertyCard = ({ property, onViewMap }) => {
 
   const handleClick = () => {
     if (propertyId) {
-      navigate(`/Project-Details/${propertyId}`);
+      navigate(`/project-details/${propertyId}`);
     } else {
       console.error("No project ID available for navigation", property);
     }

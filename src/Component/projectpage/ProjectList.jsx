@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
 import PropertyCard from "./PropertyCard";
 import useApiFetch from "../../hooks/useApiFetch";
 import BASE_URL from "../../Confi/baseurl";
@@ -114,9 +114,9 @@ const ProjectsList = ({ view = "list" }) => {
                           <h1 className="self-end font-bold md:text-[16px]">{property.configurations}</h1>
                         </div>
                       </div>
-                      <button className="hidden lg:block text-[#F59E0B] text-sm self-center text-right">
+                      <Link to={`/project-details/${property.id}`} className="hidden lg:block text-[#F59E0B] text-sm self-center text-right">
                         View on map
-                      </button>
+                      </Link>
                     </div>
                   </div>
                 </div>

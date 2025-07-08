@@ -1,28 +1,37 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import Piramal_Aranya from "../../assets/ProjectImg/Piramal_Aranya.png"
-import Piramal_Mahalaxmi from "../../assets/ProjectImg/Piramal_Mahalaxmi.png"
-import Piramal_Relaty from "../../assets/ProjectImg/Piramal_Relaty.png"
-import Piramal_Revanta from "../../assets/ProjectImg/Piramal_Revanta.png"
-import Piramal_Vaikunth from "../../assets/ProjectImg/Piramal_Vaikunth.png"
-
-
-const projects = [
-  { name: 'Piramal Aranya', image: Piramal_Aranya },
-  { name: 'Piramal Mahalaxmi', image: Piramal_Mahalaxmi },
-  { name: 'Piramal Revanta', image: Piramal_Revanta },
-  { name: 'Piramal Vaikunth', image: Piramal_Vaikunth }
-];
+import Piramal_Aranya from "../../assets/ProjectImg/Piramal_Aranya.png";
+import Piramal_Mahalaxmi from "../../assets/ProjectImg/Piramal_Mahalaxmi.png";
+import Piramal_Revanta from "../../assets/ProjectImg/Piramal_Revanta.png";
+import Piramal_Vaikunth from "../../assets/ProjectImg/Piramal_Vaikunth.png";
+import useApiFetch from "../../hooks/useApiFetch";
+import BASE_URL from "../../Confi/baseurl";
 
 const ProjectsCarousel = () => {
   const scrollRef = useRef(null);
   const [scrollIndex, setScrollIndex] = useState(0);
+  const [projectIds, setProjectIds] = useState([]);
 
-  const visibleCountDesktop = 3; // Default visible cards for desktop
-  const mobileVisibleCount = 1.2; // Show 1 full card + part on mobile
+  const { data } = useApiFetch(`${BASE_URL}get_all_projects.json`);
 
-  // Returns how many cards are visible based on window width
+  useEffect(() => {
+    if (data && data.projects) {
+      const ids = data.projects.map((project) => project.id);
+      setProjectIds(ids);
+    }
+  }, [data]);
+
+  const projects = [
+    { name: 'Piramal Aranya', image: Piramal_Aranya, id: projectIds[0] },
+    { name: 'Piramal Mahalaxmi', image: Piramal_Mahalaxmi, id: projectIds[1] },
+    { name: 'Piramal Revanta', image: Piramal_Revanta, id: projectIds[2] },
+    { name: 'Piramal Vaikunth', image: Piramal_Vaikunth, id: projectIds[3] }
+  ];
+
+  const visibleCountDesktop = 3;
+  const mobileVisibleCount = 1.2;
+
   const getVisibleCount = () => {
     if (typeof window !== 'undefined') {
       if (window.innerWidth < 640) return mobileVisibleCount;
@@ -31,7 +40,6 @@ const ProjectsCarousel = () => {
     return visibleCountDesktop;
   };
 
-  // Store visibleCount in state and update on resize
   const [visibleCount, setVisibleCount] = useState(getVisibleCount());
 
   useEffect(() => {
@@ -42,12 +50,10 @@ const ProjectsCarousel = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Scroll container to position for given index
   const scrollToIndex = (index) => {
     const container = scrollRef.current;
     if (!container) return;
 
-    // Calculate child width assuming equal width cards
     const childWidth = container.scrollWidth / projects.length;
 
     container.scrollTo({
@@ -56,7 +62,6 @@ const ProjectsCarousel = () => {
     });
   };
 
-  // Handle left/right scroll button click
   const scroll = (direction) => {
     const maxScrollIndex = Math.ceil(projects.length - visibleCount);
     const newIndex =
@@ -68,7 +73,6 @@ const ProjectsCarousel = () => {
     setScrollIndex(newIndex);
   };
 
-  // Auto scroll every 4 seconds
   useEffect(() => {
     const interval = setInterval(() => {
       setScrollIndex((prev) => {
@@ -80,7 +84,7 @@ const ProjectsCarousel = () => {
     }, 4000);
 
     return () => clearInterval(interval);
-  }, [visibleCount]);
+  }, [visibleCount, projects]);
 
   return (
     <section className="w-full py-16 flex flex-col items-center bg-white">
@@ -90,15 +94,13 @@ const ProjectsCarousel = () => {
       <div className="h-[2px] w-24 bg-[#FF4F12] mt-2 mb-12" />
 
       <div className="relative w-full max-w-6xl px-4 sm:px-6 ">
-        {/* Left Arrow */}
         <button
           onClick={() => scroll('left')}
           className="absolute left-0 top-1/2 transform -translate-y-1/2 z-10 bg-white p-2 rounded-full shadow cursor-pointer"
         >
-          <ChevronLeft className="w-7 h-7"/>
+          <ChevronLeft className="w-7 h-7" />
         </button>
 
-        {/* Scrollable Content */}
         <div
           ref={scrollRef}
           className="flex gap-6 overflow-hidden scroll-smooth transition-all duration-500"
@@ -109,7 +111,7 @@ const ProjectsCarousel = () => {
               className="min-w-[80%] sm:min-w-[45%] md:min-w-[33.33%] flex-shrink-0 flex justify-center items-center"
             >
               <Link
-                to={`/projects?name=${encodeURIComponent(project.name)}`}
+                to={`/project-details/${project.id}`}
                 className="w-full"
               >
                 <img
@@ -126,7 +128,6 @@ const ProjectsCarousel = () => {
           ))}
         </div>
 
-        {/* Right Arrow */}
         <button
           onClick={() => scroll('right')}
           className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 bg-white p-2 rounded-full shadow cursor-pointer"

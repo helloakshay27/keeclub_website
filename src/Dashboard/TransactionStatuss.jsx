@@ -10,7 +10,7 @@ import BASE_URL from "../Confi/baseurl";
 
 const TransactionStatuss = () => {
   const { id } = useParams();
-  const [selectedTab, setSelectedTab] = useState("redemptions");
+  const [selectedTab, setSelectedTab] = useState("referrals");
   const [memberData, setMemberData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [referrals, setReferrals] = useState([]);
@@ -22,9 +22,9 @@ const TransactionStatuss = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   const tabs = [
-    { key: "redemptions", label: "My Redemptions" },
-    { key: "transactions", label: "My Transactions" },
     { key: "referrals", label: "My Referrals" },
+    { key: "transactions", label: "My Transactions" },
+    { key: "redemptions", label: "My Redemptions" },
   ];
   const getTabIndex = (key) => tabs.findIndex((tab) => tab.key === key);
 
@@ -180,10 +180,13 @@ const TransactionStatuss = () => {
     );
 
   const summaryCards = [
-    { title: "Loyalty Points", value: memberData?.current_loyalty_points || 0 },
     { title: "Earned Points", value: memberData?.earned_points || 0 },
+    { title: "Loyalty Points", value: memberData?.current_loyalty_points || 0 },
     { title: "Redeemed Points", value: memberData?.reedem_points || 0 },
   ];
+
+  console.log("Member Data:", memberData);
+  
 
   const transactions = Array.isArray(memberData?.member_transactions)
     ? memberData.member_transactions
