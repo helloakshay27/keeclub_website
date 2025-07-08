@@ -507,7 +507,7 @@ const starImagePath =
           {currentTier !== "--" && (
   <button
     onClick={() => setShowTierBenefit(!showTierBenefit)}
-    className="text-sm font-semibold bg-orange-600 text-white px-4 py-2 rounded-md hover:bg-orange-700 transition-colors"
+    className="bg-gray-900 text-white px-4 py-3 md:py-4 rounded text-sm font-medium uppercase"
   >
     {showTierBenefit ? "HIDE TIER BENEFITS" : "VIEW TIER BENEFITS"}
   </button>
