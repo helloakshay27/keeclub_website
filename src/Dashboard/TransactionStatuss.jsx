@@ -20,6 +20,7 @@ const TransactionStatuss = () => {
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [showTierBenefit, setShowTierBenefit] = useState(false);
 
   const tabs = [
     { key: "referrals", label: "My Referrals" },
@@ -186,7 +187,6 @@ const TransactionStatuss = () => {
   ];
 
   console.log("Member Data:", memberData);
-  
 
   const transactions = Array.isArray(memberData?.member_transactions)
     ? memberData.member_transactions
@@ -221,30 +221,72 @@ const TransactionStatuss = () => {
   // Loop through all tiers and find the highest tier where currentPoints >= exit_points
   for (let i = 0; i < allTiers.length; i++) {
     const tier = allTiers[i];
-    console.log(`Current Points: ${currentPoints}, Tier: ${tier.name}, Exit Points: ${tier.exit_points}`);
+    console.log(
+      `Current Points: ${currentPoints}, Tier: ${tier.name}, Exit Points: ${tier.exit_points}`
+    );
     if (currentPoints >= tier.exit_points) {
-      
       currentTier = tier.name;
     }
   }
+
+  const tierBenefits = [
+    {
+      tier: "Bronze",
+      title: "Bronze Tier",
+      points: [
+        "Every purchase earns you reward points that bring you closer to exclusive experiences.",
+        "You’ll be invited to member-only events, receive curated monthly recommendations, and get a warm welcome gift as a new member.",
+        "This tier opens the door to thoughtful perks and sets the stage for something truly rewarding.",
+        "It’s the foundation for your relationship with Kee Club personal, consistent, and curated with care.",
+      ],
+    },
+    {
+      tier: "Silver",
+      title: "Silver Tier",
+      points: [
+        "As a Silver member, you’re celebrated with extra care. You earn points at a faster pace and get access to new arrivals and sales before anyone else.",
+        "Your birthday is special here we’ll make sure of it with a curated surprise just for you. Enjoy complimentary standard shipping, priority assistance from our support team, and seasonal offers crafted for your preferences.",
+        "With Silver, you step into a space where service is smoother, selections are smarter, and your loyalty is felt.",
+      ],
+    },
+    {
+      tier: "Gold",
+      title: "Gold Tier",
+      points: [
+        "Gold membership is an invitation to go deeper with Kee Club.",
+        "Enjoy faster rewards, free express shipping, and a dedicated line for quicker support.",
+        "You’ll be among the first to access new collections and exclusive drops, with personal invitations to member-only experiences. Receive curated gifts for special milestones, thoughtful service throughout your journey, and styling or shopping recommendations based on your tastes.",
+        "Gold is more than a tier it’s a partnership built on trust, taste, and attention.",
+      ],
+    },
+  ];
+
+  // Find benefit for current tier
+const benefit = tierBenefits.find(
+  (tier) => tier.tier.toLowerCase() === currentTier.toLowerCase()
+);
+
+// Dynamic star image
+const starImagePath =
+  currentTier !== "--" ? `/${currentTier.toLowerCase()}-star.png` : null;
 
   return (
     <div className="max-w-7xl mx-auto p-4">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0">
         <p className="text-lg font-semibold">
-  {currentTier === "--" ? (
-    "You are not in any tier"
-  ) : (
-    <>
-      You are on the{" "}
-      <span className="text-orange-500 font-bold capitalize">
-        {currentTier}
-      </span>{" "}
-      Tier!
-    </>
-  )}
-</p>
+          {currentTier === "--" ? (
+            "You are not in any tier"
+          ) : (
+            <>
+              You are on the{" "}
+              <span className="text-orange-500 font-bold capitalize">
+                {currentTier}
+              </span>{" "}
+              Tier!
+            </>
+          )}
+        </p>
 
         <button
           href="#"
@@ -257,7 +299,7 @@ const TransactionStatuss = () => {
 
       {/* Progress Section */}
       <div className="bg-white border border-gray-300 rounded-lg mt-4 p-5 sm:p-7 shadow-sm flex flex-col md:flex-row gap-9 md:gap-40">
-        <div className="w-full md:w-[70%]">
+        <div className="w-full md:w-[100%]">
           {(() => {
             const tierProgressData = memberData?.tier_progress;
             if (
@@ -290,14 +332,21 @@ const TransactionStatuss = () => {
             }
 
             // Calculate points range for current segment
-            const prevExit = currentTierIndex === 0 ? 0 : allTiers[currentTierIndex - 1].exit_points;
+            const prevExit =
+              currentTierIndex === 0
+                ? 0
+                : allTiers[currentTierIndex - 1].exit_points;
             const nextExit = allTiers[currentTierIndex].exit_points;
             const segmentRange = nextExit - prevExit;
-            const segmentProgress = segmentRange > 0 ? (currentPoints - prevExit) / segmentRange : 0.0;
+            const segmentProgress =
+              segmentRange > 0
+                ? (currentPoints - prevExit) / segmentRange
+                : 0.0;
 
             // Calculate dot position: center of current segment
             const segmentWidthPercent = 100 / numTiers;
-            const dotLeftPercent = currentTierIndex * segmentWidthPercent + segmentWidthPercent / 2;
+            const dotLeftPercent =
+              currentTierIndex * segmentWidthPercent + segmentWidthPercent / 2;
 
             const pointsNeeded = maxPoints - currentPoints;
 
@@ -322,7 +371,10 @@ const TransactionStatuss = () => {
                 </div>
 
                 {/* Tier Bar */}
-                <div className="relative w-full h-2.5 bg-gray-200 rounded-full mt-2 flex items-center" style={{ borderRadius: '999px' }}>
+                <div
+                  className="relative w-full h-2.5 bg-gray-200 rounded-full mt-2 flex items-center"
+                  style={{ borderRadius: "999px" }}
+                >
                   {allTiers.map((tier, index) => {
                     // Fill color for completed segments
                     let fill = "bg-transparent";
@@ -338,8 +390,8 @@ const TransactionStatuss = () => {
                     if (isFirst) {
                       // Only the very first segment has full left rounding
                       borderRadiusStyle = {
-                        borderTopLeftRadius: '999px',
-                        borderBottomLeftRadius: '999px',
+                        borderTopLeftRadius: "999px",
+                        borderBottomLeftRadius: "999px",
                         borderTopRightRadius: 0,
                         borderBottomRightRadius: 0,
                       };
@@ -355,7 +407,7 @@ const TransactionStatuss = () => {
                         key={index}
                         style={{
                           width: `${segmentWidthPercent}%`,
-                          borderRadius: '0px',
+                          borderRadius: "0px",
                         }}
                         className="relative h-full overflow-hidden"
                       >
@@ -413,10 +465,19 @@ const TransactionStatuss = () => {
                             : index === allTiers.length - 1
                             ? "right"
                             : "center",
-                        position: index === allTiers.length - 1 ? "absolute" : "relative",
+                        position:
+                          index === allTiers.length - 1
+                            ? "absolute"
+                            : "relative",
                         right: index === allTiers.length - 1 ? 0 : undefined,
-                        left: index === 0 ? `calc(${100 / allTiers.length / 2}% - 0.5rem)` : undefined,
-                        transform: index === allTiers.length - 1 ? "translateX(50%)" : undefined,
+                        left:
+                          index === 0
+                            ? `calc(${100 / allTiers.length / 2}% - 0.5rem)`
+                            : undefined,
+                        transform:
+                          index === allTiers.length - 1
+                            ? "translateX(50%)"
+                            : undefined,
                       }}
                       className="relative"
                     >
@@ -442,12 +503,67 @@ const TransactionStatuss = () => {
           })()}
         </div>
 
-        <div className="flex items-center justify-start md:justify-end">
-          <button className="bg-gray-900 text-white px-4 py-3 md:py-4 rounded text-sm font-medium uppercase">
-            VIEW TIER BENEFITS
-          </button>
+        <div className="md:items-end">
+          {currentTier !== "--" && (
+  <button
+    onClick={() => setShowTierBenefit(!showTierBenefit)}
+    className="text-sm font-semibold bg-orange-600 text-white px-4 py-2 rounded-md hover:bg-orange-700 transition-colors"
+  >
+    {showTierBenefit ? "HIDE TIER BENEFITS" : "VIEW TIER BENEFITS"}
+  </button>
+)}
+
         </div>
       </div>
+      {showTierBenefit && (() => {
+  // const starImagePath = `/${currentTier?.toLowerCase()}-star.png`;
+
+  return (
+    <div className="relative w-full md:w-[90%] mt-6 transition-all duration-300 ease-in-out border border-gray-300 rounded-lg bg-[#e8ecf7] p-6 sm:p-8 shadow-md overflow-hidden">
+      {/* Decorative Background Stars */}
+      <img
+        src={starImagePath}
+        alt="star"
+        className="absolute w-8 h-8 top-4 left-4 opacity-20 pointer-events-none"
+      />
+      <img
+        src={starImagePath}
+        alt="star"
+        className="absolute w-6 h-6 bottom-8 left-10 opacity-10 pointer-events-none"
+      />
+      <img
+        src={starImagePath}
+        alt="star"
+        className="absolute w-24 h-24 top-0 right-6 opacity-100 pointer-events-none"
+      />
+      <img
+        src={starImagePath}
+        alt="star"
+        className="absolute w-10 h-10 bottom-4 right-10 opacity-20 pointer-events-none"
+      />
+
+      {/* Benefit Card Content */}
+      {benefit ? (
+        <div className="relative z-10">
+          <h3 className="text-xl font-semibold text-[#d6451d] mb-3">
+            {benefit.title}
+          </h3>
+          <ul className="list-disc list-inside text-gray-800 space-y-2 text-sm leading-relaxed">
+            {benefit.points.map((point, idx) => (
+              <li key={idx}>{point}</li>
+            ))}
+          </ul>
+        </div>
+      ) : (
+        <p className="text-sm text-gray-600 z-10 relative">
+          No benefits data found for your current tier.
+        </p>
+      )}
+    </div>
+  );
+})()}
+
+
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6">
