@@ -164,7 +164,7 @@ const Header = ({ isTransparent }) => {
       )}
 
       {showModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black">
+        <div className="fixed inset-0 flex items-center justify-center bg-black/80">
 
           <div className="bg-white rounded-lg shadow-lg p-6 min-w-[300px]" style={{ color: '#000' }}>
             <h2 className="text-lg font-semibold mb-4">Sign Out</h2>
