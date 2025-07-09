@@ -178,8 +178,8 @@ const Header = ({ isTransparent }) => {
             <Link to={`/dashboard/transactions/${id}`} className="mb-4 text-blue-500 hover:underline cursor-pointer">
 
             <button
-                className="px-4 py-2 rounded bg-[#eb5e28] text-white hover:bg-[#cf4c1e]"
-              >go to dashboard</button>
+                className="px-4 py-2 rounded bg-[#f54a00] text-white hover:bg-[#cf4c1e]"
+              >Go to dashboard</button>
             </Link>
             <div className="flex justify-end space-x-3 mt-10">
               <button
@@ -189,7 +189,7 @@ const Header = ({ isTransparent }) => {
                 Cancel
               </button>
               <button
-                className="px-4 py-2 rounded bg-[#eb5e28] text-white hover:bg-[#cf4c1e]"
+                className="px-4 py-2 rounded bg-[#f54a00] text-white hover:bg-[#cf4c1e]"
                 onClick={handleSignOut}
               >
                 Sign Out

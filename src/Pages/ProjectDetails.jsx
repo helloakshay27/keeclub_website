@@ -451,7 +451,7 @@ const ProjectDetail = () => {
         <div className="flex gap-4 mb-6">
           <button
             onClick={handleEnquireClick}
-            className="flex-1 bg-orange-500 text-white py-2 rounded-md font-medium"
+            className="flex-1 bg-orange-600 text-white py-2 rounded-md font-medium hover:bg-orange-700"
             disabled={enquireDisabled}
           >
             Enquire Now
