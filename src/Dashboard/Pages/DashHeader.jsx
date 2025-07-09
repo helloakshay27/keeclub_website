@@ -48,7 +48,7 @@ const DashHeader = () => {
       </header>
 
       {showModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
+        <div className="fixed inset-0 flex items-center justify-center bg-black/80 z-150">
           <div className="bg-white rounded-lg shadow-lg p-6 min-w-[300px]">
             <h2 className="text-lg font-semibold mb-4">Sign Out</h2>
             <div className="mb-4">
@@ -66,7 +66,7 @@ const DashHeader = () => {
                 Cancel
               </button>
               <button
-                className="px-4 py-2 rounded bg-[#eb5e28] text-white hover:bg-[#cf4c1e]"
+                className="px-4 py-2 rounded bg-[#f54a00] text-white hover:bg-[#cf4c1e]"
                 onClick={handleSignOut}
               >
                 Sign Out
