@@ -262,13 +262,13 @@ const TransactionStatuss = () => {
   ];
 
   // Find benefit for current tier
-const benefit = tierBenefits.find(
-  (tier) => tier.tier.toLowerCase() === currentTier.toLowerCase()
-);
+  const benefit = tierBenefits.find(
+    (tier) => tier.tier.toLowerCase() === currentTier.toLowerCase()
+  );
 
-// Dynamic star image
-const starImagePath =
-  currentTier !== "--" ? `/${currentTier.toLowerCase()}-star.png` : null;
+  // Dynamic star image
+  const starImagePath =
+    currentTier !== "--" ? `/${currentTier.toLowerCase()}-star.png` : null;
 
   return (
     <div className="max-w-7xl mx-auto p-4">
@@ -504,66 +504,58 @@ const starImagePath =
         </div>
 
         <div className="md:items-end">
-          {currentTier !== "--" && (
-  <button
-    onClick={() => setShowTierBenefit(!showTierBenefit)}
-    className="bg-gray-900 text-white px-4 py-3 md:py-4 rounded text-sm font-medium uppercase"
-  >
-    {showTierBenefit ? "HIDE TIER BENEFITS" : "VIEW TIER BENEFITS"}
-  </button>
-)}
-
+          <button
+            onClick={() => setShowTierBenefit(!showTierBenefit)}
+            className="bg-gray-900 text-white px-4 py-3 md:py-4 rounded text-sm font-medium uppercase"
+          >
+            {showTierBenefit ? "HIDE TIER BENEFITS" : "VIEW TIER BENEFITS"}
+          </button>
         </div>
       </div>
-      {showTierBenefit && (() => {
-  // const starImagePath = `/${currentTier?.toLowerCase()}-star.png`;
+      {showTierBenefit && (
+  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-6">
+    {tierBenefits.map((tier, index) => (
+      <div
+        key={index}
+        className="relative w-full transition-all duration-300 ease-in-out border border-gray-300 rounded-lg bg-[#e8ecf7] p-6 sm:p-8 shadow-md overflow-hidden"
+      >
+        {/* Decorative Background Stars */}
+        <img
+          src={`/${tier.tier.toLowerCase()}-star.png`}
+          alt="star"
+          className="absolute w-8 h-8 top-4 left-4 opacity-20 pointer-events-none"
+        />
+        <img
+          src={`/${tier.tier.toLowerCase()}-star.png`}
+          alt="star"
+          className="absolute w-6 h-6 bottom-8 left-10 opacity-10 pointer-events-none"
+        />
+        <img
+          src={`/${tier.tier.toLowerCase()}-star.png`}
+          alt="star"
+          className="absolute w-24 h-24 top-0 right-6 opacity-100 pointer-events-none"
+        />
+        <img
+          src={`/${tier.tier.toLowerCase()}-star.png`}
+          alt="star"
+          className="absolute w-10 h-10 bottom-4 right-10 opacity-20 pointer-events-none"
+        />
 
-  return (
-    <div className="relative w-full md:w-[90%] mt-6 transition-all duration-300 ease-in-out border border-gray-300 rounded-lg bg-[#e8ecf7] p-6 sm:p-8 shadow-md overflow-hidden">
-      {/* Decorative Background Stars */}
-      <img
-        src={starImagePath}
-        alt="star"
-        className="absolute w-8 h-8 top-4 left-4 opacity-20 pointer-events-none"
-      />
-      <img
-        src={starImagePath}
-        alt="star"
-        className="absolute w-6 h-6 bottom-8 left-10 opacity-10 pointer-events-none"
-      />
-      <img
-        src={starImagePath}
-        alt="star"
-        className="absolute w-24 h-24 top-0 right-6 opacity-100 pointer-events-none"
-      />
-      <img
-        src={starImagePath}
-        alt="star"
-        className="absolute w-10 h-10 bottom-4 right-10 opacity-20 pointer-events-none"
-      />
-
-      {/* Benefit Card Content */}
-      {benefit ? (
+        {/* Benefit Card Content */}
         <div className="relative z-10">
           <h3 className="text-xl font-semibold text-[#d6451d] mb-3">
-            {benefit.title}
+            {tier.title}
           </h3>
           <ul className="list-disc list-inside text-gray-800 space-y-2 text-sm leading-relaxed">
-            {benefit.points.map((point, idx) => (
+            {tier.points.map((point, idx) => (
               <li key={idx}>{point}</li>
             ))}
           </ul>
         </div>
-      ) : (
-        <p className="text-sm text-gray-600 z-10 relative">
-          No benefits data found for your current tier.
-        </p>
-      )}
-    </div>
-  );
-})()}
-
-
+      </div>
+    ))}
+  </div>
+)}
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6">

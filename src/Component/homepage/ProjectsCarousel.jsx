@@ -25,8 +25,8 @@ const ProjectsCarousel = () => {
   const projects = [
     { name: 'Piramal Aranya', image: Piramal_Aranya, id: projectIds[0] },
     { name: 'Piramal Mahalaxmi', image: Piramal_Mahalaxmi, id: projectIds[1] },
-    { name: 'Piramal Revanta', image: Piramal_Revanta, id: projectIds[2] },
-    { name: 'Piramal Vaikunth', image: Piramal_Vaikunth, id: projectIds[3] }
+    { name: 'Piramal Revanta', image: Piramal_Revanta, id: projectIds[3] },
+    { name: 'Piramal Vaikunth', image: Piramal_Vaikunth, id: projectIds[2] }
   ];
 
   const visibleCountDesktop = 3;
