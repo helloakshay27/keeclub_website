@@ -184,6 +184,7 @@ const TransactionStatuss = () => {
     { title: "Earned Points", value: memberData?.earned_points || 0 },
     { title: "Loyalty Points", value: memberData?.current_loyalty_points || 0 },
     { title: "Redeemed Points", value: memberData?.reedem_points || 0 },
+    { title: "Expired Points", value: memberData?.expired_points || 0 },
   ];
 
   console.log("Member Data:", memberData);
