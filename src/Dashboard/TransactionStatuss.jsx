@@ -144,7 +144,13 @@ const TransactionStatuss = () => {
         setIsSubmitted(false);
       }
     } catch (error) {
-      toast.error("Failed to add referral. Please try again.");
+      if (error.response?.status === 422 && error.response?.data?.mobile) {
+        toast.error(
+          "This phone number has already been referred by this user for this project."
+        );
+      } else {
+        toast.error("Failed to add referral. Please try again.");
+      }
     }
   };
 
