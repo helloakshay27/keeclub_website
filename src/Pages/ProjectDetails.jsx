@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
-import { ArrowLeft, Share2 } from "lucide-react";
+import { ArrowLeft, Share2, X } from "lucide-react";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import EnquiryModal from "../Models/EnquiryModal";
 import SiteVisitModal from "../Models/SiteVisitModal";
+import { toast } from "react-toastify";
 import BASE_URL from "../Confi/baseurl";
 
 const ProjectDetail = () => {
@@ -12,6 +13,12 @@ const ProjectDetail = () => {
   const amenitiesRef = useRef(null);
   const highlightsRef = useRef(null);
   const videoGalleryRef = useRef(null);
+  const [showModal, setShowModal] = useState(false);
+  const [newReferral, setNewReferral] = useState({});
+  const [pirmalData, setPirmalData] = useState([]);
+  const [errors, setErrors] = useState({});
+  const [touched, setTouched] = useState({});
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   const [project, setProject] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -143,6 +150,117 @@ const ProjectDetail = () => {
         })
         .catch((error) => console.log("Error sharing", error));
     }
+  };
+
+  useEffect(() => {
+    const fetchPiramlaData = async () => {
+      try {
+        const response = await axios.get(`${BASE_URL}get_all_projects.json`);
+        setPirmalData(response.data?.projects || []);
+      } catch (error) {
+        console.error("Error fetching project data:", error);
+      }
+    };
+    fetchPiramlaData();
+  }, []);
+
+  useEffect(() => {
+    if (showModal) {
+      setNewReferral({ projectId: id }); // Pre-select current project
+      setTouched({});
+      setErrors({});
+      setIsSubmitted(false);
+    }
+  }, [showModal, id]);
+
+  useEffect(() => {
+    const validationErrors = validateReferral(newReferral);
+    const filteredErrors = {};
+    Object.keys(validationErrors).forEach((key) => {
+      if (touched[key] || isSubmitted) {
+        filteredErrors[key] = validationErrors[key];
+      }
+    });
+    setErrors(filteredErrors);
+  }, [newReferral, touched, isSubmitted]);
+
+  const handleAddReferral = async () => {
+    setIsSubmitted(true);
+    const validationErrors = validateReferral(newReferral);
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      setTouched({
+        projectId: true,
+        name: true,
+        phone: true,
+        date: true,
+      });
+      return;
+    }
+
+    const token = localStorage.getItem("authToken");
+
+    try {
+      const payload = {
+        customer_code: localStorage.getItem("userId"), // Assuming user ID is stored
+        ref_name: newReferral.name,
+        ref_phone: newReferral.phone,
+        status: "Open",
+        project_id: newReferral.projectId,
+        referred_on: newReferral.date,
+        referral_mode: "Dashboard Static",
+      };
+
+      const response = await axios.post(
+        `${BASE_URL}add_referral.json?access_token=${token}`,
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.status === 201) {
+        setNewReferral({});
+        setShowModal(false);
+        setErrors({});
+        setTouched({});
+        setIsSubmitted(false);
+        toast.success("Referral added successfully!");
+      }
+    } catch (error) {
+      if (error.response?.status === 422 && error.response?.data?.mobile) {
+        toast.error(
+          "This phone number has already been referred by this user for this project."
+        );
+      } else {
+        toast.error("Failed to add referral. Please try again.");
+      }
+    }
+  };
+
+  const validateReferral = (referral) => {
+    const errors = {};
+
+    if (!referral.projectId) {
+      errors.projectId = "Please select a project.";
+    }
+
+    if (!referral.name || referral.name.trim().length < 2) {
+      errors.name = "Name must be at least 2 characters long.";
+    }
+
+    if (!referral.phone || !/^\d{10}$/.test(referral.phone)) {
+      errors.phone = "Phone number must be 10 digits.";
+    }
+
+    return errors;
+  };
+
+  const handleBlur = (field) => {
+    setTouched((prev) => ({ ...prev, [field]: true }));
   };
 
   if (loading) {
@@ -344,6 +462,12 @@ const ProjectDetail = () => {
             className="flex-1 border-2 border-gray-200 py-2 rounded-md cursor-pointer text-gray-600 hover:bg-gray-100 transition duration-200"
           >
             Book A Site Visit
+          </button>
+          <button
+            onClick={() => setShowModal(true)}
+            className="text-sm font-semibold bg-orange-600 text-white px-4 py-2 rounded-md hover:bg-orange-700 transition-colors"
+          >
+            REFER & EARN
           </button>
         </div>
         <EnquiryModal
@@ -714,7 +838,95 @@ const ProjectDetail = () => {
           </button>
         </div>
       )}
+
+      {showModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white p-6 rounded shadow-md w-full max-w-md relative">
+            <button
+              onClick={() => setShowModal(false)}
+              className="absolute cursor-pointer top-4 right-4 text-gray-500 hover:text-gray-800"
+            >
+              <X size={20} />
+            </button>
+            <h2 className="text-lg font-semibold mb-4">Refer Someone</h2>
+            <select
+              value={newReferral.projectId || ""}
+              onChange={(e) =>
+                setNewReferral({ ...newReferral, projectId: e.target.value })
+              }
+              onBlur={() => handleBlur("projectId")}
+              className="w-full mb-4 p-2 border rounded"
+              disabled={true}
+            >
+              <option value="">Select Project</option>
+              {pirmalData.map((option) => (
+                <option key={option.id} value={option.id}>
+                  {option.project_name}
+                </option>
+              ))}
+            </select>
+            {errors.projectId && (
+              <p className="text-sm text-red-500 mb-2">{errors.projectId}</p>
+            )}
+
+            <input
+              type="text"
+              placeholder="Name"
+              value={newReferral.name || ""}
+              onChange={(e) =>
+                setNewReferral({ ...newReferral, name: e.target.value })
+              }
+              onBlur={() => handleBlur("name")}
+              className="w-full mb-4 p-2 border rounded"
+            />
+            {errors.name && (
+              <p className="text-sm text-red-500 mb-2">{errors.name}</p>
+            )}
+
+            <input
+              type="tel"
+              placeholder="Phone Number"
+              value={newReferral.phone || ""}
+              onChange={(e) =>
+                setNewReferral({ ...newReferral, phone: e.target.value })
+              }
+              onBlur={() => handleBlur("phone")}
+              className="w-full mb-4 p-2 border rounded"
+            />
+            {errors.phone && (
+              <p className="text-sm text-red-500 mb-2">{errors.phone}</p>
+            )}
+
+            {/* <input
+                    type="date"
+                    value={newReferral.date || ""}
+                    onChange={(e) =>
+                      setNewReferral({ ...newReferral, date: e.target.value })
+                    }
+                    onBlur={() => handleBlur("date")}
+                    className="w-full mb-4 p-2 border rounded"
+                  />
+                  {errors.date && <p className="text-sm text-red-500 mb-2">{errors.date}</p>} */}
+
+            <div className="flex justify-end gap-2">
+              <button
+                className="px-4 cursor-pointer py-2 bg-gray-300 text-gray-800 rounded"
+                onClick={() => setShowModal(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="px-4 py-2 cursor-pointer bg-orange-500 text-white rounded"
+                onClick={handleAddReferral}
+              >
+                Add Referral
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
+
   );
 };
 

@@ -188,9 +188,9 @@ const TransactionStatuss = () => {
 
   const summaryCards = [
     { title: "Earned Points", value: memberData?.earned_points || 0 },
-    { title: "Loyalty Points", value: memberData?.current_loyalty_points || 0 },
     { title: "Redeemed Points", value: memberData?.reedem_points || 0 },
     { title: "Expired Points", value: memberData?.expired_points || 0 },
+    { title: "Balanced Points", value: memberData?.current_loyalty_points || 0 },
   ];
 
   console.log("Member Data:", memberData);
@@ -264,6 +264,15 @@ const TransactionStatuss = () => {
         "Enjoy faster rewards, free express shipping, and a dedicated line for quicker support.",
         "You’ll be among the first to access new collections and exclusive drops, with personal invitations to member-only experiences. Receive curated gifts for special milestones, thoughtful service throughout your journey, and styling or shopping recommendations based on your tastes.",
         "Gold is more than a tier it’s a partnership built on trust, taste, and attention.",
+      ],
+    },
+    {
+      tier: "Platinum",
+      title: "Platinum Tier",
+      points: [
+        "Platinum is our most exclusive tier, designed for those who truly live the brand.",
+        "Your rewards accelerate even further, and your service becomes white-glove. A dedicated concierge is available for personalized styling, private previews, and seamless support.",
+        "Enjoy luxury gifting, access to high-touch brand experiences, and invitations to exclusive dinners, launches, or one-on-one sessions. You’ll also receive special recognition, early reservations, and priority access to limited-edition pieces.",
       ],
     },
   ];
@@ -571,7 +580,7 @@ const TransactionStatuss = () => {
       )}
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6">
+      <div className="flex justify-between gap-4 mt-6">
         {summaryCards.map((item, index) => (
           <div
             key={index}
@@ -588,28 +597,34 @@ const TransactionStatuss = () => {
         ))}
       </div>
 
-      <div className="flex justify-center mt-10">
-        <div className="relative bg-[#FAFAFA] border border-gray-300 rounded-full flex p-2 w-[320px] sm:w-[800px]">
-          <div
-            className="absolute top-1 left-1 h-[90%] bg-[#F9461C] rounded-full transition-all duration-300"
-            style={{
-              width: `${100 / tabs.length}%`,
-              transform: `translateX(${getTabIndex(selectedTab) * 100}%)`,
-            }}
-          ></div>
-          {tabs.map((tab) => (
-            <button
-              key={tab.key}
-              onClick={() => setSelectedTab(tab.key)}
-              className={`relative z-10 cursor-pointer flex-1 py-2 text-sm sm:text-base rounded-full font-normal transition-colors duration-300 ${
-                selectedTab === tab.key ? "text-white" : "text-black"
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-      </div>
+      <div className="flex flex-col sm:flex-row justify-start items-start sm:items-center gap-4 mt-10">
+  <button
+    onClick={() => setShowModal(true)}
+    className="text-sm font-semibold bg-orange-600 text-white px-4 py-2 rounded-md hover:bg-orange-700 transition-colors"
+  >
+    REFER & EARN
+  </button>
+  <div className="relative bg-[#FAFAFA] border border-gray-300 rounded-full flex p-2 w-[320px] sm:w-[800px]">
+    <div
+      className="absolute top-1 left-1 h-[90%] bg-[#F9461C] rounded-full transition-all duration-300"
+      style={{
+        width: `${100 / tabs.length}%`,
+        transform: `translateX(${getTabIndex(selectedTab) * 100}%)`,
+      }}
+    ></div>
+    {tabs.map((tab) => (
+      <button
+        key={tab.key}
+        onClick={() => setSelectedTab(tab.key)}
+        className={`relative z-10 cursor-pointer flex-1 py-2 text-sm sm:text-base rounded-full font-normal transition-colors duration-300 ${
+          selectedTab === tab.key ? "text-white" : "text-black"
+        }`}
+      >
+        {tab.label}
+      </button>
+    ))}
+  </div>
+</div>
 
       {/* Redemptions */}
       {selectedTab === "redemptions" && (
@@ -691,6 +706,7 @@ const TransactionStatuss = () => {
               <tr>
                 <th className="px-4 py-3">Date</th>
                 <th className="px-4 py-3">Name referred</th>
+                <th className="px-4 py-3">Project Name</th>
                 <th className="px-4 py-3">Status</th>
                 <th className="px-4 py-3">Phone</th>
               </tr>
@@ -699,12 +715,15 @@ const TransactionStatuss = () => {
               {referrals.length > 0 ? (
                 referrals.map((item, index) => (
                   <tr key={index}>
+                    {console.log("Referral Item:", item)
+                    }
                     <td className="px-4 py-3">
                       {item?.created_at
                         ? new Date(item.created_at).toLocaleDateString()
                         : "--"}
                     </td>
                     <td className="px-4 py-3">{item?.name || "--"}</td>
+                    <td className="px-4 py-3">{item?.project_name || "--"}</td>
                     <td className="px-4 py-3">{item?.status || "--"}</td>
                     <td className="px-4 py-3">{item?.mobile || "--"}</td>
                   </tr>
