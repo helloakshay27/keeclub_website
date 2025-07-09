@@ -142,6 +142,7 @@ const TransactionStatuss = () => {
         setErrors({});
         setTouched({});
         setIsSubmitted(false);
+        toast.success("Referral added successfully!");
       }
     } catch (error) {
       if (error.response?.status === 422 && error.response?.data?.mobile) {

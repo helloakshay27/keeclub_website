@@ -113,6 +113,7 @@ function App() {
           draggable
           pauseOnHover
           theme="light"
+          toastStyle={{ backgroundColor: 'white' }}
         />
         {!hideLayout && <Footer />}
       </main>
