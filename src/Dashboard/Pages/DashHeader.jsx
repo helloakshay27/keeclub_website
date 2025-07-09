@@ -40,7 +40,7 @@ const DashHeader = () => {
           >
             {/* ... */}
           </div>
-
+    
           <div className="w-7 h-7 rounded-full border border-[#eb5e28] text-[#eb5e28] flex items-center justify-center text-sm font-bold " onClick={() => setShowModal(true)}>
             {firstName?.[0]?.toUpperCase() || "U"}
           </div>

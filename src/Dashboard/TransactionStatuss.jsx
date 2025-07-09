@@ -116,7 +116,7 @@ const TransactionStatuss = () => {
         customer_code: memberData?.user_id,
         ref_name: newReferral.name,
         ref_phone: newReferral.phone,
-        status: "Open",
+        status: "Pending",
         project_id: newReferral.projectId,
         referred_on: newReferral.date,
         referral_mode: "Dashboard Static",
@@ -581,21 +581,21 @@ const TransactionStatuss = () => {
 
       {/* Summary Cards */}
       <div className="flex justify-between gap-4 mt-6">
-        {summaryCards.map((item, index) => (
-          <div
-            key={index}
-            className="rounded-lg p-4 flex items-center gap-4 border border-gray-200"
-          >
-            <div className="bg-[#FA46151A] rounded-full w-16 h-16 flex items-center justify-center">
-              <span className="text-3xl text-[#A78847]">✦</span>
-            </div>
-            <div>
-              <div className="text-sm text-gray-500">{item.title}</div>
-              <div className="text-xl font-bold">{item.value} Points</div>
-            </div>
-          </div>
-        ))}
+  {summaryCards.map((item, index) => (
+    <div
+      key={index}
+      className="flex-1 rounded-lg p-4 flex items-center gap-4 border border-gray-200"
+    >
+      <div className="bg-[#FA46151A] rounded-full w-16 h-16 flex items-center justify-center">
+        <span className="text-3xl text-[#A78847]">✦</span>
       </div>
+      <div>
+        <div className="text-sm text-gray-500">{item.title}</div>
+        <div className="text-xl font-bold">{item.value} Points</div>
+      </div>
+    </div>
+  ))}
+</div>
 
       <div className="flex flex-col sm:flex-row justify-start items-start sm:items-center gap-4 mt-10">
   <button

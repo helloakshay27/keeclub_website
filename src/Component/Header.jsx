@@ -3,11 +3,17 @@ import classNames from 'classnames';
 import { Menu, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import ComLogo from "../assets/ComLogo.png"
+import { useNavigate } from "react-router-dom";
 
 const Header = ({ isTransparent }) => {
   const [scrolled, setScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isTabletOrMobile, setIsTabletOrMobile] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const navigate = useNavigate();
+
+  let id = localStorage.getItem("member_id");
 
   useEffect(() => {
     const handleScroll = () => {
@@ -34,8 +40,18 @@ const Header = ({ isTransparent }) => {
     return () => window.removeEventListener('resize', checkDevice);
   }, []);
 
+  useEffect(() => {
+    const authToken = localStorage.getItem('authToken');
+    setIsAuthenticated(!!authToken);
+  }, []);
+
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
+  const handleSignOut = () => {
+    localStorage.clear();
+    navigate("/");
   };
 
   return (
@@ -68,7 +84,7 @@ const Header = ({ isTransparent }) => {
 
 
       <nav className="hidden lg:block">
-        <ul className="flex space-x-6 font-medium text-sm">
+        <ul className="flex space-x-6 font-medium align-items-start text-sm">
           <li className="hover:text-[#fa4615] cursor-pointer">
             <Link to="/">HOME</Link>
           </li>
@@ -85,8 +101,17 @@ const Header = ({ isTransparent }) => {
             <Link to="/projects">PROJECTS</Link>
           </li>
 
-          <li className="hover:text-[#fa4615] cursor-pointer">
-            <Link to="/login" >LOGIN</Link></li>
+          {isAuthenticated ? (
+            <li style={{ marginTop:'-4px'}}>
+              <div className="w-7 h-7 rounded-full border border-[#fff] text-[#fff] flex items-center justify-center text-sm font-bold cursor-pointer" onClick={() => setShowModal(true)}>
+                G
+              </div>
+            </li>
+          ) : (
+            <li className="hover:text-[#fa4615] cursor-pointer">
+              <Link to="/login">LOGIN</Link>
+            </li>
+          )}
         </ul>
       </nav>
 
@@ -123,10 +148,54 @@ const Header = ({ isTransparent }) => {
 
             </li>
 
-            <li className="hover:text-[#fa4615] cursor-pointer">
-              <Link to="/login" onClick={() => setIsMobileMenuOpen(false)}>LOGIN</Link>
-            </li>
+            {isAuthenticated ? (
+              <li>
+                <div className="w-7 h-7 rounded-full border border-[#ffffff] text-[#ffffff] flex items-center justify-center text-sm font-bold cursor-pointer" onClick={() => setShowModal(true)}>
+                  G
+                </div>
+              </li>
+            ) : (
+              <li className="hover:text-[#fa4615] cursor-pointer">
+                <Link to="/login" onClick={() => setIsMobileMenuOpen(false)}>LOGIN</Link>
+              </li>
+            )}
           </ul>
+        </div>
+      )}
+
+      {showModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black">
+
+          <div className="bg-white rounded-lg shadow-lg p-6 min-w-[300px]" style={{ color: '#000' }}>
+            <h2 className="text-lg font-semibold mb-4">Sign Out</h2>
+            <div className="mb-4">
+              {/* <div className="font-medium"> {localStorage.getItem("firstName")} {localStorage.getItem("lastName")}</div> */}
+              {/* <div className="text-gray-500 text-sm">
+                {localStorage.getItem("email") || "No email"}
+              </div> */}
+            </div>
+            <p className="mb-2">Are you sure you want to sign out?</p>
+            <Link to={`/dashboard/transactions/${id}`} className="mb-4 text-blue-500 hover:underline cursor-pointer">
+
+            <button
+                className="px-4 py-2 rounded bg-[#eb5e28] text-white hover:bg-[#cf4c1e]"
+              >go to dashboard</button>
+            </Link>
+            <div className="flex justify-end space-x-3 mt-10">
+              <button
+                className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300"
+                onClick={() => setShowModal(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="px-4 py-2 rounded bg-[#eb5e28] text-white hover:bg-[#cf4c1e]"
+                onClick={handleSignOut}
+              >
+                Sign Out
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </header>
