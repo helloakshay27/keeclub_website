@@ -40,7 +40,7 @@ const DashHeader = () => {
                 <Link to="/">HOME</Link>
               </li>
               <li className="hover:text-[#fa4615] cursor-pointer">
-                <Link to="/login">REFER AND EARN</Link>
+                <Link to="/refer-now">REFER AND EARN</Link>
               </li>
               <li className="hover:text-[#fa4615] cursor-pointer">
                 <Link to="/events">EVENTS</Link>

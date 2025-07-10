@@ -131,7 +131,7 @@ const Header = ({ isTransparent }) => {
 
             </li>
             <li className="hover:text-[#fa4615] cursor-pointer">
-              <Link to="/login" onClick={() => setIsMobileMenuOpen(false)}>
+              <Link to="/refer-now" onClick={() => setIsMobileMenuOpen(false)}>
                 REFER AND EARN
               </Link>
             </li>
