@@ -19,7 +19,6 @@ const ProjectDetail = () => {
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
   const [isSubmitted, setIsSubmitted] = useState(false);
-
   const [project, setProject] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -465,7 +464,15 @@ const ProjectDetail = () => {
             Book A Site Visit
           </button>
           <button
-            onClick={() => setShowModal(true)}
+            onClick={() => {
+               const authToken = localStorage.getItem("authToken");
+                            if (authToken) {
+                              setShowModal(true)
+                            } else {
+                              toast.info("Please login to continue");
+                              navigate("/login");
+                            }
+            }}
             className="bg-orange-600 text-white px-4 py-2 rounded-md hover:bg-orange-700 transition-colors"
           >
             REFER & EARN

@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const slides = [
   {
@@ -19,7 +21,7 @@ const slides = [
     subheading: 'Because every apartment becomes a world by itself.',
     title: 'KEE CLUB',
     description: 'A joint initiative by Piramal Realty and Lockated',
-    buttonText: 'Refer Now ',
+    buttonText: 'Refer Now',
   },
   {
     id: 3,
@@ -29,12 +31,14 @@ const slides = [
     subheading: 'Because every apartment becomes a world by itself.',
     title: 'KEE CLUB',
     description: 'A joint initiative by Piramal Realty and Lockated',
-    buttonText: 'Refer Now ',
+    buttonText: 'Refer Now',
   },
 ];
 
 const HeroSection = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const navigate = useNavigate(); // ✅ MUST be inside component function
+  let id = localStorage.getItem("member_id");
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -42,6 +46,16 @@ const HeroSection = () => {
     }, 10000);
     return () => clearInterval(interval);
   }, []);
+
+  const handleReferNowClick = () => {
+    const authToken = localStorage.getItem('authToken');
+    if (authToken) {
+      navigate(`/dashboard/transactions/${id}`);
+    } else {
+      toast.info('Please login to continue');
+      navigate('/login');
+    }
+  };
 
   return (
     <section className="relative h-screen w-full overflow-hidden">
@@ -66,8 +80,6 @@ const HeroSection = () => {
               <p className="text-[15px] sm:text-[15px] md:text-[15px] lg:text-[28px] font-light tracking-wide mb-6 max-w-4xl drop-shadow-md px-2 sm:px-0">
                 {slide.subheading}
               </p>
-
-
               <h2 className="text-4xl sm:text-[44px] md:text-5xl lg:text-6xl font-extrabold tracking-widest drop-shadow-lg">
                 {slide.title}
               </h2>
@@ -75,7 +87,10 @@ const HeroSection = () => {
                 {slide.description}
               </p>
 
-              <button className="bg-[#fa4615] hover:bg-[#d93b18] px-6 sm:px-8 py-2 sm:py-3 rounded-[1px] text-white text-sm sm:text-sm font-normal shadow-lg transition" onClick={() => window.location.href = '/refer-now'}>
+              <button
+                className="bg-[#fa4615] hover:bg-[#d93b18] px-6 sm:px-8 py-2 sm:py-3 rounded-[1px] text-white text-sm sm:text-sm font-normal shadow-lg transition"
+                onClick={handleReferNowClick}
+              >
                 {slide.buttonText}
               </button>
             </div>

@@ -4,6 +4,7 @@ import { ChevronDown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import ComLogo from "../../assets/ComLogo.png"
 import { Link } from "react-router-dom";
+import { toast } from 'react-toastify';
 
 const DashHeader = () => {
   const firstName = sessionStorage.getItem("firstname") || "Guest";
@@ -15,7 +16,8 @@ const DashHeader = () => {
 
   const handleSignOut = () => {
     localStorage.clear();
-    navigate("/");
+    navigate("/login");
+     toast.success("Signed out successfully");
   };
 
   return (

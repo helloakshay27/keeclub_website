@@ -51,7 +51,8 @@ const Header = ({ isTransparent }) => {
 
   const handleSignOut = () => {
     localStorage.clear();
-    navigate("/");
+    navigate("/login");
+     toast.success("Signed out successfully");
   };
 
   return (
