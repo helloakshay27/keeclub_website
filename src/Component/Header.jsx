@@ -88,7 +88,7 @@ const Header = ({ isTransparent }) => {
           <li className="hover:text-[#fa4615] cursor-pointer">
             <Link to="/">HOME</Link>
           </li>
-          <Link to="/login" className="hover:text-[#fa4615] cursor-pointer">REFER AND EARN</Link>
+          <Link to="/refer-now" className="hover:text-[#fa4615] cursor-pointer">REFER AND EARN</Link>
 
           <li className="hover:text-[#fa4615] cursor-pointer">
             <Link to="/events">EVENTS</Link>
@@ -150,7 +150,7 @@ const Header = ({ isTransparent }) => {
 
             {isAuthenticated ? (
               <li>
-                <div className="w-7 h-7 rounded-full border border-[#ffffff] text-[#ffffff] flex items-center justify-center text-sm font-bold cursor-pointer" onClick={() => setShowModal(true)}>
+                <div className="hover:text-[#fa4615] w-7 h-7 rounded-full border border-[#ffffff] text-[#ffffff] flex items-center justify-center text-sm font-bold cursor-pointer" onClick={() => setShowModal(true)}>
                   G
                 </div>
               </li>
