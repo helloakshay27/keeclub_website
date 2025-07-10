@@ -164,40 +164,56 @@ const Header = ({ isTransparent }) => {
       )}
 
       {showModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black/80">
+  <div className="fixed inset-0 flex items-center justify-center bg-black/80">
+    <div className="bg-white rounded-lg shadow-lg p-6 min-w-[350px]" style={{ color: '#000' }}>
+      
+      {/* Title */}
+      <h2 className="text-lg font-semibold mb-4 text-center">Sign Out</h2>
 
-          <div className="bg-white rounded-lg shadow-lg p-6 min-w-[300px]" style={{ color: '#000' }}>
-            <h2 className="text-lg font-semibold mb-4">Sign Out</h2>
-            <div className="mb-4">
-              {/* <div className="font-medium"> {localStorage.getItem("firstName")} {localStorage.getItem("lastName")}</div> */}
-              {/* <div className="text-gray-500 text-sm">
-                {localStorage.getItem("email") || "No email"}
-              </div> */}
-            </div>
-            <p className="mb-2">Are you sure you want to sign out?</p>
-            <Link to={`/dashboard/transactions/${id}`} className="mb-4 text-blue-500 hover:underline cursor-pointer">
-
-            <button
-                className="px-4 py-2 rounded bg-[#f54a00] text-white hover:bg-[#cf4c1e]"
-              >Go to dashboard</button>
-            </Link>
-            <div className="flex justify-end space-x-3 mt-10">
-              <button
-                className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300"
-                onClick={() => setShowModal(false)}
-              >
-                Cancel
-              </button>
-              <button
-                className="px-4 py-2 rounded bg-[#f54a00] text-white hover:bg-[#cf4c1e]"
-                onClick={handleSignOut}
-              >
-                Sign Out
-              </button>
-            </div>
-          </div>
+      {/* Optional User Info (currently commented out) */}
+      {/* 
+      <div className="mb-4 text-center">
+        <div className="font-medium">
+          {localStorage.getItem("firstName")} {localStorage.getItem("lastName")}
         </div>
-      )}
+        <div className="text-gray-500 text-sm">
+          {localStorage.getItem("email") || "No email"}
+        </div>
+      </div> 
+      */}
+
+      {/* Confirmation Text */}
+      <p className="mb-4 text-center">Are you sure you want to sign out?</p>
+
+      {/* Go to Dashboard Button */}
+      <div className="flex justify-center mb-6">
+        <Link to={`/dashboard/transactions/${id}`} className="text-blue-500 hover:underline cursor-pointer">
+          <button className="px-4 py-2 rounded bg-[#f54a00] text-white hover:bg-[#cf4c1e]">
+            Go to dashboard
+          </button>
+        </Link>
+      </div>
+
+      {/* Action Buttons */}
+      <div className="flex justify-end space-x-3 mt-10">
+        <button
+          className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300"
+          onClick={() => setShowModal(false)}
+        >
+          Cancel
+        </button>
+        <button
+          className="px-4 py-2 rounded bg-[#f54a00] text-white hover:bg-[#cf4c1e]"
+          onClick={handleSignOut}
+        >
+          Sign Out
+        </button>
+      </div>
+      
+    </div>
+  </div>
+)}
+
     </header>
   );
 };
