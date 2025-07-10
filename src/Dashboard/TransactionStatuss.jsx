@@ -59,6 +59,13 @@ const TransactionStatuss = () => {
     fetchMemberData();
   }, [id]);
 
+  // Store user_id in localStorage when memberData is available
+  useEffect(() => {
+    if (memberData?.user_id) {
+      localStorage.setItem('userId', memberData.user_id);
+    }
+  }, [memberData]);
+
   const fetchReferrals = async () => {
     try {
       const token = localStorage.getItem("authToken");
@@ -121,6 +128,10 @@ const TransactionStatuss = () => {
         referred_on: newReferral.date,
         referral_mode: "Dashboard Static",
       };
+
+      console.log("memberData:-",memberData);
+      console.log("payload:-",payload);
+      
 
       const response = await axios.post(
         `${BASE_URL}add_referral.json?access_token=${token}`,
@@ -315,7 +326,7 @@ const TransactionStatuss = () => {
       </div>
 
       {/* Progress Section */}
-      <div className="bg-white border border-gray-300 rounded-lg mt-4 p-5 sm:p-7 shadow-sm flex flex-col md:flex-row gap-9 md:gap-40">
+      <div className="bg-white border border-gray-300 rounded-lg mt-4 p-5 sm:p-7 shadow-sm flex flex-col md:flex-row gap-9 md:gap-40 items-center">
         <div className="w-full md:w-[100%]">
           {(() => {
             const tierProgressData = memberData?.tier_progress;
@@ -520,10 +531,10 @@ const TransactionStatuss = () => {
           })()}
         </div>
 
-        <div className="md:items-end">
+       <div className="md:items-end">
           <button
             onClick={() => setShowTierBenefit(!showTierBenefit)}
-            className="bg-gray-900 text-white px-4 py-3 md:py-4 rounded text-sm font-medium uppercase"
+            className="bg-gray-900 text-white px-4 py-3 md:py-4 rounded text-sm font-medium uppercase whitespace-nowrap"
           >
             {showTierBenefit ? "HIDE TIER BENEFITS" : "VIEW TIER BENEFITS"}
           </button>
@@ -598,13 +609,7 @@ const TransactionStatuss = () => {
   ))}
 </div>
 
-      <div className="flex flex-col sm:flex-row justify-start items-start sm:items-center gap-4 mt-10">
-  <button
-    onClick={() => setShowModal(true)}
-    className="text-sm font-semibold bg-orange-600 text-white px-4 py-2 rounded-md hover:bg-orange-700 transition-colors"
-  >
-    REFER & EARN
-  </button>
+<div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mt-10">
   <div className="relative bg-[#FAFAFA] border border-gray-300 rounded-full flex p-2 w-[320px] sm:w-[800px]">
     <div
       className="absolute top-1 left-1 h-[90%] bg-[#F9461C] rounded-full transition-all duration-300"
@@ -625,6 +630,12 @@ const TransactionStatuss = () => {
       </button>
     ))}
   </div>
+  <button
+    onClick={() => setShowModal(true)}
+    className="text-sm font-semibold bg-orange-600 text-white px-4 py-2 rounded-md hover:bg-orange-700 transition-colors"
+  >
+    REFER & EARN
+  </button>
 </div>
 
       {/* Redemptions */}
@@ -720,7 +731,14 @@ const TransactionStatuss = () => {
                     }
                     <td className="px-4 py-3">
                       {item?.created_at
-                        ? new Date(item.created_at).toLocaleDateString()
+                        ? new Date(item.created_at).toLocaleString('en-US', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric',
+                            hour: 'numeric',
+                            minute: '2-digit',
+                            hour12: true
+                          })
                         : "--"}
                     </td>
                     <td className="px-4 py-3">{item?.name || "--"}</td>

@@ -3,6 +3,7 @@ import { FaSearch } from "react-icons/fa";
 import { ChevronDown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import ComLogo from "../../assets/ComLogo.png"
+import { Link } from "react-router-dom";
 
 const DashHeader = () => {
   const firstName = sessionStorage.getItem("firstname") || "Guest";
@@ -20,28 +21,45 @@ const DashHeader = () => {
   return (
     <>
       <header className="flex items-center justify-between px-8 h-20 bg-white shadow-md">
-        <div className="flex items-center space-x-10 bg-[#24293c] p-2 rounded-sm">
+        {/* Logo Section */}
+        <div className="flex items-center bg-[#24293c] p-2 rounded-sm">
           <img
             src={ComLogo}
             alt="GoPhygital Logo"
             className="h-13 w-auto cursor-pointer"
             onClick={() => navigate("/")}
           />
-          {/* ... */}
         </div>
 
-        <div className="flex items-center space-x-6">
-          <div className="relative">
-            {/* ... */}
-          </div>
+        {/* Navigation and Profile Section */}
+        <div className="flex items-center space-x-8">
+          {/* Navigation Menu */}
+          <nav>
+            <ul className="flex items-center space-x-6 text-sm font-medium">
+              <li className="hover:text-[#fa4615] cursor-pointer">
+                <Link to="/">HOME</Link>
+              </li>
+              <li className="hover:text-[#fa4615] cursor-pointer">
+                <Link to="/login">REFER AND EARN</Link>
+              </li>
+              <li className="hover:text-[#fa4615] cursor-pointer">
+                <Link to="/events">EVENTS</Link>
+              </li>
+              <li className="hover:text-[#fa4615] cursor-pointer">
+                <Link to="/blogs">BLOGS</Link>
+              </li>
+              <li className="hover:text-[#fa4615] cursor-pointer">OFFERS</li>
+              <li className="hover:text-[#fa4615] cursor-pointer">
+                <Link to="/projects">PROJECTS</Link>
+              </li>
+            </ul>
+          </nav>
 
-          <div
-            className="flex items-center text-black font-medium cursor-pointer"
+          {/* Profile Icon */}
+          <div 
+            className="w-7 h-7 rounded-full border border-[#eb5e28] text-[#eb5e28] flex items-center justify-center text-sm font-bold cursor-pointer" 
+            onClick={() => setShowModal(true)}
           >
-            {/* ... */}
-          </div>
-    
-          <div className="w-7 h-7 rounded-full border border-[#eb5e28] text-[#eb5e28] flex items-center justify-center text-sm font-bold " onClick={() => setShowModal(true)}>
             {firstName?.[0]?.toUpperCase() || "U"}
           </div>
         </div>

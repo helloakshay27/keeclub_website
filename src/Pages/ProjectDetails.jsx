@@ -199,13 +199,14 @@ const ProjectDetail = () => {
     }
 
     const token = localStorage.getItem("authToken");
-
+    console.log("token", token);
+    
     try {
       const payload = {
         customer_code: localStorage.getItem("userId"), // Assuming user ID is stored
         ref_name: newReferral.name,
         ref_phone: newReferral.phone,
-        status: "Open",
+        status: "Pending",
         project_id: newReferral.projectId,
         referred_on: newReferral.date,
         referral_mode: "Dashboard Static",
@@ -459,13 +460,13 @@ const ProjectDetail = () => {
 
           <button
             onClick={handleSiteVisitClick}
-            className="flex-1 border-2 border-gray-200 py-2 rounded-md cursor-pointer text-gray-600 hover:bg-gray-100 transition duration-200"
+            className="flex-1 bg-orange-600 py-2 rounded-md cursor-pointer text-white hover:bg-orange-700 transition duration-200"
           >
             Book A Site Visit
           </button>
           <button
             onClick={() => setShowModal(true)}
-            className="text-sm font-semibold bg-orange-600 text-white px-4 py-2 rounded-md hover:bg-orange-700 transition-colors"
+            className="bg-orange-600 text-white px-4 py-2 rounded-md hover:bg-orange-700 transition-colors"
           >
             REFER & EARN
           </button>
