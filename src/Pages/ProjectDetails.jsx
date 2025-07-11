@@ -475,7 +475,7 @@ const ProjectDetail = () => {
             }}
             className="bg-orange-600 text-white px-4 py-2 rounded-md hover:bg-orange-700 transition-colors"
           >
-            REFER & EARN
+            Refer & Earn
           </button>
         </div>
         <EnquiryModal
@@ -495,7 +495,7 @@ const ProjectDetail = () => {
 
         {/* RERA Details */}
         <div className="border-2 border-gray-200 rounded p-3 text-gray-600">
-          <p className="font-medium">RERA Details</p>
+          <p className="font-medium">Maha RERA Details</p>
           <p className="text-sm break-all">
             {project.rera_number_multiple?.length > 0
               ? project.rera_number_multiple.join(" | ")
