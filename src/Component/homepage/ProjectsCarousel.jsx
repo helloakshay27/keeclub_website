@@ -1,5 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Piramal_Aranya from "../../assets/ProjectImg/Piramal_Aranya.png";
 import Piramal_Mahalaxmi from "../../assets/ProjectImg/Piramal_Mahalaxmi.png";
@@ -9,8 +8,6 @@ import useApiFetch from "../../hooks/useApiFetch";
 import BASE_URL from "../../Confi/baseurl";
 
 const ProjectsCarousel = () => {
-  const scrollRef = useRef(null);
-  const [scrollIndex, setScrollIndex] = useState(0);
   const [projectIds, setProjectIds] = useState([]);
 
   const { data } = useApiFetch(`${BASE_URL}get_all_projects.json`);
@@ -29,63 +26,6 @@ const ProjectsCarousel = () => {
     { name: 'Piramal Vaikunth', image: Piramal_Vaikunth, id: projectIds[2] }
   ];
 
-  const visibleCountDesktop = 3;
-  const mobileVisibleCount = 1.2;
-
-  const getVisibleCount = () => {
-    if (typeof window !== 'undefined') {
-      if (window.innerWidth < 640) return mobileVisibleCount;
-      if (window.innerWidth < 1024) return 2;
-    }
-    return visibleCountDesktop;
-  };
-
-  const [visibleCount, setVisibleCount] = useState(getVisibleCount());
-
-  useEffect(() => {
-    const handleResize = () => {
-      setVisibleCount(getVisibleCount());
-    };
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  const scrollToIndex = (index) => {
-    const container = scrollRef.current;
-    if (!container) return;
-
-    const childWidth = container.scrollWidth / projects.length;
-
-    container.scrollTo({
-      left: childWidth * index,
-      behavior: 'smooth',
-    });
-  };
-
-  const scroll = (direction) => {
-    const maxScrollIndex = Math.ceil(projects.length - visibleCount);
-    const newIndex =
-      direction === 'left'
-        ? Math.max(scrollIndex - 1, 0)
-        : Math.min(scrollIndex + 1, maxScrollIndex);
-
-    scrollToIndex(newIndex);
-    setScrollIndex(newIndex);
-  };
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setScrollIndex((prev) => {
-        const maxIndex = Math.ceil(projects.length - visibleCount);
-        const next = (prev + 1) > maxIndex ? 0 : prev + 1;
-        scrollToIndex(next);
-        return next;
-      });
-    }, 4000);
-
-    return () => clearInterval(interval);
-  }, [visibleCount, projects]);
-
   return (
     <section className="w-full py-16 flex flex-col items-center bg-white">
       <h2 className="text-3xl md:text-4xl font-semibold text-[#FF4F12] text-center">
@@ -93,22 +33,12 @@ const ProjectsCarousel = () => {
       </h2>
       <div className="h-[2px] w-24 bg-[#FF4F12] mt-2 mb-12" />
 
-      <div className="relative w-full max-w-6xl px-4 sm:px-6 ">
-        <button
-          onClick={() => scroll('left')}
-          className="absolute left-0 top-1/2 transform -translate-y-1/2 z-10 bg-white p-2 rounded-full shadow cursor-pointer"
-        >
-          <ChevronLeft className="w-7 h-7" />
-        </button>
-
-        <div
-          ref={scrollRef}
-          className="flex gap-6 overflow-hidden scroll-smooth transition-all duration-500"
-        >
+      <div className="w-full max-w-6xl px-4 sm:px-6">
+        <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
           {projects.map((project, index) => (
             <div
               key={index}
-              className="min-w-[80%] sm:min-w-[45%] md:min-w-[33.33%] flex-shrink-0 flex justify-center items-center"
+              className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 flex justify-center items-center"
             >
               <Link
                 to={`/project-details/${project.id}`}
@@ -127,13 +57,6 @@ const ProjectsCarousel = () => {
             </div>
           ))}
         </div>
-
-        <button
-          onClick={() => scroll('right')}
-          className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 bg-white p-2 rounded-full shadow cursor-pointer"
-        >
-          <ChevronRight className="w-7 h-7" />
-        </button>
       </div>
     </section>
   );
