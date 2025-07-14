@@ -685,7 +685,14 @@ const TransactionStatuss = () => {
                   <tr key={index}>
                     <td className="px-4 py-3">
                       {item?.created_at
-                        ? new Date(item.created_at).toLocaleString()
+                        ? new Date(item.created_at).toLocaleString('en-US', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric',
+                            hour: 'numeric',
+                            minute: '2-digit',
+                            hour12: true
+                          })
                         : "--"}
                     </td>
                     <td className="px-4 py-3 capitalize">
