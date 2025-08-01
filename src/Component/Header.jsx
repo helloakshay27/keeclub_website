@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import classNames from 'classnames';
 import { Menu, X } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import ComLogo from "../assets/ComLogo.png"
 import { useNavigate } from "react-router-dom";
 
@@ -12,6 +12,7 @@ const Header = ({ isTransparent }) => {
   const [showModal, setShowModal] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
   let id = localStorage.getItem("member_id");
 
@@ -55,6 +56,25 @@ const Header = ({ isTransparent }) => {
      toast.success("Signed out successfully");
   };
 
+  // Helper function to check if a link is active
+  const isActiveLink = (path) => {
+    if (path === '/') {
+      return location.pathname === '/';
+    }
+    return location.pathname.startsWith(path);
+  };
+
+  // Helper function to get link classes
+  const getLinkClasses = (path) => {
+    return classNames(
+      "hover:text-[#fa4615] cursor-pointer transition-colors duration-200",
+      {
+        "text-[#fa4615] font-semibold": isActiveLink(path),
+        "": !isActiveLink(path)
+      }
+    );
+  };
+
   return (
     <header
       className={classNames(
@@ -86,19 +106,22 @@ const Header = ({ isTransparent }) => {
 
       <nav className="hidden lg:block">
         <ul className="flex space-x-6 font-medium align-items-start text-sm">
-          <li className="hover:text-[#fa4615] cursor-pointer">
+          <li className={getLinkClasses('/')}>
             <Link to="/">HOME</Link>
           </li>
-          <Link to="/refer-now" className="hover:text-[#fa4615] cursor-pointer">REFER AND EARN</Link>
-
-          <li className="hover:text-[#fa4615] cursor-pointer">
+          <li className={getLinkClasses('/refer-now')}>
+            <Link to="/refer-now">REFER AND EARN</Link>
+          </li>
+          <li className={getLinkClasses('/events')}>
             <Link to="/events">EVENTS</Link>
           </li>
-          <li className="hover:text-[#fa4615] cursor-pointer">
+          <li className={getLinkClasses('/blogs')}>
             <Link to="/blogs">BLOGS</Link>
           </li>
-          <li className="hover:text-[#fa4615] cursor-pointer">OFFERS</li>
-          <li className="hover:text-[#fa4615] cursor-pointer">
+          <li className={getLinkClasses('/promotions')}>
+            <Link to="/promotions">PROMOTIONS</Link>
+          </li>
+          <li className={getLinkClasses('/projects')}>
             <Link to="/projects">PROJECTS</Link>
           </li>
 
@@ -109,7 +132,7 @@ const Header = ({ isTransparent }) => {
               </div>
             </li>
           ) : (
-            <li className="hover:text-[#fa4615] cursor-pointer">
+            <li className={getLinkClasses('/login')}>
               <Link to="/login">LOGIN</Link>
             </li>
           )}
@@ -127,26 +150,25 @@ const Header = ({ isTransparent }) => {
       {isMobileMenuOpen && (
         <div className="absolute top-full left-0 w-full bg-[#24293c] text-white lg:hidden px-6 py-4 shadow-md">
           <ul className="flex flex-col space-y-4 font-medium text-sm">
-            <li className="hover:text-[#fa4615] cursor-pointer">
+            <li className={getLinkClasses('/')}>
               <Link to="/" onClick={() => setIsMobileMenuOpen(false)}>HOME</Link>
-
             </li>
-            <li className="hover:text-[#fa4615] cursor-pointer">
+            <li className={getLinkClasses('/refer-now')}>
               <Link to="/refer-now" onClick={() => setIsMobileMenuOpen(false)}>
                 REFER AND EARN
               </Link>
             </li>
-
-            <li className="hover:text-[#fa4615] cursor-pointer">
+            <li className={getLinkClasses('/events')}>
               <Link to="/events" onClick={() => setIsMobileMenuOpen(false)}>EVENTS</Link>
             </li>
-            <li className="hover:text-[#fa4615] cursor-pointer">
+            <li className={getLinkClasses('/blogs')}>
               <Link to="/blogs" onClick={() => setIsMobileMenuOpen(false)}>BLOGS</Link>
             </li>
-            <li className="hover:text-orange-[#fa4615] cursor-pointer">OFFERS</li>
-            <li className="hover:text-orange-[#fa4615] cursor-pointer">
+            <li className={getLinkClasses('/promotions')}>
+              <Link to="/promotions" onClick={() => setIsMobileMenuOpen(false)}>PROMOTIONS</Link>
+            </li>
+            <li className={getLinkClasses('/projects')}>
               <Link to="/projects" onClick={() => setIsMobileMenuOpen(false)}>PROJECTS</Link>
-
             </li>
 
             {isAuthenticated ? (
@@ -156,7 +178,7 @@ const Header = ({ isTransparent }) => {
                 </div>
               </li>
             ) : (
-              <li className="hover:text-[#fa4615] cursor-pointer">
+              <li className={getLinkClasses('/login')}>
                 <Link to="/login" onClick={() => setIsMobileMenuOpen(false)}>LOGIN</Link>
               </li>
             )}

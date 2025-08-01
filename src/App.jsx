@@ -30,6 +30,15 @@ import PrivateRoute from './Dashboard/Pages/PrivateRoute';
 import PageNotFound from './Pages/PageNotFound';
 import { ToastContainer } from 'react-toastify';
 
+// Promotion Pages
+import Promotions from './Pages/Promotions';
+import PromotionDetail from './Pages/PromotionDetail';
+import RedeemPoints from './Pages/RedeemPoints';
+import OrderConfirmation from './Pages/OrderConfirmation';
+import OrderSuccess from './Pages/OrderSuccess';
+import TrackOrder from './Pages/TrackOrder';
+import HotelsRedemption from './Pages/HotelsRedemption';
+
 const routeConfigs = [
   { path: '/', element: <Home />, transparent: true },
   { path: '/about', element: <About />, transparent: false },
@@ -38,6 +47,15 @@ const routeConfigs = [
   { path: '/event/:id', element: <EventDetail />, transparent: false },
   { path: '/projects', element: <Projects />, transparent: true },
   { path: '/Project-Details/:id', element: <ProjectDetail />, transparent: false },
+
+  // Promotion Routes
+  { path: '/promotions', element: <Promotions />, transparent: true },
+  { path: '/promotion-detail/:id', element: <PromotionDetail />, transparent: false },
+  { path: '/redeem-points', element: <RedeemPoints />, transparent: false },
+  { path: '/order-confirmation', element: <OrderConfirmation />, transparent: false },
+  { path: '/order-success', element: <OrderSuccess />, transparent: false },
+  { path: '/track-order/:orderId', element: <TrackOrder />, transparent: false },
+  { path: '/hotels-redemption', element: <HotelsRedemption />, transparent: false },
 
   { path: '/login', element: <SignIn />, transparent: true, hideLayout: true },
   { path: '/register', element: <Register />, transparent: true, hideLayout: true },

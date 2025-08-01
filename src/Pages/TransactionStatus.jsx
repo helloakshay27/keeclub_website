@@ -1,6 +1,9 @@
 import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const TransactionStatus = () => {
+    const navigate = useNavigate();
+
     const slide = {
         bgImage: 'https://images.pexels.com/photos/6214370/pexels-photo-6214370.jpeg?auto=compress&cs=tinysrgb&w=1200',
         heading: "TRANSACTION STATUS",
@@ -44,6 +47,24 @@ const TransactionStatus = () => {
         { date: "2025-05-01 10:00:00", transactionType: "Credit", points: 150 },
         { date: "2025-05-05 14:30:00", transactionType: "Debit", points: 75 },
         { date: "2025-05-10 09:00:00", transactionType: "Credit", points: 200 },
+    ];
+
+    // Sample orders for tracking
+    const recentOrders = [
+        { 
+            id: "4567", 
+            product: "Tissot T-Race MotoGP", 
+            status: "Delivered", 
+            date: "2025-07-28",
+            points: 65000
+        },
+        { 
+            id: "4568", 
+            product: "Longines Conquest", 
+            status: "In Transit", 
+            date: "2025-08-01",
+            points: 95000
+        }
     ];
 
 
@@ -119,6 +140,63 @@ const TransactionStatus = () => {
                             <h3 className="text-lg font-bold mb-3">{event.transactionType}</h3>
 
                             <p className="text-gray-700 text-xl font-semibold">{event.points}</p>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            {/* Recent Orders Section */}
+            <div className="px-4 py-8 sm:py-10 max-w-7xl mx-auto">
+                <h2 className="text-center text-2xl sm:text-3xl font-bold mb-3 uppercase">Recent Orders</h2>
+                <hr className="border-t-2 border-orange-600 w-12 mx-auto mb-6" />
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8">
+                    {recentOrders.map((order) => (
+                        <div
+                            key={order.id}
+                            className="bg-white rounded-lg shadow-md border border-gray-200 p-6 hover:shadow-lg transition-shadow"
+                        >
+                            <div className="flex justify-between items-start mb-4">
+                                <div>
+                                    <h3 className="text-lg font-bold text-gray-800">Order #{order.id}</h3>
+                                    <p className="text-gray-600">{order.product}</p>
+                                </div>
+                                <span className={`px-3 py-1 rounded-full text-sm font-medium ${
+                                    order.status === 'Delivered' 
+                                        ? 'bg-green-100 text-green-800' 
+                                        : 'bg-blue-100 text-blue-800'
+                                }`}>
+                                    {order.status}
+                                </span>
+                            </div>
+                            
+                            <div className="space-y-2 mb-4">
+                                <div className="flex justify-between">
+                                    <span className="text-gray-600">Order Date:</span>
+                                    <span className="font-medium">{order.date}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                    <span className="text-gray-600">Points Used:</span>
+                                    <span className="font-medium text-orange-600">⭐ {order.points.toLocaleString()}</span>
+                                </div>
+                            </div>
+
+                            <button
+                                onClick={() => navigate(`/track-order/${order.id}`, {
+                                    state: {
+                                        product: {
+                                            name: order.product.split(' ')[0],
+                                            title: order.product,
+                                            points: order.points,
+                                            image: "/src/assets/Hotel/Card1.png"
+                                        },
+                                        orderId: order.id
+                                    }
+                                })}
+                                className="w-full bg-[#24293c] text-white py-2 px-4 rounded-lg font-medium hover:bg-[#1a1f2e] transition-colors"
+                            >
+                                Track Order
+                            </button>
                         </div>
                     ))}
                 </div>

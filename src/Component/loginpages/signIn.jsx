@@ -150,8 +150,15 @@ const SignIn = () => {
 
         toast.success("Login successful!");
 
-        const from = location.state?.from || `/dashboard/transactions/${data.member_id}`;
-        navigate(from);
+        // Check for redirect after login
+        const redirectPath = localStorage.getItem('redirectAfterLogin');
+        if (redirectPath) {
+          localStorage.removeItem('redirectAfterLogin');
+          navigate(redirectPath);
+        } else {
+          const from = location.state?.from || `/dashboard/transactions/${data.member_id}`;
+          navigate(from);
+        }
       } else {
         toast.error("Invalid credentials. Please try again.");
       }
