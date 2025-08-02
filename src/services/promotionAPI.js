@@ -1,6 +1,8 @@
 // Real API configuration for Piramal Loyalty Platform
+import BASE_URL from '../Confi/baseurl.js';
+
 const API_CONFIG = {
-    baseURL: 'https://piramal-loyalty-dev.lockated.com',
+    baseURL: BASE_URL.replace(/\/$/, ''), // Remove trailing slash if present
     endpoints: {
         // Products/Promotions
         getPromotions: '/products.json',
@@ -170,6 +172,7 @@ const transformers = {
 class PromotionAPI {
     constructor() {
         this.baseURL = API_CONFIG.baseURL;
+        console.log('🔧 PromotionAPI initialized with base URL:', this.baseURL);
     }
 
     // Get dynamic headers with current auth token
@@ -835,6 +838,7 @@ export const simulateNetworkDelay = (ms = 1000) => {
 // Log API service initialization
 console.group('🚀 API SERVICE INITIALIZED');
 console.log('📋 Endpoints configured:', Object.keys(API_CONFIG.endpoints).length);
-console.log('🔗 Base URL:', API_CONFIG.baseURL);
+console.log('🔗 Base URL (Dynamic):', API_CONFIG.baseURL);
+console.log('🌍 Current hostname:', window.location.hostname);
 console.log('📖 Call promotionAPI.printAPIDocumentation() for detailed info');
 console.groupEnd();
