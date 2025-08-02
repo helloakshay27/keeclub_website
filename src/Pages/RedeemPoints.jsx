@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import promotionAPI from '../services/promotionAPI';
 
 const RedeemPoints = () => {
@@ -9,6 +10,10 @@ const RedeemPoints = () => {
 
     const [pointCode, setPointCode] = useState('');
     const [loading, setLoading] = useState(false);
+    const [addressLoading, setAddressLoading] = useState(true);
+    const [existingAddresses, setExistingAddresses] = useState([]);
+    const [showAddressForm, setShowAddressForm] = useState(false);
+    const [selectedAddressId, setSelectedAddressId] = useState(null);
     const [addressForm, setAddressForm] = useState({
         name: '',
         contactNumber: '',
@@ -17,8 +22,62 @@ const RedeemPoints = () => {
         state: 'Select State',
         landmark: '',
         fullAddress: '',
-        addressType: 'Home'
+        addressType: 'home',
+        email: ''
     });
+
+    // Check authentication and fetch addresses on component mount
+    useEffect(() => {
+        const authToken = localStorage.getItem('authToken');
+        const memberId = localStorage.getItem('member_id');
+        
+        // Check if user is properly authenticated
+        if (!authToken || !memberId || authToken === 'null' || memberId === 'null') {
+            console.log('🔐 User not authenticated, redirecting to login');
+            toast.error('Please login to access this page');
+            navigate('/login');
+            return;
+        }
+        
+        console.log('🔐 User authenticated, proceeding to fetch addresses');
+        fetchUserAddresses();
+    }, [navigate]);
+
+    const fetchUserAddresses = async () => {
+        setAddressLoading(true);
+        try {
+            console.log('🔄 Fetching user addresses...');
+            const response = await promotionAPI.getUserAddresses();
+            
+            if (response.success && response.data.length > 0) {
+                setExistingAddresses(response.data);
+                console.log('✅ Addresses loaded:', response.data);
+                
+                // If addresses exist, skip to order confirmation
+                const defaultAddress = response.data.find(addr => addr.isDefault) || response.data[0];
+                if (defaultAddress) {
+                    // Directly navigate to order confirmation with existing address
+                    navigate('/order-confirmation', {
+                        state: {
+                            product: product,
+                            selectedAddress: defaultAddress,
+                            pointCode: pointCode
+                        }
+                    });
+                    return;
+                }
+            } else {
+                // No addresses found, show address form
+                setShowAddressForm(true);
+                console.log('📝 No addresses found, showing address form');
+            }
+        } catch (error) {
+            console.error('❌ Error fetching addresses:', error);
+            setShowAddressForm(true);
+        } finally {
+            setAddressLoading(false);
+        }
+    };
 
     const handleInputChange = (field, value) => {
         setAddressForm(prev => ({
@@ -28,34 +87,53 @@ const RedeemPoints = () => {
     };
 
     const handleSaveAndContinue = async () => {
+        // Validate required fields
+        const requiredFields = ['name', 'contactNumber', 'pinCode', 'city', 'fullAddress', 'email'];
+        const missingFields = requiredFields.filter(field => !addressForm[field]);
+        
+        if (missingFields.length > 0) {
+            toast.error(`Please fill in all required fields: ${missingFields.join(', ')}`);
+            return;
+        }
+
+        if (addressForm.state === 'Select State') {
+            toast.error('Please select a state');
+            return;
+        }
+
+        // Validate email format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(addressForm.email)) {
+            toast.error('Please enter a valid email address');
+            return;
+        }
+
         try {
             setLoading(true);
             
-            // Create order via API
-            const orderData = {
-                product: product,
-                deliveryAddress: addressForm,
-                orderType: 'product_redemption'
-            };
+            // Create address via API
+            console.log('🏠 Creating address...');
+            const addressResponse = await promotionAPI.createAddress(addressForm);
             
-            const response = await promotionAPI.createOrder(orderData);
-            
-            if (response.success) {
-                // Navigate to order confirmation with order details
+            if (addressResponse.success) {
+                console.log('✅ Address created successfully');
+                toast.success('Address saved successfully! Redirecting to order confirmation...');
+                
+                // Navigate to order confirmation with address details
                 navigate('/order-confirmation', {
                     state: {
                         product: product,
                         addressForm: addressForm,
                         pointCode: pointCode,
-                        orderDetails: response.data
+                        addressId: addressResponse.data.id
                     }
                 });
             } else {
-                alert('Failed to create order. Please try again.');
+                toast.error('Failed to save address. Please try again.');
             }
         } catch (error) {
-            console.error('Error creating order:', error);
-            alert('An error occurred while creating the order. Please try again.');
+            console.error('❌ Error creating address:', error);
+            toast.error('An error occurred while saving the address. Please try again.');
         } finally {
             setLoading(false);
         }
@@ -77,8 +155,33 @@ const RedeemPoints = () => {
         );
     }
 
+    // Show loading state while checking for existing addresses
+    if (addressLoading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-[#fa4615] mx-auto mb-4"></div>
+                    <p className="text-gray-600">Checking your addresses...</p>
+                </div>
+            </div>
+        );
+    }
+
+    // If not showing address form (addresses exist), this component won't render
+    // because user is redirected to order-confirmation
+    if (!showAddressForm) {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-[#fa4615] mx-auto mb-4"></div>
+                    <p className="text-gray-600">Redirecting...</p>
+                </div>
+            </div>
+        );
+    }
+
     return (
-        <div className="min-h-screen bg-white py-8">
+        <div className="min-h-screen bg-white py-8 pt-30">
             <div className="max-w-6xl mx-auto px-4">
                 <div className="grid lg:grid-cols-2 gap-12">
                     {/* Left Column - Product Details */}
@@ -134,6 +237,18 @@ const RedeemPoints = () => {
                                             className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#fa4615]"
                                         />
                                     </div>
+                                </div>
+
+                                {/* Email Field */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+                                    <input
+                                        type="email"
+                                        placeholder="Enter Email Address"
+                                        value={addressForm.email}
+                                        onChange={(e) => handleInputChange('email', e.target.value)}
+                                        className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#fa4615]"
+                                    />
                                 </div>
 
                                 {/* Pin Code and City */}
@@ -211,8 +326,8 @@ const RedeemPoints = () => {
                                             <input
                                                 type="radio"
                                                 name="addressType"
-                                                value="Home"
-                                                checked={addressForm.addressType === 'Home'}
+                                                value="home"
+                                                checked={addressForm.addressType === 'home'}
                                                 onChange={(e) => handleInputChange('addressType', e.target.value)}
                                                 className="w-4 h-4 text-[#fa4615] focus:ring-[#fa4615] mr-2"
                                             />
@@ -222,8 +337,8 @@ const RedeemPoints = () => {
                                             <input
                                                 type="radio"
                                                 name="addressType"
-                                                value="Work"
-                                                checked={addressForm.addressType === 'Work'}
+                                                value="work"
+                                                checked={addressForm.addressType === 'work'}
                                                 onChange={(e) => handleInputChange('addressType', e.target.value)}
                                                 className="w-4 h-4 text-[#fa4615] focus:ring-[#fa4615] mr-2"
                                             />
@@ -236,7 +351,7 @@ const RedeemPoints = () => {
                     </div>
 
                     {/* Right Column - Redeem Points */}
-                    <div>
+                    {/* <div>
                         <div className="bg-gray-50 p-8 rounded-lg">
                             <h2 className="text-2xl font-bold mb-4">Redeem Your Points</h2>
                             <p className="text-gray-600 mb-6">Choose from exclusive rewards curated just for you</p>
@@ -262,7 +377,7 @@ const RedeemPoints = () => {
                                 </button>
                             </div>
                         </div>
-                    </div>
+                    </div> */}
                 </div>
 
                 {/* Save & Continue Button */}

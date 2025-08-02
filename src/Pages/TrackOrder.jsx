@@ -29,13 +29,19 @@ const TrackOrder = () => {
             
             if (response.success) {
                 setOrderData(response.data);
+                console.log('✅ Order data loaded:', response.data);
+                
                 // Determine current status from API response
                 const statusMap = {
+                    'pending': 1,
                     'confirmed': 1,
                     'processing': 2,
                     'shipped': 3,
                     'in_transit': 3,
-                    'delivered': 4
+                    'out_for_delivery': 3,
+                    'delivered': 4,
+                    'cancelled': 0,
+                    'refunded': 0
                 };
                 setCurrentStatus(statusMap[response.data.status] || 1);
             } else {
@@ -49,13 +55,19 @@ const TrackOrder = () => {
         }
     };
 
-    const orderStatuses = orderData?.updates ? orderData.updates.map((update, index) => ({
+    const orderStatuses = orderData?.orderStatusLogs ? orderData.orderStatusLogs.map((log, index) => ({
         id: index + 1,
-        title: update.status,
-        description: update.description,
-        icon: [CheckCircle, Package, Truck, CheckCircle][index] || Clock,
+        title: log.status.charAt(0).toUpperCase() + log.status.slice(1).replace('_', ' '),
+        description: log.notes || `Order status updated to ${log.status}`,
+        icon: [CheckCircle, Package, Truck, CheckCircle][index] || CheckCircle,
         completed: true,
-        timestamp: update.date
+        timestamp: new Date(log.createdAt).toLocaleDateString('en-IN', {
+            day: 'numeric',
+            month: 'short',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        })
     })) : [
         {
             id: 1,
@@ -63,7 +75,13 @@ const TrackOrder = () => {
             description: "Your order has been confirmed and is being processed",
             icon: CheckCircle,
             completed: currentStatus >= 1,
-            timestamp: "2 Aug 2025, 10:30 AM"
+            timestamp: orderData?.createdAt ? new Date(orderData.createdAt).toLocaleDateString('en-IN', {
+                day: 'numeric',
+                month: 'short',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            }) : "Loading..."
         },
         {
             id: 2,
@@ -71,7 +89,7 @@ const TrackOrder = () => {
             description: "Your order has been processed and is ready for dispatch",
             icon: Package,
             completed: currentStatus >= 2,
-            timestamp: currentStatus >= 2 ? "2 Aug 2025, 2:45 PM" : ""
+            timestamp: currentStatus >= 2 ? "Processing..." : ""
         },
         {
             id: 3,
@@ -79,7 +97,7 @@ const TrackOrder = () => {
             description: "Your order has been shipped and is on the way",
             icon: Truck,
             completed: currentStatus >= 3,
-            timestamp: currentStatus >= 3 ? "3 Aug 2025, 9:15 AM" : ""
+            timestamp: currentStatus >= 3 ? "Shipped..." : ""
         },
         {
             id: 4,
@@ -87,7 +105,7 @@ const TrackOrder = () => {
             description: "Your order has been delivered successfully",
             icon: CheckCircle,
             completed: currentStatus >= 4,
-            timestamp: currentStatus >= 4 ? "5 Aug 2025, 11:30 AM" : ""
+            timestamp: currentStatus >= 4 ? "Delivered..." : ""
         }
     ];
 
@@ -161,7 +179,29 @@ const TrackOrder = () => {
                             <h1 className="text-2xl font-bold text-gray-800">
                                 Track Your Order
                             </h1>
-                            <p className="text-gray-600">Order ID: #{orderId}</p>
+                            <p className="text-gray-600">
+                                Order ID: #{orderData?.orderNumber || orderId}
+                            </p>
+                            {orderData && (
+                                <div className="flex items-center space-x-4 mt-2">
+                                    <span className={`px-3 py-1 rounded-full text-sm font-medium ${
+                                        orderData.status === 'confirmed' ? 'bg-green-100 text-green-800' :
+                                        orderData.status === 'processing' ? 'bg-blue-100 text-blue-800' :
+                                        orderData.status === 'shipped' ? 'bg-purple-100 text-purple-800' :
+                                        orderData.status === 'delivered' ? 'bg-green-100 text-green-800' :
+                                        'bg-gray-100 text-gray-800'
+                                    }`}>
+                                        {orderData.status.charAt(0).toUpperCase() + orderData.status.slice(1)}
+                                    </span>
+                                    <span className="text-sm text-gray-500">
+                                        Ordered on {new Date(orderData.createdAt).toLocaleDateString('en-IN', {
+                                            day: 'numeric',
+                                            month: 'long',
+                                            year: 'numeric'
+                                        })}
+                                    </span>
+                                </div>
+                            )}
                         </div>
                         <button
                             onClick={() => navigate('/promotions')}
@@ -171,7 +211,33 @@ const TrackOrder = () => {
                         </button>
                     </div>
                     
-                    {product && (
+                    {orderData?.orderItems && orderData.orderItems.length > 0 && (
+                        <div className="space-y-4">
+                            {orderData.orderItems.map((item, index) => (
+                                <div key={index} className="flex items-center space-x-4 p-4 bg-gray-50 rounded-lg">
+                                    <img
+                                        src={item.product.primaryImage}
+                                        alt={item.product.name}
+                                        className="w-16 h-16 object-cover rounded-lg"
+                                    />
+                                    <div className="flex-1">
+                                        <h3 className="font-semibold text-gray-800">{item.product.name}</h3>
+                                        <p className="text-sm text-[#FF4F12]">SKU: {item.product.sku}</p>
+                                        <p className="text-sm text-gray-600">
+                                            Quantity: {item.quantity} | Points Used: ⭐ {orderData.loyaltyPointsRedeemed?.toLocaleString()}
+                                        </p>
+                                    </div>
+                                    <div className="text-right">
+                                        <p className="font-semibold text-gray-800">{formatPrice(item.totalPrice)}</p>
+                                        <p className="text-sm text-green-600">Paid with Points</p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                    
+                    {/* Fallback for when no order data but product is available */}
+                    {!orderData?.orderItems && product && (
                         <div className="flex items-center space-x-4 p-4 bg-gray-50 rounded-lg">
                             <img
                                 src={product.images?.[0] || product.image}
@@ -276,15 +342,23 @@ const TrackOrder = () => {
                                     <div className="flex items-center mb-2">
                                         <Truck className="text-blue-600 mr-2" size={20} />
                                         <span className="font-medium text-blue-800">
-                                            Out for Delivery
+                                            {currentStatus === 3 ? 'Out for Delivery' : 'Delivered'}
                                         </span>
                                     </div>
                                     <p className="text-blue-700 text-sm mb-2">
-                                        Your package is out for delivery and will arrive today between 10:00 AM - 6:00 PM
+                                        {currentStatus === 3 
+                                            ? `Your package is out for delivery to ${orderData?.shippingAddress?.city || 'your location'} and will arrive today between 10:00 AM - 6:00 PM`
+                                            : 'Your package has been delivered successfully'
+                                        }
                                     </p>
                                     <p className="text-xs text-blue-600">
-                                        Tracking ID: KCL{orderId}2025
+                                        Tracking ID: KCL{orderData?.orderNumber || orderId}
                                     </p>
+                                    {orderData?.shippingAddress && (
+                                        <p className="text-xs text-blue-600 mt-1">
+                                            Delivering to: {orderData.shippingAddress.city}, {orderData.shippingAddress.state} - {orderData.shippingAddress.pinCode}
+                                        </p>
+                                    )}
                                 </div>
                             </div>
                         )}
@@ -299,48 +373,90 @@ const TrackOrder = () => {
                                 Delivery Address
                             </h3>
                             <div className="text-sm text-gray-600 space-y-1">
-                                <p className="font-medium text-gray-800">
-                                    {userDetails?.firstName} {userDetails?.lastName}
-                                </p>
-                                <p>{userDetails?.address || "408, Floor no.4, Sumer Kendra, Worli West, Mumbai, Maharashtra-400030"}</p>
-                                <p className="flex items-center mt-2">
-                                    <Phone size={14} className="mr-1" />
-                                    {userDetails?.phone || "9890887363"}
-                                </p>
+                                {orderData?.shippingAddress ? (
+                                    <>
+                                        <p className="font-medium text-gray-800">
+                                            Delivery Address
+                                        </p>
+                                        <p>{orderData.shippingAddress.address}</p>
+                                        <p>{orderData.shippingAddress.city}, {orderData.shippingAddress.state}</p>
+                                        <p>PIN: {orderData.shippingAddress.pinCode}</p>
+                                    </>
+                                ) : (
+                                    <>
+                                        <p className="font-medium text-gray-800">
+                                            {userDetails?.firstName} {userDetails?.lastName}
+                                        </p>
+                                        <p>{userDetails?.address || "Address being updated..."}</p>
+                                        <p className="flex items-center mt-2">
+                                            <Phone size={14} className="mr-1" />
+                                            {userDetails?.phone || "Phone number loading..."}
+                                        </p>
+                                    </>
+                                )}
                             </div>
                         </div>
 
                         {/* Order Summary */}
-                        {product && (
+                        {(orderData?.orderItems || product) && (
                             <div className="bg-white rounded-lg shadow-sm p-6">
                                 <h3 className="font-semibold text-gray-800 mb-4">
                                     Order Summary
                                 </h3>
                                 <div className="space-y-3 text-sm">
-                                    <div className="flex justify-between">
-                                        <span className="text-gray-600">Item Price</span>
-                                        <span>{formatPrice(product.currentPrice)}</span>
-                                    </div>
-                                    <div className="flex justify-between text-[#FF4F12]">
-                                        <span>Points Used</span>
-                                        <span>⭐ {product.points?.toLocaleString()}</span>
-                                    </div>
-                                    <div className="flex justify-between">
-                                        <span className="text-gray-600">Delivery</span>
-                                        <span className="text-green-600">Free</span>
-                                    </div>
-                                    <div className="border-t pt-3">
-                                        <div className="flex justify-between font-semibold">
-                                            <span>Total Paid</span>
-                                            <span className="text-green-600">₹ 0.00</span>
-                                        </div>
-                                    </div>
+                                    {orderData?.orderItems ? (
+                                        <>
+                                            <div className="flex justify-between">
+                                                <span className="text-gray-600">Subtotal ({orderData.totalItems} item{orderData.totalItems > 1 ? 's' : ''})</span>
+                                                <span>{formatPrice(orderData.orderItems.reduce((sum, item) => sum + item.totalPrice, 0))}</span>
+                                            </div>
+                                            <div className="flex justify-between text-[#FF4F12]">
+                                                <span>Loyalty Points Used</span>
+                                                <span>⭐ {orderData.loyaltyPointsRedeemed?.toLocaleString()}</span>
+                                            </div>
+                                            <div className="flex justify-between text-green-600">
+                                                <span>Loyalty Discount</span>
+                                                <span>-{formatPrice(orderData.loyaltyDiscountAmount)}</span>
+                                            </div>
+                                            <div className="flex justify-between">
+                                                <span className="text-gray-600">Delivery</span>
+                                                <span className="text-green-600">Free</span>
+                                            </div>
+                                            <div className="border-t pt-3">
+                                                <div className="flex justify-between font-semibold">
+                                                    <span>Total Paid</span>
+                                                    <span className="text-green-600">{formatPrice(orderData.totalAmount)}</span>
+                                                </div>
+                                            </div>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <div className="flex justify-between">
+                                                <span className="text-gray-600">Item Price</span>
+                                                <span>{formatPrice(product.currentPrice)}</span>
+                                            </div>
+                                            <div className="flex justify-between text-[#FF4F12]">
+                                                <span>Points Used</span>
+                                                <span>⭐ {product.points?.toLocaleString()}</span>
+                                            </div>
+                                            <div className="flex justify-between">
+                                                <span className="text-gray-600">Delivery</span>
+                                                <span className="text-green-600">Free</span>
+                                            </div>
+                                            <div className="border-t pt-3">
+                                                <div className="flex justify-between font-semibold">
+                                                    <span>Total Paid</span>
+                                                    <span className="text-green-600">₹ 0.00</span>
+                                                </div>
+                                            </div>
+                                        </>
+                                    )}
                                 </div>
                             </div>
                         )}
 
                         {/* Help & Support */}
-                        <div className="bg-white rounded-lg shadow-sm p-6">
+                        {/* <div className="bg-white rounded-lg shadow-sm p-6">
                             <h3 className="font-semibold text-gray-800 mb-4">
                                 Need Help?
                             </h3>
@@ -355,7 +471,7 @@ const TrackOrder = () => {
                                     Return Policy
                                 </button>
                             </div>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
             </div>

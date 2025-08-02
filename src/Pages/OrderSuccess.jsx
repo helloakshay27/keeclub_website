@@ -5,7 +5,18 @@ import { CheckCircle, Package, Truck, Home } from 'lucide-react';
 const OrderSuccess = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const { product, orderId, userDetails } = location.state || {};
+    const { 
+        product, 
+        orderId, 
+        orderNumber,
+        userDetails, 
+        deliveryAddress,
+        orderDetails,
+        loyaltyPointsUsed,
+        remainingPoints,
+        totalAmount,
+        trackingNumber
+    } = location.state || {};
 
     const formatPrice = (price) => {
         return new Intl.NumberFormat('en-IN', {
@@ -16,11 +27,12 @@ const OrderSuccess = () => {
         }).format(price);
     };
 
-    if (!product || !orderId) {
+    if (!product || (!orderId && !orderNumber)) {
         return (
             <div className="min-h-screen flex items-center justify-center">
                 <div className="text-center">
                     <h1 className="text-xl font-semibold text-gray-800 mb-4">Order not found</h1>
+                    <p className="text-gray-600 mb-4">No valid order data was found.</p>
                     <button 
                         onClick={() => navigate('/promotions')}
                         className="px-6 py-3 bg-[#FF4F12] text-white rounded-lg hover:bg-[#e63e0f]"
@@ -69,11 +81,28 @@ const OrderSuccess = () => {
                         <CheckCircle size={80} className="text-[#FF4F12] mx-auto" />
                     </div>
                     <h1 className="text-3xl font-bold mb-2">
-                        Thank You {userDetails?.firstName}!
+                        Thank You {deliveryAddress?.name || userDetails?.firstName || 'Valued Customer'}!
                     </h1>
                     <p className="text-xl">
-                        Your Order #{orderId} is completed successfully
+                        Your Order #{orderNumber || orderId} is completed successfully
                     </p>
+                    {orderDetails?.message && (
+                        <p className="text-lg mt-2 text-green-300">
+                            {orderDetails.message}
+                        </p>
+                    )}
+                    {loyaltyPointsUsed && (
+                        <div className="mt-4 p-4 bg-green-600 rounded-lg">
+                            <p className="text-lg font-semibold">
+                                🎉 {loyaltyPointsUsed.toLocaleString()} Loyalty Points Redeemed!
+                            </p>
+                            {remainingPoints && (
+                                <p className="text-sm">
+                                    Remaining Points: {remainingPoints.toLocaleString()}
+                                </p>
+                            )}
+                        </div>
+                    )}
                 </div>
             </div>
 
@@ -87,7 +116,9 @@ const OrderSuccess = () => {
                         </h2>
                         <p className="text-gray-600 mb-6">
                             We've accepted your order, and we're getting it ready. A Confirmation 
-                            mail has been sent to <span className="font-medium">asdf@gmail.com</span>
+                            mail has been sent to <span className="font-medium">
+                                {deliveryAddress?.email || userDetails?.email || 'your registered email'}
+                            </span>
                         </p>
 
                         <div className="border-t pt-6">
@@ -96,12 +127,20 @@ const OrderSuccess = () => {
                             </h3>
                             <div className="space-y-2 text-gray-600">
                                 <p className="font-medium text-gray-800">
-                                    {userDetails?.firstName} {userDetails?.lastName}
+                                    {deliveryAddress?.name || userDetails?.firstName + ' ' + userDetails?.lastName || 'Customer'}
                                 </p>
-                                <p>{userDetails?.phone}</p>
+                                <p>{deliveryAddress?.phone || userDetails?.phone}</p>
+                                {deliveryAddress?.email && (
+                                    <p>{deliveryAddress.email}</p>
+                                )}
                                 <p className="text-sm">
-                                    {userDetails?.address}
+                                    {deliveryAddress?.address || userDetails?.address}
                                 </p>
+                                {deliveryAddress?.type && (
+                                    <p className="text-xs text-gray-500 capitalize">
+                                        Address Type: {deliveryAddress.type}
+                                    </p>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -114,35 +153,76 @@ const OrderSuccess = () => {
 
                         <div className="flex items-start space-x-4 mb-6">
                             <img
-                                src={product.images?.[0] || product.image}
+                                src={product.images?.[0] || product.image || product.primary_image}
                                 alt={product.name}
                                 className="w-20 h-20 object-cover rounded-lg"
                             />
                             <div className="flex-1">
-                                <h3 className="font-semibold text-gray-800">{product.name}</h3>
-                                <p className="text-sm text-[#FF4F12] mb-2">{product.title}</p>
-                                <p className="text-xs text-gray-600">
-                                    {product.id}: {product.specifications?.model || 'TT1.417.27.081.00'}
+                                <h3 className="font-semibold text-gray-800">
+                                    {product.brand ? `${product.brand} ${product.name}` : product.name}
+                                </h3>
+                                <p className="text-sm text-[#FF4F12] mb-2">
+                                    {product.title || product.description}
                                 </p>
+                                <p className="text-xs text-gray-600">
+                                    SKU: {product.sku || product.id}
+                                </p>
+                                {orderNumber && (
+                                    <p className="text-xs text-gray-600">
+                                        Order Number: {orderNumber}
+                                    </p>
+                                )}
+                                {trackingNumber && trackingNumber !== orderNumber && (
+                                    <p className="text-xs text-gray-600">
+                                        Tracking: {trackingNumber}
+                                    </p>
+                                )}
                             </div>
                         </div>
 
                         <div className="space-y-3 border-t pt-4">
                             <div className="flex justify-between">
                                 <span className="text-gray-600">Price (1 Item)</span>
-                                <span className="font-medium">{formatPrice(product.currentPrice)}</span>
+                                <span className="font-medium">
+                                    {formatPrice(product.currentPrice || product.current_price || 0)}
+                                </span>
                             </div>
                             
                             <div className="flex justify-between text-[#FF4F12]">
                                 <span>Redeemed Points</span>
-                                <span className="font-medium">⭐ {product.points?.toLocaleString()}</span>
+                                <span className="font-medium">
+                                    ⭐ {(loyaltyPointsUsed || product.loyalty_points_required || product.points || 0).toLocaleString()}
+                                </span>
                             </div>
+                            
+                            {orderDetails?.loyalty_discount_amount && (
+                                <div className="flex justify-between text-green-600">
+                                    <span>Loyalty Discount</span>
+                                    <span className="font-medium">
+                                        -{formatPrice(orderDetails.loyalty_discount_amount)}
+                                    </span>
+                                </div>
+                            )}
                             
                             <div className="border-t pt-3">
                                 <div className="flex justify-between text-lg font-semibold">
                                     <span>Total Payable</span>
-                                    <span className="text-green-600">₹ 0.00</span>
+                                    <span className="text-green-600">
+                                        {formatPrice(totalAmount || orderDetails?.total_amount || 0)}
+                                    </span>
                                 </div>
+                                {orderDetails?.payment_status && (
+                                    <div className="flex justify-between text-sm text-gray-600 mt-1">
+                                        <span>Payment Status</span>
+                                        <span className="capitalize">{orderDetails.payment_status}</span>
+                                    </div>
+                                )}
+                                {orderDetails?.status && (
+                                    <div className="flex justify-between text-sm text-gray-600 mt-1">
+                                        <span>Order Status</span>
+                                        <span className="capitalize">{orderDetails.status}</span>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -152,7 +232,13 @@ const OrderSuccess = () => {
                 <div className="mt-12 text-center space-y-4">
                     <button
                         onClick={() => navigate(`/track-order/${orderId}`, { 
-                            state: { product, orderId, userDetails } 
+                            state: { 
+                                orderId: orderId,
+                                orderNumber: orderNumber,
+                                product,
+                                deliveryAddress,
+                                orderDetails
+                            } 
                         })}
                         className="inline-flex items-center px-8 py-3 bg-[#FF4F12] text-white font-semibold rounded-lg hover:bg-[#e63e0f] transition-colors duration-300 mr-4"
                     >

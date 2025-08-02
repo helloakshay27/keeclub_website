@@ -187,49 +187,74 @@ const Header = ({ isTransparent }) => {
       )}
 
       {showModal && (
-  <div className="fixed inset-0 flex items-center justify-center bg-black/80">
+  <div className="fixed inset-0 flex items-center justify-center bg-black/80 z-50">
     <div className="bg-white rounded-lg shadow-lg p-6 min-w-[350px]" style={{ color: '#000' }}>
       
       {/* Title */}
-      <h2 className="text-lg font-semibold mb-4 text-center">Sign Out</h2>
+      <h2 className="text-lg font-semibold mb-4 text-center">Profile Menu</h2>
 
-      {/* Optional User Info (currently commented out) */}
-      {/* 
-      <div className="mb-4 text-center">
-        <div className="font-medium">
-          {localStorage.getItem("firstName")} {localStorage.getItem("lastName")}
-        </div>
-        <div className="text-gray-500 text-sm">
-          {localStorage.getItem("email") || "No email"}
-        </div>
-      </div> 
-      */}
+      {/* User Info */}
+    
 
-      {/* Confirmation Text */}
-      <p className="mb-4 text-center">Are you sure you want to sign out?</p>
-
-      {/* Go to Dashboard Button */}
-      <div className="flex justify-center mb-6">
-        <Link to={`/dashboard/transactions/${id}`} className="text-blue-500 hover:underline cursor-pointer">
-          <button className="px-4 py-2 rounded bg-[#f54a00] text-white hover:bg-[#cf4c1e]">
-            Go to dashboard
-          </button>
-        </Link>
-      </div>
-
-      {/* Action Buttons */}
-      <div className="flex justify-end space-x-3 mt-10">
-        <button
-          className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300"
+      {/* Menu Options */}
+      <div className="space-y-2 mb-6">
+        <Link 
+          to="/orders" 
+          className="flex items-center px-4 py-3 rounded-lg hover:bg-gray-100 transition-colors"
           onClick={() => setShowModal(false)}
         >
-          Cancel
-        </button>
-        <button
-          className="px-4 py-2 rounded bg-[#f54a00] text-white hover:bg-[#cf4c1e]"
-          onClick={handleSignOut}
+          <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+            📦
+          </div>
+          <div>
+            <div className="font-medium">My Orders</div>
+            <div className="text-sm text-gray-500">Track and manage orders</div>
+          </div>
+        </Link>
+
+        <Link 
+          to={`/dashboard/transactions/${id}`} 
+          className="flex items-center px-4 py-3 rounded-lg hover:bg-gray-100 transition-colors"
+          onClick={() => setShowModal(false)}
         >
-          Sign Out
+          <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center mr-3">
+            💳
+          </div>
+          <div>
+            <div className="font-medium">Dashboard</div>
+            <div className="text-sm text-gray-500">View transactions & points</div>
+          </div>
+        </Link>
+
+        <div 
+          className="flex items-center px-4 py-3 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
+          onClick={() => {
+            setShowModal(false);
+            setTimeout(() => {
+              const confirmSignOut = window.confirm("Are you sure you want to sign out?");
+              if (confirmSignOut) {
+                handleSignOut();
+              }
+            }, 100);
+          }}
+        >
+          <div className="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center mr-3">
+            🚪
+          </div>
+          <div>
+            <div className="font-medium text-red-600">Sign Out</div>
+            <div className="text-sm text-gray-500">Exit your account</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Close Button */}
+      <div className="flex justify-center">
+        <button
+          className="px-6 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 transition-colors"
+          onClick={() => setShowModal(false)}
+        >
+          Close
         </button>
       </div>
       

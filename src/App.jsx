@@ -38,6 +38,8 @@ import OrderConfirmation from './Pages/OrderConfirmation';
 import OrderSuccess from './Pages/OrderSuccess';
 import TrackOrder from './Pages/TrackOrder';
 import HotelsRedemption from './Pages/HotelsRedemption';
+import Orders from './Pages/Orders';
+import OrderDetail from './Pages/OrderDetail';
 
 const routeConfigs = [
   { path: '/', element: <Home />, transparent: true },
@@ -54,6 +56,8 @@ const routeConfigs = [
   { path: '/redeem-points', element: <RedeemPoints />, transparent: false },
   { path: '/order-confirmation', element: <OrderConfirmation />, transparent: false },
   { path: '/order-success', element: <OrderSuccess />, transparent: false },
+  { path: '/orders', element: <Orders />, transparent: false },
+  { path: '/order-detail/:orderId', element: <OrderDetail />, transparent: false },
   { path: '/track-order/:orderId', element: <TrackOrder />, transparent: false },
   { path: '/hotels-redemption', element: <HotelsRedemption />, transparent: false },
 

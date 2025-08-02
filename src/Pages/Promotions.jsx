@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import Redemptions from './Redemptions';
 import Encash from './Encash';
 import promotionAPI from '../services/promotionAPI';
@@ -17,12 +18,12 @@ const Promotions = () => {
         subheading: "Your rewards, your way. Redeem now!"
     };
 
-    const categories = ["All", "Luxury", "Premium"];
+    const categories = ["All"];
 
     // Fetch promotions data
     useEffect(() => {
         fetchPromotions();
-    }, []);
+    }, [selectedCategory]); // Re-fetch when category changes
 
     const fetchPromotions = async () => {
         setLoading(true);
@@ -35,13 +36,16 @@ const Promotions = () => {
             if (response.success) {
                 setPromotionData(response.data);
                 console.log('✅ Promotions loaded successfully:', response.data);
+                toast.success(`${response.data.length} promotions loaded successfully!`);
             } else {
                 setError('Failed to load promotions');
                 console.error('❌ Failed to load promotions:', response.message);
+                toast.error('Failed to load promotions from server.');
             }
         } catch (error) {
             setError('Network error occurred');
             console.error('❌ Network error:', error);
+            toast.error('Network error occurred. Loading sample promotions.');
             
             // Fallback to static data if API fails
             setPromotionData([
@@ -76,6 +80,13 @@ const Promotions = () => {
         }).format(price);
     };
 
+    // Helper function to truncate description
+    const truncateDescription = (description, maxLength = 60) => {
+        if (!description) return '';
+        if (description.length <= maxLength) return description;
+        return description.substring(0, maxLength).trim() + '...';
+    };
+
     const renderTabContent = () => {
         switch(selectedTab) {
             case 'Redemptions':
@@ -85,25 +96,6 @@ const Promotions = () => {
             default: // Promotions
                 return (
                     <>
-                        {/* Category Filters */}
-                        <div className="w-full mt-8 px-4 max-w-7xl mx-auto">
-                            <div className="flex justify-center space-x-4">
-                                {categories.map((category) => (
-                                    <button
-                                        key={category}
-                                        onClick={() => setSelectedCategory(category)}
-                                        className={`px-6 py-2 rounded-lg font-medium transition-all duration-300 ${
-                                            selectedCategory === category
-                                                ? "bg-[#FF4F12] text-white"
-                                                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                                        }`}
-                                    >
-                                        {category}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-
                         {/* Promotions Grid */}
                         <div className="px-4 py-8 sm:py-10 md:py-20 max-w-7xl mx-auto">
                             {loading ? (
@@ -154,8 +146,8 @@ const Promotions = () => {
                                                 <p className="text-sm text-[#FF4F12] font-medium mb-3">
                                                     {item.title}
                                                 </p>
-                                                <p className="text-gray-600 text-sm mb-4">
-                                                    {item.description}
+                                                <p className="text-gray-600 text-sm mb-4" title={item.description}>
+                                                    {truncateDescription(item.description)}
                                                 </p>
 
                                                 <div className="space-y-2 mb-4">
@@ -222,7 +214,7 @@ const Promotions = () => {
             </section>
 
             {/* Tab Navigation */}
-            <div className="w-full mt-10 px-4 max-w-7xl mx-auto">
+            <div className="w-full mt-10 px-4">
                 <div className="flex justify-center">
                     <div className="flex bg-gray-100 rounded-full p-1 max-w-md">
                         {["Promotions", "Redemptions", "Encash"].map((tab) => (

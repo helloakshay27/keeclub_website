@@ -17,7 +17,17 @@ const PromotionDetail = () => {
     // Check authentication status
     useEffect(() => {
         const authToken = localStorage.getItem('authToken');
-        setIsAuthenticated(!!authToken);
+        const memberId = localStorage.getItem('member_id');
+        
+        // More robust authentication check
+        const isUserAuthenticated = authToken && memberId && authToken !== 'null' && memberId !== 'null';
+        setIsAuthenticated(isUserAuthenticated);
+        
+        console.log('🔐 Authentication Check:', {
+            hasToken: !!authToken,
+            hasMemberId: !!memberId,
+            isAuthenticated: isUserAuthenticated
+        });
     }, []);
 
     // Fetch product data from API
@@ -40,7 +50,7 @@ const PromotionDetail = () => {
             } else {
                 setError('Product not found');
                 console.error('❌ Failed to load product:', response.message);
-                toast.error('Product not found. Please check the product ID.');
+                toast.error('Product not found. Loading sample data as fallback.');
                 // Fallback to static data
                 setProduct(getStaticProductData());
             }
@@ -125,9 +135,17 @@ const PromotionDetail = () => {
     };
 
     const handleClaimNow = () => {
-        if (!isAuthenticated) {
+        const authToken = localStorage.getItem('authToken');
+        const memberId = localStorage.getItem('member_id');
+        
+        // Check if user is properly authenticated
+        if (!authToken || !memberId || authToken === 'null' || memberId === 'null') {
+            console.log('🔐 User not authenticated, showing login modal');
+            toast.warning('Please login to claim this promotion');
             setShowLoginModal(true);
         } else {
+            console.log('🔐 User authenticated, proceeding to redeem points');
+            toast.success('Redirecting to redeem points...');
             // Proceed to redeem points page
             navigate('/redeem-points', { 
                 state: { 
