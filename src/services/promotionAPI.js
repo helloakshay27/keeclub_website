@@ -1,5 +1,11 @@
 // Real API configuration for Piramal Loyalty Platform
 import BASE_URL from '../Confi/baseurl.js';
+import hotel1 from '../assets/Hotel/hotel1.jpg';
+import hotel2 from '../assets/Hotel/hotel2.jpg';
+import hotel3 from '../assets/Hotel/hotel3.jpg';
+import Card1 from '../assets/Hotel/Card1.png';
+import Card2 from '../assets/Hotel/Card2.png';
+import Card3 from '../assets/Hotel/Card3.png';
 
 const API_CONFIG = {
     baseURL: BASE_URL.replace(/\/$/, ''), // Remove trailing slash if present
@@ -64,8 +70,8 @@ const transformers = {
             currentPrice: parseFloat(product.current_price || product.sale_price || product.base_price || 0),
             originalPrice: parseFloat(product.base_price || product.current_price || 0),
             points: product.loyalty_points_required || parseFloat(product.current_price || product.sale_price || 0),
-            image: product.primary_image || (product.all_images && product.all_images[0]) || "/src/assets/Hotel/Card1.png",
-            images: product.all_images || (product.primary_image ? [product.primary_image] : ["/src/assets/Hotel/Card1.png"]),
+            image: product.primary_image || (product.all_images && product.all_images[0]) || Card1,
+            images: product.all_images || (product.primary_image ? [product.primary_image] : [Card1]),
             category: product.featured ? "Luxury" : "Premium",
             featured: product.featured || product.is_trending || false,
             description: product.description 
@@ -137,21 +143,21 @@ const transformers = {
                 id: 1,
                 title: 'Hotels',
                 subtitle: 'Unlock Exclusive Stays',
-                image: '/src/assets/Hotel/hotel1.jpg',
+                image: hotel1,
                 category: 'Travel'
             },
             {
                 id: 2,
                 title: 'F&B',
                 subtitle: 'Gourmet Dining Experiences',
-                image: '/src/assets/Hotel/hotel2.jpg',
+                image: hotel2,
                 category: 'Food'
             },
             {
                 id: 3,
                 title: 'Tickets',
                 subtitle: 'Entertainment & Events',
-                image: '/src/assets/Hotel/hotel3.jpg',
+                image: hotel3,
                 category: 'Entertainment'
             },
            
@@ -166,7 +172,7 @@ const transformers = {
             id: product.id,
             name: product.name,
             location: ["Mumbai", "Delhi", "Chennai", "Jaipur", "Shimla", "Bangalore"][index % 6],
-            image: product.primary_image || `/src/assets/Hotel/hotel${(index % 3) + 1}.jpg`,
+            image: product.primary_image || [hotel1, hotel2, hotel3][index % 3],
             rating: product.average_rating || (4.5 + (index * 0.1)),
             points: product.loyalty_points_required || parseFloat(product.current_price || 25000),
             originalPrice: parseFloat(product.base_price || 45000),
@@ -316,7 +322,7 @@ class PromotionAPI {
                 id: 1,
                 name: "The Taj Mahal Palace",
                 location: "Mumbai",
-                image: "/src/assets/Hotel/hotel1.jpg",
+                image: hotel1,
                 rating: 4.8,
                 points: 25000,
                 originalPrice: 45000,
@@ -330,7 +336,7 @@ class PromotionAPI {
                 id: 2,
                 name: "The Oberoi",
                 location: "Delhi",
-                image: "/src/assets/Hotel/hotel2.jpg",
+                image: hotel2,
                 rating: 4.9,
                 points: 30000,
                 originalPrice: 55000,
@@ -344,7 +350,7 @@ class PromotionAPI {
                 id: 3,
                 name: "ITC Grand Chola",
                 location: "Chennai",
-                image: "/src/assets/Hotel/hotel3.jpg",
+                image: hotel3,
                 rating: 4.7,
                 points: 28000,
                 originalPrice: 48000,

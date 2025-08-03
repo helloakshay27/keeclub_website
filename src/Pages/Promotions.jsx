@@ -5,6 +5,7 @@ import Redemptions from './Redemptions';
 import Encash from './Encash';
 import promotionAPI from '../services/promotionAPI';
 import RedemptionBg from '../assets/RedemptionBg.jpg';
+import Card1 from '../assets/Hotel/Card1.png';
 
 const Promotions = () => {
     const [selectedCategory, setSelectedCategory] = useState("All");
@@ -57,7 +58,7 @@ const Promotions = () => {
                     currentPrice: 65000,
                     originalPrice: 85000,
                     points: 65000,
-                    image: "/src/assets/Hotel/Card1.png",
+                    image: Card1,
                     category: "Luxury",
                     featured: true,
                     description: "Exclusive of all taxes EMI from ₹ 5851"

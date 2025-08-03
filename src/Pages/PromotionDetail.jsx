@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { ChevronLeft, ChevronRight, Star, Shield, Truck, RotateCcw } from 'lucide-react';
 import { toast } from 'react-toastify';
 import promotionAPI from '../services/promotionAPI';
+import Card1 from '../assets/Hotel/Card1.png';
 
 const PromotionDetail = () => {
     const { id } = useParams();

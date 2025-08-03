@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import promotionAPI from '../services/promotionAPI';
+import hotel1 from '../assets/Hotel/hotel1.jpg';
+import hotel2 from '../assets/Hotel/hotel2.jpg';
+import hotel3 from '../assets/Hotel/hotel3.jpg';
 
 const Redemptions = () => {
     const [redemptionCategories, setRedemptionCategories] = useState([]);
@@ -43,21 +46,21 @@ const Redemptions = () => {
                 id: 1,
                 title: 'Hotels',
                 subtitle: 'Unlock Exclusive Stays',
-                image: '/src/assets/Hotel/hotel1.jpg',
+                image: hotel1,
                 category: 'Travel'
             },
             {
                 id: 2,
                 title: 'F&B',
                 subtitle: 'Savor Culinary Delights',
-                image: '/src/assets/Hotel/hotel2.jpg',
+                image: hotel2,
                 category: 'Food'
             },
             {
                 id: 3,
                 title: 'Tickets',
                 subtitle: 'Experience Entertainment',
-                image: '/src/assets/Hotel/hotel3.jpg',
+                image: hotel3,
                 category: 'Entertainment'
             }
         ];
