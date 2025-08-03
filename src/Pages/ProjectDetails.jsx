@@ -38,13 +38,14 @@ const ProjectDetail = () => {
   }, []);
 
   const handleEnquireClick = () => {
+    
+    console.log("Enquire button clicked");
     if (localStorage.getItem("authToken")) {
       setShowEnquiryModal(true);
       sessionStorage.setItem("enquireClicked", "true");
       setEnquireDisabled(true);
     } else {
       navigate("/login", { state: { from: location.pathname } });
-
     }
   };
 
@@ -452,7 +453,7 @@ const ProjectDetail = () => {
           <button
             onClick={handleEnquireClick}
             className="flex-1 bg-orange-600 text-white py-2 rounded-md font-medium hover:bg-orange-700"
-            disabled={enquireDisabled}
+            // disabled={enquireDisabled}
           >
             Enquire Now
           </button>
@@ -729,22 +730,32 @@ const ProjectDetail = () => {
             <div className="w-full">
               <h2 className="text-2xl font-bold mb-4">Location Highlights</h2>
               <div className="h-[500px] bg-gray-100 rounded overflow-hidden shadow-md w-full">
-                {project.map_url ? (
-                  <iframe
-                    src="https://maps.google.com/maps?width=600&height=400&hl=en&q=Piramal Revanta Sales Office&t=&z=13&ie=UTF8&iwloc=B&output=embed"
-                    title="Google Map"
-                    className="w-full h-full border-0"
-                    allowFullScreen
-                    loading="lazy"
-                    referrerPolicy="no-referrer-when-downgrade"
-                  ></iframe>
-                ) : (
-                  <img
-                    src="/api/placeholder/600/400?text=Location Map"
-                    alt="Location map"
-                    className="w-full h-full object-cover"
-                  />
-                )}
+                {(() => {
+                  // Map project name to Google Maps embed URL
+                  const name = (project.project_name || project.name || "").toLowerCase();
+                  let mapUrl = "";
+                  if (name.includes("aranya")) {
+                    mapUrl = "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3769.591964887727!2d72.8383949!3d18.9776669!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7cfdfb1fc26e3%3A0x200e9eea4891f803!2sPiramal%20Aranya!5e0!3m2!1sen!2sin!4v1718030000000!5m2!1sen!2sin";
+                  } else if (name.includes("vaikunth")) {
+                    mapUrl = "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3762.181011003837!2d72.9875609!3d19.2235139!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7b94dc1000001%3A0x3972be2feaf7a4cd!2sPiramal%20Vaikunth!5e0!3m2!1sen!2sin!4v1718030000000!5m2!1sen!2sin";
+                  } else if (name.includes("mahalaxmi")) {
+                    mapUrl = "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3769.453857327885!2d72.8250929!3d18.9821424!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7cfb1e4e8b6c7%3A0x0!2zMTjCsDU4JzU1LjciTiA3MsKwNDknMzAuMyJF!5e0!3m2!1sen!2sin!4v1718030000000!5m2!1sen!2sin";
+                  } else if (name.includes("revanta")) {
+                    mapUrl = "https://maps.google.com/maps?width=600&height=400&hl=en&q=Piramal Revanta Sales Office&t=&z=13&ie=UTF8&iwloc=B&output=embed";
+                  } else {
+                    mapUrl = project.map_url || "https://maps.google.com/maps?width=600&height=400&hl=en&q=Mumbai&t=&z=13&ie=UTF8&iwloc=B&output=embed";
+                  }
+                  return (
+                    <iframe
+                      src={mapUrl}
+                      title="Google Map"
+                      className="w-full h-full border-0"
+                      allowFullScreen
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                    ></iframe>
+                  );
+                })()}
               </div>
             </div>
 

@@ -80,7 +80,7 @@ const Redemptions = () => {
         // Navigate based on category
         switch(categoryTitle) {
             case 'Hotels':
-                navigate('');
+                navigate('/dashboard/hotel-details');
                 break;
             case 'F&B':
                 // Navigate to F&B section or create a specific F&B page
@@ -157,7 +157,10 @@ const Redemptions = () => {
                             {/* View Rewards Button */}
                             <div className="absolute bottom-4 right-4">
                                 <button 
-                                    onClick={() => handleCategoryClick(item.title)}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleCategoryClick(item.title);
+                                    }}
                                     className="bg-[#24293c] text-white px-4 py-2 rounded-lg font-medium hover:bg-[#1a1f2e] transition-colors duration-300"
                                 >
                                     View Rewards

@@ -209,9 +209,6 @@ const Promotions = () => {
                     <p className="text-lg sm:text-xl mt-4 opacity-90">
                         {slide.subheading}
                     </p>
-                    <button className="mt-6 px-8 py-3 bg-[#FF4F12] text-white font-semibold rounded-lg hover:bg-[#e63e0f] transition-colors duration-300">
-                        Read More
-                    </button>
                 </div>
             </section>
 
