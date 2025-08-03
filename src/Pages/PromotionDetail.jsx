@@ -13,6 +13,7 @@ const PromotionDetail = () => {
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [activeTab, setActiveTab] = useState('specifications');
 
     // Check authentication status
     useEffect(() => {
@@ -59,43 +60,70 @@ const PromotionDetail = () => {
     const getStaticProductData = () => {
         return {
             id: parseInt(id),
-            name: "Tissot PRX 40mm",
-            title: "Tissot T137.407.11.351.00",
-            currentPrice: 74500,
-            originalPrice: 74500,
-            points: 74500,
+            name: "Tissot T-Race MotoGP",
+            title: "Tissot T-Race MotoGP™ Quartz Chronograph (2025)",
+            currentPrice: 65500,
+            originalPrice: 65500,
+            points: 65000,
             images: [
                 "https://lockated-public.s3.ap-south-1.amazonaws.com/attachfiles/documents/680/original/T137_407_11_351_00_B1.png",
                 "https://lockated-public.s3.ap-south-1.amazonaws.com/attachfiles/documents/681/original/T137_407_11_351_00_PROFIL.png",
                 "https://lockated-public.s3.ap-south-1.amazonaws.com/attachfiles/documents/682/original/T137-407-11-351-00_shadow.png"
             ],
-            description: "If you're looking for a slim, smooth watch with an authentic '70s feel, look no further than the PRX Powermatic 80. Created for those with an eye for design and packed with twenty-first century features in a Tissot case shape from 1978, the PRX is a must-have on every watch fan's wish list.",
+            description: "Exclusive of all taxes EMI from ₹ 5851",
+            longDescription: "The Tissot T-Race MotoGP collection represents the perfect fusion of Swiss precision and motorsport adrenaline. This timepiece embodies the spirit of MotoGP racing while incorporating cutting-edge technology and Swiss craftsmanship that Tissot is renowned for worldwide.",
             features: [
-                "Powermatic 80 Movement",
+                "Swiss Quartz Chronograph Movement",
                 "Swiss Made",
-                "Water Resistant",
-                "Stainless Steel Case"
+                "Water Resistant up to 100m", 
+                "Stainless Steel Case",
+                "Silicone Racing Strap",
+                "Scratch-resistant Sapphire Crystal",
+                "Tachymeter Scale",
+                "Date Display"
             ],
+            // Enhanced fields for new design
+            brand: "Tissot",
+            collection: "T-Sport",
+            series: "Tissot T-Race MotoGP™",
+            modelNumber: "T141.417.27.081.00",
+            collectionDescription: "The T-Sport collection elevates Tissot watches for men and women that are absolutely sporty, with bold, versatile designs that emphasize strength and clarity. Geared towards sport enthusiasts looking for reliable, precision-driven watches that bring Swiss craftsmanship to the field. These Tissot watches offer an active lifestyle and are designed with performance, durability, and style in mind. T-Sport robust build and technical features reflect Tissot's involvement in high-intensity sports, including motorsports, diving and cycling. Contemporary waterproof wristwatches, the Tissot collection offers optimal timekeeping crafted with precision and reliability for sport environments and demanding environments, delivering excellence in Swiss timekeeping.",
+            designFeatures: "The T-Sport collection features Tissot watches for men and women that are absolutely sporty, with bold, versatile designs that emphasize strength and clarity. Geared towards sport enthusiasts looking for reliable, precision-driven watches that bring Swiss craftsmanship to the field. These Tissot watches offer an active lifestyle and are designed with performance, durability, and style in mind. T-Sport robust build and technical features reflect Tissot's involvement in high-intensity sports, including motorsports, diving and cycling. Contemporary waterproof wristwatches, the Tissot collection offers optimal timekeeping crafted with precision and reliability for sport environments and demanding environments, delivering excellence in Swiss timekeeping.",
+            heritage: "With over 170 years of Swiss watchmaking excellence, Tissot continues to push the boundaries of innovation while maintaining traditional craftsmanship values. Each timepiece in the T-Sport collection embodies this legacy, combining cutting-edge technology with timeless design principles.",
+            technicalFeatures: "Advanced Swiss quartz chronograph movement with precision timing capabilities, robust stainless steel construction for durability, and ergonomic design optimized for active lifestyles.",
+            qualityAssurance: "Every Tissot timepiece undergoes rigorous testing and quality control processes to ensure exceptional performance and reliability. Our commitment to excellence means each watch meets the highest standards of Swiss watchmaking.",
             specifications: {
-                brand: "TISSOT",
-                model: "T137.407.11.351.00",
-                movement: "Powermatic 80",
-                caseSize: "40mm",
+                // Movement specifications
+                movementFeatures: "Chronograph and Date Display",
+                movement: "Quartz",
+                dial: "N/A",
+                
+                // Case specifications  
+                caseSize: "45",
+                caseShape: "Round",
                 caseMaterial: "Stainless Steel",
-                dialColor: "Silver",
-                strapType: "Steel Bracelet",
-                strapColor: "Silver",
-                waterResistance: "100m"
+                
+                // Dial specifications
+                dialColor: "Black",
+                
+                // Strap specifications
+                strapType: "Silicone",
+                strapColor: "Black",
+                
+                // Additional specs
+                waterResistance: "100m",
+                glassType: "Sapphire Crystal",
+                caseThickness: "12.5mm",
+                lugWidth: "22mm"
             },
+            additionalInfo: "This timepiece comes with a comprehensive 2-year international warranty and is delivered in an elegant Tissot presentation box, making it perfect for gifting or personal collection.",
             inStock: true,
             rating: 4.5,
             reviews: 127,
-            brand: "TISSOT",
-            modelNumber: "T137.407.11.351.00",
-            color: "Silver",
+            color: "Black",
             material: "Stainless Steel",
-            size: "40 mm",
-            warranty: "1 year"
+            size: "45 mm",
+            warranty: "2 years international warranty"
         };
     };
 
@@ -356,69 +384,217 @@ const PromotionDetail = () => {
                     </div>
 
                     {/* Tabs Section */}
-                    <div className="mt-12">
+                    <div className="mt-16 bg-white rounded-lg shadow-sm">
                         <div className="border-b border-gray-200">
-                            <nav className="flex space-x-8">
-                                <button className="py-4 px-1 border-b-2 border-[#FF4F12] font-medium text-sm text-[#FF4F12]">
+                            <nav className="flex">
+                                <button 
+                                    onClick={() => setActiveTab('specifications')}
+                                    className={`px-8 py-4 font-medium text-base transition-all duration-300 relative ${
+                                        activeTab === 'specifications'
+                                            ? 'text-[#FF4F12] bg-white'
+                                            : 'text-gray-600 hover:text-gray-800 bg-gray-50'
+                                    }`}
+                                    style={{
+                                        borderBottom: activeTab === 'specifications' ? '3px solid #FF4F12' : '3px solid transparent'
+                                    }}
+                                >
                                     Full Specifications
                                 </button>
-                                <button className="py-4 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700">
+                                <button 
+                                    onClick={() => setActiveTab('about')}
+                                    className={`px-8 py-4 font-medium text-base transition-all duration-300 relative ${
+                                        activeTab === 'about'
+                                            ? 'text-[#FF4F12] bg-white'
+                                            : 'text-gray-600 hover:text-gray-800 bg-gray-50'
+                                    }`}
+                                    style={{
+                                        borderBottom: activeTab === 'about' ? '3px solid #FF4F12' : '3px solid transparent'
+                                    }}
+                                >
                                     About The Collections
                                 </button>
                             </nav>
                         </div>
 
-                        <div className="py-8">
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                                <div>
-                                    <h4 className="font-semibold text-gray-800 mb-2">BRAND</h4>
-                                    <p className="text-gray-600">{productSpecs.brand || product.brand || 'N/A'}</p>
-                                </div>
-                                <div>
-                                    <h4 className="font-semibold text-gray-800 mb-2">MODEL</h4>
-                                    <p className="text-gray-600">{productSpecs.model || product.modelNumber || 'N/A'}</p>
-                                </div>
-                                <div>
-                                    <h4 className="font-semibold text-gray-800 mb-2">MATERIAL</h4>
-                                    <p className="text-gray-600">{productSpecs.caseMaterial || product.material || 'N/A'}</p>
-                                </div>
-                                <div>
-                                    <h4 className="font-semibold text-gray-800 mb-2">SIZE</h4>
-                                    <p className="text-gray-600">{productSpecs.caseSize || product.size || 'N/A'}</p>
-                                </div>
-                                <div>
-                                    <h4 className="font-semibold text-gray-800 mb-2">COLOR</h4>
-                                    <p className="text-gray-600">{productSpecs.dialColor || product.color || 'N/A'}</p>
-                                </div>
-                                <div>
-                                    <h4 className="font-semibold text-gray-800 mb-2">MOVEMENT</h4>
-                                    <p className="text-gray-600">{productSpecs.movement || 'Quartz'}</p>
-                                </div>
-                                <div>
-                                    <h4 className="font-semibold text-gray-800 mb-2">STRAP TYPE</h4>
-                                    <p className="text-gray-600">{productSpecs.strapType || 'Steel Bracelet'}</p>
-                                </div>
-                                <div>
-                                    <h4 className="font-semibold text-gray-800 mb-2">WATER RESISTANCE</h4>
-                                    <p className="text-gray-600">{productSpecs.waterResistance || '100m'}</p>
-                                </div>
-                            </div>
+                        <div className="p-8">
+                            {/* Specifications Tab Content */}
+                            {activeTab === 'specifications' && (
+                                <div className="animate-fadeIn">
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+                                        {/* Brand Section */}
+                                        <div>
+                                            <h4 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-2">Brand</h4>
+                                            <p className="text-lg font-medium text-gray-900">{product.brand || 'Tissot'}</p>
+                                        </div>
+                                        
+                                        {/* Collection Section */}
+                                        <div>
+                                            <h4 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-2">Collection</h4>
+                                            <p className="text-lg font-medium text-gray-900">{product.collection || 'T-Sport'}</p>
+                                        </div>
+                                        
+                                        {/* Series Section */}
+                                        <div>
+                                            <h4 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-2">Series</h4>
+                                            <p className="text-lg font-medium text-gray-900">{product.series || 'Tissot T-Race MotoGP™'}</p>
+                                        </div>
+                                        
+                                        {/* Model No Section */}
+                                        <div>
+                                            <h4 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-2">Model No.</h4>
+                                            <p className="text-lg font-medium text-gray-900">{product.modelNumber || 'T141.417.27.081.00'}</p>
+                                        </div>
+                                    </div>
 
-                            <div className="mt-8">
-                                <h3 className="text-xl font-semibold text-[#FF4F12] mb-4">
-                                    About the {product.brand || 'Tissot'} Collection
-                                </h3>
-                                <p className="text-gray-700 leading-relaxed">
-                                    {product.description || 'Premium collection featuring exceptional craftsmanship and innovative design. Each piece combines traditional watchmaking expertise with modern technology to deliver reliable performance and timeless style.'}
-                                </p>
-                                
-                                <h4 className="text-lg font-semibold text-gray-800 mt-6 mb-3">
-                                    Design And Features
-                                </h4>
-                                <p className="text-gray-700 leading-relaxed">
-                                    This collection features watches that are distinctly elegant, with bold, versatile designs that emphasize strength and clarity. Premium materials and precise movements ensure exceptional performance and durability for everyday wear or special occasions.
-                                </p>
-                            </div>
+                                    {/* Specifications Grid */}
+                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                                        {/* Movement Section */}
+                                        <div>
+                                            <h3 className="text-lg font-bold text-gray-900 uppercase tracking-wide mb-4">MOVEMENT</h3>
+                                            <div className="space-y-4">
+                                                <div>
+                                                    <h4 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-1">FEATURES</h4>
+                                                    <p className="text-sm text-gray-700">{productSpecs.movementFeatures || 'Chronograph and Date Display'}</p>
+                                                </div>
+                                                <div>
+                                                    <h4 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-1">MOVEMENT</h4>
+                                                    <p className="text-sm text-gray-700">{productSpecs.movement || 'Quartz'}</p>
+                                                </div>
+                                                <div>
+                                                    <h4 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-1">DIAL</h4>
+                                                    <p className="text-sm text-gray-700">{productSpecs.dial || 'N/A'}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* Case Section */}
+                                        <div>
+                                            <h3 className="text-lg font-bold text-gray-900 uppercase tracking-wide mb-4">CASE</h3>
+                                            <div className="space-y-4">
+                                                <div>
+                                                    <h4 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-1">CASE</h4>
+                                                    <p className="text-sm text-gray-700">{productSpecs.caseSize || '45'}</p>
+                                                </div>
+                                                <div>
+                                                    <h4 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-1">CASE SHAPE</h4>
+                                                    <p className="text-sm text-gray-700">{productSpecs.caseShape || 'Round'}</p>
+                                                </div>
+                                                <div>
+                                                    <h4 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-1">CASE MATERIAL</h4>
+                                                    <p className="text-sm text-gray-700">{productSpecs.caseMaterial || 'Stainless Steel'}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* Dial Section */}
+                                        <div>
+                                            <h3 className="text-lg font-bold text-gray-900 uppercase tracking-wide mb-4">DIAL</h3>
+                                            <div className="space-y-4">
+                                                <div>
+                                                    <h4 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-1">DIAL COLOUR</h4>
+                                                    <p className="text-sm text-gray-700">{productSpecs.dialColor || 'Black'}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* Strap Section */}
+                                        <div>
+                                            <h3 className="text-lg font-bold text-gray-900 uppercase tracking-wide mb-4">STRAP</h3>
+                                            <div className="space-y-4">
+                                                <div>
+                                                    <h4 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-1">STRAP TYPE</h4>
+                                                    <p className="text-sm text-gray-700">{productSpecs.strapType || 'Silicone'}</p>
+                                                </div>
+                                                <div>
+                                                    <h4 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-1">STRAP COLOUR</h4>
+                                                    <p className="text-sm text-gray-700">{productSpecs.strapColor || 'Black'}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Additional Features if available from API */}
+                                    {product.features && Array.isArray(product.features) && product.features.length > 0 && (
+                                        <div className="mt-12">
+                                            <h3 className="text-lg font-bold text-gray-900 uppercase tracking-wide mb-6">Key Features</h3>
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                {product.features.map((feature, index) => (
+                                                    <div key={index} className="flex items-start space-x-3">
+                                                        <div className="w-2 h-2 bg-[#FF4F12] rounded-full mt-2 flex-shrink-0"></div>
+                                                        <span className="text-gray-700 text-sm leading-relaxed">{feature}</span>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+
+                            {/* About Tab Content */}
+                            {activeTab === 'about' && (
+                                <div className="animate-fadeIn">
+                                    <div className="max-w-none">
+                                        <h3 className="text-2xl font-bold text-[#FF4F12] mb-8">
+                                            About the {product.brand || 'Tissot'} {product.collection || 'T-Sport'} Collection
+                                        </h3>
+                                        
+                                        {/* Main Collection Description */}
+                                        <div className="prose prose-lg max-w-none mb-8">
+                                            <p className="text-gray-700 leading-relaxed text-base mb-6">
+                                                {product.collectionDescription || 
+                                                `The T-Sport collection elevates ${product.brand || 'Tissot'} watches for men and women that are absolutely sporty, with bold, versatile designs that emphasize strength and clarity. Geared towards range from classic to extreme, providing a substantial look and performance for demanding environments. With precision movement, performance technologies, and creating dynamic design, high-contrast dials and transitional renditions enhance legibility in all lighting conditions, with straps available in rubber, leather, or stainless steel for maximum comfort and flexibility. Powered by Swiss automatic or quartz movement, T-Sport watches ensure accurate timekeeping and dependable performance for demanding environments.`}
+                                            </p>
+                                        </div>
+
+                                        {/* Design And Features Section */}
+                                        <div className="mb-8">
+                                            <h4 className="text-xl font-bold text-gray-900 mb-6">Design And Features</h4>
+                                            <p className="text-gray-700 leading-relaxed text-base">
+                                                {product.designFeatures || 
+                                                `The T-Sport collection features ${product.brand || 'Tissot'} watches for men and women that are absolutely sporty, with bold, versatile designs that emphasize strength and clarity. Geared towards sport enthusiasts looking for reliable, precision-driven watches that bring Swiss craftsmanship to the field. These ${product.brand || 'Tissot'} watches offer an active lifestyle and are designed with performance, durability, and style in mind. T-Sport robust build and technical features reflect ${product.brand || 'Tissot'}'s involvement in high-intensity sports, including motorsports, diving and cycling. Contemporary waterproof wristwatches, the ${product.brand || 'Tissot'} collection offers optimal timekeeping crafted with precision and reliability for sport environments and demanding environments, delivering excellence in Swiss timekeeping.`}
+                                            </p>
+                                        </div>
+
+                                        {/* Additional Information from API */}
+                                        {product.additionalInfo && (
+                                            <div className="mb-8">
+                                                <h4 className="text-xl font-bold text-gray-900 mb-6">Additional Information</h4>
+                                                <p className="text-gray-700 leading-relaxed text-base">
+                                                    {product.additionalInfo}
+                                                </p>
+                                            </div>
+                                        )}
+
+                                        {/* Heritage & Craftsmanship */}
+                                        <div className="mb-8">
+                                            <h4 className="text-xl font-bold text-gray-900 mb-6">Heritage & Craftsmanship</h4>
+                                            <p className="text-gray-700 leading-relaxed text-base">
+                                                {product.heritage || 
+                                                `With over 170 years of Swiss watchmaking excellence, ${product.brand || 'Tissot'} continues to push the boundaries of innovation while maintaining traditional craftsmanship values. Each timepiece in the ${product.collection || 'T-Sport'} collection embodies this legacy, combining cutting-edge technology with timeless design principles.`}
+                                            </p>
+                                        </div>
+
+                                        {/* Technical Innovation */}
+                                        {(product.technicalFeatures || product.innovation) && (
+                                            <div className="mb-8">
+                                                <h4 className="text-xl font-bold text-gray-900 mb-6">Technical Innovation</h4>
+                                                <p className="text-gray-700 leading-relaxed text-base">
+                                                    {product.technicalFeatures || product.innovation}
+                                                </p>
+                                            </div>
+                                        )}
+
+                                        {/* Quality Assurance */}
+                                        <div className="bg-gray-50 p-6 rounded-lg">
+                                            <h4 className="text-lg font-bold text-gray-900 mb-4">Quality Assurance</h4>
+                                            <p className="text-gray-700 leading-relaxed text-sm">
+                                                {product.qualityAssurance || 
+                                                `Every ${product.brand || 'Tissot'} timepiece undergoes rigorous testing and quality control processes to ensure exceptional performance and reliability. Our commitment to excellence means each watch meets the highest standards of Swiss watchmaking.`}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>

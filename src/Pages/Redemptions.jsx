@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import promotionAPI from '../services/promotionAPI';
 
 const Redemptions = () => {
-    const [selectedCategory, setSelectedCategory] = useState('All');
     const [redemptionCategories, setRedemptionCategories] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -12,14 +11,14 @@ const Redemptions = () => {
     // Fetch redemption categories on component mount
     useEffect(() => {
         fetchRedemptions();
-    }, [selectedCategory]);
+    }, []);
 
     const fetchRedemptions = async () => {
         try {
             setLoading(true);
             setError(null);
             
-            const response = await promotionAPI.getRedemptions(selectedCategory);
+            const response = await promotionAPI.getRedemptions();
             
             if (response.success) {
                 setRedemptionCategories(response.data);
@@ -50,37 +49,16 @@ const Redemptions = () => {
             {
                 id: 2,
                 title: 'F&B',
-                subtitle: 'Unlock Exclusive Stays',
+                subtitle: 'Savor Culinary Delights',
                 image: '/src/assets/Hotel/hotel2.jpg',
                 category: 'Food'
             },
             {
                 id: 3,
                 title: 'Tickets',
-                subtitle: 'Unlock Exclusive Stays',
+                subtitle: 'Experience Entertainment',
                 image: '/src/assets/Hotel/hotel3.jpg',
                 category: 'Entertainment'
-            },
-            {
-                id: 4,
-                title: 'Shopping',
-                subtitle: 'Unlock Exclusive Stays',
-                image: '/src/assets/Hotel/Card1.png',
-                category: 'Shopping'
-            },
-            {
-                id: 5,
-                title: 'Experience',
-                subtitle: 'Unlock Exclusive Stays',
-                image: '/src/assets/Hotel/Card2.png',
-                category: 'Experience'
-            },
-            {
-                id: 6,
-                title: 'Services',
-                subtitle: 'Unlock Exclusive Stays',
-                image: '/src/assets/Hotel/Card3.png',
-                category: 'Services'
             }
         ];
     };
@@ -99,15 +77,15 @@ const Redemptions = () => {
         // Navigate based on category
         switch(categoryTitle) {
             case 'Hotels':
-                navigate('/hotels-redemption');
+                navigate('');
                 break;
             case 'F&B':
                 // Navigate to F&B section or create a specific F&B page
-                navigate('/hotels-redemption'); // For now, redirect to hotels
+                navigate(''); // For now, redirect to hotels
                 break;
             case 'Tickets':
                 // Navigate to tickets section
-                navigate('/hotels-redemption'); // For now, redirect to hotels
+                navigate(''); // For now, redirect to hotels
                 break;
             default:
                 // For other categories, you can add more specific navigation
@@ -115,11 +93,8 @@ const Redemptions = () => {
         }
     };
 
-    const categories = ['All', 'Travel', 'Food', 'Entertainment', 'Shopping', 'Experience', 'Services'];
-
-    const filteredRedemptions = selectedCategory === 'All' 
-        ? redemptionCategories 
-        : redemptionCategories.filter(item => item.category === selectedCategory);
+    // Only show Hotels, F&B, and Tickets - no category filtering needed
+    const displayRedemptions = redemptionCategories.length > 0 ? redemptionCategories : getStaticRedemptions();
 
     if (loading) {
         return (
@@ -153,28 +128,9 @@ const Redemptions = () => {
 
     return (
         <div className="max-w-7xl mx-auto px-4 py-8">
-            {/* Category Filters */}
-            <div className="flex justify-center mb-8">
-                <div className="flex flex-wrap gap-2 justify-center">
-                    {categories.map((category) => (
-                        <button
-                            key={category}
-                            onClick={() => setSelectedCategory(category)}
-                            className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 ${
-                                selectedCategory === category
-                                    ? "bg-[#FF4F12] text-white"
-                                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                            }`}
-                        >
-                            {category}
-                        </button>
-                    ))}
-                </div>
-            </div>
-
             {/* Redemption Cards Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredRedemptions.map((item) => (
+                {displayRedemptions.map((item) => (
                     <div
                         key={item.id}
                         onClick={() => handleCategoryClick(item.title)}

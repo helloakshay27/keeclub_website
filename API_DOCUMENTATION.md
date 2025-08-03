@@ -174,6 +174,152 @@
 }
 ```
 
+### 5. Product Details Response (Enhanced for Dynamic Tabs)
+```json
+{
+  "success": true,
+  "data": {
+    "id": 1,
+    "name": "Tissot PRX 40mm",
+    "title": "Tissot T137.407.11.351.00",
+    "description": "Short product description for listing",
+    "longDescription": "Detailed product description for about tab",
+    "brand": "TISSOT",
+    "modelNumber": "T137.407.11.351.00",
+    "current_price": 74500,
+    "base_price": 74500,
+    "loyalty_points_required": 74500,
+    "primary_image": "https://example.com/image1.png",
+    "images": [
+      "https://example.com/image1.png",
+      "https://example.com/image2.png",
+      "https://example.com/image3.png"
+    ],
+    "in_stock": true,
+    "rating": 4.5,
+    "reviews_count": 127,
+    "features": [
+      "Powermatic 80 Movement",
+      "Swiss Made",
+      "Water Resistant up to 100m",
+      "Stainless Steel Case"
+    ],
+    "specifications": {
+      "brand": "TISSOT",
+      "model": "T137.407.11.351.00",
+      "movement": "Powermatic 80",
+      "caseSize": "40mm",
+      "caseMaterial": "Stainless Steel",
+      "dialColor": "Silver",
+      "strapType": "Steel Bracelet",
+      "waterResistance": "100m",
+      "glassType": "Sapphire Crystal",
+      "caseThickness": "10.9mm",
+      "lugWidth": "20mm"
+    },
+    "collection": {
+      "name": "PRX Collection",
+      "description": "Collection description for about tab"
+    },
+    "designFeatures": "Detailed design and features text",
+    "additionalInfo": "Additional information text",
+    "warranty": "2 years international warranty",
+    "category": "Watches",
+    "subcategory": "Luxury Watches"
+  }
+}
+```
+
+---
+
+## 🎯 ENHANCED PRODUCT API FIELDS
+
+### Product Details Response - Enhanced Fields for Tab Design
+
+```json
+{
+  "id": 1,
+  "name": "Tissot T-Race MotoGP",
+  "brand": "Tissot",
+  "collection": "T-Sport",
+  "series": "Tissot T-Race MotoGP™",
+  "model_number": "T141.417.27.081.00",
+  
+  // Content for "About The Collections" tab
+  "collection_description": "The T-Sport collection elevates Tissot watches...",
+  "design_features": "The T-Sport collection features Tissot watches...",
+  "heritage_info": "With over 170 years of Swiss watchmaking excellence...",
+  "technical_features": "Advanced Swiss quartz chronograph movement...",
+  "innovation_details": "Cutting-edge technology and design...",
+  "quality_assurance": "Every Tissot timepiece undergoes rigorous testing...",
+  "additional_info": "This timepiece comes with comprehensive warranty...",
+  "long_description": "Extended product description for about section",
+  
+  // Content for "Full Specifications" tab
+  "specifications": {
+    // Movement specifications
+    "movement_features": "Chronograph and Date Display",
+    "movement_type": "Quartz",
+    "dial_features": "N/A",
+    
+    // Case specifications  
+    "case_size": "45",
+    "case_shape": "Round", 
+    "case_material": "Stainless Steel",
+    
+    // Dial specifications
+    "dial_color": "Black",
+    
+    // Strap specifications
+    "strap_type": "Silicone",
+    "strap_color": "Black"
+  },
+  
+  // Standard product fields
+  "current_price": 65500,
+  "base_price": 65500,
+  "loyalty_points_required": 65000,
+  "primary_image": "image_url",
+  "all_images": ["image1_url", "image2_url"],
+  "description": "Short description for card view",
+  "in_stock": true,
+  "featured": true
+}
+```
+
+### 🎨 Tab Design Implementation
+
+The product detail page now features two main tabs:
+
+1. **Full Specifications Tab**
+   - Displays product info in 4-column grid layout
+   - Brand, Collection, Series, Model Number at top
+   - Organized sections: MOVEMENT, CASE, DIAL, STRAP
+   - Dynamic field mapping from API response
+
+2. **About The Collections Tab**  
+   - Rich content sections with detailed descriptions
+   - Heritage & Craftsmanship information
+   - Technical Innovation details
+   - Quality Assurance information
+   - Responsive typography and spacing
+
+### 🔧 API Field Mapping Priority
+
+**High Priority** (Required for proper display):
+- `collection_description` - Main content for About tab
+- `design_features` - Design section content
+- `specifications.*` - All specification fields
+
+**Medium Priority** (Enhanced content):
+- `heritage_info` - Heritage section
+- `technical_features` - Technical details
+- `quality_assurance` - Quality information
+
+**Low Priority** (Fallback content available):
+- `innovation_details` - Innovation section
+- `additional_info` - Additional information section
+
 ---
 
 ## 🔧 IMPLEMENTATION DETAILS

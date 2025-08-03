@@ -113,8 +113,9 @@ const Encash = () => {
                                     placeholder="Points"
                                     value={formData.pointsToEncash}
                                     onChange={(e) => handleInputChange('pointsToEncash', e.target.value)}
-                                    className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                                    className="w-full border border-gray-300 rounded-lg px-4 py-3 bg-gray-50 text-gray-500 cursor-not-allowed"
                                     max={userPoints}
+                                    disabled
                                 />
                             </div>
 
@@ -165,7 +166,8 @@ const Encash = () => {
                                         placeholder="Enter bank account no."
                                         value={formData.accountNumber}
                                         onChange={(e) => handleInputChange('accountNumber', e.target.value)}
-                                        className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                                        className="w-full border border-gray-300 rounded-lg px-4 py-3 bg-gray-50 text-gray-500 cursor-not-allowed"
+                                        disabled
                                     />
                                 </div>
                                 <div>
@@ -177,7 +179,8 @@ const Encash = () => {
                                         placeholder="Enter IFSC code"
                                         value={formData.ifscCode}
                                         onChange={(e) => handleInputChange('ifscCode', e.target.value)}
-                                        className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                                        className="w-full border border-gray-300 rounded-lg px-4 py-3 bg-gray-50 text-gray-500 cursor-not-allowed"
+                                        disabled
                                     />
                                 </div>
                             </div>
@@ -192,7 +195,8 @@ const Encash = () => {
                                     placeholder="Enter branch name"
                                     value={formData.branchName}
                                     onChange={(e) => handleInputChange('branchName', e.target.value)}
-                                    className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                                    className="w-full border border-gray-300 rounded-lg px-4 py-3 bg-gray-50 text-gray-500 cursor-not-allowed"
+                                    disabled
                                 />
                             </div>
 
@@ -206,7 +210,8 @@ const Encash = () => {
                                     placeholder="Enter person name"
                                     value={formData.personName}
                                     onChange={(e) => handleInputChange('personName', e.target.value)}
-                                    className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                                    className="w-full border border-gray-300 rounded-lg px-4 py-3 bg-gray-50 text-gray-500 cursor-not-allowed"
+                                    disabled
                                 />
                             </div>
 
@@ -217,11 +222,12 @@ const Encash = () => {
                                     id="agreeToTerms"
                                     checked={formData.agreeToTerms}
                                     onChange={(e) => handleInputChange('agreeToTerms', e.target.checked)}
-                                    className="w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500 mt-1"
+                                    className="w-4 h-4 text-gray-400 border-gray-300 rounded cursor-not-allowed mt-1"
+                                    disabled
                                 />
-                                <label htmlFor="agreeToTerms" className="text-sm text-gray-700">
+                                <label htmlFor="agreeToTerms" className="text-sm text-gray-500">
                                     I agree to the{' '}
-                                    <span className="text-orange-500 hover:underline cursor-pointer">
+                                    <span className="text-gray-400 cursor-not-allowed">
                                         Terms and Conditions
                                     </span>
                                 </label>
@@ -230,14 +236,10 @@ const Encash = () => {
                             {/* Submit Button */}
                             <button
                                 type="submit"
-                                disabled={loading}
-                                className={`w-full py-4 px-6 rounded-lg font-semibold text-lg transition-colors duration-300 ${
-                                    loading 
-                                        ? 'bg-gray-400 cursor-not-allowed' 
-                                        : 'bg-[#24293c] hover:bg-[#1a1f2e]'
-                                } text-white`}
+                                disabled={true}
+                                className="w-full py-4 px-6 rounded-lg font-semibold text-lg transition-colors duration-300 bg-gray-400 cursor-not-allowed text-white"
                             >
-                                {loading ? 'Submitting...' : 'Submit'}
+                                Submit
                             </button>
                         </div>
                     </div>

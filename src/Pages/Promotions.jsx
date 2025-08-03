@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import Redemptions from './Redemptions';
 import Encash from './Encash';
 import promotionAPI from '../services/promotionAPI';
+import RedemptionBg from '../assets/RedemptionBg.jpg';
 
 const Promotions = () => {
     const [selectedCategory, setSelectedCategory] = useState("All");
@@ -13,8 +14,8 @@ const Promotions = () => {
     const [error, setError] = useState(null);
 
     const slide = {
-        bgImage: 'https://images.pexels.com/photos/6214370/pexels-photo-6214370.jpeg?auto=compress&cs=tinysrgb&w=1200',
-        heading: "PROMOTIONS",
+        bgImage: RedemptionBg,
+        heading: "Redemption",
         subheading: "Your rewards, your way. Redeem now!"
     };
 
@@ -36,7 +37,7 @@ const Promotions = () => {
             if (response.success) {
                 setPromotionData(response.data);
                 console.log('✅ Promotions loaded successfully:', response.data);
-                toast.success(`${response.data.length} promotions loaded successfully!`);
+                // toast.success(`${response.data.length} promotions loaded successfully!`);
             } else {
                 setError('Failed to load promotions');
                 console.error('❌ Failed to load promotions:', response.message);
@@ -194,7 +195,7 @@ const Promotions = () => {
         <div className="w-full">
             {/* Hero Section */}
             <section
-                className="relative min-h-[70vh] w-full text-white flex items-center justify-center px-4 sm:px-6 py-12 sm:py-20 bg-cover bg-center bg-no-repeat"
+                className="relative min-h-[75vh] w-full text-white flex items-center justify-center px-4 sm:px-6 py-12 sm:py-20 bg-cover bg-center bg-no-repeat"
                 style={{
                     backgroundImage: `linear-gradient(to right, rgba(18, 44, 59, 0.7), rgba(255, 71, 19, 0.3)), url(${slide.bgImage})`,
                 }}

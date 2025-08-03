@@ -78,6 +78,38 @@ const transformers = {
             size: product.size,
             warranty: product.warranty_period,
             inStock: product.in_stock !== false,
+            // Enhanced fields for new design
+            collection: product.collection || product.product_line,
+            series: product.series || product.sub_collection,
+            collectionDescription: product.collection_description,
+            designFeatures: product.design_features,
+            heritage: product.heritage_info,
+            technicalFeatures: product.technical_features,
+            innovation: product.innovation_details,
+            qualityAssurance: product.quality_assurance,
+            additionalInfo: product.additional_info,
+            longDescription: product.long_description,
+            specifications: {
+                // Movement specifications
+                movementFeatures: product.movement_features,
+                movement: product.movement_type,
+                dial: product.dial_features,
+                
+                // Case specifications  
+                caseSize: product.case_size,
+                caseShape: product.case_shape,
+                caseMaterial: product.case_material,
+                
+                // Dial specifications
+                dialColor: product.dial_color,
+                
+                // Strap specifications
+                strapType: product.strap_type,
+                strapColor: product.strap_color,
+                
+                // Additional specs from generic fields
+                ...product.specifications
+            },
             sku: product.sku,
             rating: product.average_rating || 4.0,
             reviews: product.reviews_count || 0,
@@ -122,27 +154,7 @@ const transformers = {
                 image: '/src/assets/Hotel/hotel3.jpg',
                 category: 'Entertainment'
             },
-            {
-                id: 4,
-                title: 'Shopping',
-                subtitle: 'Premium Products',
-                image: '/src/assets/Hotel/Card1.png',
-                category: 'Shopping'
-            },
-            {
-                id: 5,
-                title: 'Experience',
-                subtitle: 'Unique Adventures',
-                image: '/src/assets/Hotel/Card2.png',
-                category: 'Experience'
-            },
-            {
-                id: 6,
-                title: 'Services',
-                subtitle: 'Professional Services',
-                image: '/src/assets/Hotel/Card3.png',
-                category: 'Services'
-            }
+           
         ];
     },
 
@@ -256,8 +268,8 @@ class PromotionAPI {
     }
 
     // Redemptions APIs
-    async getRedemptions(category = 'All') {
-        console.log('🎁 Getting Redemptions for category:', category);
+    async getRedemptions() {
+        console.log('🎁 Getting Redemptions');
         
         // For now, return static data since we don't have separate redemption categories endpoint
         return {
