@@ -115,9 +115,9 @@ const Header = ({ isTransparent }) => {
           <li className={getLinkClasses('/events')}>
             <Link to="/events">EVENTS</Link>
           </li>
-          <li className={getLinkClasses('/blogs')}>
+          {/* <li className={getLinkClasses('/blogs')}>
             <Link to="/blogs">BLOGS</Link>
-          </li>
+          </li> */}
           <li className={getLinkClasses('/promotions')}>
             <Link to="/promotions">REDEMPTION</Link>
           </li>
@@ -161,9 +161,9 @@ const Header = ({ isTransparent }) => {
             <li className={getLinkClasses('/events')}>
               <Link to="/events" onClick={() => setIsMobileMenuOpen(false)}>EVENTS</Link>
             </li>
-            <li className={getLinkClasses('/blogs')}>
+            {/* <li className={getLinkClasses('/blogs')}>
               <Link to="/blogs" onClick={() => setIsMobileMenuOpen(false)}>BLOGS</Link>
-            </li>
+            </li> */}
             <li className={getLinkClasses('/promotions')}>
               <Link to="/promotions" onClick={() => setIsMobileMenuOpen(false)}>REDEMPTION</Link>
             </li>
