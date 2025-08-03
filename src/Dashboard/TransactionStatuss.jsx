@@ -7,10 +7,15 @@ import hotel2 from "../assets/Hotel/hotel2.jpg";
 import hotel3 from "../assets/Hotel/hotel3.jpg";
 import { toast } from "react-toastify";
 import BASE_URL from "../Confi/baseurl";
+import Redemptions from "../Pages/Redemptions";
+import Encash from "../Pages/Encash";
+import promotionAPI from "../services/promotionAPI";
+import Card1 from "../assets/Hotel/Card1.png";
 
 const TransactionStatuss = () => {
   const { id } = useParams();
   const [selectedTab, setSelectedTab] = useState("referrals");
+  const [selectedRedemptionTab, setSelectedRedemptionTab] = useState("Promotions");
   const [memberData, setMemberData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [referrals, setReferrals] = useState([]);
@@ -21,11 +26,13 @@ const TransactionStatuss = () => {
   const [touched, setTouched] = useState({});
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [showTierBenefit, setShowTierBenefit] = useState(false);
+  const [promotionData, setPromotionData] = useState([]);
+  const [promotionLoading, setPromotionLoading] = useState(false);
 
   const tabs = [
     { key: "referrals", label: "My Referrals" },
     { key: "transactions", label: "My Transactions" },
-    { key: "redemptions", label: "My Redemptions" },
+    { key: "redemptions", label: "My Redemption" },
   ];
   const getTabIndex = (key) => tabs.findIndex((tab) => tab.key === key);
 
@@ -42,6 +49,44 @@ const TransactionStatuss = () => {
     };
     fetchPiramlaData();
   }, []);
+
+  // Fetch promotions data when redemptions tab is selected
+  useEffect(() => {
+    if (selectedTab === "redemptions" && selectedRedemptionTab === "Promotions") {
+      fetchPromotions();
+    }
+  }, [selectedTab, selectedRedemptionTab]);
+
+  const fetchPromotions = async () => {
+    setPromotionLoading(true);
+    try {
+      const response = await promotionAPI.getPromotions({ category: "All" });
+      if (response.success) {
+        setPromotionData(response.data);
+      } else {
+        // Fallback to static data if API fails
+        setPromotionData([
+          {
+            id: 1,
+            name: "Tissot Watch",
+            title: "Tissot T-Race MotoGP Quartz Chronograph (2025)",
+            currentPrice: 65000,
+            originalPrice: 85000,
+            points: 65000,
+            image: Card1,
+            category: "Luxury",
+            featured: true,
+            description: "Exclusive of all taxes EMI from ₹ 5851"
+          }
+        ]);
+      }
+    } catch (error) {
+      console.error("Error fetching promotions:", error);
+      setPromotionData([]);
+    } finally {
+      setPromotionLoading(false);
+    }
+  };
 
   const fetchMemberData = async () => {
     try {
@@ -190,6 +235,22 @@ const TransactionStatuss = () => {
 
   const handleBlur = (field) => {
     setTouched((prev) => ({ ...prev, [field]: true }));
+  };
+
+  const formatPrice = (price) => {
+    return new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency: 'INR',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(price);
+  };
+
+  // Helper function to truncate description
+  const truncateDescription = (description, maxLength = 60) => {
+    if (!description) return '';
+    if (description.length <= maxLength) return description;
+    return description.substring(0, maxLength).trim() + '...';
   };
 
   if (loading) return <div className="text-center mt-8">Loading...</div>;
@@ -638,32 +699,121 @@ const TransactionStatuss = () => {
   </button>
 </div>
 
-      {/* Redemptions */}
+      {/* My Redemption with Sub-tabs */}
       {selectedTab === "redemptions" && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-6">
-          {redemptionsCards.map((card, index) => (
-            <Link
-              key={index}
-              to="/dashboard/hotel-list"
-              className="rounded overflow-hidden shadow-sm relative group block"
-            >
-              <div
-                className="h-48 bg-cover bg-center relative"
-                style={{ backgroundImage: `url('${card.image}')` }}
-              >
-                <div className="absolute inset-0 bg-gradient-to-t from-black/100 via-transparent to-transparent"></div>
-                <div className="px-4 text-white relative top-4">
-                  <h3 className="text-lg font-semibold">{card.title}</h3>
-                  <p className="text-xs">{card.subtitle}</p>
+        <div className="mt-6">
+          {/* Sub-tab Navigation */}
+          <div className="flex justify-center mb-6">
+            <div className="flex bg-gray-100 rounded-full p-1 max-w-md">
+              {["Promotions", "Redemptions", "Encash"].map((tab) => (
+                <button
+                  key={tab}
+                  onClick={() => setSelectedRedemptionTab(tab)}
+                  className={`px-6 py-2 rounded-full font-medium transition-all duration-300 ${
+                    selectedRedemptionTab === tab
+                      ? "bg-[#FF4F12] text-white shadow-md"
+                      : "text-gray-600 hover:text-gray-800"
+                  }`}
+                >
+                  {tab}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Sub-tab Content */}
+          {selectedRedemptionTab === "Promotions" && (
+            <div className="px-4">
+              {promotionLoading ? (
+                <div className="flex justify-center items-center py-20">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#FF4F12]"></div>
+                  <span className="ml-3 text-gray-600">Loading promotions...</span>
                 </div>
-                <div className="absolute bottom-0 left-0 w-full">
-                  <div className="bg-[rgba(255,165,0,0.6)] text-sm font-normal text-white px-4 py-2">
-                    {card.action}
-                  </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {promotionData.map((item) => (
+                    <div
+                      key={item.id}
+                      className={`bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 ${
+                        item.featured ? "border-2 border-[#FF4F12]" : "border border-gray-200"
+                      }`}
+                    >
+                      {item.featured && (
+                        <div className="bg-[#FF4F12] text-white text-center py-2 text-sm font-semibold">
+                          Featured
+                        </div>
+                      )}
+                      
+                      <div className="relative">
+                        <img
+                          src={item.image}
+                          alt={item.name}
+                          className="w-full h-64 object-cover"
+                        />
+                        <div className="absolute top-4 right-4 bg-black bg-opacity-70 text-white px-3 py-1 rounded-full text-sm">
+                          {item.category}
+                        </div>
+                      </div>
+
+                      <div className="p-6">
+                        <h3 className="text-lg font-bold text-gray-800 mb-2">
+                          {item.name}
+                        </h3>
+                        <p className="text-sm text-[#FF4F12] font-medium mb-3">
+                          {item.title}
+                        </p>
+                        <p className="text-gray-600 text-sm mb-4" title={item.description}>
+                          {truncateDescription(item.description)}
+                        </p>
+
+                        <div className="space-y-2 mb-4">
+                          <div className="flex items-center justify-between">
+                            <span className="text-gray-600 text-sm">Current Price:</span>
+                            <span className="text-lg font-bold text-gray-800">
+                              {formatPrice(item.currentPrice)}
+                            </span>
+                          </div>
+                          {item.originalPrice > item.currentPrice && (
+                            <div className="flex items-center justify-between">
+                              <span className="text-gray-500 text-sm">Original:</span>
+                              <span className="text-sm text-gray-500 line-through">
+                                {formatPrice(item.originalPrice)}
+                              </span>
+                            </div>
+                          )}
+                          <div className="flex items-center justify-between">
+                            <span className="text-gray-600 text-sm">Points Required:</span>
+                            <span className="text-lg font-bold text-[#FF4F12]">
+                              ⭐ {item.points.toLocaleString()}
+                            </span>
+                          </div>
+                        </div>
+
+                        <Link
+                          to={`/promotion-detail/${item.id}`}
+                          className="w-full bg-[#24293c] text-white py-3 px-4 rounded-lg font-semibold hover:bg-[#1a1f2e] transition-colors duration-300 text-center block"
+                        >
+                          View Details
+                        </Link>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              </div>
-            </Link>
-          ))}
+              )}
+            </div>
+          )}
+
+          {selectedRedemptionTab === "Redemptions" && (
+            <div className="px-4">
+              <Redemptions />
+            </div>
+          )}
+
+          {selectedRedemptionTab === "Encash" && (
+            <div className="px-4">
+              <Encash />
+            </div>
+          )}
         </div>
       )}
 
