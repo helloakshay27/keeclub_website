@@ -20,10 +20,10 @@ const ProjectsCarousel = () => {
   }, [data]);
 
   const projects = [
-    { name: 'Piramal Aranya', image: Piramal_Aranya, id: projectIds[0] },
-    { name: 'Piramal Mahalaxmi', image: Piramal_Mahalaxmi, id: projectIds[1] },
-    { name: 'Piramal Revanta', image: Piramal_Revanta, id: projectIds[3] },
-    { name: 'Piramal Vaikunth', image: Piramal_Vaikunth, id: projectIds[2] }
+    { name: 'Piramal Aranya', image: Piramal_Aranya, link: 'https://www.piramalrealty.com/project-aranya' },
+    { name: 'Piramal Mahalaxmi', image: Piramal_Mahalaxmi, link: 'https://www.piramalrealty.com/project-mahalaxmi' },
+    { name: 'Piramal Revanta', image: Piramal_Revanta, link: 'https://www.piramalrealty.com/project-revanta' },
+    { name: 'Piramal Vaikunth', image: Piramal_Vaikunth, link: 'https://www.piramalrealty.com/project-vaikunth' }
   ];
 
   return (
@@ -40,8 +40,10 @@ const ProjectsCarousel = () => {
               key={index}
               className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 flex justify-center items-center"
             >
-              <Link
-                to={`/project-details/${project.id}`}
+              <a
+                href={project.link}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="w-full"
               >
                 <img
@@ -53,7 +55,7 @@ const ProjectsCarousel = () => {
                   }}
                   className="w-full object-contain h-40 sm:h-48 md:h-56 max-h-[180px]"
                 />
-              </Link>
+              </a>
             </div>
           ))}
         </div>
