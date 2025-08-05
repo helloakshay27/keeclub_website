@@ -73,13 +73,15 @@ const Promotions = () => {
         ? promotionData 
         : promotionData.filter(item => item.category === selectedCategory);
 
+    // Format price as INR with Indian comma separators
     const formatPrice = (price) => {
-        return new Intl.NumberFormat('en-IN', {
+        if (typeof price !== 'number') return price;
+        return price.toLocaleString('en-IN', {
             style: 'currency',
             currency: 'INR',
             minimumFractionDigits: 0,
             maximumFractionDigits: 0,
-        }).format(price);
+        });
     };
 
     // Helper function to truncate description
@@ -134,24 +136,24 @@ const Promotions = () => {
                                             </div>
                                             {/* Card Content */}
                                             <div className="flex flex-col flex-1 px-8 pb-8 pt-2">
-                                                <h3 className="text-xl font-bold text-[#24293c] mb-1">{item.name}</h3>
+                                                <h3 className="text-xl font-bold mb-1">{item.name}</h3>
                                                 {item.originalPrice > item.currentPrice && (
-                                                    <div className="text-base text-gray-400 font-semibold line-through mb-1">
+                                                    <div className="text-base text-gray-400 font-semibold line-through mb-1" >
                                                         {formatPrice(item.originalPrice)}
                                                     </div>
                                                 )}
-                                                <div className="text-2xl font-bold text-[#24293c] mb-2">{formatPrice(item.currentPrice)}</div>
+                                                <div className="text-2xl text-[#B3B3B3] font-bold mb-2" style={{textDecoration: 'line-through', fontSize:'16px'}}>{formatPrice(item.currentPrice)}</div>
                                                 {/* Redeem Row */}
-                                                <div className="flex items-center text-base mb-6">
-                                                    <span className="text-gray-500 mr-2">Redeem using</span>
-                                                    <span className="flex items-center text-[#000] font-bold">
+                                                <div className=" mb-6" style={{fontSize:'14px', fontWeight:'bold'}}>
+                                                    <span className="text-gray-500 mr-2" >Redeem using</span>
+                                                    <span className="flex items-center text-[#000]">
                                                         <img
                                                             src="/redeemStar.png"
                                                             alt="star"
                                                             className="mr-1"
                                                             style={{ width: 24, height: 24, display: 'inline-block' }}
                                                         />
-                                                        {item.points.toLocaleString()}
+                                                        {typeof item.points === 'number' ? item.points.toLocaleString('en-IN') : item.points}
                                                     </span>
                                                 </div>
                                                 {/* View Details Button */}
@@ -199,7 +201,7 @@ const Promotions = () => {
             <div className="w-full mt-10 px-4">
                 <div className="flex justify-center">
                     <div className="flex bg-gray-100 rounded-full w-4/5 mx-auto border-1" style={{padding: '4px'}}>
-                        {["Promotions", "Redemptions", "Encash"].map((tab) => (
+                        {["Featured Product", "Redemption Market Place", "Encash"].map((tab) => (
                             <button
                                 key={tab}
                                 onClick={() => setSelectedTab(tab)}

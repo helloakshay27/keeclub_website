@@ -266,12 +266,12 @@ const Orders = () => {
                                                 </div>
                                                 <div className="text-right">
                                                     <p className="font-medium text-gray-800">
-                                                        ₹{item.totalPrice.toLocaleString()}
+                                                        ₹{typeof item.totalPrice === 'number' ? item.totalPrice.toLocaleString('en-IN') : item.totalPrice}
                                                     </p>
                                                     {order.loyaltyPointsRedeemed > 0 && (
-                                                        <p className="text-sm text-orange-600">
-                                                            🔹 {order.loyaltyPointsRedeemed.toLocaleString()} points used
-                                                        </p>
+                                                    <p className="text-sm text-orange-600">
+                                                        🔹 {typeof order.loyaltyPointsRedeemed === 'number' ? order.loyaltyPointsRedeemed.toLocaleString('en-IN') : order.loyaltyPointsRedeemed} points used
+                                                    </p>
                                                     )}
                                                 </div>
                                             </div>
@@ -297,11 +297,11 @@ const Orders = () => {
                                             </div>
                                             <div className="text-right">
                                                 <p className="text-lg font-semibold text-gray-800">
-                                                    Total: ₹{order.totalAmount.toLocaleString()}
+                                                    Total: ₹{typeof order.totalAmount === 'number' ? order.totalAmount.toLocaleString('en-IN') : order.totalAmount}
                                                 </p>
                                                 {order.loyaltyDiscountAmount > 0 && (
                                                     <p className="text-sm text-green-600">
-                                                        Saved: ₹{order.loyaltyDiscountAmount.toLocaleString()}
+                                                        Saved: ₹{typeof order.loyaltyDiscountAmount === 'number' ? order.loyaltyDiscountAmount.toLocaleString('en-IN') : order.loyaltyDiscountAmount}
                                                     </p>
                                                 )}
                                             </div>

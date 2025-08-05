@@ -339,19 +339,19 @@ const OrderConfirmation = () => {
                                 <div className="space-y-4">
                                     <div className="flex justify-between text-lg">
                                         <span>Price (1 Item)</span>
-                                        <span>₹ {(product.currentPrice || product.points || 0).toLocaleString()}</span>
+                                        <span>₹ {(product.currentPrice || product.points || 0).toLocaleString('en-IN')}</span>
                                     </div>
                                     <div className="flex justify-between text-lg">
                                         <span> Points To Redeem</span>
                                         <span className="text-orange-500 flex items-center">
                                             <span className="text-orange-500 mr-1">🔹</span>
-                                            {(product.loyalty_points_required || product.points || 0).toLocaleString()}
+                                            {(product.loyalty_points_required || product.points || 0).toLocaleString('en-IN')}
                                         </span>
                                     </div>
                                     {product.originalPrice && product.originalPrice > (product.currentPrice || 0) && (
                                         <div className="flex justify-between text-lg text-green-600">
                                             <span>Savings</span>
-                                            <span>₹ {(product.originalPrice - (product.currentPrice || 0)).toLocaleString()}</span>
+                                            <span>₹ {(product.originalPrice - (product.currentPrice || 0)).toLocaleString('en-IN')}</span>
                                         </div>
                                     )}
                                     <hr className="border-gray-300" />
@@ -403,7 +403,7 @@ const OrderConfirmation = () => {
                         
                         {/* Order Summary Info */}
                         <div className="mt-6 text-sm text-gray-600">
-                            <p>By confirming, you agree to redeem {(product.loyalty_points_required || product.points || 0).toLocaleString()} points for this product.</p>
+                            <p>By confirming, you agree to redeem {(product.loyalty_points_required || product.points || 0).toLocaleString('en-IN')} points for this product.</p>
                             <p>Estimated delivery: 7-10 business days</p>
                         </div>
                         

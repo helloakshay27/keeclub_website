@@ -31,9 +31,78 @@ const TransactionStatuss = () => {
 
   const tabs = [
     { key: "referrals", label: "My Referrals" },
-    { key: "transactions", label: "My Transactions" },
+    { key: "transactions", label: "Transaction Ledger" },
     { key: "redemptions", label: "My Redemption" },
+    { key: "orders", label: "My Orders" },
   ];
+
+  // My Orders tab state and logic
+  const [orders, setOrders] = useState([]);
+  const [ordersLoading, setOrdersLoading] = useState(false);
+  const [ordersError, setOrdersError] = useState(null);
+  const [selectedOrderFilter, setSelectedOrderFilter] = useState('All');
+
+  useEffect(() => {
+    if (selectedTab === 'orders') {
+      fetchOrders();
+    }
+    // eslint-disable-next-line
+  }, [selectedTab]);
+
+  const fetchOrders = async () => {
+    setOrdersLoading(true);
+    setOrdersError(null);
+    try {
+      const authToken = localStorage.getItem('authToken');
+      const memberId = localStorage.getItem('member_id');
+      if (!authToken || !memberId || authToken === 'null' || memberId === 'null') {
+        setOrdersError('Please login to access your orders.');
+        setOrders([]);
+        setOrdersLoading(false);
+        return;
+      }
+      const response = await promotionAPI.getUserOrders();
+      if (response.success) {
+        setOrders(response.data.orders);
+      } else {
+        setOrdersError('Failed to load orders');
+        setOrders([]);
+      }
+    } catch (error) {
+      setOrdersError('Network error while loading orders');
+      setOrders([]);
+    } finally {
+      setOrdersLoading(false);
+    }
+  };
+
+  const getOrderStatusBadge = (status) => {
+    const statusConfig = {
+      pending: { color: 'bg-yellow-100 text-yellow-800', text: 'Pending' },
+      confirmed: { color: 'bg-blue-100 text-blue-800', text: 'Confirmed' },
+      processing: { color: 'bg-indigo-100 text-indigo-800', text: 'Processing' },
+      shipped: { color: 'bg-purple-100 text-purple-800', text: 'Shipped' },
+      delivered: { color: 'bg-green-100 text-green-800', text: 'Delivered' },
+      cancelled: { color: 'bg-red-100 text-red-800', text: 'Cancelled' },
+      refunded: { color: 'bg-gray-100 text-gray-800', text: 'Refunded' }
+    };
+    const config = statusConfig[status] || statusConfig.pending;
+    return (
+      <span className={`px-3 py-1 rounded-full text-sm font-medium ${config.color}`}>
+        {config.text}
+      </span>
+    );
+  };
+
+  const formatOrderDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString('en-IN', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
   const getTabIndex = (key) => tabs.findIndex((tab) => tab.key === key);
 
   useEffect(() => {
@@ -122,6 +191,7 @@ const TransactionStatuss = () => {
       console.error("Error fetching referrals:", error);
     }
   };
+  // My Orders Tab UI block (moved to main return)
 
   useEffect(() => {
     if (selectedTab === "referrals") fetchReferrals();
@@ -237,13 +307,22 @@ const TransactionStatuss = () => {
     setTouched((prev) => ({ ...prev, [field]: true }));
   };
 
+
+  // Format price as INR with Indian comma separators
   const formatPrice = (price) => {
-    return new Intl.NumberFormat('en-IN', {
+    if (typeof price !== 'number') return price;
+    return price.toLocaleString('en-IN', {
       style: 'currency',
       currency: 'INR',
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
-    }).format(price);
+    });
+  };
+
+  // Format points with Indian comma separators
+  const formatPoints = (points) => {
+    if (typeof points !== 'number') return points;
+    return points.toLocaleString('en-IN');
   };
 
   // Helper function to truncate description
@@ -259,11 +338,12 @@ const TransactionStatuss = () => {
       <div className="text-center mt-8 text-red-500">Member not found.</div>
     );
 
+
   const summaryCards = [
-    { title: "Earned Points", value: memberData?.earned_points || 0 },
-    { title: "Redeemed Points", value: memberData?.reedem_points || 0 },
-    { title: "Expired Points", value: memberData?.expired_points || 0 },
-    { title: "Balanced Points", value: memberData?.current_loyalty_points || 0 },
+    { title: "Earned Points", value: formatPoints(memberData?.earned_points || 0) },
+    { title: "Redeemed Points", value: formatPoints(memberData?.reedem_points || 0) },
+    { title: "Expired Points", value: formatPoints(memberData?.expired_points || 0) },
+    { title: "Balanced Points", value: formatPoints(memberData?.current_loyalty_points || 0) },
   ];
 
   console.log("Member Data:", memberData);
@@ -301,9 +381,9 @@ const TransactionStatuss = () => {
   // Loop through all tiers and find the highest tier where currentPoints >= exit_points
   for (let i = 0; i < allTiers.length; i++) {
     const tier = allTiers[i];
-    console.log(
-      `Current Points: ${currentPoints}, Tier: ${tier.name}, Exit Points: ${tier.exit_points}`
-    );
+    // console.log(
+    //   `Current Points: ${currentPoints}, Tier: ${tier.name}, Exit Points: ${tier.exit_points}`
+    // );
     if (currentPoints >= tier.exit_points) {
       currentTier = tier.name;
     }
@@ -362,19 +442,16 @@ const TransactionStatuss = () => {
   return (
     <div className="max-w-7xl mx-auto p-4">
       {/* Header */}
+      
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0">
         <p className="text-lg font-semibold">
-          {currentTier === "--" ? (
-            "You are not in any tier"
-          ) : (
-            <>
-              You are on the{" "}
-              <span className="text-orange-500 font-bold capitalize">
-                {currentTier}
-              </span>{" "}
-              Tier!
-            </>
-          )}
+          {currentTier === "--"
+            ? "You are not in any tier"
+            : (
+              <span>
+                You are on the <span className="text-orange-500 font-bold capitalize">{currentTier}</span> Tier!
+              </span>
+            )}
         </p>
 
         <button
@@ -445,16 +522,16 @@ const TransactionStatuss = () => {
                 <div className="flex justify-between text-sm text-gray-700 flex-wrap">
                   <div className="mb-3 font-medium text-gray-900 uppercase">
                     {pointsNeeded > 0
-                      ? `YOU NEED ${pointsNeeded} POINTS TO REACH THE HIGHEST TIER!`
+                      ? `YOU NEED ${formatPoints(pointsNeeded)} POINTS TO REACH THE HIGHEST TIER!`
                       : "You are in the highest tier!"}
                   </div>
 
                   <div className="flex items-center text-sm mb-1">
                     <span className="text-lg font-bold text-gray-900">
-                      {currentPoints}
+                      {formatPoints(currentPoints)}
                     </span>
                     <span className="text-sm text-gray-500 ml-1">
-                      /{maxPoints}
+                      /{formatPoints(maxPoints)}
                     </span>
                   </div>
                 </div>
@@ -529,7 +606,7 @@ const TransactionStatuss = () => {
                     }}
                   >
                     <div className="absolute left-1/2 -translate-x-1/2 -top-8 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
-                      {currentPoints} pts
+                      {formatPoints(currentPoints)} pts
                     </div>
                   </div>
                 </div>
@@ -573,7 +650,7 @@ const TransactionStatuss = () => {
                       <span className="cursor-default group relative inline-block">
                         {/* Tooltip on hover of span only */}
                         <div className="absolute -top-6 left-1/2 -translate-x-1/2 whitespace-nowrap px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity z-10">
-                          {tier.exit_points.toLocaleString()} pts
+                          {formatPoints(tier.exit_points)} pts
                         </div>
                         {tier.name}
                       </span>
@@ -783,9 +860,9 @@ const TransactionStatuss = () => {
                           )}
                           <div className="flex items-center justify-between">
                             <span className="text-gray-600 text-sm">Points Required:</span>
-                            <span className="text-lg font-bold text-[#FF4F12]">
-                              ⭐ {item.points.toLocaleString()}
-                            </span>
+                              <span className="text-lg font-bold text-[#FF4F12]">
+                                ⭐ {formatPoints(item.points)}
+                              </span>
                           </div>
                         </div>
 
@@ -916,6 +993,180 @@ const TransactionStatuss = () => {
               )}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {/* My Orders Tab */}
+      {selectedTab === "orders" && (
+        <div className="mt-6">
+          <div className="max-w-6xl mx-auto px-4">
+            <div className="mb-8">
+              <h1 className="text-3xl font-bold text-gray-800 mb-2">My Orders</h1>
+              <p className="text-gray-600">Track and manage your recent orders</p>
+            </div>
+            <div className="bg-white rounded-lg shadow-sm mb-6">
+              <div className="flex flex-wrap border-b">
+                {['All', 'Pending', 'Confirmed', 'Shipped', 'Delivered', 'Cancelled'].map((filter) => (
+                  <button
+                    key={filter}
+                    onClick={() => setSelectedOrderFilter(filter)}
+                    className={`px-6 py-4 text-sm font-medium border-b-2 transition-colors ${
+                      selectedOrderFilter === filter
+                        ? 'border-[#fa4615] text-[#fa4615]'
+                        : 'border-transparent text-gray-600 hover:text-gray-800'
+                    }`}
+                  >
+                    {filter} ({filter === 'All' ? orders.length : orders.filter(o => o.status.toLowerCase() === filter.toLowerCase()).length})
+                  </button>
+                ))}
+              </div>
+            </div>
+            {ordersLoading ? (
+              <div className="flex items-center justify-center min-h-96">
+                <div className="text-center">
+                  <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-[#fa4615] mx-auto mb-4"></div>
+                  <p className="text-gray-600">Loading your orders...</p>
+                </div>
+              </div>
+            ) : ordersError ? (
+              <div className="flex items-center justify-center min-h-96">
+                <div className="text-center">
+                  <h2 className="text-2xl font-bold text-red-600 mb-4">Error</h2>
+                  <p className="text-gray-600 mb-4">{ordersError}</p>
+                  <button 
+                    onClick={fetchOrders}
+                    className="bg-[#fa4615] text-white px-6 py-2 rounded hover:bg-[#e63e0f]"
+                  >
+                    Retry
+                  </button>
+                </div>
+              </div>
+            ) : (
+              (() => {
+                const filteredOrders = orders.filter(order => {
+                  if (selectedOrderFilter === 'All') return true;
+                  return order.status.toLowerCase() === selectedOrderFilter.toLowerCase();
+                });
+                if (filteredOrders.length === 0) {
+                  return (
+                    <div className="bg-white rounded-lg shadow-sm p-8 text-center">
+                      <span className="mx-auto h-16 w-16 text-gray-400 mb-4 flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-16 h-16">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M3 3v1.5A2.25 2.25 0 005.25 6.75h13.5A2.25 2.25 0 0021 4.5V3M3 3l1.5 18.75A2.25 2.25 0 006.75 24h10.5a2.25 2.25 0 002.25-2.25L21 3M3 3h18" />
+                        </svg>
+                      </span>
+                      <h3 className="text-lg font-medium text-gray-800 mb-2">No orders found</h3>
+                      <p className="text-gray-600 mb-6">
+                        {selectedOrderFilter === 'All' 
+                          ? "You haven't placed any orders yet." 
+                          : `No ${selectedOrderFilter.toLowerCase()} orders found.`}
+                      </p>
+                    </div>
+                  );
+                }
+                return (
+                  <div className="space-y-4">
+                    {filteredOrders.map((order) => (
+                      <div key={order.id} className="bg-white rounded-lg shadow-sm overflow-hidden">
+                        <div className="p-6">
+                          <div className="flex flex-col lg:flex-row lg:items-center justify-between mb-4">
+                            <div className="flex items-center space-x-4 mb-4 lg:mb-0">
+                              <div>
+                                <h3 className="text-lg font-semibold text-gray-800">
+                                  Order #{order.orderNumber}
+                                </h3>
+                                <div className="flex items-center space-x-4 text-sm text-gray-600 mt-1">
+                                  <span className="flex items-center">
+                                    {/* Calendar icon */}
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 mr-1"><path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3.75 7.5h16.5M4.5 21h15a2.25 2.25 0 002.25-2.25V7.5a2.25 2.25 0 00-2.25-2.25h-15A2.25 2.25 0 002.25 7.5v11.25A2.25 2.25 0 004.5 21z" /></svg>
+                                    {formatOrderDate(order.createdAt)}
+                                  </span>
+                                  <span className="flex items-center">
+                                    {/* Package icon */}
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 mr-1"><path strokeLinecap="round" strokeLinejoin="round" d="M21 12.75V6.375a2.25 2.25 0 00-1.072-1.91l-6.75-4.05a2.25 2.25 0 00-2.356 0l-6.75 4.05A2.25 2.25 0 003 6.375V12.75m18 0v6.375a2.25 2.25 0 01-1.072 1.91l-6.75 4.05a2.25 2.25 0 01-2.356 0l-6.75-4.05A2.25 2.25 0 013 19.125V12.75m18 0l-9 5.4m0 0l-9-5.4" /></svg>
+                                    {order.totalItems} item{order.totalItems > 1 ? 's' : ''}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                            <div className="flex items-center space-x-3">
+                              {getOrderStatusBadge(order.status)}
+                            </div>
+                          </div>
+                          <div className="space-y-4">
+                            {order.orderItems.map((item) => (
+                              <div key={item.id} className="flex items-start space-x-4 p-4 bg-gray-50 rounded-lg">
+                                <div className="w-16 h-16 bg-gray-200 rounded-lg overflow-hidden flex-shrink-0">
+                                  {item.product?.primaryImage ? (
+                                    <img
+                                      src={item.product.primaryImage}
+                                      alt={item.product.name}
+                                      className="w-full h-full object-cover"
+                                    />
+                                  ) : (
+                                    <div className="w-full h-full flex items-center justify-center">
+                                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-gray-400"><path strokeLinecap="round" strokeLinejoin="round" d="M21 12.75V6.375a2.25 2.25 0 00-1.072-1.91l-6.75-4.05a2.25 2.25 0 00-2.356 0l-6.75 4.05A2.25 2.25 0 003 6.375V12.75m18 0v6.375a2.25 2.25 0 01-1.072 1.91l-6.75 4.05a2.25 2.25 0 01-2.356 0l-6.75-4.05A2.25 2.25 0 013 19.125V12.75m18 0l-9 5.4m0 0l-9-5.4" /></svg>
+                                    </div>
+                                  )}
+                                </div>
+                                <div className="flex-1">
+                                  <h4 className="font-medium text-gray-800">
+                                    {item.product?.name || item.itemName}
+                                  </h4>
+                                  {item.product?.sku && (
+                                    <p className="text-sm text-gray-600">SKU: {item.product.sku}</p>
+                                  )}
+                                  <p className="text-sm text-gray-600">Quantity: {item.quantity}</p>
+                                </div>
+                                <div className="text-right">
+                                  <p className="font-medium text-gray-800">
+                                    ₹{typeof item.totalPrice === 'number' ? item.totalPrice.toLocaleString('en-IN') : item.totalPrice}
+                                  </p>
+                                  {order.loyaltyPointsRedeemed > 0 && (
+                                    <p className="text-sm text-orange-600">
+                                      🔹 {typeof order.loyaltyPointsRedeemed === 'number' ? order.loyaltyPointsRedeemed.toLocaleString('en-IN') : order.loyaltyPointsRedeemed} points used
+                                    </p>
+                                  )}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                          <div className="mt-4 pt-4 border-t border-gray-200">
+                            <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center">
+                              <div className="flex items-center space-x-4 mb-4 lg:mb-0">
+                                {order.shippingAddress && (
+                                  <div className="flex items-center text-sm text-gray-600">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 mr-1"><path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" /></svg>
+                                    <span>
+                                      {order.shippingAddress.city}, {order.shippingAddress.state}
+                                    </span>
+                                  </div>
+                                )}
+                                <div className="flex items-center text-sm text-gray-600">
+                                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 mr-1"><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v7.125A2.625 2.625 0 007.125 19.5h9.75a2.625 2.625 0 002.625-2.625V9.75" /></svg>
+                                  <span className="capitalize">{order.paymentStatus}</span>
+                                </div>
+                              </div>
+                              <div className="text-right">
+                                <p className="text-lg font-semibold text-gray-800">
+                                  Total: ₹{typeof order.totalAmount === 'number' ? order.totalAmount.toLocaleString('en-IN') : order.totalAmount}
+                                </p>
+                                {order.loyaltyDiscountAmount > 0 && (
+                                  <p className="text-sm text-green-600">
+                                    Saved: ₹{typeof order.loyaltyDiscountAmount === 'number' ? order.loyaltyDiscountAmount.toLocaleString('en-IN') : order.loyaltyDiscountAmount}
+                                  </p>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                );
+              })()
+            )}
+          </div>
         </div>
       )}
 
