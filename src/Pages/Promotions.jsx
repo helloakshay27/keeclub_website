@@ -9,7 +9,7 @@ import Card1 from '../assets/Hotel/Card1.png';
 
 const Promotions = () => {
     const [selectedCategory, setSelectedCategory] = useState("All");
-    const [selectedTab, setSelectedTab] = useState("Promotions");
+    const [selectedTab, setSelectedTab] = useState("Featured Product");
     const [promotionData, setPromotionData] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -93,7 +93,7 @@ const Promotions = () => {
 
     const renderTabContent = () => {
         switch(selectedTab) {
-            case 'Redemptions':
+            case 'Redemption Market Place':
                 return <Redemptions />;
             case 'Encash':
                 return <Encash />;

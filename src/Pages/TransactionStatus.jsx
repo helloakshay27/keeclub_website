@@ -76,6 +76,11 @@ const TransactionStatus = () => {
         return `${day} ${month}${year}`;
     };
 
+
+    // Tab UI state
+    const [selectedTab, setSelectedTab] = useState("Featured Product");
+    const tabList = ["Featured Product", "Redemption Market Place", "Encash"];
+
     return (
         <div className="w-full">
             <section
@@ -92,6 +97,26 @@ const TransactionStatus = () => {
                 </div>
             </section>
 
+            {/* Tab UI like provided example */}
+            <div className="w-full mt-10">
+                <div className="flex justify-center w-full">
+                    <div className="flex bg-gray-100 rounded-full w-full border border-gray-200" style={{padding: '4px'}}>
+                        {tabList.map((tab) => (
+                            <button
+                                key={tab}
+                                onClick={() => setSelectedTab(tab)}
+                                className={`flex-1 px-6 py-2 rounded-full font-medium transition-all duration-300 ${
+                                    selectedTab === tab
+                                        ? "bg-[#FF4F12] text-white shadow-md"
+                                        : "text-gray-600 hover:text-gray-800"
+                                }`}
+                            >
+                                {tab}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            </div>
 
             <div className="w-full mt-10">
                 <div className="overflow-hidden max-w-6xl mx-auto">
