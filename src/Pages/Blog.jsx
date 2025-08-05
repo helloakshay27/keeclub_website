@@ -33,11 +33,11 @@ const Blog = () => {
                     <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold uppercase drop-shadow-md leading-snug">
                         {slide.heading}
                     </h1>
-                    <div className="h-[2px] w-16 sm:w-24 bg-[#FF4F12] my-3 sm:my-4 mx-auto" />
+                    <div className="h-[2px] w-16 sm:w-24 bg-[#f9461c] my-3 sm:my-4 mx-auto" />
                     <p className="text-sm sm:text-base md:text-lg mb-4 sm:mb-6 drop-shadow-sm px-2 sm:px-0">
                         {slide.subheading}
                     </p>
-                    <button className="bg-[#FF4F12] hover:bg-[#d93b18] px-6 sm:px-8 py-2.5 sm:py-3 rounded-md text-white text-sm sm:text-base font-semibold shadow-md transition duration-300">
+                    <button className="bg-[#f9461c] hover:bg-[#d93b18] px-6 sm:px-8 py-2.5 sm:py-3 rounded-md text-white text-sm sm:text-base font-semibold shadow-md transition duration-300">
                         {slide.buttonText}
                     </button>
                 </div>

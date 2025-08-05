@@ -93,7 +93,7 @@ const TransactionStatus = () => {
                     <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold uppercase drop-shadow-md leading-snug">
                         {slide.heading}
                     </h1>
-                    <div className="h-[2px] w-16 sm:w-50 bg-[#FF4F12] my-3 sm:my-4 mx-auto" />
+                    <div className="h-[2px] w-16 sm:w-50 bg-[#f9461c] my-3 sm:my-4 mx-auto" />
                 </div>
             </section>
 
@@ -107,7 +107,7 @@ const TransactionStatus = () => {
                                 onClick={() => setSelectedTab(tab)}
                                 className={`flex-1 px-6 py-2 rounded-full font-medium transition-all duration-300 ${
                                     selectedTab === tab
-                                        ? "bg-[#FF4F12] text-white shadow-md"
+                                        ? "bg-[#f9461c] text-white shadow-md"
                                         : "text-gray-600 hover:text-gray-800"
                                 }`}
                             >

@@ -104,7 +104,7 @@ const Promotions = () => {
                         <div className="px-4 py-8 sm:py-10 md:py-20 max-w-7xl mx-auto">
                             {loading ? (
                                 <div className="flex justify-center items-center py-20">
-                                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#FF4F12]"></div>
+                                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#f9461c]"></div>
                                     <span className="ml-3 text-gray-600">Loading promotions...</span>
                                 </div>
                             ) : error ? (
@@ -112,7 +112,7 @@ const Promotions = () => {
                                     <div className="text-red-500 mb-4">❌ {error}</div>
                                     <button 
                                         onClick={fetchPromotions}
-                                        className="bg-[#FF4F12] text-white px-6 py-2 rounded-lg hover:bg-[#e63e0f]"
+                                        className="bg-[#f9461c] text-white px-6 py-2 rounded-lg hover:bg-[#e63e0f]"
                                     >
                                         Retry
                                     </button>
@@ -123,7 +123,7 @@ const Promotions = () => {
                                         <div
                                             key={item.id}
                                             className="flex flex-col justify-between bg-white rounded-[12px] overflow-hidden min-h-[440px] transition-all duration-300"
-                                            style={{ boxShadow: '0px 2px 4px 0px rgba(0, 0, 0, 0.15)', borderBottom: '2px solid #ff4f12' }}
+                                            style={{ boxShadow: '0px 2px 4px 0px rgba(0, 0, 0, 0.15)', borderBottom: '2px solid #f9461c' }}
                                         >
                                             {/* Watch Image */}
                                             <div className="flex justify-center items-end bg-white pt-8 pb-2 px-4" style={{minHeight: 230}}>
@@ -190,7 +190,7 @@ const Promotions = () => {
                     <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold uppercase drop-shadow-md leading-snug">
                         {slide.heading}
                     </h1>
-                    <div className="h-[2px] w-16 sm:w-50 bg-[#FF4F12] my-3 sm:my-4 mx-auto" />
+                    <div className="h-[2px] w-16 sm:w-50 bg-[#f9461c] my-3 sm:my-4 mx-auto" />
                     <p className="text-lg sm:text-xl mt-4 opacity-90">
                         {slide.subheading}
                     </p>
@@ -200,14 +200,14 @@ const Promotions = () => {
             {/* Tab Navigation */}
             <div className="w-full mt-10 px-4">
                 <div className="flex justify-center">
-                    <div className="flex bg-gray-100 rounded-full w-4/5 mx-auto border-1" style={{padding: '4px'}}>
+                    <div className="flex bg-gray-100 rounded-full w-4/5 mx-auto" style={{padding: '4px'}}>
                         {["Featured Product", "Redemption Market Place", "Encash"].map((tab) => (
                             <button
                                 key={tab}
                                 onClick={() => setSelectedTab(tab)}
                                 className={`flex-1 px-6 py-2 rounded-full font-medium transition-all duration-300 ${
                                     selectedTab === tab
-                                        ? "bg-[#FF4F12] text-white shadow-md"
+                                        ? "bg-[#f9461c] text-white shadow-md"
                                         : "text-gray-600 hover:text-gray-800"
                                 }`}
                             >

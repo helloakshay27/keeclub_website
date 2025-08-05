@@ -173,7 +173,7 @@ const PromotionDetail = () => {
             {loading && (
                 <div className="flex items-center justify-center min-h-screen">
                     <div className="text-center">
-                        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-[#FF4F12] mx-auto mb-4"></div>
+                        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-[#f9461c] mx-auto mb-4"></div>
                         <p className="text-gray-600">Loading product details...</p>
                     </div>
                 </div>
@@ -188,7 +188,7 @@ const PromotionDetail = () => {
                         <div className="space-x-4">
                             <button 
                                 onClick={fetchProductData}
-                                className="bg-[#FF4F12] text-white px-6 py-2 rounded-lg hover:bg-[#e63e0f]"
+                                className="bg-[#f9461c] text-white px-6 py-2 rounded-lg hover:bg-[#e63e0f]"
                             >
                                 Retry
                             </button>
@@ -246,7 +246,7 @@ const PromotionDetail = () => {
                                             src={image}
                                             alt={`${product.name} ${index + 1}`}
                                             className={`w-20 h-20 object-cover rounded-lg cursor-pointer border-2 transition-all ${
-                                                currentImageIndex === index ? 'border-[#FF4F12]' : 'border-gray-200'
+                                                currentImageIndex === index ? 'border-[#f9461c]' : 'border-gray-200'
                                             }`}
                                             onClick={() => setCurrentImageIndex(index)}
                                             onError={(e) => {
@@ -264,7 +264,7 @@ const PromotionDetail = () => {
                                 <h1 className="text-3xl font-bold text-gray-800 mb-2">
                                     {product.name}
                                 </h1>
-                                <p className="text-lg text-[#FF4F12] font-medium mb-4">
+                                <p className="text-lg text-[#f9461c] font-medium mb-4">
                                     {product.title}
                                 </p>
                                 
@@ -308,7 +308,7 @@ const PromotionDetail = () => {
                                     )}
                                     <div className="flex items-center justify-between border-t pt-3">
                                         <span className="text-gray-600">Redeemed Points:</span>
-                                        <span className="text-2xl font-bold text-[#FF4F12]">
+                                        <span className="text-2xl font-bold text-[#f9461c]">
                                             ⭐ {(product.points || product.currentPrice || 0).toLocaleString()}
                                         </span>
                                     </div>
@@ -354,19 +354,19 @@ const PromotionDetail = () => {
                             {/* Features */}
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="flex items-center space-x-2">
-                                    <Shield className="text-[#FF4F12]" size={20} />
+                                    <Shield className="text-[#f9461c]" size={20} />
                                     <span className="text-sm text-gray-600">Warranty Included</span>
                                 </div>
                                 <div className="flex items-center space-x-2">
-                                    <Truck className="text-[#FF4F12]" size={20} />
+                                    <Truck className="text-[#f9461c]" size={20} />
                                     <span className="text-sm text-gray-600">Free Delivery</span>
                                 </div>
                                 <div className="flex items-center space-x-2">
-                                    <RotateCcw className="text-[#FF4F12]" size={20} />
+                                    <RotateCcw className="text-[#f9461c]" size={20} />
                                     <span className="text-sm text-gray-600">Easy Returns</span>
                                 </div>
                                 <div className="flex items-center space-x-2">
-                                    <Star className="text-[#FF4F12]" size={20} />
+                                    <Star className="text-[#f9461c]" size={20} />
                                     <span className="text-sm text-gray-600">Authentic Product</span>
                                 </div>
                             </div>
@@ -377,7 +377,7 @@ const PromotionDetail = () => {
                     <div className="mt-12">
                         <div className="border-b border-gray-200">
                             <nav className="flex space-x-8">
-                                <button className="py-4 px-1 border-b-2 border-[#FF4F12] font-medium text-sm text-[#FF4F12]">
+                                <button className="py-4 px-1 border-b-2 border-[#f9461c] font-medium text-sm text-[#f9461c]">
                                     Full Specifications
                                 </button>
                                 <button className="py-4 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700">
@@ -423,7 +423,7 @@ const PromotionDetail = () => {
                             </div>
 
                             <div className="mt-8">
-                                <h3 className="text-xl font-semibold text-[#FF4F12] mb-4">
+                                <h3 className="text-xl font-semibold text-[#f9461c] mb-4">
                                     About the {product.brand || 'Tissot'} Collection
                                 </h3>
                                 <p className="text-gray-700 leading-relaxed">
@@ -459,7 +459,7 @@ const PromotionDetail = () => {
                             </button>
                             <button
                                 onClick={handleLoginRedirect}
-                                className="flex-1 px-4 py-2 bg-[#FF4F12] text-white rounded-lg hover:bg-[#e63e0f]"
+                                className="flex-1 px-4 py-2 bg-[#f9461c] text-white rounded-lg hover:bg-[#e63e0f]"
                             >
                                 Login
                             </button>

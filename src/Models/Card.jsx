@@ -4,7 +4,7 @@ const Card = ({
   imageUrl,
   title,
   subtitle,
-  highlightColor = '#FF4F12',
+  highlightColor = '#f9461c',
   description,
   buttonText = 'Know More',
   onButtonClick,

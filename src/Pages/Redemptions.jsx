@@ -104,7 +104,7 @@ const Redemptions = () => {
             <div className="max-w-7xl mx-auto px-4 py-8">
                 <div className="flex justify-center items-center h-64">
                     <div className="text-center">
-                        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-[#FF4F12] mx-auto mb-4"></div>
+                        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-[#f9461c] mx-auto mb-4"></div>
                         <p className="text-gray-600">Loading redemptions...</p>
                     </div>
                 </div>
@@ -120,7 +120,7 @@ const Redemptions = () => {
                     <p className="text-gray-500 mb-4">{error}</p>
                     <button 
                         onClick={fetchRedemptions}
-                        className="bg-[#FF4F12] text-white px-6 py-2 rounded-lg hover:bg-[#e03d12]"
+                        className="bg-[#f9461c] text-white px-6 py-2 rounded-lg hover:bg-[#e03d12]"
                     >
                         Retry
                     </button>
@@ -131,6 +131,33 @@ const Redemptions = () => {
 
     return (
         <div className="max-w-7xl mx-auto px-4 py-8">
+            {/* Additional Information */}
+            <div className="mt-4 text-center">
+                <h3 className="text-2xl font-bold text-gray-800 mb-4">How Redemptions Work</h3>
+                <div className="grid md:grid-cols-3 gap-8 mt-8">
+                    <div className="text-center">
+                        <div className="w-16 h-16 bg-[#f9461c] rounded-full flex items-center justify-center mx-auto mb-4">
+                            <span className="text-white text-2xl font-bold">1</span>
+                        </div>
+                        <h4 className="font-semibold text-gray-800 mb-2">Choose Category</h4>
+                        <p className="text-gray-600 text-sm">Select from various categories like Hotels, F&B, Tickets, and more</p>
+                    </div>
+                    <div className="text-center">
+                        <div className="w-16 h-16 bg-[#f9461c] rounded-full flex items-center justify-center mx-auto mb-4">
+                            <span className="text-white text-2xl font-bold">2</span>
+                        </div>
+                        <h4 className="font-semibold text-gray-800 mb-2">View Rewards</h4>
+                        <p className="text-gray-600 text-sm">Browse available rewards and check point requirements</p>
+                    </div>
+                    <div className="text-center">
+                        <div className="w-16 h-16 bg-[#f9461c] rounded-full flex items-center justify-center mx-auto mb-4">
+                            <span className="text-white text-2xl font-bold">3</span>
+                        </div>
+                        <h4 className="font-semibold text-gray-800 mb-2">Redeem Points</h4>
+                        <p className="text-gray-600 text-sm">Use your points to unlock exclusive experiences and rewards</p>
+                    </div>
+                </div>
+            </div>
             {/* Redemption Cards Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {displayRedemptions.map((item) => (
@@ -169,7 +196,7 @@ const Redemptions = () => {
 
                             {/* Category Badge */}
                             <div className="absolute top-4 left-4">
-                                <span className="bg-[#FF4F12] text-white px-3 py-1 rounded-full text-sm font-medium">
+                                <span className="bg-[#f9461c] text-white px-3 py-1 rounded-full text-sm font-medium">
                                     {item.category}
                                 </span>
                             </div>
@@ -178,33 +205,6 @@ const Redemptions = () => {
                 ))}
             </div>
 
-            {/* Additional Information */}
-            <div className="mt-12 text-center">
-                <h3 className="text-2xl font-bold text-gray-800 mb-4">How Redemptions Work</h3>
-                <div className="grid md:grid-cols-3 gap-8 mt-8">
-                    <div className="text-center">
-                        <div className="w-16 h-16 bg-[#FF4F12] rounded-full flex items-center justify-center mx-auto mb-4">
-                            <span className="text-white text-2xl font-bold">1</span>
-                        </div>
-                        <h4 className="font-semibold text-gray-800 mb-2">Choose Category</h4>
-                        <p className="text-gray-600 text-sm">Select from various categories like Hotels, F&B, Tickets, and more</p>
-                    </div>
-                    <div className="text-center">
-                        <div className="w-16 h-16 bg-[#FF4F12] rounded-full flex items-center justify-center mx-auto mb-4">
-                            <span className="text-white text-2xl font-bold">2</span>
-                        </div>
-                        <h4 className="font-semibold text-gray-800 mb-2">View Rewards</h4>
-                        <p className="text-gray-600 text-sm">Browse available rewards and check point requirements</p>
-                    </div>
-                    <div className="text-center">
-                        <div className="w-16 h-16 bg-[#FF4F12] rounded-full flex items-center justify-center mx-auto mb-4">
-                            <span className="text-white text-2xl font-bold">3</span>
-                        </div>
-                        <h4 className="font-semibold text-gray-800 mb-2">Redeem Points</h4>
-                        <p className="text-gray-600 text-sm">Use your points to unlock exclusive experiences and rewards</p>
-                    </div>
-                </div>
-            </div>
         </div>
     );
 };

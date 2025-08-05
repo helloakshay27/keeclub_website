@@ -789,7 +789,7 @@ const TransactionStatuss = () => {
                     onClick={() => setSelectedRedemptionTab(tab)}
                     className={`flex-1 px-6 py-2 rounded-full font-medium transition-all duration-300 ${
                       selectedRedemptionTab === tab
-                        ? "bg-[#FF4F12] text-white shadow-md"
+                        ? "bg-[#f9461c] text-white shadow-md"
                         : "text-gray-600 hover:text-gray-800"
                     }`}
                   >
@@ -807,7 +807,7 @@ const TransactionStatuss = () => {
               <div className="px-4 py-8 sm:py-10 md:py-20 max-w-7xl mx-auto">
                 {promotionLoading ? (
                   <div className="flex justify-center items-center py-20">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#FF4F12]"></div>
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#f9461c]"></div>
                     <span className="ml-3 text-gray-600">Loading promotions...</span>
                   </div>
                 ) : (
@@ -816,7 +816,7 @@ const TransactionStatuss = () => {
                       <div
                         key={item.id}
                         className="flex flex-col justify-between bg-white rounded-[12px] overflow-hidden min-h-[440px] transition-all duration-300"
-                        style={{ boxShadow: '0px 2px 4px 0px rgba(0, 0, 0, 0.15)', borderBottom: '2px solid #ff4f12' }}
+                        style={{ boxShadow: '0px 2px 4px 0px rgba(0, 0, 0, 0.15)', borderBottom: '2px solid #f9461c' }}
                       >
                         {/* Watch Image */}
                         <div className="flex justify-center items-end bg-white pt-8 pb-2 px-4" style={{minHeight: 230}}>

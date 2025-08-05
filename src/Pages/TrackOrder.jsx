@@ -122,7 +122,7 @@ const TrackOrder = () => {
         return (
             <div className="min-h-screen flex items-center justify-center">
                 <div className="text-center">
-                    <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-[#FF4F12] mx-auto mb-4"></div>
+                    <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-[#f9461c] mx-auto mb-4"></div>
                     <p className="text-gray-600">Loading order details...</p>
                 </div>
             </div>
@@ -137,7 +137,7 @@ const TrackOrder = () => {
                     <div className="space-x-4">
                         <button 
                             onClick={fetchOrderDetails}
-                            className="px-6 py-3 bg-[#FF4F12] text-white rounded-lg hover:bg-[#e63e0f]"
+                            className="px-6 py-3 bg-[#f9461c] text-white rounded-lg hover:bg-[#e63e0f]"
                         >
                             Retry
                         </button>
@@ -160,7 +160,7 @@ const TrackOrder = () => {
                     <h1 className="text-xl font-semibold text-gray-800 mb-4">Invalid Order ID</h1>
                     <button 
                         onClick={() => navigate('/promotions')}
-                        className="px-6 py-3 bg-[#FF4F12] text-white rounded-lg hover:bg-[#e63e0f]"
+                        className="px-6 py-3 bg-[#f9461c] text-white rounded-lg hover:bg-[#e63e0f]"
                     >
                         Go to Promotions
                     </button>
@@ -222,7 +222,7 @@ const TrackOrder = () => {
                                     />
                                     <div className="flex-1">
                                         <h3 className="font-semibold text-gray-800">{item.product.name}</h3>
-                                        <p className="text-sm text-[#FF4F12]">SKU: {item.product.sku}</p>
+                                        <p className="text-sm text-[#f9461c]">SKU: {item.product.sku}</p>
                                         <p className="text-sm text-gray-600">
                                             Quantity: {item.quantity} | Points Used: ⭐ {orderData.loyaltyPointsRedeemed?.toLocaleString()}
                                         </p>
@@ -246,7 +246,7 @@ const TrackOrder = () => {
                             />
                             <div>
                                 <h3 className="font-semibold text-gray-800">{product.name}</h3>
-                                <p className="text-sm text-[#FF4F12]">{product.title}</p>
+                                <p className="text-sm text-[#f9461c]">{product.title}</p>
                                 <p className="text-sm text-gray-600">
                                     Points Used: ⭐ {product.points?.toLocaleString()}
                                 </p>
@@ -285,7 +285,7 @@ const TrackOrder = () => {
                                                     status.completed 
                                                         ? 'bg-green-500 text-white' 
                                                         : currentStatus === status.id
-                                                        ? 'bg-[#FF4F12] text-white'
+                                                        ? 'bg-[#f9461c] text-white'
                                                         : 'bg-gray-300 text-gray-600'
                                                 }`}
                                             >
@@ -317,8 +317,8 @@ const TrackOrder = () => {
                                                 {currentStatus === status.id && !status.completed && (
                                                     <div className="mt-2">
                                                         <div className="flex items-center">
-                                                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-[#FF4F12] mr-2"></div>
-                                                            <span className="text-sm text-[#FF4F12] font-medium">
+                                                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-[#f9461c] mr-2"></div>
+                                                            <span className="text-sm text-[#f9461c] font-medium">
                                                                 In Progress...
                                                             </span>
                                                         </div>
@@ -369,7 +369,7 @@ const TrackOrder = () => {
                         {/* Delivery Address */}
                         <div className="bg-white rounded-lg shadow-sm p-6">
                             <h3 className="font-semibold text-gray-800 mb-4 flex items-center">
-                                <MapPin className="mr-2 text-[#FF4F12]" size={20} />
+                                <MapPin className="mr-2 text-[#f9461c]" size={20} />
                                 Delivery Address
                             </h3>
                             <div className="text-sm text-gray-600 space-y-1">
@@ -410,7 +410,7 @@ const TrackOrder = () => {
                                                 <span className="text-gray-600">Subtotal ({orderData.totalItems} item{orderData.totalItems > 1 ? 's' : ''})</span>
                                                 <span>{formatPrice(orderData.orderItems.reduce((sum, item) => sum + item.totalPrice, 0))}</span>
                                             </div>
-                                            <div className="flex justify-between text-[#FF4F12]">
+                                            <div className="flex justify-between text-[#f9461c]">
                                                 <span>Loyalty Points Used</span>
                                                 <span>⭐ {orderData.loyaltyPointsRedeemed?.toLocaleString()}</span>
                                             </div>
@@ -435,7 +435,7 @@ const TrackOrder = () => {
                                                 <span className="text-gray-600">Item Price</span>
                                                 <span>{formatPrice(product.currentPrice)}</span>
                                             </div>
-                                            <div className="flex justify-between text-[#FF4F12]">
+                                            <div className="flex justify-between text-[#f9461c]">
                                                 <span>Points Used</span>
                                                 <span>⭐ {product.points?.toLocaleString()}</span>
                                             </div>
@@ -461,13 +461,13 @@ const TrackOrder = () => {
                                 Need Help?
                             </h3>
                             <div className="space-y-3 text-sm">
-                                <button className="w-full text-left text-[#FF4F12] hover:underline">
+                                <button className="w-full text-left text-[#f9461c] hover:underline">
                                     Contact Customer Support
                                 </button>
-                                <button className="w-full text-left text-[#FF4F12] hover:underline">
+                                <button className="w-full text-left text-[#f9461c] hover:underline">
                                     Report an Issue
                                 </button>
-                                <button className="w-full text-left text-[#FF4F12] hover:underline">
+                                <button className="w-full text-left text-[#f9461c] hover:underline">
                                     Return Policy
                                 </button>
                             </div>

@@ -202,7 +202,7 @@ const PromotionDetail = () => {
       {loading && (
         <div className="flex items-center justify-center min-h-screen">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-[#FF4F12] mx-auto mb-4"></div>
+            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-[#f9461c] mx-auto mb-4"></div>
             <p className="text-gray-600">Loading product details...</p>
           </div>
         </div>
@@ -217,7 +217,7 @@ const PromotionDetail = () => {
             <div className="space-x-4">
               <button
                 onClick={fetchProductData}
-                className="bg-[#FF4F12] text-white px-6 py-2 rounded-lg hover:bg-[#e63e0f]"
+                className="bg-[#f9461c] text-white px-6 py-2 rounded-lg hover:bg-[#e63e0f]"
               >
                 Retry
               </button>
@@ -251,7 +251,7 @@ const PromotionDetail = () => {
                     }} // Ensures 100x100px always
                     className={`rounded-lg cursor-pointer border-2 transition-all ${
                       currentImageIndex === index
-                        ? "border-[#FF4F12]"
+                        ? "border-[#f9461c]"
                         : "border-gray-200"
                     }`}
                     onClick={() => setCurrentImageIndex(index)}
@@ -301,7 +301,7 @@ const PromotionDetail = () => {
                 <h1 className="text-2xl font-bold text-gray-800 mb-1">
                   {product.name}
                 </h1>
-                <p className="text-base text-[#FF4F12] font-semibold mb-1">
+                <p className="text-base text-[#f9461c] font-semibold mb-1">
                   {product.title}
                 </p>
                 <span className="block text-xs text-gray-400 mb-2">
@@ -360,7 +360,7 @@ const PromotionDetail = () => {
                     </span>
                   </div>
                   <p className="text-gray-600 text-base">Redeem using</p>
-                  <span className="text-xl font-bold text-[#FF4F12] flex items-center">
+                  <span className="text-xl font-bold text-[#f9461c] flex items-center">
                     <img
                       src="/redeemStar.png"
                       alt="star"
@@ -411,21 +411,21 @@ const PromotionDetail = () => {
               {/* Features */}
               <div className="grid grid-cols-2 gap-2 mt-2">
                 <div className="flex items-center space-x-2">
-                  <Shield className="text-[#FF4F12]" size={18} />
+                  <Shield className="text-[#f9461c]" size={18} />
                   <span className="text-xs text-gray-600">
                     Warranty Included
                   </span>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Truck className="text-[#FF4F12]" size={18} />
+                  <Truck className="text-[#f9461c]" size={18} />
                   <span className="text-xs text-gray-600">Free Delivery</span>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <RotateCcw className="text-[#FF4F12]" size={18} />
+                  <RotateCcw className="text-[#f9461c]" size={18} />
                   <span className="text-xs text-gray-600">Easy Returns</span>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Star className="text-[#FF4F12]" size={18} />
+                  <Star className="text-[#f9461c]" size={18} />
                   <span className="text-xs text-gray-600">
                     Authentic Product
                   </span>
@@ -448,7 +448,7 @@ const PromotionDetail = () => {
                   style={{
                     borderBottom:
                       activeTab === "specifications"
-                        ? "3px solid #FF4F12"
+                        ? "3px solid #f9461c"
                         : "3px solid transparent",
                   }}
                 >
@@ -464,7 +464,7 @@ const PromotionDetail = () => {
                   style={{
                     borderBottom:
                       activeTab === "about"
-                        ? "3px solid #FF4F12"
+                        ? "3px solid #f9461c"
                         : "3px solid transparent",
                   }}
                 >
@@ -645,7 +645,7 @@ const PromotionDetail = () => {
                               key={index}
                               className="flex items-start space-x-3"
                             >
-                              <div className="w-2 h-2 bg-[#FF4F12] rounded-full mt-2 flex-shrink-0"></div>
+                              <div className="w-2 h-2 bg-[#f9461c] rounded-full mt-2 flex-shrink-0"></div>
                               <span className="text-gray-700 text-sm leading-relaxed">
                                 {feature}
                               </span>
@@ -661,7 +661,7 @@ const PromotionDetail = () => {
               {activeTab === "about" && (
                 <div className="animate-fadeIn">
                   <div className="max-w-none">
-                    <h3 className="text-2xl font-bold text-[#FF4F12] mb-8">
+                    <h3 className="text-2xl font-bold text-[#f9461c] mb-8">
                       About the {product.brand || "Tissot"}{" "}
                       {product.collection || "T-Sport"} Collection
                     </h3>
@@ -773,7 +773,7 @@ const PromotionDetail = () => {
               </button>
               <button
                 onClick={handleLoginRedirect}
-                className="flex-1 px-4 py-2 bg-[#FF4F12] text-white rounded-lg hover:bg-[#e63e0f]"
+                className="flex-1 px-4 py-2 bg-[#f9461c] text-white rounded-lg hover:bg-[#e63e0f]"
               >
                 Login
               </button>

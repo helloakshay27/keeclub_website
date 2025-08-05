@@ -19,7 +19,7 @@ const Projects = () => {
           <h1 className="text-xl sm:text-3xl md:text-5xl font-bold uppercase drop-shadow-md leading-snug">
             {slide.heading}
           </h1>
-          <div className="h-[2px] w-12 sm:w-24 bg-[#FF4F12] my-3 sm:my-4 mx-auto" />
+          <div className="h-[2px] w-12 sm:w-24 bg-[#f9461c] my-3 sm:my-4 mx-auto" />
         </div>
       </section>
 

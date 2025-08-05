@@ -11,7 +11,7 @@ const MainCard = () => {
       subtitle: "An exclusive referral campaign, curated just for you!",
       description:
         "Piramal Realty knows what it means to build model communities that care for each other, and with One Family Many Rewards, we intend to reward every member who helps build the Piramal family. We bring you the opportunity to include your loved ones in the Piramal family and win exclusive rewards for yourselves and the referred basis various slabs. To know more, please refer to the attached e-brochures.",
-      highlightColor: "#FF4F12",
+      highlightColor: "#f9461c",
       buttonText: "Know More",
       onButtonClick: () => {
         window.location.href = "/refer-now"; // Navigate to the refer page
@@ -48,7 +48,7 @@ const MainCard = () => {
           <p>You are our brand ambassador in this vision.</p>
         </div>
       ),
-      highlightColor: "#FF4F12",
+      highlightColor: "#f9461c",
       buttonText: "Refer Now",
       onButtonClick: () => {
         window.location.href = "/refer-now"; // Navigate to the refer page
@@ -81,7 +81,7 @@ const MainCard = () => {
           </p>
         </div>
       ),
-      highlightColor: "#FF4F12",
+      highlightColor: "#f9461c",
       reverse: false,
       hideButton: true,
     },
@@ -104,7 +104,7 @@ const MainCard = () => {
           </p>
         </div>
       ),
-      highlightColor: "#FF4F12",
+      highlightColor: "#f9461c",
       buttonText: "View Past Events",
       onButtonClick: () => {
         window.location.href = "/events"; // Navigate to the refer page
@@ -131,7 +131,7 @@ const MainCard = () => {
           </p>
         </div>
       ),
-      highlightColor: "#FF4F12",
+      highlightColor: "#f9461c",
       buttonText: "Read Now",
       onButtonClick: () => {
         window.location.href = `/blog/${id}`; // Navigate to the refer page
@@ -144,7 +144,7 @@ const MainCard = () => {
     <div className="w-full min-h-screen bg-[#F5F8FC] flex flex-col items-center justify-center px-4 sm:px-6 md:px-10 lg:px-16 py-10 space-y-16">
       {/* Introductory Text Section */}
       <div className="max-w-7xl w-full text-center space-y-6 px-2 sm:px-4">
-        <h1 className="text-base sm:text-lg md:text-xl font-semibold text-[#FF4F12]">
+        <h1 className="text-base sm:text-lg md:text-xl font-semibold text-[#f9461c]">
           Kee Club is an exclusive loyalty and referral program for the entire
           Piramal family. Every member is a brand ambassador in our vision of
           adding more value to homeownership and unlocking the Kee Club

@@ -105,7 +105,7 @@ const DashHeader = () => {
                 Cancel
               </button>
               <button
-                className="px-4 py-2 rounded bg-[#f54a00] text-white hover:bg-[#cf4c1e]"
+                className="px-4 py-2 rounded bg-[#f9461c] text-white hover:bg-[#cf4c1e]"
                 onClick={handleSignOut}
               >
                 Sign Out

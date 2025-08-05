@@ -28,10 +28,10 @@ const ProjectsCarousel = () => {
 
   return (
     <section className="w-full py-16 flex flex-col items-center bg-white">
-      <h2 className="text-3xl md:text-4xl font-semibold text-[#FF4F12] text-center">
+      <h2 className="text-3xl md:text-4xl font-semibold text-[#f9461c] text-center">
         Projects
       </h2>
-      <div className="h-[2px] w-24 bg-[#FF4F12] mt-2 mb-12" />
+      <div className="h-[2px] w-24 bg-[#f9461c] mt-2 mb-12" />
 
       <div className="w-full max-w-6xl px-4 sm:px-6">
         <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">

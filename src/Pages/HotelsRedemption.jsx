@@ -172,7 +172,7 @@ const HotelsRedemption = () => {
             <div className="max-w-7xl mx-auto px-4 py-8">
                 <div className="flex justify-center items-center h-64">
                     <div className="text-center">
-                        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-[#FF4F12] mx-auto mb-4"></div>
+                        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-[#f9461c] mx-auto mb-4"></div>
                         <p className="text-gray-600">Loading hotels...</p>
                     </div>
                 </div>
@@ -188,7 +188,7 @@ const HotelsRedemption = () => {
                     <p className="text-gray-500 mb-4">{error}</p>
                     <button 
                         onClick={fetchHotels}
-                        className="bg-[#FF4F12] text-white px-6 py-2 rounded-lg hover:bg-[#e03d12]"
+                        className="bg-[#f9461c] text-white px-6 py-2 rounded-lg hover:bg-[#e03d12]"
                     >
                         Retry
                     </button>
@@ -214,7 +214,7 @@ const HotelsRedemption = () => {
                             onClick={() => setSelectedLocation(location)}
                             className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 ${
                                 selectedLocation === location
-                                    ? "bg-[#FF4F12] text-white"
+                                    ? "bg-[#f9461c] text-white"
                                     : "bg-gray-200 text-gray-700 hover:bg-gray-300"
                             }`}
                         >
@@ -240,7 +240,7 @@ const HotelsRedemption = () => {
                                 className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
                             />
                             <div className="absolute top-4 left-4">
-                                <span className="bg-[#FF4F12] text-white px-3 py-1 rounded-full text-sm font-medium">
+                                <span className="bg-[#f9461c] text-white px-3 py-1 rounded-full text-sm font-medium">
                                     {hotel.location}
                                 </span>
                             </div>
@@ -276,7 +276,7 @@ const HotelsRedemption = () => {
                             <div className="space-y-2 mb-4">
                                 <div className="flex items-center justify-between">
                                     <span className="text-gray-600 text-sm">Points Required:</span>
-                                    <span className="text-lg font-bold text-[#FF4F12]">
+                                    <span className="text-lg font-bold text-[#f9461c]">
                                         🔹 {hotel.points.toLocaleString()}
                                     </span>
                                 </div>

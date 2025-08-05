@@ -35,7 +35,7 @@ const OrderSuccess = () => {
                     <p className="text-gray-600 mb-4">No valid order data was found.</p>
                     <button 
                         onClick={() => navigate('/promotions')}
-                        className="px-6 py-3 bg-[#FF4F12] text-white rounded-lg hover:bg-[#e63e0f]"
+                        className="px-6 py-3 bg-[#f9461c] text-white rounded-lg hover:bg-[#e63e0f]"
                     >
                         Go to Promotions
                     </button>
@@ -51,24 +51,24 @@ const OrderSuccess = () => {
                 <div className="max-w-4xl mx-auto px-4 py-10">
                     <div className="flex items-center justify-center space-x-4">
                         <div className="flex items-center">
-                            <div className="w-8 h-8 bg-[#FF4F12] text-white rounded-full flex items-center justify-center text-sm font-semibold">
+                            <div className="w-8 h-8 bg-[#f9461c] text-white rounded-full flex items-center justify-center text-sm font-semibold">
                                 ✓
                             </div>
                             <span className="ml-2 text-sm font-medium text-gray-700">Checkout</span>
                         </div>
-                        <div className="w-16 h-1 bg-[#FF4F12]"></div>
+                        <div className="w-16 h-1 bg-[#f9461c]"></div>
                         <div className="flex items-center">
-                            <div className="w-8 h-8 bg-[#FF4F12] text-white rounded-full flex items-center justify-center text-sm font-semibold">
+                            <div className="w-8 h-8 bg-[#f9461c] text-white rounded-full flex items-center justify-center text-sm font-semibold">
                                 ✓
                             </div>
                             <span className="ml-2 text-sm font-medium text-gray-700">Bonus Offer</span>
                         </div>
-                        <div className="w-16 h-1 bg-[#FF4F12]"></div>
+                        <div className="w-16 h-1 bg-[#f9461c]"></div>
                         <div className="flex items-center">
-                            <div className="w-8 h-8 bg-[#FF4F12] text-white rounded-full flex items-center justify-center text-sm font-semibold">
+                            <div className="w-8 h-8 bg-[#f9461c] text-white rounded-full flex items-center justify-center text-sm font-semibold">
                                 ✓
                             </div>
-                            <span className="ml-2 text-sm font-medium text-[#FF4F12]">Confirmation</span>
+                            <span className="ml-2 text-sm font-medium text-[#f9461c]">Confirmation</span>
                         </div>
                     </div>
                 </div>
@@ -78,7 +78,7 @@ const OrderSuccess = () => {
             <div className="bg-[#24293c] text-white py-16">
                 <div className="max-w-4xl mx-auto px-4 text-center">
                     <div className="mb-6">
-                        <CheckCircle size={80} className="text-[#FF4F12] mx-auto" />
+                        <CheckCircle size={80} className="text-[#f9461c] mx-auto" />
                     </div>
                     <h1 className="text-3xl font-bold mb-2">
                         Thank You {deliveryAddress?.name || userDetails?.firstName || 'Valued Customer'}!
@@ -161,7 +161,7 @@ const OrderSuccess = () => {
                                 <h3 className="font-semibold text-gray-800">
                                     {product.brand ? `${product.brand} ${product.name}` : product.name}
                                 </h3>
-                                <p className="text-sm text-[#FF4F12] mb-2">
+                                <p className="text-sm text-[#f9461c] mb-2">
                                     {product.title || product.description}
                                 </p>
                                 <p className="text-xs text-gray-600">
@@ -188,7 +188,7 @@ const OrderSuccess = () => {
                                 </span>
                             </div>
                             
-                            <div className="flex justify-between text-[#FF4F12]">
+                            <div className="flex justify-between text-[#f9461c]">
                                 <span>Redeemed Points</span>
                                 <span className="font-medium">
                                     ⭐ {(loyaltyPointsUsed || product.loyalty_points_required || product.points || 0).toLocaleString()}
@@ -240,7 +240,7 @@ const OrderSuccess = () => {
                                 orderDetails
                             } 
                         })}
-                        className="inline-flex items-center px-8 py-3 bg-[#FF4F12] text-white font-semibold rounded-lg hover:bg-[#e63e0f] transition-colors duration-300 mr-4"
+                        className="inline-flex items-center px-8 py-3 bg-[#f9461c] text-white font-semibold rounded-lg hover:bg-[#e63e0f] transition-colors duration-300 mr-4"
                     >
                         <Package className="mr-2" size={20} />
                         Track Order
@@ -248,7 +248,7 @@ const OrderSuccess = () => {
                     
                     <button
                         onClick={() => navigate('/promotions')}
-                        className="inline-flex items-center px-8 py-3 border-2 border-[#FF4F12] text-[#FF4F12] font-semibold rounded-lg hover:bg-[#FF4F12] hover:text-white transition-colors duration-300"
+                        className="inline-flex items-center px-8 py-3 border-2 border-[#f9461c] text-[#f9461c] font-semibold rounded-lg hover:bg-[#f9461c] hover:text-white transition-colors duration-300"
                     >
                         <Home className="mr-2" size={20} />
                         Continue Shopping
