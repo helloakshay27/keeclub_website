@@ -804,7 +804,7 @@ const TransactionStatuss = () => {
           {selectedRedemptionTab === "Featured Products" && (
             <>
               {/* Promotions Grid */}
-              <div className="px-4 py-8 sm:py-10 md:py-20 max-w-7xl mx-auto">
+              <div className="px-4 pt-2 pb-4 max-w-7xl mx-auto">
                 {promotionLoading ? (
                   <div className="flex justify-center items-center py-20">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#f9461c]"></div>
