@@ -534,13 +534,13 @@ const ProjectDetail = () => {
                 {project.location?.city || "Mumbai"}
               </p>
             </div>
-            <button
+            {/* <button
               onClick={handleShare}
               className="flex items-center gap-2 px-4 py-2 bg-white rounded-full shadow-md"
             >
               <Share2 size={18} />
               <span>Share</span>
-            </button>
+            </button> */}
           </div>
 
           <h2 className="text-xl font-bold mb-3">Project Description</h2>
