@@ -671,7 +671,7 @@ const TransactionStatuss = () => {
 </div>
 
 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mt-10">
-  <div className="relative bg-[#FAFAFA] border border-gray-300 rounded-full flex p-2 w-[320px] sm:w-[800px]">
+  <div className="relative bg-[#FAFAFA] border border-gray-300 rounded-full flex p-2 w-full">
     <div
       className="absolute top-1 left-1 h-[90%] bg-[#F9461C] rounded-full transition-all duration-300"
       style={{
@@ -692,11 +692,11 @@ const TransactionStatuss = () => {
     ))}
   </div>
   <button
-    onClick={() => setShowModal(true)}
-    className="text-sm font-semibold bg-orange-600 text-white px-4 py-2 rounded-md hover:bg-orange-700 transition-colors"
-  >
-    REFER & EARN
-  </button>
+      onClick={() => setShowModal(true)}
+      className="text-sm font-semibold bg-orange-600 text-white px-4 py-2 rounded-md hover:bg-orange-700 transition-colors whitespace-nowrap"
+    >
+      REFER & EARN
+    </button>
 </div>
 
       {/* My Redemption with Sub-tabs */}

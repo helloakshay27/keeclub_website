@@ -116,71 +116,54 @@ const Promotions = () => {
                                     </button>
                                 </div>
                             ) : (
-                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                                     {filteredPromotions.map((item) => (
                                         <div
                                             key={item.id}
-                                            className={`bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 ${
-                                                item.featured ? "border-2 border-[#FF4F12]" : "border border-gray-200"
-                                            }`}
+                                            className="flex flex-col justify-between bg-white rounded-[12px] overflow-hidden min-h-[440px] transition-all duration-300"
+                                            style={{ boxShadow: '0px 2px 4px 0px rgba(0, 0, 0, 0.15)', borderBottom: '2px solid #ff4f12' }}
                                         >
-                                            {item.featured && (
-                                                <div className="bg-[#FF4F12] text-white text-center py-2 text-sm font-semibold">
-                                                    Featured
-                                                </div>
-                                            )}
-                                            
-                                            <div className="relative">
+                                            {/* Watch Image */}
+                                            <div className="flex justify-center items-end bg-white pt-8 pb-2 px-4" style={{minHeight: 230}}>
                                                 <img
                                                     src={item.image}
                                                     alt={item.name}
-                                                    className="w-full h-64 object-cover"
+                                                    className="h-56 object-contain"
+                                                    style={{maxHeight: '200px'}}
                                                 />
-                                                <div className="absolute top-4 right-4 bg-black bg-opacity-70 text-white px-3 py-1 rounded-full text-sm">
-                                                    {item.category}
-                                                </div>
                                             </div>
-
-                                            <div className="p-6">
-                                                <h3 className="text-lg font-bold text-gray-800 mb-2">
-                                                    {item.name}
-                                                </h3>
-                                                <p className="text-sm text-[#FF4F12] font-medium mb-3">
-                                                    {item.title}
-                                                </p>
-                                                <p className="text-gray-600 text-sm mb-4" title={item.description}>
-                                                    {truncateDescription(item.description)}
-                                                </p>
-
-                                                <div className="space-y-2 mb-4">
-                                                    <div className="flex items-center justify-between">
-                                                        <span className="text-gray-600 text-sm">Current Price:</span>
-                                                        <span className="text-lg font-bold text-gray-800">
-                                                            {formatPrice(item.currentPrice)}
-                                                        </span>
+                                            {/* Card Content */}
+                                            <div className="flex flex-col flex-1 px-8 pb-8 pt-2">
+                                                <h3 className="text-xl font-bold text-[#24293c] mb-1">{item.name}</h3>
+                                                {item.originalPrice > item.currentPrice && (
+                                                    <div className="text-base text-gray-400 font-semibold line-through mb-1">
+                                                        {formatPrice(item.originalPrice)}
                                                     </div>
-                                                    {item.originalPrice > item.currentPrice && (
-                                                        <div className="flex items-center justify-between">
-                                                            <span className="text-gray-500 text-sm">Original:</span>
-                                                            <span className="text-sm text-gray-500 line-through">
-                                                                {formatPrice(item.originalPrice)}
-                                                            </span>
-                                                        </div>
-                                                    )}
-                                                    <div className="flex items-center justify-between">
-                                                        <span className="text-gray-600 text-sm">Points Required:</span>
-                                                        <span className="text-lg font-bold text-[#FF4F12]">
-                                                            ⭐ {item.points.toLocaleString()}
-                                                        </span>
-                                                    </div>
+                                                )}
+                                                <div className="text-2xl font-bold text-[#24293c] mb-2">{formatPrice(item.currentPrice)}</div>
+                                                {/* Redeem Row */}
+                                                <div className="flex items-center text-base mb-6">
+                                                    <span className="text-gray-500 mr-2">Redeem using</span>
+                                                    <span className="flex items-center text-[#000] font-bold">
+                                                        <img
+                                                            src="/redeemStar.png"
+                                                            alt="star"
+                                                            className="mr-1"
+                                                            style={{ width: 24, height: 24, display: 'inline-block' }}
+                                                        />
+                                                        {item.points.toLocaleString()}
+                                                    </span>
                                                 </div>
-
-                                                <Link
-                                                    to={`/promotion-detail/${item.id}`}
-                                                    className="w-full bg-[#24293c] text-white py-3 px-4 rounded-lg font-semibold hover:bg-[#1a1f2e] transition-colors duration-300 text-center block"
-                                                >
-                                                    View Details
-                                                </Link>
+                                                {/* View Details Button */}
+                                                <div className="flex justify-end mt-auto">
+                                                    <Link
+                                                        to={`/promotion-detail/${item.id}`}
+                                                        className="bg-[#24293c] text-white px-8 py-3 rounded-full font-semibold text-base hover:bg-[#1a1f2e] transition-colors duration-300 shadow-none"
+                                                        style={{minWidth: 170, textAlign: 'center'}}
+                                                    >
+                                                        View Details
+                                                    </Link>
+                                                </div>
                                             </div>
                                         </div>
                                     ))}
@@ -215,12 +198,12 @@ const Promotions = () => {
             {/* Tab Navigation */}
             <div className="w-full mt-10 px-4">
                 <div className="flex justify-center">
-                    <div className="flex bg-gray-100 rounded-full p-1 max-w-md">
+                    <div className="flex bg-gray-100 rounded-full w-4/5 mx-auto border-1" style={{padding: '4px'}}>
                         {["Promotions", "Redemptions", "Encash"].map((tab) => (
                             <button
                                 key={tab}
                                 onClick={() => setSelectedTab(tab)}
-                                className={`px-6 py-2 rounded-full font-medium transition-all duration-300 ${
+                                className={`flex-1 px-6 py-2 rounded-full font-medium transition-all duration-300 ${
                                     selectedTab === tab
                                         ? "bg-[#FF4F12] text-white shadow-md"
                                         : "text-gray-600 hover:text-gray-800"

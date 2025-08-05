@@ -143,7 +143,7 @@ const transformers = {
                 id: 1,
                 title: 'Hotels',
                 subtitle: 'Unlock Exclusive Stays',
-                image: hotel1,
+                image: hotel3,
                 category: 'Travel'
             },
             {
@@ -157,7 +157,7 @@ const transformers = {
                 id: 3,
                 title: 'Tickets',
                 subtitle: 'Entertainment & Events',
-                image: hotel3,
+                image: hotel1,
                 category: 'Entertainment'
             },
            

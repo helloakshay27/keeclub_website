@@ -179,7 +179,7 @@ const PromotionDetail = () => {
     const productSpecs = product?.specifications || {};
 
     return (
-        <div className="w-full min-h-screen bg-gray-50">
+        <div className="w-full min-h-screen">
             {/* Loading State */}
             {loading && (
                 <div className="flex items-center justify-center min-h-screen">
@@ -217,46 +217,16 @@ const PromotionDetail = () => {
             {/* Product Content */}
             {product && !loading && (
                 <div className="max-w-7xl mx-auto px-4 py-8 pt-30">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                        {/* Product Images */}
-                        <div className="space-y-4">
-                            <div className="relative">
-                                <img
-                                    src={currentImage}
-                                    alt={product.name}
-                                    className="w-full h-96 lg:h-[500px] object-cover rounded-lg"
-                                    onError={(e) => {
-                                        e.target.src = "/src/assets/Hotel/Card1.png";
-                                    }}
-                                />
-                                
-                                {safeImages.length > 1 && (
-                                    <>
-                                        <button
-                                            onClick={prevImage}
-                                            className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-70 transition-all"
-                                        >
-                                            <ChevronLeft size={20} />
-                                        </button>
-                                        <button
-                                            onClick={nextImage}
-                                            className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-70 transition-all"
-                                        >
-                                            <ChevronRight size={20} />
-                                        </button>
-                                    </>
-                                )}
-                            </div>
-
-                            {/* Thumbnail Images */}
+                    <div className="flex gap-12 items-start">
+                        {/* Thumbnail Images */}
                             {safeImages.length > 1 && (
-                                <div className="flex space-x-2">
+                                <div className="flex flex-col gap-2 mt-6">
                                     {safeImages.map((image, index) => (
                                         <img
                                             key={index}
                                             src={image}
                                             alt={`${product.name} ${index + 1}`}
-                                            className={`w-20 h-20 object-cover rounded-lg cursor-pointer border-2 transition-all ${
+                                            className={`w-[60px] h-[60px] object-contain rounded-lg cursor-pointer border-2 transition-all mx-auto ${
                                                 currentImageIndex === index ? 'border-[#FF4F12]' : 'border-gray-200'
                                             }`}
                                             onClick={() => setCurrentImageIndex(index)}
@@ -267,20 +237,51 @@ const PromotionDetail = () => {
                                     ))}
                                 </div>
                             )}
+                        {/* Product Images */}
+                        <div className="flex flex-col items-center w-full">
+                            <div className="relative w-full flex flex-col items-center">
+                                <img
+                                    src={currentImage}
+                                    alt={product.name}
+                                    className="w-[480px] h-[480px] object-contain bg-white rounded-lg border border-gray-200"
+                                    style={{ margin: '0 auto' }}
+                                    onError={(e) => {
+                                        e.target.src = "/src/assets/Hotel/Card1.png";
+                                    }}
+                                />
+                                {safeImages.length > 1 && (
+                                    <>
+                                        <button
+                                            onClick={prevImage}
+                                            className="absolute left-[-32px] top-1/2 transform -translate-y-1/2 bg-white border border-gray-300 text-gray-700 p-1 rounded-full shadow hover:bg-gray-100 transition-all"
+                                            style={{ zIndex: 2 }}
+                                        >
+                                            <ChevronLeft size={20} />
+                                        </button>
+                                        <button
+                                            onClick={nextImage}
+                                            className="absolute right-[-32px] top-1/2 transform -translate-y-1/2 bg-white border border-gray-300 text-gray-700 p-1 rounded-full shadow hover:bg-gray-100 transition-all"
+                                            style={{ zIndex: 2 }}
+                                        >
+                                            <ChevronRight size={20} />
+                                        </button>
+                                    </>
+                                )}
+                            </div>                            
                         </div>
 
                         {/* Product Details */}
-                        <div className="space-y-6">
+                        <div className="flex flex-col gap-4">
                             <div>
-                                <h1 className="text-3xl font-bold text-gray-800 mb-2">
+                                <h1 className="text-2xl font-bold text-gray-800 mb-1">
                                     {product.name}
                                 </h1>
-                                <p className="text-lg text-[#FF4F12] font-medium mb-4">
+                                <p className="text-base text-[#FF4F12] font-semibold mb-1">
                                     {product.title}
                                 </p>
-                                
+                                <span className="block text-xs text-gray-400 mb-2">{product.modelNumber}</span>
                                 {/* Rating */}
-                                <div className="flex items-center space-x-2 mb-4">
+                                <div className="flex items-center space-x-2 mb-2">
                                     <div className="flex items-center">
                                         {[...Array(5)].map((_, i) => (
                                             <Star
@@ -294,56 +295,64 @@ const PromotionDetail = () => {
                                             />
                                         ))}
                                     </div>
-                                    <span className="text-sm text-gray-600">
+                                    <span className="text-xs text-gray-600">
                                         {product.rating || 0} ({product.reviews || product.reviewsCount || 0} reviews)
                                     </span>
                                 </div>
                             </div>
 
                             {/* Pricing */}
-                            <div className="bg-white p-6 rounded-lg shadow-sm border">
-                                <div className="space-y-3">
-                                    <div className="flex items-center justify-between">
-                                        <span className="text-gray-600">Current MRP:</span>
-                                        <span className="text-2xl font-bold text-gray-800">
+                            <div className=" p-0 rounded-none shadow-none border-0 w-full">
+                                <div className="space-y-1">
+                                        <p className="text-gray-600 text-base">Current MRP</p>
+                                        <p className="text-xl font-bold text-gray-800">
                                             {formatPrice(product.currentPrice)}
-                                        </span>
-                                    </div>
+                                        </p>
+                                    <span className="block text-xs text-black mb-1" style={{fontSize: '16px'}}>*Inclusive of all taxes<br/>EMI from ₹ 5851</span>
                                     {product.originalPrice > product.currentPrice && (
                                         <div className="flex items-center justify-between">
-                                            <span className="text-gray-500">Original Price:</span>
-                                            <span className="text-lg text-gray-500 line-through">
+                                            <span className="text-gray-500 text-sm">Original Price</span>
+                                            <span className="text-base text-gray-500 line-through">
                                                 {formatPrice(product.originalPrice)}
                                             </span>
                                         </div>
                                     )}
-                                    <div className="flex items-center justify-between border-t pt-3">
-                                        <span className="text-gray-600">Redeemed Points:</span>
-                                        <span className="text-2xl font-bold text-[#FF4F12]">
-                                            ⭐ {(product.points || product.currentPrice || 0).toLocaleString()}
+                                    <div className="flex items-center justify-between mt-2">
+                                        <span className="text-gray-600 text-base">Tissot Watch</span>
+                                    </div>
+                                        <p className="text-gray-600 text-base">Redeem using</p>
+                                        <span className="text-xl font-bold text-[#FF4F12] flex items-center">
+                                            <img
+                                                src="/redeemStar.png"
+                                                alt="star"
+                                                className="mr-1"
+                                                style={{ width: 22, height: 22, display: 'inline-block' }}
+                                            />
+                                            {(product.points || product.currentPrice || 0).toLocaleString()}
                                         </span>
                                     </div>
-                                    <div className="flex items-center justify-between">
-                                        <span className="text-lg font-semibold">Total Payable:</span>
-                                        <span className="text-2xl font-bold text-green-600">
-                                            ₹ 0.00
-                                        </span>
-                                    </div>
-                                </div>
                             </div>
+
+                            {/* Claim Now Button */}
+                            <button
+                                onClick={handleClaimNow}
+                                disabled={!product.inStock}
+                                className="w-full bg-[#24293c] text-white py-3 px-6 rounded-md font-semibold text-base hover:bg-[#1a1f2e] transition-colors duration-300 disabled:bg-gray-400 disabled:cursor-not-allowed mt-4 mb-4"
+                            >
+                                {product.inStock ? 'Claim Now' : 'Out of Stock'}
+                            </button>
 
                             {/* Description */}
                             <div>
-                                <p className="text-gray-600 mb-4">{product.description}</p>
-                                <div className="text-sm text-gray-500">
-                                    <p>*Inclusive of all taxes</p>
+                                <p className="text-gray-600 mb-2">{product.description}</p>
+                                <div className="text-xs text-gray-500">
                                     <p>SKU: {product.sku || 'N/A'}</p>
                                     {product.warranty && <p>Warranty: {product.warranty}</p>}
                                 </div>
                             </div>
 
                             {/* Stock Status */}
-                            <div className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
+                            <div className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
                                 product.inStock 
                                     ? 'bg-green-100 text-green-800' 
                                     : 'bg-red-100 text-red-800'
@@ -351,34 +360,23 @@ const PromotionDetail = () => {
                                 {product.inStock ? '✓ In Stock' : '✗ Out of Stock'}
                             </div>
 
-                            {/* Action Buttons */}
-                            <div className="space-y-3">
-                                <button
-                                    onClick={handleClaimNow}
-                                    disabled={!product.inStock}
-                                    className="w-full bg-[#24293c] text-white py-4 px-6 rounded-lg font-semibold text-lg hover:bg-[#1a1f2e] transition-colors duration-300 disabled:bg-gray-400 disabled:cursor-not-allowed"
-                                >
-                                    {product.inStock ? 'Claim Now' : 'Out of Stock'}
-                                </button>
-                            </div>
-
                             {/* Features */}
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-2 gap-2 mt-2">
                                 <div className="flex items-center space-x-2">
-                                    <Shield className="text-[#FF4F12]" size={20} />
-                                    <span className="text-sm text-gray-600">Warranty Included</span>
+                                    <Shield className="text-[#FF4F12]" size={18} />
+                                    <span className="text-xs text-gray-600">Warranty Included</span>
                                 </div>
                                 <div className="flex items-center space-x-2">
-                                    <Truck className="text-[#FF4F12]" size={20} />
-                                    <span className="text-sm text-gray-600">Free Delivery</span>
+                                    <Truck className="text-[#FF4F12]" size={18} />
+                                    <span className="text-xs text-gray-600">Free Delivery</span>
                                 </div>
                                 <div className="flex items-center space-x-2">
-                                    <RotateCcw className="text-[#FF4F12]" size={20} />
-                                    <span className="text-sm text-gray-600">Easy Returns</span>
+                                    <RotateCcw className="text-[#FF4F12]" size={18} />
+                                    <span className="text-xs text-gray-600">Easy Returns</span>
                                 </div>
                                 <div className="flex items-center space-x-2">
-                                    <Star className="text-[#FF4F12]" size={20} />
-                                    <span className="text-sm text-gray-600">Authentic Product</span>
+                                    <Star className="text-[#FF4F12]" size={18} />
+                                    <span className="text-xs text-gray-600">Authentic Product</span>
                                 </div>
                             </div>
                         </div>
@@ -392,8 +390,8 @@ const PromotionDetail = () => {
                                     onClick={() => setActiveTab('specifications')}
                                     className={`px-8 py-4 font-medium text-base transition-all duration-300 relative ${
                                         activeTab === 'specifications'
-                                            ? 'text-[#FF4F12] bg-white'
-                                            : 'text-gray-600 hover:text-gray-800 bg-gray-50'
+                                            ? 'bg-white'
+                                            : 'text-gray-600 hover:text-gray-800 bg-white'
                                     }`}
                                     style={{
                                         borderBottom: activeTab === 'specifications' ? '3px solid #FF4F12' : '3px solid transparent'
@@ -405,8 +403,8 @@ const PromotionDetail = () => {
                                     onClick={() => setActiveTab('about')}
                                     className={`px-8 py-4 font-medium text-base transition-all duration-300 relative ${
                                         activeTab === 'about'
-                                            ? 'text-[#FF4F12] bg-white'
-                                            : 'text-gray-600 hover:text-gray-800 bg-gray-50'
+                                            ? ' bg-white'
+                                            : 'text-gray-600 hover:text-gray-800 bg-white'
                                     }`}
                                     style={{
                                         borderBottom: activeTab === 'about' ? '3px solid #FF4F12' : '3px solid transparent'
@@ -417,7 +415,7 @@ const PromotionDetail = () => {
                             </nav>
                         </div>
 
-                        <div className="p-8">
+                        <div className="p-8 bg-gray-50">
                             {/* Specifications Tab Content */}
                             {activeTab === 'specifications' && (
                                 <div className="animate-fadeIn">
@@ -455,15 +453,15 @@ const PromotionDetail = () => {
                                             <div className="space-y-4">
                                                 <div>
                                                     <h4 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-1">FEATURES</h4>
-                                                    <p className="text-sm text-gray-700">{productSpecs.movementFeatures || 'Chronograph and Date Display'}</p>
+                                                    <p className="text-lg font-medium text-gray-900">{productSpecs.movementFeatures || 'Chronograph and Date Display'}</p>
                                                 </div>
                                                 <div>
                                                     <h4 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-1">MOVEMENT</h4>
-                                                    <p className="text-sm text-gray-700">{productSpecs.movement || 'Quartz'}</p>
+                                                    <p className="text-lg font-medium text-gray-900">{productSpecs.movement || 'Quartz'}</p>
                                                 </div>
                                                 <div>
                                                     <h4 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-1">DIAL</h4>
-                                                    <p className="text-sm text-gray-700">{productSpecs.dial || 'N/A'}</p>
+                                                    <p className="text-lg font-medium text-gray-900">{productSpecs.dial || 'N/A'}</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -474,15 +472,15 @@ const PromotionDetail = () => {
                                             <div className="space-y-4">
                                                 <div>
                                                     <h4 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-1">CASE</h4>
-                                                    <p className="text-sm text-gray-700">{productSpecs.caseSize || '45'}</p>
+                                                    <p className="text-lg font-medium text-gray-900">{productSpecs.caseSize || '45'}</p>
                                                 </div>
                                                 <div>
                                                     <h4 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-1">CASE SHAPE</h4>
-                                                    <p className="text-sm text-gray-700">{productSpecs.caseShape || 'Round'}</p>
+                                                    <p className="text-lg font-medium text-gray-900">{productSpecs.caseShape || 'Round'}</p>
                                                 </div>
                                                 <div>
                                                     <h4 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-1">CASE MATERIAL</h4>
-                                                    <p className="text-sm text-gray-700">{productSpecs.caseMaterial || 'Stainless Steel'}</p>
+                                                    <p className="text-lg font-medium text-gray-900">{productSpecs.caseMaterial || 'Stainless Steel'}</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -493,7 +491,7 @@ const PromotionDetail = () => {
                                             <div className="space-y-4">
                                                 <div>
                                                     <h4 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-1">DIAL COLOUR</h4>
-                                                    <p className="text-sm text-gray-700">{productSpecs.dialColor || 'Black'}</p>
+                                                    <p className="text-lg font-medium text-gray-900">{productSpecs.dialColor || 'Black'}</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -504,11 +502,11 @@ const PromotionDetail = () => {
                                             <div className="space-y-4">
                                                 <div>
                                                     <h4 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-1">STRAP TYPE</h4>
-                                                    <p className="text-sm text-gray-700">{productSpecs.strapType || 'Silicone'}</p>
+                                                    <p className="text-lg font-medium text-gray-900">{productSpecs.strapType || 'Silicone'}</p>
                                                 </div>
                                                 <div>
                                                     <h4 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-1">STRAP COLOUR</h4>
-                                                    <p className="text-sm text-gray-700">{productSpecs.strapColor || 'Black'}</p>
+                                                    <p className="text-lg font-medium text-gray-900">{productSpecs.strapColor || 'Black'}</p>
                                                 </div>
                                             </div>
                                         </div>
