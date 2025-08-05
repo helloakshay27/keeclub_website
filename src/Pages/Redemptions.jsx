@@ -130,9 +130,9 @@ const Redemptions = () => {
     }
 
     return (
-        <div className="max-w-7xl mx-auto px-4 py-8">
+        <div className="max-w-7xl mx-auto px-4 pt-4 pb-8">
             {/* Additional Information */}
-            <div className="mt-4 text-center">
+            <div className=" text-center">
                 <h3 className="text-2xl font-bold text-gray-800 mb-4">How Redemptions Work</h3>
                 <div className="grid md:grid-cols-3 gap-8 mt-8">
                     <div className="text-center">

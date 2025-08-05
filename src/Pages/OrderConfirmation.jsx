@@ -150,7 +150,7 @@ const OrderConfirmation = () => {
         return (
             <div className="min-h-screen flex items-center justify-center">
                 <div className="text-center">
-                    <h2 className="text-2xl font-bold mb-4">No product selected</h2>
+                    <h2 className="text-2xl font-semibold mb-4">No product selected</h2>
                     <button 
                         onClick={() => navigate('/promotions')}
                         className="bg-[#fa4615] text-white px-6 py-2 rounded hover:bg-[#e03d12]"
@@ -179,7 +179,7 @@ const OrderConfirmation = () => {
         return (
             <div className="min-h-screen flex items-center justify-center">
                 <div className="text-center">
-                    <h2 className="text-2xl font-bold mb-4 text-red-600">Error</h2>
+                    <h2 className="text-2xl font-semibold mb-4 text-red-600">Error</h2>
                     <p className="text-gray-600 mb-4">{error || 'No delivery address found'}</p>
                     <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
                         <p className="text-sm text-yellow-800">
@@ -208,38 +208,33 @@ const OrderConfirmation = () => {
 
     return (
         <div className="min-h-screen bg-gray-50 py-12 pt-30">
-            <div className="max-w-6xl mx-auto px-4">
+            <div className="w-full px-4">
                 <div className="bg-white rounded-lg shadow-md p-8">
                     <div className="grid lg:grid-cols-2 gap-12">
                         {/* Left Column - Order Summary & Delivery Address */}
                         <div className="space-y-8">
                             {/* Order Summary */}
-                            <div>
-                                <h2 className="text-2xl font-bold mb-6">Order Summary</h2>
-                                <div className="flex items-start space-x-6">
-                                    <div className="w-32 h-32 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
-                                        <img 
-                                            src={product.images?.[0] || product.image || product.primary_image} 
-                                            alt={product.name}
-                                            className="w-full h-full object-cover"
-                                        />
-                                    </div>
-                                    <div className="flex-1">
-                                        <h3 className="text-xl font-bold mb-1">{product.brand || product.name}</h3>
-                                        <p className="text-[#fa4615] text-base mb-3">{product.title || product.description}</p>
-                                        <div className="text-sm text-gray-600 space-y-1">
-                                            <p>*Inclusive of all taxes</p>
-                                            <p>EMI available</p>
-                                            {product.sku && <p>SKU: {product.sku}</p>}
+                            <div className="bg-gray-50 rounded-lg p-6">
+                                <h2 className="text-2xl font-semibold mb-6">Order Summary</h2>
+                                    <div className="flex items-start space-x-6">
+                                        <div className="w-32 h-32 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
+                                            <img 
+                                                src={product.images?.[0] || product.image || product.primary_image} 
+                                                alt={product.name}
+                                                className="w-full h-full object-cover"
+                                            />
+                                        </div>
+                                        <div className="flex-1">
+                                            <h3 className="text-xl font-semibold mb-1">{product.brand || product.name}</h3>
+                                            <p className="text-[#fa4615] text-base mb-3">{product.title || product.description}</p>
                                         </div>
                                     </div>
-                                </div>
                             </div>
 
                             {/* Delivery Address */}
-                            <div>
+                            <div className="bg-gray-50 rounded-lg p-6">
                                 <div className="flex items-center justify-between mb-6">
-                                    <h2 className="text-2xl font-bold">Delivery Address</h2>
+                                    <h2 className="text-2xl font-semibold">Delivery Address</h2>
                                     {/* <button 
                                         onClick={() => setIsEditingAddress(!isEditingAddress)}
                                         className="text-gray-600 hover:text-gray-800"
@@ -309,11 +304,11 @@ const OrderConfirmation = () => {
                                             <div className="w-4 h-4 rounded-full bg-green-500 mt-1 mr-4"></div>
                                             <div>
                                                 <div className="flex items-center space-x-3 mb-2">
-                                                    <span className="font-bold text-lg">{deliveryAddress.name}</span>
+                                                    <span className="font-medium text-lg">{deliveryAddress.name}</span>
                                                     <span className="bg-gray-200 px-3 py-1 rounded-full text-sm font-medium capitalize">
                                                         {deliveryAddress.type}
                                                     </span>
-                                                    <span className="font-bold text-lg">{deliveryAddress.phone}</span>
+                                                    <span className="font-medium text-lg">{deliveryAddress.phone}</span>
                                                 </div>
                                                 {deliveryAddress.email && (
                                                     <div className="text-gray-600 text-sm mb-1">
@@ -332,10 +327,10 @@ const OrderConfirmation = () => {
                         </div>
 
                         {/* Right Column - Price Details & Redeem Points */}
-                        <div className="space-y-8">
+                        <div className="bg-gray-50 rounded-lg p-6 space-y-8">
                             {/* Price Details */}
                             <div>
-                                <h2 className="text-2xl font-bold mb-6">Price details</h2>
+                                <h2 className="text-2xl font-semibold mb-6">Price details</h2>
                                 <div className="space-y-4">
                                     <div className="flex justify-between text-lg">
                                         <span>Price (1 Item)</span>
@@ -344,7 +339,12 @@ const OrderConfirmation = () => {
                                     <div className="flex justify-between text-lg">
                                         <span> Points To Redeem</span>
                                         <span className="text-orange-500 flex items-center">
-                                            <span className="text-orange-500 mr-1">🔹</span>
+                                            <img
+                                src="/redeemStar.png"
+                                alt="star"
+                                className="mr-1"
+                                style={{ width: 24, height: 24, display: 'inline-block' }}
+                              />
                                             {(product.loyalty_points_required || product.points || 0).toLocaleString('en-IN')}
                                         </span>
                                     </div>
@@ -355,7 +355,7 @@ const OrderConfirmation = () => {
                                         </div>
                                     )}
                                     <hr className="border-gray-300" />
-                                    <div className="flex justify-between font-bold text-xl">
+                                    <div className="flex justify-between font-semibold text-xl">
                                         <span>Total Payable</span>
                                         <span className="text-green-600">₹ 0.00</span>
                                     </div>
@@ -364,11 +364,11 @@ const OrderConfirmation = () => {
 
                             {/* Redeem Your Points Section */}
                             {/* <div className="bg-gray-50 p-6 rounded-lg">
-                                <h3 className="text-xl font-bold mb-2">Redeem Your Points</h3>
+                                <h3 className="text-xl font-semibold mb-2">Redeem Your Points</h3>
                                 <p className="text-gray-600 mb-4">Choose from exclusive rewards curated just for you</p>
                                 <div className="mb-4">
                                     <span className="text-sm text-gray-600">Your Points Balance: </span>
-                                    <span className="text-orange-500 font-bold">
+                                    <span className="text-orange-500 font-semibold">
                                         🔹 You have {(product.loyalty_points_required || product.points || 65000).toLocaleString()} Points
                                     </span>
                                 </div>
