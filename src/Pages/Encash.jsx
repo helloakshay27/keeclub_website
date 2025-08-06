@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import promotionAPI from '../services/promotionAPI';
+import { toast } from 'react-toastify';
 
 const Encash = ({ memberData }) => {
     const [formData, setFormData] = useState({
@@ -38,31 +39,29 @@ const Encash = ({ memberData }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        
+        // Validation
         if (!formData.agreeToTerms) {
-            alert('Please agree to the Terms and Conditions');
+            toast.error('Please agree to the Terms and Conditions');
             return;
         }
         
         try {
             setLoading(true);
             
-            // Validate bank details first
-            const validationResponse = await promotionAPI.validateBankDetails({
-                accountNumber: formData.accountNumber,
-                ifscCode: formData.ifscCode
-            });
+            console.log('Submitting encash request with data:', formData);
+            console.log('Current member data:', memberData);
+            console.log('Auth token:', localStorage.getItem('authToken'));
             
-            if (!validationResponse.success) {
-                alert('Invalid bank details. Please check and try again.');
-                return;
-            }
-            
-            // Submit encash request
+            // Submit encash request directly to the API
             const response = await promotionAPI.submitEncashRequest(formData);
+            
+            console.log('API Response:', response);
             
             if (response.success) {
                 setSuccess(true);
-                alert('Encash request submitted successfully!');
+                toast.success('Encash request submitted successfully! You will receive confirmation shortly.');
+                
                 // Reset form
                 setFormData({
                     pointsToEncash: '',
@@ -75,13 +74,78 @@ const Encash = ({ memberData }) => {
                     agreeToTerms: false
                 });
             } else {
-                alert('Failed to submit encash request. Please try again.');
+                console.error('Encash request failed:', response);
+                toast.error(response.message || 'Failed to submit encash request. Please try again.');
             }
         } catch (error) {
             console.error('Error submitting encash request:', error);
-            alert('An error occurred. Please try again.');
+            console.error('Error details:', {
+                message: error.message,
+                stack: error.stack,
+                name: error.name
+            });
+            
+            // More detailed error message
+            let errorMessage = 'An error occurred while submitting your request.';
+            if (error.message) {
+                errorMessage += ` Error: ${error.message}`;
+            }
+            if (error.name === 'TypeError' && error.message.includes('fetch')) {
+                errorMessage += ' Please check your internet connection.';
+            }
+            
+            toast.error(errorMessage);
         } finally {
             setLoading(false);
+        }
+    };
+
+    // Test function to debug API connection
+    const testAPIConnection = async () => {
+        console.log('Testing API connection...');
+        console.log('Base URL:', 'https://piramal-loyalty-dev.lockated.com/');
+        console.log('Auth Token:', localStorage.getItem('authToken'));
+        console.log('Member Data:', memberData);
+        
+        try {
+            const testPayload = {
+                encash_request: {
+                    points_to_encash: 1000,
+                    facilitation_fee: 20,
+                    amount_payable: 980,
+                    account_number: "test123",
+                    ifsc_code: "TEST0000123",
+                    branch_name: "Test Branch",
+                    person_name: "Test User",
+                    terms_accepted: true
+                }
+            };
+            
+            console.log('Test payload:', testPayload);
+            
+            const response = await fetch('https://piramal-loyalty-dev.lockated.com/encash_requests.json', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                },
+                body: JSON.stringify(testPayload)
+            });
+            
+            console.log('Response status:', response.status);
+            console.log('Response headers:', response.headers);
+            
+            const data = await response.json();
+            console.log('Response data:', data);
+            
+            if (response.ok) {
+                toast.success(`Test API call successful! Status: ${response.status}. Check console for details.`);
+            } else {
+                toast.error(`Test API call failed! Status: ${response.status}. Check console for details.`);
+            }
+        } catch (error) {
+            console.error('Test API error:', error);
+            toast.error(`Test API failed: ${error.message}`);
         }
     };
 
@@ -90,19 +154,22 @@ const Encash = ({ memberData }) => {
             {/* Points Balance Header */}
             <div className="bg-orange-50 rounded-lg p-6 mb-8 flex items-center justify-between">
                 <h2 className="text-2xl font-bold text-gray-800">Encash Form</h2>
-                {currentPoints > 0 && (
-                    <div className="flex items-center space-x-2">
-                        <img
-                                src="/redeemStar.png"
-                                alt="star"
-                                className="mr-1"
-                                style={{ width: 24, height: 24, display: 'inline-block' }}
-                              />
-                        <span className="text-xl font-bold text-gray-800">
-                            {currentPoints.toLocaleString('en-IN')} Point
-                        </span>
-                    </div>
-                )}
+                <div className="flex items-center space-x-4">
+                    {currentPoints > 0 && (
+                        <div className="flex items-center space-x-2">
+                            <img
+                                    src="/redeemStar.png"
+                                    alt="star"
+                                    className="mr-1"
+                                    style={{ width: 24, height: 24, display: 'inline-block' }}
+                                  />
+                            <span className="text-xl font-bold text-gray-800">
+                                {currentPoints.toLocaleString('en-IN')} Point
+                            </span>
+                        </div>
+                    )}
+              
+                </div>
             </div>
 
             <form onSubmit={handleSubmit} className="bg-white rounded-lg border border-gray-200 p-8">

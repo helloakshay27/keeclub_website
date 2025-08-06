@@ -18,8 +18,8 @@ const API_CONFIG = {
         getRedemptions: '/products.json',
         getRedemptionCategories: '/categories.json',
         
-        // Encash (mock endpoints for now)
-        submitEncashRequest: '/encash/request',
+        // Encash (real endpoints)
+        submitEncashRequest: '/encash_requests.json',
         validateBankDetails: '/encash/validate-bank',
         
         // Hotels (using products filtered by category)
@@ -205,7 +205,8 @@ class PromotionAPI {
     // Generic API call method
     async makeAPICall(endpoint, options = {}) {
         const url = `${this.baseURL}${endpoint}`;
-        const headers = this.getHeaders();
+        const defaultHeaders = this.getHeaders();
+        const headers = { ...defaultHeaders, ...(options.headers || {}) };
         
         console.group(`🌐 API Call: ${options.method || 'GET'} ${endpoint}`);
         console.log('📤 Request URL:', url);
@@ -214,8 +215,8 @@ class PromotionAPI {
         
         try {
             const response = await fetch(url, {
-                headers: headers,
-                ...options
+                ...options,
+                headers: headers
             });
             
             const data = await response.json();
@@ -400,44 +401,75 @@ class PromotionAPI {
         }
     }
 
-    // Encash APIs - Mock endpoints for now
+    // Encash APIs - Real implementation
     async submitEncashRequest(encashData) {
         console.log('💰 Submitting Encash Request:', encashData);
         
+        // Validate required fields
+        if (!encashData.pointsToEncash) {
+            return {
+                success: false,
+                message: 'Points to encash is required',
+                data: null
+            };
+        }
+
+        if (!encashData.agreeToTerms) {
+            return {
+                success: false,
+                message: 'You must agree to terms and conditions',
+                data: null
+            };
+        }
+        
         const payload = {
-            user_id: localStorage.getItem('member_id') || 'user123',
-            points_to_encash: parseInt(encashData.pointsToEncash),
-            facilitation_fees: parseInt(encashData.facilitationFees),
-            amount_payable: parseInt(encashData.amountPayable),
-            bank_details: {
-                account_number: encashData.accountNumber,
-                ifsc_code: encashData.ifscCode,
-                branch_name: encashData.branchName,
-                account_holder_name: encashData.personName
-            },
-            agree_to_terms: encashData.agreeToTerms,
-            timestamp: new Date().toISOString()
+            encash_request: {
+                points_to_encash: parseInt(encashData.pointsToEncash) || 0,
+                facilitation_fee: parseInt(encashData.facilitationFees) || 0,
+                amount_payable: parseInt(encashData.amountPayable) || 0,
+                account_number: encashData.accountNumber || '',
+                ifsc_code: encashData.ifscCode || '',
+                branch_name: encashData.branchName || '',
+                person_name: encashData.personName || '',
+                terms_accepted: encashData.agreeToTerms
+            }
         };
         
+        console.log('💰 Payload being sent:', JSON.stringify(payload, null, 2));
+        
         try {
+            // Get auth token from localStorage
+            const authToken = localStorage.getItem('authToken');
+            console.log('💰 Auth token found:', !!authToken);
+            
+            if (!authToken || authToken === 'null') {
+                return {
+                    success: false,
+                    message: 'Authentication required. Please login again.',
+                    data: null
+                };
+            }
+
             const response = await this.makeAPICall(API_CONFIG.endpoints.submitEncashRequest, {
                 method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`
+                },
                 body: JSON.stringify(payload)
             });
             
+            console.log('💰 API Response received:', response);
             return response;
         } catch (error) {
-            // Mock success response for demo
-            console.log('💰 Encash endpoint not available, returning mock success');
+            console.error('💰 Error submitting encash request:', error);
+            
+            // Return structured error response instead of throwing
             return {
-                success: true,
-                data: {
-                    request_id: Math.floor(1000 + Math.random() * 9000),
-                    status: 'submitted',
-                    estimated_processing_time: '3-5 business days',
-                    message: 'Encash request submitted successfully'
-                },
-                message: 'Encash request submitted (mock response)'
+                success: false,
+                message: error.message || 'Network error occurred while submitting encash request',
+                data: null,
+                error: error
             };
         }
     }
