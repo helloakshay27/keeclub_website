@@ -22,7 +22,7 @@ const DashHeader = () => {
   const handleSignOut = () => {
     localStorage.clear();
     sessionStorage.clear();
-    navigate("/login");
+    navigate("/");
     toast.success("Signed out successfully");
   };
 
