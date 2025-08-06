@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import promotionAPI from '../services/promotionAPI';
 import { toast } from 'react-toastify';
 
 const Encash = ({ memberData }) => {
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         pointsToEncash: '',
         facilitationFees: '',
@@ -15,6 +17,25 @@ const Encash = ({ memberData }) => {
     });
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
+    const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+
+    // Check authentication on component mount
+    useEffect(() => {
+        const checkAuthentication = () => {
+            const authToken = localStorage.getItem('authToken');
+            const isLoggedIn = authToken && authToken !== 'null';
+            
+            if (!isLoggedIn) {
+                toast.error('Please login to access the Encash feature');
+                navigate('/login'); // Redirect to login page
+                return;
+            }
+            
+            setIsCheckingAuth(false);
+        };
+
+        checkAuthentication();
+    }, [navigate]);
 
     // Use currentPoints from memberData prop
     const currentPoints = memberData?.current_loyalty_points || 0;
@@ -39,6 +60,14 @@ const Encash = ({ memberData }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        
+        // Check authentication before submission
+        const authToken = localStorage.getItem('authToken');
+        if (!authToken || authToken === 'null') {
+            toast.error('Your session has expired. Please login again.');
+            navigate('/signin');
+            return;
+        }
         
         // Validation
         if (!formData.agreeToTerms) {
@@ -149,6 +178,18 @@ const Encash = ({ memberData }) => {
         }
     };
 
+    // Show loading while checking authentication
+    if (isCheckingAuth) {
+        return (
+            <div className="max-w-6xl mx-auto px-4 py-8">
+                <div className="flex justify-center items-center py-20">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
+                    <span className="ml-3 text-gray-600">Checking authentication...</span>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="max-w-6xl mx-auto px-4 py-8">
             {/* Points Balance Header */}
@@ -190,6 +231,7 @@ const Encash = ({ memberData }) => {
                                     onChange={(e) => handleInputChange('pointsToEncash', e.target.value)}
                                     className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                                     max={currentPoints}
+                                    required
                                 />
                             </div>
 
@@ -241,6 +283,7 @@ const Encash = ({ memberData }) => {
                                         value={formData.accountNumber}
                                         onChange={(e) => handleInputChange('accountNumber', e.target.value)}
                                         className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                                        required
                                     />
                                 </div>
                                 <div>
@@ -253,6 +296,7 @@ const Encash = ({ memberData }) => {
                                         value={formData.ifscCode}
                                         onChange={(e) => handleInputChange('ifscCode', e.target.value)}
                                         className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                                        required
                                     />
                                 </div>
                             </div>
@@ -268,6 +312,7 @@ const Encash = ({ memberData }) => {
                                     value={formData.branchName}
                                     onChange={(e) => handleInputChange('branchName', e.target.value)}
                                     className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                                    required
                                 />
                             </div>
 
@@ -282,6 +327,7 @@ const Encash = ({ memberData }) => {
                                     value={formData.personName}
                                     onChange={(e) => handleInputChange('personName', e.target.value)}
                                     className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                                    required
                                 />
                             </div>
 
@@ -293,6 +339,7 @@ const Encash = ({ memberData }) => {
                                     checked={formData.agreeToTerms}
                                     onChange={(e) => handleInputChange('agreeToTerms', e.target.checked)}
                                     className="w-4 h-4 text-orange-600 border-gray-300 rounded focus:ring-orange-500 mt-1"
+                                    required
                                 />
                                 <label htmlFor="agreeToTerms" className="text-sm text-gray-700">
                                     I agree to the{' '}
