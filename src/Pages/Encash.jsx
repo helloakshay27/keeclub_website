@@ -353,7 +353,7 @@ const Encash = ({ memberData }) => {
                 </div>
             </form>
             {/* Encash Requests List */}
-            {/* <div className="mt-12">
+            <div className="mt-12">
                 <h3 className="text-xl font-semibold text-gray-800 mb-4">Your Encash Requests</h3>
                 {encashLoading ? (
                     <div className="text-gray-500">Loading encash requests...</div>
@@ -385,7 +385,7 @@ const Encash = ({ memberData }) => {
                         ))}
                     </div>
                 )}
-            </div> */}
+            </div>
         </div>
     );
 };
