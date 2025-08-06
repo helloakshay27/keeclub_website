@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import promotionAPI from '../services/promotionAPI';
 
-const Encash = () => {
+const Encash = ({ memberData }) => {
     const [formData, setFormData] = useState({
         pointsToEncash: '',
         facilitationFees: '',
@@ -15,7 +15,8 @@ const Encash = () => {
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
 
-    const userPoints = 1000000; // 10,00,000 points
+    // Use currentPoints from memberData prop
+    const currentPoints = memberData?.current_loyalty_points || 0;
 
     const handleInputChange = (field, value) => {
         setFormData(prev => {
@@ -89,12 +90,19 @@ const Encash = () => {
             {/* Points Balance Header */}
             <div className="bg-orange-50 rounded-lg p-6 mb-8 flex items-center justify-between">
                 <h2 className="text-2xl font-bold text-gray-800">Encash Form</h2>
-                <div className="flex items-center space-x-2">
-                    <span className="text-orange-500 text-2xl">🔹</span>
-                    <span className="text-xl font-bold text-gray-800">
-                        {userPoints.toLocaleString()} Point
-                    </span>
-                </div>
+                {currentPoints > 0 && (
+                    <div className="flex items-center space-x-2">
+                        <img
+                                src="/redeemStar.png"
+                                alt="star"
+                                className="mr-1"
+                                style={{ width: 24, height: 24, display: 'inline-block' }}
+                              />
+                        <span className="text-xl font-bold text-gray-800">
+                            {currentPoints.toLocaleString('en-IN')} Point
+                        </span>
+                    </div>
+                )}
             </div>
 
             <form onSubmit={handleSubmit} className="bg-white rounded-lg border border-gray-200 p-8">
@@ -114,7 +122,7 @@ const Encash = () => {
                                     value={formData.pointsToEncash}
                                     onChange={(e) => handleInputChange('pointsToEncash', e.target.value)}
                                     className="w-full border border-gray-300 rounded-lg px-4 py-3 bg-gray-50 text-gray-500 cursor-not-allowed"
-                                    max={userPoints}
+                                    max={currentPoints}
                                     disabled
                                 />
                             </div>

@@ -13,6 +13,20 @@ const Promotions = () => {
     const [promotionData, setPromotionData] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [memberData, setMemberData] = useState(() => {
+        const stored = sessionStorage.getItem('memberData');
+        return stored ? JSON.parse(stored) : null;
+    });
+    // Listen for updates to sessionStorage (in case TransactionStatuss updates it)
+    useEffect(() => {
+        const handleStorage = (e) => {
+            if (e.key === 'memberData') {
+                setMemberData(e.newValue ? JSON.parse(e.newValue) : null);
+            }
+        };
+        window.addEventListener('storage', handleStorage);
+        return () => window.removeEventListener('storage', handleStorage);
+    }, []);
 
     const slide = {
         bgImage: RedemptionBg,
@@ -95,8 +109,11 @@ const Promotions = () => {
         switch(selectedTab) {
             case 'Redemption Market Place':
                 return <Redemptions />;
-            case 'Encash':
-                return <Encash />;
+            case 'Encash': {
+                const memberId = localStorage.getItem('member_id');
+                
+                return <Encash memberData={memberId ? memberData : []} />;
+            }
             default: // Promotions
                 return (
                     <>

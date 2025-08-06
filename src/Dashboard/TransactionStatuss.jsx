@@ -18,6 +18,29 @@ const TransactionStatuss = () => {
   const [selectedRedemptionTab, setSelectedRedemptionTab] = useState("Featured Products");
   const [memberData, setMemberData] = useState(null);
   const [loading, setLoading] = useState(true);
+  // Fetch member data from API on mount
+  useEffect(() => {
+    const fetchMemberData = async () => {
+      setLoading(true);
+      try {
+        // Replace with your actual API call for member data
+        const response = await promotionAPI.getMemberData?.();
+        if (response?.success) {
+          setMemberData(response.data);
+          sessionStorage.setItem('memberData', JSON.stringify(response.data));
+        } else {
+          setMemberData(null);
+          sessionStorage.removeItem('memberData');
+        }
+      } catch (err) {
+        setMemberData(null);
+        sessionStorage.removeItem('memberData');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchMemberData();
+  }, []);
   const [referrals, setReferrals] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [newReferral, setNewReferral] = useState({});
@@ -161,9 +184,15 @@ const TransactionStatuss = () => {
     try {
       const response = await axios.get(`${BASE_URL}loyalty/members/${id}.json`);
       setMemberData(response.data || null);
+      if (response.data) {
+        sessionStorage.setItem('memberData', JSON.stringify(response.data));
+      } else {
+        sessionStorage.removeItem('memberData');
+      }
     } catch (error) {
       console.error("Error fetching member data:", error);
       setMemberData(null);
+      sessionStorage.removeItem('memberData');
     } finally {
       setLoading(false);
     }
@@ -261,7 +290,13 @@ const TransactionStatuss = () => {
 
       if (response.status === 201) {
         await fetchReferrals();
-        await fetchMemberData();
+        const memberResp = await axios.get(`${BASE_URL}loyalty/members/${id}.json`);
+        setMemberData(memberResp.data || null);
+        if (memberResp.data) {
+          sessionStorage.setItem('memberData', JSON.stringify(memberResp.data));
+        } else {
+          sessionStorage.removeItem('memberData');
+        }
         setReferrals((prev) => [...prev, response.data.referral]);
         setNewReferral({});
         setShowModal(false);
@@ -270,6 +305,14 @@ const TransactionStatuss = () => {
         setIsSubmitted(false);
         toast.success("Referral added successfully!");
       }
+  // Always keep sessionStorage in sync if memberData changes (for any reason)
+  useEffect(() => {
+    if (memberData) {
+      sessionStorage.setItem('memberData', JSON.stringify(memberData));
+    } else {
+      sessionStorage.removeItem('memberData');
+    }
+  }, [memberData]);
     } catch (error) {
       if (error.response?.status === 422 && error.response?.data?.mobile) {
         toast.error(
@@ -876,7 +919,7 @@ const TransactionStatuss = () => {
 
           {selectedRedemptionTab === "Encash" && (
             <div className="px-4">
-              <Encash />
+              <Encash memberData={memberData} />
             </div>
           )}
         </div>
