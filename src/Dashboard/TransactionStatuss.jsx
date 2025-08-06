@@ -9,6 +9,7 @@ import { toast } from "react-toastify";
 import BASE_URL from "../Confi/baseurl";
 import Redemptions from "../Pages/Redemptions";
 import Encash from "../Pages/Encash";
+import EncashRequests from "../Component/EncashRequests";
 import promotionAPI from "../services/promotionAPI";
 import Card1 from "../assets/Hotel/Card1.png";
 
@@ -845,7 +846,7 @@ const TransactionStatuss = () => {
           <div className="w-full mb-6 px-4">
             <div className="flex justify-center">
               <div className="flex bg-gray-100 rounded-full w-4/5 mx-auto border border-gray-200" style={{padding: '4px'}}>
-                {["Featured Products", "Redemption Market Place", "Encash"].map((tab) => (
+                {["Featured Products", "Redemption Market Place", "Encash", "My Encash Requests"].map((tab) => (
                   <button
                     key={tab}
                     onClick={() => setSelectedRedemptionTab(tab)}
@@ -939,6 +940,12 @@ const TransactionStatuss = () => {
           {selectedRedemptionTab === "Encash" && (
             <div className="px-4">
               <Encash memberData={memberData} />
+            </div>
+          )}
+
+          {selectedRedemptionTab === "My Encash Requests" && (
+            <div className="px-4">
+              <EncashRequests memberData={memberData} />
             </div>
           )}
         </div>
@@ -1173,9 +1180,19 @@ const TransactionStatuss = () => {
                                     ₹{typeof item.totalPrice === 'number' ? item.totalPrice.toLocaleString('en-IN') : item.totalPrice}
                                   </p>
                                   {order.loyaltyPointsRedeemed > 0 && (
-                                    <p className="text-sm text-orange-600">
-                                      🔹 {typeof order.loyaltyPointsRedeemed === 'number' ? order.loyaltyPointsRedeemed.toLocaleString('en-IN') : order.loyaltyPointsRedeemed} points used
-                                    </p>
+                                    <div className=" flex text-sm text-orange-600">
+                                      <span className="flex items-center text-[#000]">
+                              <img
+                                src="/redeemStar.png"
+                                alt="star"
+                                className="mr-1"
+                                style={{ width: 24, height: 24, display: 'inline-block' }}
+                              />
+                              {typeof item.points === 'number' ? item.points.toLocaleString('en-IN') : item.points}
+                            </span>
+                                      
+                                       {typeof order.loyaltyPointsRedeemed === 'number' ? order.loyaltyPointsRedeemed.toLocaleString('en-IN') : order.loyaltyPointsRedeemed} points used
+                                    </div>
                                   )}
                                 </div>
                               </div>
