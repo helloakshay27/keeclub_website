@@ -471,6 +471,15 @@ const TransactionStatuss = () => {
         "Enjoy luxury gifting, access to high-touch brand experiences, and invitations to exclusive dinners, launches, or one-on-one sessions. You’ll also receive special recognition, early reservations, and priority access to limited-edition pieces.",
       ],
     },
+    {
+      tier: "Titanium",
+      title: "Titanium Tier",
+      points: [
+        "Titanium is our most exclusive tier, designed for those who truly live the brand.",
+        "Your rewards accelerate even further, and your service becomes white-glove. A dedicated concierge is available for personalized styling, private previews, and seamless support.",
+        "Enjoy luxury gifting, access to high-touch brand experiences, and invitations to exclusive dinners, launches, or one-on-one sessions. You’ll also receive special recognition, early reservations, and priority access to limited-edition pieces.",
+      ],
+    },
   ];
 
   // Find benefit for current tier
@@ -721,56 +730,101 @@ const TransactionStatuss = () => {
           </button>
         </div>
       </div>
-      {showTierBenefit && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-6">
-          {tierBenefits.map((tier, index) => (
-            <div
-              key={index}
-              className="relative w-full transition-all duration-300 ease-in-out border border-gray-300 rounded-lg bg-[#e8ecf7] p-6 sm:p-8 shadow-md overflow-hidden"
-            >
-              {/* Decorative Background Stars */}
-              <img
-                src={`/${tier.tier.toLowerCase()}-star.png`}
-                alt="star"
-                className="absolute w-8 h-8 top-4 left-4 opacity-20 pointer-events-none"
-              />
-              <img
-                src={`/${tier.tier.toLowerCase()}-star.png`}
-                alt="star"
-                className="absolute w-6 h-6 bottom-8 left-10 opacity-10 pointer-events-none"
-              />
-              <img
-                src={`/${tier.tier.toLowerCase()}-star.png`}
-                alt="star"
-                className="absolute w-24 h-24 top-3 right-3 opacity-100 pointer-events-none"
-              />
-              <img
-                src={`/${tier.tier.toLowerCase()}-star.png`}
-                alt="star"
-                className="absolute w-10 h-10 bottom-4 right-10 opacity-20 pointer-events-none"
-              />
-
-              {/* Benefit Card Content */}
-              <div className="relative z-10 pr-10">
-                {" "}
-                {/* Added padding to avoid overlap */}
-                <h3 className="text-xl font-semibold text-[#d6451d] mb-3">
-                  {tier.title}
-                </h3>
-                <ul className="list-disc list-outside px-6 text-gray-800 space-y-2 text-sm leading-relaxed">
-                  {tier.points.map((point, idx) => (
-                    <li key={idx} className="pl-1">
-                      {" "}
-                      {/* Added padding for better alignment */}
-                      {point}
-                    </li>
-                  ))}
-                </ul>
-              </div>
+{showTierBenefit && (
+  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-6">
+    {tierBenefits.map((tier, index) => {
+      const isLast = index === tierBenefits.length - 1;
+      const isOdd = tierBenefits.length % 2 === 1;
+      // If last and odd, insert an empty cell before the last card to center it
+      if (isLast && isOdd && tierBenefits.length > 1) {
+        return [
+          <div key="empty" className="hidden sm:block" />,
+          <div
+            key={index}
+            className="relative w-full transition-all duration-300 ease-in-out border border-gray-300 rounded-lg bg-[#e8ecf7] p-6 p-8 shadow-md overflow-hidden mx-auto"
+          >
+            {/* Decorative Background Stars */}
+            <img
+              src={`/${tier.tier.toLowerCase()}-star.png`}
+              alt="star"
+              className="absolute w-8 h-8 top-4 left-4 opacity-20 pointer-events-none"
+            />
+            <img
+              src={`/${tier.tier.toLowerCase()}-star.png`}
+              alt="star"
+              className="absolute w-6 h-6 bottom-8 left-10 opacity-10 pointer-events-none"
+            />
+            <img
+              src={`/${tier.tier.toLowerCase()}-star.png`}
+              alt="star"
+              className="absolute w-24 h-24 top-3 right-3 opacity-100 pointer-events-none"
+            />
+            <img
+              src={`/${tier.tier.toLowerCase()}-star.png`}
+              alt="star"
+              className="absolute w-10 h-10 bottom-4 right-10 opacity-20 pointer-events-none"
+            />
+            {/* Benefit Card Content */}
+            <div className="relative z-10 pr-10">
+              <h3 className="text-xl font-semibold text-[#d6451d] mb-3">
+                {tier.title}
+              </h3>
+              <ul className="list-disc list-outside px-6 text-gray-800 space-y-2 text-sm leading-relaxed">
+                {tier.points.map((point, idx) => (
+                  <li key={idx} className="pl-1">
+                    {point}
+                  </li>
+                ))}
+              </ul>
             </div>
-          ))}
+          </div>
+        ];
+      }
+      // Normal card
+      return (
+        <div
+          key={index}
+          className="relative w-full transition-all duration-300 ease-in-out border border-gray-300 rounded-lg bg-[#e8ecf7] p-6 p-8 shadow-md overflow-hidden"
+        >
+          {/* Decorative Background Stars */}
+          <img
+            src={`/${tier.tier.toLowerCase()}-star.png`}
+            alt="star"
+            className="absolute w-8 h-8 top-4 left-4 opacity-20 pointer-events-none"
+          />
+          <img
+            src={`/${tier.tier.toLowerCase()}-star.png`}
+            alt="star"
+            className="absolute w-6 h-6 bottom-8 left-10 opacity-10 pointer-events-none"
+          />
+          <img
+            src={`/${tier.tier.toLowerCase()}-star.png`}
+            alt="star"
+            className="absolute w-24 h-24 top-3 right-3 opacity-100 pointer-events-none"
+          />
+          <img
+            src={`/${tier.tier.toLowerCase()}-star.png`}
+            alt="star"
+            className="absolute w-10 h-10 bottom-4 right-10 opacity-20 pointer-events-none"
+          />
+          {/* Benefit Card Content */}
+          <div className="relative z-10 pr-10">
+            <h3 className="text-xl font-semibold text-[#d6451d] mb-3">
+              {tier.title}
+            </h3>
+            <ul className="list-disc list-outside px-6 text-gray-800 space-y-2 text-sm leading-relaxed">
+              {tier.points.map((point, idx) => (
+                <li key={idx} className="pl-1">
+                  {point}
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
-      )}
+      );
+    })}
+  </div>
+)}
 
       {/* Summary Cards */}
       <div className="flex justify-between gap-4 mt-6">
