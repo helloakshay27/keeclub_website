@@ -22,15 +22,16 @@ const Footer = () => {
             <ul className="space-y-3 text-sm">
               <li><a href="/events" className="hover:underline">Events & Workshops</a></li>
               <li><a href="/refer-now" className="hover:underline">Refer and Earn</a></li>
-              <li><a href="/blogs" className="hover:underline">Blogs</a></li>
+              {/* <li><a href="/blogs" className="hover:underline">Blogs</a></li> */}
             </ul>
           </div>
 
           <div className="space-y-2">
             <h4 className="text-sm text-gray-400">Information</h4>
             <ul className="space-y-3 text-sm">
-              <li><a href="#" className="hover:underline">Offers</a></li>
-              <li><a href="/projects" className="hover:underline">Projects</a></li>
+              {/* <li><a href="#" className="hover:underline">Offers</a></li>
+              <li><a href="/projects" className="hover:underline">Projects</a></li> */}
+              <li><a href="/promotions" className="hover:underline">Redemption</a></li>
             </ul>
           </div>
 

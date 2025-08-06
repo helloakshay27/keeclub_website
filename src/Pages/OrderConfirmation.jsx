@@ -272,19 +272,31 @@ const OrderConfirmation = () => {
                             {/* Order Summary */}
                             <div className="bg-gray-50 rounded-lg p-6">
                                 <h2 className="text-2xl font-semibold mb-6">Order Summary</h2>
-                                    <div className="flex items-start space-x-6">
-                                        <div className="w-32 h-32 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
-                                            <img 
-                                                src={product.images?.[0] || product.image || product.primary_image} 
-                                                alt={product.name}
-                                                className="w-full h-full object-cover"
-                                            />
+                                <div className="flex items-center gap-6">
+                                    <div className="w-32 h-32 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden border border-gray-200">
+                                        <img 
+                                            src={product.images?.[0] || product.image || product.primary_image} 
+                                            alt={product.name}
+                                            className="w-full h-full object-cover"
+                                        />
+                                    </div>
+                                    <div className="flex-1 flex flex-col justify-between h-full" >
+                                        <div>
+                                            <h3 className="text-xl font-semibold text-gray-900 mb-1">{product.brand || product.name}</h3>
+                                            <p className="text-[#fa4615] text-base mb-3 leading-tight">{product.title || product.description}</p>
                                         </div>
-                                        <div className="flex-1">
-                                            <h3 className="text-xl font-semibold mb-1">{product.brand || product.name}</h3>
-                                            <p className="text-[#fa4615] text-base mb-3">{product.title || product.description}</p>
+                                        <div className="flex flex-col gap-1 mt-2 w-2/4">
+                                            <div className="flex items-center justify-between text-sm text-gray-700 font-medium">
+                                                <span className="w-24 whitespace-nowrap">Quantity:</span>
+                                                <span className="ml-2 font-normal">1</span>
+                                            </div>
+                                            <div className="flex items-center justify-between text-sm text-gray-700 font-medium whitespace-nowrap">
+                                                <span className="w-24 whitespace-nowrap">Estimated delivery:</span>
+                                                <span className="ml-2 font-normal whitespace-nowrap">30-60 days</span>
+                                            </div>
                                         </div>
                                     </div>
+                                </div>
                             </div>
 
                             {/* Delivery Address */}
@@ -495,32 +507,42 @@ const OrderConfirmation = () => {
                                         </button>
                                     </div>
                                 ) : (
-                                    <div>
-                                        <div className="flex items-start mb-4">
-                                            <div className="w-4 h-4 rounded-full bg-green-500 mt-1 mr-4"></div>
-                                            <div>
-                                                <div className="flex items-center space-x-3 mb-2">
-                                                    <span className="font-medium text-lg">{deliveryAddress.name}</span>
-                                                    <span className="bg-gray-200 px-3 py-1 rounded-full text-sm font-medium capitalize">
-                                                        {deliveryAddress.type}
-                                                    </span>
-                                                    <span className="font-medium text-lg">{deliveryAddress.phone}</span>
-                                                </div>
-                                                {deliveryAddress.email && (
-                                                    <div className="text-gray-600 text-sm mb-1">
-                                                        Email: {deliveryAddress.email}
-                                                    </div>
-                                                )}
-                                            </div>
+                                    <div className="flex flex-col gap-2">
+                                        <div className="flex items-center gap-4 mb-2">
+                                            <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                                            <span className="font-semibold text-lg text-gray-900">{deliveryAddress.name}</span>
+                                            <span className="bg-gray-200 px-3 py-1 rounded-full text-xs font-medium capitalize">
+                                                {deliveryAddress.type}
+                                            </span>
+                                            <span className="font-semibold text-lg text-gray-900">{deliveryAddress.phone}</span>
                                         </div>
-                                        {console.log(deliveryAddress)
-                                        }
-                                        <p className="text-gray-700 ml-8 leading-relaxed">{deliveryAddress.address}</p>
-                                        {/* {deliveryAddress.id && (
-                                            <p className="text-xs text-gray-500 ml-8 mt-2">Address ID: {deliveryAddress.id}</p>
-                                        )} */}
+                                        {deliveryAddress.email && (
+                                            <div className="text-gray-600 text-xs ml-7">
+                                                {deliveryAddress.email}
+                                            </div>
+                                        )}
+                                        <div className="flex items-start ml-7">
+                                            <span className="text-gray-700 text-sm leading-relaxed">
+                                                {deliveryAddress.fullDetails
+                                                    ? [
+                                                        deliveryAddress.fullDetails.address,
+                                                        deliveryAddress.fullDetails.addressLineTwo,
+                                                        deliveryAddress.fullDetails.addressLineThree,
+                                                        deliveryAddress.fullDetails.city,
+                                                        deliveryAddress.fullDetails.state,
+                                                        deliveryAddress.fullDetails.pinCode
+                                                    ]
+                                                        .filter(Boolean)
+                                                        .join(', ')
+                                                    : deliveryAddress.address}
+                                            </span>
+                                        </div>
                                     </div>
                                 )}
+                            </div>
+                            <div className="flex align-items-end">
+                                <p style={{fontSize: '16px', fontWeight: '500', color: '#f9461c'}} > Note:</p>
+                                <span style={{fontSize: '14px', color: '#555', marginLeft: '4px', marginTop:'2px'}}>Estimated delivery timeline is 30–60 days from the order date. Delays may occur due to logistics or product availability.</span>
                             </div>
                         </div>
 

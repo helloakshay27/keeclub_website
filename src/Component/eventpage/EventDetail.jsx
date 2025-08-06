@@ -10,7 +10,12 @@ const EventDetail = () => {
   const { data } = useApiFetch(`${BASE_URL}events/${id}.json`, token);
 
   const event = data && data.id;
-  const images = [data?.attachfile];
+  // Use data.event_images if available, else fallback to single attachfile
+  const images = Array.isArray(data?.event_images) && data.event_images.length > 0
+    ? data.event_images
+    : data?.attachfile
+      ? [data.attachfile]
+      : [];
 
   if (!event)
     return (
@@ -35,41 +40,51 @@ const EventDetail = () => {
       </h2>
 
       <div
-        className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4"
-        style={{ position: "relative" }}
+        className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5"
       >
         {images?.map((img, i) => (
-          <div key={i} className="flex flex-col">
-            <img
-              src={img?.document_url}
-              alt={`Event ${i + 1}`}
-              className="w-full h-auto max-h-[320px] object-cover rounded shadow"
-            />
-            <p
-              className="text-sm text-gray-700"
-              style={{
-                position: "absolute",
-                bottom: "70px",
-                left: "10px",
-                backgroundColor: "rgba(255, 255, 255, 0.8)",
-                padding: "5px",
-                borderRadius: "5px",
-                fontWeight: "medium",
-              }}
-            >
-              {data.from_time
-                ? new Date(data.from_time).toLocaleDateString("en-US", {
-                    weekday: "short",
-                    day: "2-digit",
-                    month: "long",
-                  }) + " Onwards"
-                : ""}
-            </p>
-            <div className="mt-2">
-              <p className="text-xl font-medium ">
-                {data.event_name}
-              </p>
-              <p className="text-md ">{data.event_at}</p>
+          <div key={i} className="flex flex-col rounded-xl pb-4" style={{ borderBottom: '2px solid #fa4615' }}>
+            <div className="relative">
+              <img
+                src={img?.document_url}
+                alt={`Event ${i + 1}`}
+                className="w-full h-auto max-h-[220px] object-cover rounded shadow"
+              />
+              {/* From Time Overlay */}
+              {/* {data.from_time && (
+                <div
+                  className="absolute left-2 bottom-2 bg-white/50 px-3 py-1 rounded text-xs font-semibold text-gray-800 shadow"
+                  style={{ pointerEvents: 'none' }}
+                >
+                  {new Date(data.from_time).toLocaleDateString('en-US', {
+                    weekday: 'short',
+                    day: '2-digit',
+                    month: 'long',
+                  }) + ' Onwards'}
+                </div>
+              )} */}
+            </div>
+            {/* Event Info Below Each Image */}
+            <div className="mt-2 mx-2" >
+              <div className="text-base font-semibold text-gray-900">
+                {data.event_name || 'EVENT Name'}
+              </div>
+              <div
+                  className=" text-sm text-gray-600"
+                  style={{ pointerEvents: 'none' }}
+                >
+                  {new Date(data.from_time).toLocaleDateString('en-US', {
+                    weekday: 'short',
+                    day: '2-digit',
+                    month: 'long',
+                  }) + ' Onwards'}
+                </div>
+              <div className="text-sm text-gray-600">
+                {data.project_name || 'Location'}
+              </div>
+              <div className="text-xs text-gray-500 mt-1">
+                {data.event_type}
+              </div>
             </div>
           </div>
         ))}

@@ -236,8 +236,6 @@ const ProjectDetail = () => {
         toast.error(
           "This phone number has already been referred by this user for this project."
         );
-      } else {
-        toast.error("Failed to add referral. Please try again.");
       }
     }
   };
