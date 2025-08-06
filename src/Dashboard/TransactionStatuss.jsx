@@ -939,7 +939,7 @@ const TransactionStatuss = () => {
 
           {selectedRedemptionTab === "Encash" && (
             <div className="px-4">
-              <Encash memberData={memberData} />
+              <Encash memberData={memberData} setSelectedRedemptionTab={setSelectedRedemptionTab} />
             </div>
           )}
 
