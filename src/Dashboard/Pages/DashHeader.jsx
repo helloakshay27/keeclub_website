@@ -70,9 +70,9 @@ const DashHeader = () => {
                 <Link to="/blogs">BLOGS</Link>
               </li>
               <li className="hover:text-[#fa4615] cursor-pointer">OFFERS</li> */}
-              <li className="hover:text-[#fa4615] cursor-pointer">
+              {/* <li className="hover:text-[#fa4615] cursor-pointer">
                 <Link to="/projects">PROJECTS</Link>
-              </li>
+              </li> */}
             </ul>
           </nav>
 

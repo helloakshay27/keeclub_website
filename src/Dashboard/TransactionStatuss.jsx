@@ -16,7 +16,8 @@ import Card1 from "../assets/Hotel/Card1.png";
 const TransactionStatuss = () => {
   const { id } = useParams();
   const [selectedTab, setSelectedTab] = useState("referrals");
-  const [selectedRedemptionTab, setSelectedRedemptionTab] = useState("Featured Products");
+  const [selectedRedemptionTab, setSelectedRedemptionTab] =
+    useState("Featured Products");
   const [memberData, setMemberData] = useState(null);
   const [loading, setLoading] = useState(true);
   // Fetch member data from API on mount
@@ -28,14 +29,14 @@ const TransactionStatuss = () => {
         const response = await promotionAPI.getMemberData?.();
         if (response?.success) {
           setMemberData(response.data);
-          sessionStorage.setItem('memberData', JSON.stringify(response.data));
+          sessionStorage.setItem("memberData", JSON.stringify(response.data));
         } else {
           setMemberData(null);
-          sessionStorage.removeItem('memberData');
+          sessionStorage.removeItem("memberData");
         }
       } catch (err) {
         setMemberData(null);
-        sessionStorage.removeItem('memberData');
+        sessionStorage.removeItem("memberData");
       } finally {
         setLoading(false);
       }
@@ -64,10 +65,10 @@ const TransactionStatuss = () => {
   const [orders, setOrders] = useState([]);
   const [ordersLoading, setOrdersLoading] = useState(false);
   const [ordersError, setOrdersError] = useState(null);
-  const [selectedOrderFilter, setSelectedOrderFilter] = useState('All');
+  const [selectedOrderFilter, setSelectedOrderFilter] = useState("All");
 
   useEffect(() => {
-    if (selectedTab === 'orders') {
+    if (selectedTab === "orders") {
       fetchOrders();
     }
     // eslint-disable-next-line
@@ -77,10 +78,15 @@ const TransactionStatuss = () => {
     setOrdersLoading(true);
     setOrdersError(null);
     try {
-      const authToken = localStorage.getItem('authToken');
-      const memberId = localStorage.getItem('member_id');
-      if (!authToken || !memberId || authToken === 'null' || memberId === 'null') {
-        setOrdersError('Please login to access your orders.');
+      const authToken = localStorage.getItem("authToken");
+      const memberId = localStorage.getItem("member_id");
+      if (
+        !authToken ||
+        !memberId ||
+        authToken === "null" ||
+        memberId === "null"
+      ) {
+        setOrdersError("Please login to access your orders.");
         setOrders([]);
         setOrdersLoading(false);
         return;
@@ -89,11 +95,11 @@ const TransactionStatuss = () => {
       if (response.success) {
         setOrders(response.data.orders);
       } else {
-        setOrdersError('Failed to load orders');
+        setOrdersError("Failed to load orders");
         setOrders([]);
       }
     } catch (error) {
-      setOrdersError('Network error while loading orders');
+      setOrdersError("Network error while loading orders");
       setOrders([]);
     } finally {
       setOrdersLoading(false);
@@ -102,29 +108,34 @@ const TransactionStatuss = () => {
 
   const getOrderStatusBadge = (status) => {
     const statusConfig = {
-      pending: { color: 'bg-yellow-100 text-yellow-800', text: 'Pending' },
-      confirmed: { color: 'bg-blue-100 text-blue-800', text: 'Confirmed' },
-      processing: { color: 'bg-indigo-100 text-indigo-800', text: 'Processing' },
-      shipped: { color: 'bg-purple-100 text-purple-800', text: 'Shipped' },
-      delivered: { color: 'bg-green-100 text-green-800', text: 'Delivered' },
-      cancelled: { color: 'bg-red-100 text-red-800', text: 'Cancelled' },
-      refunded: { color: 'bg-gray-100 text-gray-800', text: 'Refunded' }
+      pending: { color: "bg-yellow-100 text-yellow-800", text: "Pending" },
+      confirmed: { color: "bg-blue-100 text-blue-800", text: "Confirmed" },
+      processing: {
+        color: "bg-indigo-100 text-indigo-800",
+        text: "Processing",
+      },
+      shipped: { color: "bg-purple-100 text-purple-800", text: "Shipped" },
+      delivered: { color: "bg-green-100 text-green-800", text: "Delivered" },
+      cancelled: { color: "bg-red-100 text-red-800", text: "Cancelled" },
+      refunded: { color: "bg-gray-100 text-gray-800", text: "Refunded" },
     };
     const config = statusConfig[status] || statusConfig.pending;
     return (
-      <span className={`px-3 py-1 rounded-full text-sm font-medium ${config.color}`}>
+      <span
+        className={`px-3 py-1 rounded-full text-sm font-medium ${config.color}`}
+      >
         {config.text}
       </span>
     );
   };
 
   const formatOrderDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('en-IN', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+    return new Date(dateString).toLocaleDateString("en-IN", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
   const getTabIndex = (key) => tabs.findIndex((tab) => tab.key === key);
@@ -145,7 +156,10 @@ const TransactionStatuss = () => {
 
   // Fetch promotions data when redemptions tab is selected
   useEffect(() => {
-    if (selectedTab === "redemptions" && selectedRedemptionTab === "Featured Products") {
+    if (
+      selectedTab === "redemptions" &&
+      selectedRedemptionTab === "Featured Products"
+    ) {
       fetchPromotions();
     }
   }, [selectedTab, selectedRedemptionTab]);
@@ -169,8 +183,8 @@ const TransactionStatuss = () => {
             image: Card1,
             category: "Luxury",
             featured: true,
-            description: "Exclusive of all taxes EMI from ₹ 5851"
-          }
+            description: "Exclusive of all taxes EMI from ₹ 5851",
+          },
         ]);
       }
     } catch (error) {
@@ -186,14 +200,14 @@ const TransactionStatuss = () => {
       const response = await axios.get(`${BASE_URL}loyalty/members/${id}.json`);
       setMemberData(response.data || null);
       if (response.data) {
-        sessionStorage.setItem('memberData', JSON.stringify(response.data));
+        sessionStorage.setItem("memberData", JSON.stringify(response.data));
       } else {
-        sessionStorage.removeItem('memberData');
+        sessionStorage.removeItem("memberData");
       }
     } catch (error) {
       console.error("Error fetching member data:", error);
       setMemberData(null);
-      sessionStorage.removeItem('memberData');
+      sessionStorage.removeItem("memberData");
     } finally {
       setLoading(false);
     }
@@ -206,7 +220,7 @@ const TransactionStatuss = () => {
   // Store user_id in localStorage when memberData is available
   useEffect(() => {
     if (memberData?.user_id) {
-      localStorage.setItem('userId', memberData.user_id);
+      localStorage.setItem("userId", memberData.user_id);
     }
   }, [memberData]);
 
@@ -274,9 +288,8 @@ const TransactionStatuss = () => {
         referral_mode: "Dashboard Static",
       };
 
-      console.log("memberData:-",memberData);
-      console.log("payload:-",payload);
-      
+      console.log("memberData:-", memberData);
+      console.log("payload:-", payload);
 
       const response = await axios.post(
         `${BASE_URL}add_referral.json?access_token=${token}`,
@@ -291,12 +304,14 @@ const TransactionStatuss = () => {
 
       if (response.status === 201) {
         await fetchReferrals();
-        const memberResp = await axios.get(`${BASE_URL}loyalty/members/${id}.json`);
+        const memberResp = await axios.get(
+          `${BASE_URL}loyalty/members/${id}.json`
+        );
         setMemberData(memberResp.data || null);
         if (memberResp.data) {
-          sessionStorage.setItem('memberData', JSON.stringify(memberResp.data));
+          sessionStorage.setItem("memberData", JSON.stringify(memberResp.data));
         } else {
-          sessionStorage.removeItem('memberData');
+          sessionStorage.removeItem("memberData");
         }
         setReferrals((prev) => [...prev, response.data.referral]);
         setNewReferral({});
@@ -306,14 +321,14 @@ const TransactionStatuss = () => {
         setIsSubmitted(false);
         toast.success("Referral added successfully!");
       }
-  // Always keep sessionStorage in sync if memberData changes (for any reason)
-  useEffect(() => {
-    if (memberData) {
-      sessionStorage.setItem('memberData', JSON.stringify(memberData));
-    } else {
-      sessionStorage.removeItem('memberData');
-    }
-  }, [memberData]);
+      // Always keep sessionStorage in sync if memberData changes (for any reason)
+      useEffect(() => {
+        if (memberData) {
+          sessionStorage.setItem("memberData", JSON.stringify(memberData));
+        } else {
+          sessionStorage.removeItem("memberData");
+        }
+      }, [memberData]);
     } catch (error) {
       if (error.response?.status === 422 && error.response?.data?.mobile) {
         toast.error(
@@ -351,13 +366,12 @@ const TransactionStatuss = () => {
     setTouched((prev) => ({ ...prev, [field]: true }));
   };
 
-
   // Format price as INR with Indian comma separators
   const formatPrice = (price) => {
-    if (typeof price !== 'number') return price;
-    return price.toLocaleString('en-IN', {
-      style: 'currency',
-      currency: 'INR',
+    if (typeof price !== "number") return price;
+    return price.toLocaleString("en-IN", {
+      style: "currency",
+      currency: "INR",
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     });
@@ -365,15 +379,15 @@ const TransactionStatuss = () => {
 
   // Format points with Indian comma separators
   const formatPoints = (points) => {
-    if (typeof points !== 'number') return points;
-    return points.toLocaleString('en-IN');
+    if (typeof points !== "number") return points;
+    return points.toLocaleString("en-IN");
   };
 
   // Helper function to truncate description
   const truncateDescription = (description, maxLength = 60) => {
-    if (!description) return '';
+    if (!description) return "";
     if (description.length <= maxLength) return description;
-    return description.substring(0, maxLength).trim() + '...';
+    return description.substring(0, maxLength).trim() + "...";
   };
 
   if (loading) return <div className="text-center mt-8">Loading...</div>;
@@ -382,12 +396,23 @@ const TransactionStatuss = () => {
       <div className="text-center mt-8 text-red-500">Member not found.</div>
     );
 
-
   const summaryCards = [
-    { title: "Earned Points", value: formatPoints(memberData?.earned_points || 0) },
-    { title: "Redeemed Points", value: formatPoints(memberData?.reedem_points || 0) },
-    { title: "Expired Points", value: formatPoints(memberData?.expired_points || 0) },
-    { title: "Balanced Points", value: formatPoints(memberData?.current_loyalty_points || 0) },
+    {
+      title: "Earned Points",
+      value: formatPoints(memberData?.earned_points || 0),
+    },
+    {
+      title: "Redeemed Points",
+      value: formatPoints(memberData?.reedem_points || 0),
+    },
+    {
+      title: "Expired Points",
+      value: formatPoints(memberData?.expired_points || 0),
+    },
+    {
+      title: "Balance Points",
+      value: formatPoints(memberData?.current_loyalty_points || 0),
+    },
   ];
 
   console.log("Member Data:", memberData);
@@ -495,16 +520,20 @@ const TransactionStatuss = () => {
   return (
     <div className="max-w-7xl mx-auto p-4">
       {/* Header */}
-      
+
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0">
         <p className="text-lg font-semibold">
-          {currentTier === "--"
-            ? "You are not in any tier"
-            : (
-              <span>
-                You are on the <span className="text-orange-500 font-bold capitalize">{currentTier}</span> Tier!
-              </span>
-            )}
+          {currentTier === "--" ? (
+            "You are not in any tier"
+          ) : (
+            <span>
+              You are on the{" "}
+              <span className="text-orange-500 font-bold capitalize">
+                {currentTier}
+              </span>{" "}
+              Tier!
+            </span>
+          )}
         </p>
 
         <button
@@ -517,7 +546,62 @@ const TransactionStatuss = () => {
       </div>
 
       {/* Progress Section */}
-      <div className="bg-white border border-gray-300 rounded-lg mt-4 p-5 sm:p-7 shadow-sm flex flex-col md:flex-row gap-9 md:gap-40 items-center">
+      <div className="bg-white border border-gray-300 rounded-lg mt-4 p-5 sm:p-7 shadow-sm flex flex-col md:flex-row gap-9 md:gap-40 items-center relative">
+        {/* Info Icon Top-Right */}
+        <div
+          className="absolute top-1 right-1 z-10 group"
+          style={{ minWidth: 40 }}
+        >
+          <div className="flex items-center relative">
+            {/* Info Icon */}
+            <span
+              className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-[#fa46151a] text-[#fa4615] cursor-pointer relative transition-all duration-4000"
+              style={{
+                boxShadow: "0 2px 8px 0 rgba(250,70,22,0.08)",
+                zIndex: 2,
+              }}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={2}
+                stroke="currentColor"
+                className="w-5 h-5"
+              >
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="#fa4615"
+                  strokeWidth="2"
+                  fill="#fff"
+                />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 16v-4m0-4h.01"
+                  stroke="#fa4615"
+                  strokeWidth="2"
+                />
+              </svg>
+            </span>
+            {/* Sliding Message */}
+            <span
+              className="absolute right-0 top-1/2 -translate-y-1/2 bg-white border border-[#fa4615] text-[#fa4615] px-3 py-1 rounded shadow text-xs font-semibold whitespace-nowrap
+        transition-all duration-500 ease-in-out
+        opacity-0 scale-x-0 group-hover:opacity-100 group-hover:scale-x-100 group-hover:right-9"
+              style={{
+                boxShadow: "0 2px 8px 0 rgba(250,70,22,0.08)",
+                transformOrigin: "right center",
+                willChange: "opacity, transform, right",
+                pointerEvents: "none",
+              }}
+            >
+              1 Point = 1 Rupee
+            </span>
+          </div>
+        </div>
         <div className="w-full md:w-[100%]">
           {(() => {
             const tierProgressData = memberData?.tier_progress;
@@ -575,7 +659,9 @@ const TransactionStatuss = () => {
                 <div className="flex justify-between text-sm text-gray-700 flex-wrap">
                   <div className="mb-3 font-medium text-gray-900 uppercase">
                     {pointsNeeded > 0
-                      ? `YOU NEED ${formatPoints(pointsNeeded)} POINTS TO REACH THE HIGHEST TIER!`
+                      ? `YOU NEED ${formatPoints(
+                          pointsNeeded
+                        )} POINTS TO REACH THE HIGHEST TIER!`
                       : "You are in the highest tier!"}
                   </div>
 
@@ -722,7 +808,7 @@ const TransactionStatuss = () => {
           })()}
         </div>
 
-       <div className="md:items-end">
+        <div className="md:items-end">
           <button
             onClick={() => setShowTierBenefit(!showTierBenefit)}
             className="bg-gray-900 text-white px-4 py-3 md:py-4 rounded text-sm font-medium uppercase whitespace-nowrap"
@@ -731,113 +817,115 @@ const TransactionStatuss = () => {
           </button>
         </div>
       </div>
-{showTierBenefit && (
-  <div className="mt-6">
-    <div
-      className={`flex flex-wrap gap-6 ${
-        tierBenefits.length % 2 === 1 ? "justify-start sm:justify-center" : "justify-start"
-      }`}
-    >
-      {tierBenefits.map((tier, index) => {
-        const isLast = index === tierBenefits.length - 1;
-        const isOdd = tierBenefits.length % 2 === 1;
-        // If last and odd, center the last card on desktop
-        const cardClass =
-          isLast && isOdd
-            ? "w-full sm:w-[48%] mx-auto"
-            : "w-full sm:w-[48%]";
-        return (
+      {showTierBenefit && (
+        <div className="mt-6">
           <div
-            key={index}
-            className={`relative transition-all duration-300 ease-in-out border border-gray-300 rounded-lg bg-[#e8ecf7] p-6 sm:p-8 shadow-md overflow-hidden ${cardClass}`}
+            className={`flex flex-wrap gap-6 ${
+              tierBenefits.length % 2 === 1
+                ? "justify-start sm:justify-center"
+                : "justify-start"
+            }`}
           >
-            {/* Decorative Background Stars */}
-            <img
-              src={`/${tier.tier.toLowerCase()}-star.png`}
-              alt="star"
-              className="absolute w-8 h-8 top-4 left-4 opacity-20 pointer-events-none"
-            />
-            <img
-              src={`/${tier.tier.toLowerCase()}-star.png`}
-              alt="star"
-              className="absolute w-6 h-6 bottom-8 left-10 opacity-10 pointer-events-none"
-            />
-            <img
-              src={`/${tier.tier.toLowerCase()}-star.png`}
-              alt="star"
-              className="absolute w-24 h-24 top-3 right-3 opacity-100 pointer-events-none"
-            />
-            <img
-              src={`/${tier.tier.toLowerCase()}-star.png`}
-              alt="star"
-              className="absolute w-10 h-10 bottom-4 right-10 opacity-20 pointer-events-none"
-            />
-            {/* Benefit Card Content */}
-            <div className="relative z-10 pr-10">
-              <h3 className="text-xl font-semibold text-[#d6451d] mb-3">
-                {tier.title}
-              </h3>
-              <ul className="list-disc list-outside px-6 text-gray-800 space-y-2 text-sm leading-relaxed">
-                {tier.points.map((point, idx) => (
-                  <li key={idx} className="pl-1">
-                    {point}
-                  </li>
-                ))}
-              </ul>
-            </div>
+            {tierBenefits.map((tier, index) => {
+              const isLast = index === tierBenefits.length - 1;
+              const isOdd = tierBenefits.length % 2 === 1;
+              // If last and odd, center the last card on desktop
+              const cardClass =
+                isLast && isOdd
+                  ? "w-full sm:w-[48%] mx-auto"
+                  : "w-full sm:w-[48%]";
+              return (
+                <div
+                  key={index}
+                  className={`relative transition-all duration-300 ease-in-out border border-gray-300 rounded-lg bg-[#e8ecf7] p-6 sm:p-8 shadow-md overflow-hidden ${cardClass}`}
+                >
+                  {/* Decorative Background Stars */}
+                  <img
+                    src={`/${tier.tier.toLowerCase()}-star.png`}
+                    alt="star"
+                    className="absolute w-8 h-8 top-4 left-4 opacity-20 pointer-events-none"
+                  />
+                  <img
+                    src={`/${tier.tier.toLowerCase()}-star.png`}
+                    alt="star"
+                    className="absolute w-6 h-6 bottom-8 left-10 opacity-10 pointer-events-none"
+                  />
+                  <img
+                    src={`/${tier.tier.toLowerCase()}-star.png`}
+                    alt="star"
+                    className="absolute w-24 h-24 top-3 right-3 opacity-100 pointer-events-none"
+                  />
+                  <img
+                    src={`/${tier.tier.toLowerCase()}-star.png`}
+                    alt="star"
+                    className="absolute w-10 h-10 bottom-4 right-10 opacity-20 pointer-events-none"
+                  />
+                  {/* Benefit Card Content */}
+                  <div className="relative z-10 pr-10">
+                    <h3 className="text-xl font-semibold text-[#d6451d] mb-3">
+                      {tier.title}
+                    </h3>
+                    <ul className="list-disc list-outside px-6 text-gray-800 space-y-2 text-sm leading-relaxed">
+                      {tier.points.map((point, idx) => (
+                        <li key={idx} className="pl-1">
+                          {point}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              );
+            })}
           </div>
-        );
-      })}
-    </div>
-  </div>
-)}
+        </div>
+      )}
 
       {/* Summary Cards */}
       <div className="flex justify-between gap-4 mt-6">
-  {summaryCards.map((item, index) => (
-    <div
-      key={index}
-      className="flex-1 rounded-lg p-4 flex items-center gap-4 border border-gray-200"
-    >
-      <div className="bg-[#FA46151A] rounded-full w-16 h-16 flex items-center justify-center">
-        <span className="text-3xl text-[#A78847]">✦</span>
+        {summaryCards.map((item, index) => (
+          <div
+            key={index}
+            className="flex-1 rounded-lg p-4 flex items-center gap-4 border border-gray-200"
+          >
+            <div className="bg-[#FA46151A] rounded-full w-16 h-16 flex items-center justify-center">
+              <span className="text-3xl text-[#A78847]">✦</span>
+            </div>
+            <div>
+              <div className="text-sm text-gray-500">{item.title}</div>
+              <div className="text-xl font-bold">{item.value} Points</div>
+            </div>
+          </div>
+        ))}
       </div>
-      <div>
-        <div className="text-sm text-gray-500">{item.title}</div>
-        <div className="text-xl font-bold">{item.value} Points</div>
-      </div>
-    </div>
-  ))}
-</div>
 
-<div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mt-10">
-  <div className="relative bg-[#FAFAFA] border border-gray-300 rounded-full flex p-2 w-full">
-    <div
-      className="absolute top-1 left-1 h-[90%] bg-[#F9461C] rounded-full transition-all duration-300"
-      style={{
-        width: `${100 / tabs.length}%`,
-        transform: `translateX(${getTabIndex(selectedTab) * 100}%)`,
-      }}
-    ></div>
-    {tabs.map((tab) => (
-      <button
-        key={tab.key}
-        onClick={() => setSelectedTab(tab.key)}
-        className={`relative z-10 cursor-pointer flex-1 py-2 text-sm sm:text-base rounded-full font-normal transition-colors duration-300 ${
-          selectedTab === tab.key ? "text-white" : "text-black"
-        }`}
-      >
-        {tab.label}
-      </button>
-    ))}
-  </div>
-  <button
-      onClick={() => setShowModal(true)}
-      className="text-sm font-semibold bg-orange-600 text-white px-4 py-2 rounded-md hover:bg-orange-700 transition-colors whitespace-nowrap"
-    >
-      REFER & EARN
-    </button>
-</div>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mt-10">
+        <div className="relative bg-[#FAFAFA] border border-gray-300 rounded-full flex p-2 w-full">
+          <div
+            className="absolute top-1 left-1 h-[90%] bg-[#F9461C] rounded-full transition-all duration-300"
+            style={{
+              width: `${100 / tabs.length}%`,
+              transform: `translateX(${getTabIndex(selectedTab) * 100}%)`,
+            }}
+          ></div>
+          {tabs.map((tab) => (
+            <button
+              key={tab.key}
+              onClick={() => setSelectedTab(tab.key)}
+              className={`relative z-10 cursor-pointer flex-1 py-2 text-sm sm:text-base rounded-full font-normal transition-colors duration-300 ${
+                selectedTab === tab.key ? "text-white" : "text-black"
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+        <button
+          onClick={() => setShowModal(true)}
+          className="text-sm font-semibold bg-orange-600 text-white px-4 py-2 rounded-md hover:bg-orange-700 transition-colors whitespace-nowrap"
+        >
+          REFER & EARN
+        </button>
+      </div>
 
       {/* My Redemption with Sub-tabs */}
       {selectedTab === "redemptions" && (
@@ -845,8 +933,16 @@ const TransactionStatuss = () => {
           {/* Sub-tab Navigation */}
           <div className="w-full mb-6 px-4">
             <div className="flex justify-center">
-              <div className="flex bg-gray-100 rounded-full w-4/5 mx-auto border border-gray-200" style={{padding: '4px'}}>
-                {["Featured Products", "Redemption Market Place", "Encash", "My Encash Requests"].map((tab) => (
+              <div
+                className="flex bg-gray-100 rounded-full w-4/5 mx-auto border border-gray-200"
+                style={{ padding: "4px" }}
+              >
+                {[
+                  "Featured Products",
+                  "Redemption Market Place",
+                  "Encash",
+                  "My Encash Requests",
+                ].map((tab) => (
                   <button
                     key={tab}
                     onClick={() => setSelectedRedemptionTab(tab)}
@@ -871,7 +967,9 @@ const TransactionStatuss = () => {
                 {promotionLoading ? (
                   <div className="flex justify-center items-center py-20">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#f9461c]"></div>
-                    <span className="ml-3 text-gray-600">Loading promotions...</span>
+                    <span className="ml-3 text-gray-600">
+                      Loading promotions...
+                    </span>
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -879,37 +977,64 @@ const TransactionStatuss = () => {
                       <div
                         key={item.id}
                         className="flex flex-col justify-between bg-white rounded-[12px] overflow-hidden min-h-[440px] transition-all duration-300"
-                        style={{ boxShadow: '0px 2px 4px 0px rgba(0, 0, 0, 0.15)', borderBottom: '2px solid #f9461c' }}
+                        style={{
+                          boxShadow: "0px 2px 4px 0px rgba(0, 0, 0, 0.15)",
+                          borderBottom: "2px solid #f9461c",
+                        }}
                       >
                         {/* Watch Image */}
-                        <div className="flex justify-center items-end bg-white pt-8 pb-2 px-4" style={{minHeight: 230}}>
+                        <div
+                          className="flex justify-center items-end bg-white pt-8 pb-2 px-4"
+                          style={{ minHeight: 230 }}
+                        >
                           <img
                             src={item.image}
                             alt={item.name}
                             className="h-56 object-contain"
-                            style={{maxHeight: '200px'}}
+                            style={{ maxHeight: "200px" }}
                           />
                         </div>
                         {/* Card Content */}
                         <div className="flex flex-col flex-1 px-8 pb-8 pt-2">
-                          <h3 className="text-xl font-bold mb-1">{item.name}</h3>
+                          <h3 className="text-xl font-bold mb-1">
+                            {item.name}
+                          </h3>
                           {item.originalPrice > item.currentPrice && (
-                            <div className="text-base text-gray-400 font-semibold line-through mb-1" >
+                            <div className="text-base text-gray-400 font-semibold line-through mb-1">
                               {formatPrice(item.originalPrice)}
                             </div>
                           )}
-                          <div className="text-2xl text-[#B3B3B3] font-bold mb-2" style={{textDecoration: 'line-through', fontSize:'16px'}}>{formatPrice(item.currentPrice)}</div>
+                          <div
+                            className="text-2xl text-[#B3B3B3] font-bold mb-2"
+                            style={{
+                              textDecoration: "line-through",
+                              fontSize: "16px",
+                            }}
+                          >
+                            {formatPrice(item.currentPrice)}
+                          </div>
                           {/* Redeem Row */}
-                          <div className=" mb-6" style={{fontSize:'14px', fontWeight:'bold'}}>
-                            <span className="text-gray-500 mr-2" >Redeem using</span>
+                          <div
+                            className=" mb-6"
+                            style={{ fontSize: "14px", fontWeight: "bold" }}
+                          >
+                            <span className="text-gray-500 mr-2">
+                              Redeem using
+                            </span>
                             <span className="flex items-center text-[#000]">
                               <img
                                 src="/redeemStar.png"
                                 alt="star"
                                 className="mr-1"
-                                style={{ width: 24, height: 24, display: 'inline-block' }}
+                                style={{
+                                  width: 24,
+                                  height: 24,
+                                  display: "inline-block",
+                                }}
                               />
-                              {typeof item.points === 'number' ? item.points.toLocaleString('en-IN') : item.points}
+                              {typeof item.points === "number"
+                                ? item.points.toLocaleString("en-IN")
+                                : item.points}
                             </span>
                           </div>
                           {/* View Details Button */}
@@ -917,7 +1042,7 @@ const TransactionStatuss = () => {
                             <Link
                               to={`/promotion-detail/${item.id}`}
                               className="bg-[#24293c] text-white px-8 py-3 rounded-full font-semibold text-base hover:bg-[#1a1f2e] transition-colors duration-300 shadow-none"
-                              style={{minWidth: 170, textAlign: 'center'}}
+                              style={{ minWidth: 170, textAlign: "center" }}
                             >
                               View Details
                             </Link>
@@ -939,7 +1064,10 @@ const TransactionStatuss = () => {
 
           {selectedRedemptionTab === "Encash" && (
             <div className="px-4">
-              <Encash memberData={memberData} setSelectedRedemptionTab={setSelectedRedemptionTab} />
+              <Encash
+                memberData={memberData}
+                setSelectedRedemptionTab={setSelectedRedemptionTab}
+              />
             </div>
           )}
 
@@ -969,13 +1097,13 @@ const TransactionStatuss = () => {
                   <tr key={index}>
                     <td className="px-4 py-3">
                       {item?.created_at
-                        ? new Date(item.created_at).toLocaleString('en-US', {
-                            year: 'numeric',
-                            month: 'short',
-                            day: 'numeric',
-                            hour: 'numeric',
-                            minute: '2-digit',
-                            hour12: true
+                        ? new Date(item.created_at).toLocaleString("en-US", {
+                            year: "numeric",
+                            month: "short",
+                            day: "numeric",
+                            hour: "numeric",
+                            minute: "2-digit",
+                            hour12: true,
                           })
                         : "--"}
                     </td>
@@ -983,7 +1111,11 @@ const TransactionStatuss = () => {
                       {item?.transaction_type || "--"}
                     </td>
                     <td className="px-4 py-3">{item?.remarks || "--"}</td>
-                    <td className="px-4 py-3">{typeof item?.points === 'number' ? formatPoints(item.points) : (item?.points || "--")}</td>
+                    <td className="px-4 py-3">
+                      {typeof item?.points === "number"
+                        ? formatPoints(item.points)
+                        : item?.points || "--"}
+                    </td>
                   </tr>
                 ))
               ) : (
@@ -1018,17 +1150,16 @@ const TransactionStatuss = () => {
               {referrals.length > 0 ? (
                 referrals.map((item, index) => (
                   <tr key={index}>
-                    {console.log("Referral Item:", item)
-                    }
+                    {console.log("Referral Item:", item)}
                     <td className="px-4 py-3">
                       {item?.created_at
-                        ? new Date(item.created_at).toLocaleString('en-US', {
-                            year: 'numeric',
-                            month: 'short',
-                            day: 'numeric',
-                            hour: 'numeric',
-                            minute: '2-digit',
-                            hour12: true
+                        ? new Date(item.created_at).toLocaleString("en-US", {
+                            year: "numeric",
+                            month: "short",
+                            day: "numeric",
+                            hour: "numeric",
+                            minute: "2-digit",
+                            hour12: true,
                           })
                         : "--"}
                     </td>
@@ -1058,22 +1189,39 @@ const TransactionStatuss = () => {
         <div className="mt-6">
           <div className="max-w-6xl mx-auto px-4">
             <div className="mb-8">
-              <h1 className="text-3xl font-bold text-gray-800 mb-2">My Orders</h1>
-              <p className="text-gray-600">Track and manage your recent orders</p>
+              <h1 className="text-3xl font-bold text-gray-800 mb-2">
+                My Orders
+              </h1>
+              <p className="text-gray-600">
+                Track and manage your recent orders
+              </p>
             </div>
             <div className="bg-white rounded-lg shadow-sm mb-6">
               <div className="flex flex-wrap border-b">
-                {['All', 'Pending', 'Confirmed', 'Shipped', 'Delivered', 'Cancelled'].map((filter) => (
+                {[
+                  "All",
+                  "Pending",
+                  "Confirmed",
+                  "Shipped",
+                  "Delivered",
+                  "Cancelled",
+                ].map((filter) => (
                   <button
                     key={filter}
                     onClick={() => setSelectedOrderFilter(filter)}
                     className={`px-6 py-4 text-sm font-medium border-b-2 transition-colors ${
                       selectedOrderFilter === filter
-                        ? 'border-[#fa4615] text-[#fa4615]'
-                        : 'border-transparent text-gray-600 hover:text-gray-800'
+                        ? "border-[#fa4615] text-[#fa4615]"
+                        : "border-transparent text-gray-600 hover:text-gray-800"
                     }`}
                   >
-                    {filter} ({filter === 'All' ? orders.length : orders.filter(o => o.status.toLowerCase() === filter.toLowerCase()).length})
+                    {filter} (
+                    {filter === "All"
+                      ? orders.length
+                      : orders.filter(
+                          (o) => o.status.toLowerCase() === filter.toLowerCase()
+                        ).length}
+                    )
                   </button>
                 ))}
               </div>
@@ -1088,9 +1236,11 @@ const TransactionStatuss = () => {
             ) : ordersError ? (
               <div className="flex items-center justify-center min-h-96">
                 <div className="text-center">
-                  <h2 className="text-2xl font-bold text-red-600 mb-4">Error</h2>
+                  <h2 className="text-2xl font-bold text-red-600 mb-4">
+                    Error
+                  </h2>
                   <p className="text-gray-600 mb-4">{ordersError}</p>
-                  <button 
+                  <button
                     onClick={fetchOrders}
                     className="bg-[#fa4615] text-white px-6 py-2 rounded hover:bg-[#e63e0f]"
                   >
@@ -1100,22 +1250,38 @@ const TransactionStatuss = () => {
               </div>
             ) : (
               (() => {
-                const filteredOrders = orders.filter(order => {
-                  if (selectedOrderFilter === 'All') return true;
-                  return order.status.toLowerCase() === selectedOrderFilter.toLowerCase();
+                const filteredOrders = orders.filter((order) => {
+                  if (selectedOrderFilter === "All") return true;
+                  return (
+                    order.status.toLowerCase() ===
+                    selectedOrderFilter.toLowerCase()
+                  );
                 });
                 if (filteredOrders.length === 0) {
                   return (
                     <div className="bg-white rounded-lg shadow-sm p-8 text-center">
                       <span className="mx-auto h-16 w-16 text-gray-400 mb-4 flex items-center justify-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-16 h-16">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M3 3v1.5A2.25 2.25 0 005.25 6.75h13.5A2.25 2.25 0 0021 4.5V3M3 3l1.5 18.75A2.25 2.25 0 006.75 24h10.5a2.25 2.25 0 002.25-2.25L21 3M3 3h18" />
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          strokeWidth={1.5}
+                          stroke="currentColor"
+                          className="w-16 h-16"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M3 3v1.5A2.25 2.25 0 005.25 6.75h13.5A2.25 2.25 0 0021 4.5V3M3 3l1.5 18.75A2.25 2.25 0 006.75 24h10.5a2.25 2.25 0 002.25-2.25L21 3M3 3h18"
+                          />
                         </svg>
                       </span>
-                      <h3 className="text-lg font-medium text-gray-800 mb-2">No orders found</h3>
+                      <h3 className="text-lg font-medium text-gray-800 mb-2">
+                        No orders found
+                      </h3>
                       <p className="text-gray-600 mb-6">
-                        {selectedOrderFilter === 'All' 
-                          ? "You haven't placed any orders yet." 
+                        {selectedOrderFilter === "All"
+                          ? "You haven't placed any orders yet."
                           : `No ${selectedOrderFilter.toLowerCase()} orders found.`}
                       </p>
                     </div>
@@ -1124,7 +1290,10 @@ const TransactionStatuss = () => {
                 return (
                   <div className="space-y-4">
                     {filteredOrders.map((order) => (
-                      <div key={order.id} className="bg-white rounded-lg shadow-sm overflow-hidden">
+                      <div
+                        key={order.id}
+                        className="bg-white rounded-lg shadow-sm overflow-hidden"
+                      >
                         <div className="p-6">
                           <div className="flex flex-col lg:flex-row lg:items-center justify-between mb-4">
                             <div className="flex items-center space-x-4 mb-4 lg:mb-0">
@@ -1135,13 +1304,40 @@ const TransactionStatuss = () => {
                                 <div className="flex items-center space-x-4 text-sm text-gray-600 mt-1">
                                   <span className="flex items-center">
                                     {/* Calendar icon */}
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 mr-1"><path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3.75 7.5h16.5M4.5 21h15a2.25 2.25 0 002.25-2.25V7.5a2.25 2.25 0 00-2.25-2.25h-15A2.25 2.25 0 002.25 7.5v11.25A2.25 2.25 0 004.5 21z" /></svg>
+                                    <svg
+                                      xmlns="http://www.w3.org/2000/svg"
+                                      fill="none"
+                                      viewBox="0 0 24 24"
+                                      strokeWidth={1.5}
+                                      stroke="currentColor"
+                                      className="w-4 h-4 mr-1"
+                                    >
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        d="M6.75 3v2.25M17.25 3v2.25M3.75 7.5h16.5M4.5 21h15a2.25 2.25 0 002.25-2.25V7.5a2.25 2.25 0 00-2.25-2.25h-15A2.25 2.25 0 002.25 7.5v11.25A2.25 2.25 0 004.5 21z"
+                                      />
+                                    </svg>
                                     {formatOrderDate(order.createdAt)}
                                   </span>
                                   <span className="flex items-center">
                                     {/* Package icon */}
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 mr-1"><path strokeLinecap="round" strokeLinejoin="round" d="M21 12.75V6.375a2.25 2.25 0 00-1.072-1.91l-6.75-4.05a2.25 2.25 0 00-2.356 0l-6.75 4.05A2.25 2.25 0 003 6.375V12.75m18 0v6.375a2.25 2.25 0 01-1.072 1.91l-6.75 4.05a2.25 2.25 0 01-2.356 0l-6.75-4.05A2.25 2.25 0 013 19.125V12.75m18 0l-9 5.4m0 0l-9-5.4" /></svg>
-                                    {order.totalItems} item{order.totalItems > 1 ? 's' : ''}
+                                    <svg
+                                      xmlns="http://www.w3.org/2000/svg"
+                                      fill="none"
+                                      viewBox="0 0 24 24"
+                                      strokeWidth={1.5}
+                                      stroke="currentColor"
+                                      className="w-4 h-4 mr-1"
+                                    >
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        d="M21 12.75V6.375a2.25 2.25 0 00-1.072-1.91l-6.75-4.05a2.25 2.25 0 00-2.356 0l-6.75 4.05A2.25 2.25 0 003 6.375V12.75m18 0v6.375a2.25 2.25 0 01-1.072 1.91l-6.75 4.05a2.25 2.25 0 01-2.356 0l-6.75-4.05A2.25 2.25 0 013 19.125V12.75m18 0l-9 5.4m0 0l-9-5.4"
+                                      />
+                                    </svg>
+                                    {order.totalItems} item
+                                    {order.totalItems > 1 ? "s" : ""}
                                   </span>
                                 </div>
                               </div>
@@ -1152,7 +1348,10 @@ const TransactionStatuss = () => {
                           </div>
                           <div className="space-y-4">
                             {order.orderItems.map((item) => (
-                              <div key={item.id} className="flex items-start space-x-4 p-4 bg-gray-50 rounded-lg">
+                              <div
+                                key={item.id}
+                                className="flex items-start space-x-4 p-4 bg-gray-50 rounded-lg"
+                              >
                                 <div className="w-16 h-16 bg-gray-200 rounded-lg overflow-hidden flex-shrink-0">
                                   {item.product?.primaryImage ? (
                                     <img
@@ -1162,7 +1361,20 @@ const TransactionStatuss = () => {
                                     />
                                   ) : (
                                     <div className="w-full h-full flex items-center justify-center">
-                                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-gray-400"><path strokeLinecap="round" strokeLinejoin="round" d="M21 12.75V6.375a2.25 2.25 0 00-1.072-1.91l-6.75-4.05a2.25 2.25 0 00-2.356 0l-6.75 4.05A2.25 2.25 0 003 6.375V12.75m18 0v6.375a2.25 2.25 0 01-1.072 1.91l-6.75 4.05a2.25 2.25 0 01-2.356 0l-6.75-4.05A2.25 2.25 0 013 19.125V12.75m18 0l-9 5.4m0 0l-9-5.4" /></svg>
+                                      <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        strokeWidth={1.5}
+                                        stroke="currentColor"
+                                        className="w-6 h-6 text-gray-400"
+                                      >
+                                        <path
+                                          strokeLinecap="round"
+                                          strokeLinejoin="round"
+                                          d="M21 12.75V6.375a2.25 2.25 0 00-1.072-1.91l-6.75-4.05a2.25 2.25 0 00-2.356 0l-6.75 4.05A2.25 2.25 0 003 6.375V12.75m18 0v6.375a2.25 2.25 0 01-1.072 1.91l-6.75 4.05a2.25 2.25 0 01-2.356 0l-6.75-4.05A2.25 2.25 0 013 19.125V12.75m18 0l-9 5.4m0 0l-9-5.4"
+                                        />
+                                      </svg>
                                     </div>
                                   )}
                                 </div>
@@ -1171,27 +1383,45 @@ const TransactionStatuss = () => {
                                     {item.product?.name || item.itemName}
                                   </h4>
                                   {item.product?.sku && (
-                                    <p className="text-sm text-gray-600">SKU: {item.product.sku}</p>
+                                    <p className="text-sm text-gray-600">
+                                      SKU: {item.product.sku}
+                                    </p>
                                   )}
-                                  <p className="text-sm text-gray-600">Quantity: {item.quantity}</p>
+                                  <p className="text-sm text-gray-600">
+                                    Quantity: {item.quantity}
+                                  </p>
                                 </div>
                                 <div className="text-right">
                                   <p className="font-medium text-gray-800">
-                                    ₹{typeof item.totalPrice === 'number' ? item.totalPrice.toLocaleString('en-IN') : item.totalPrice}
+                                    ₹
+                                    {typeof item.totalPrice === "number"
+                                      ? item.totalPrice.toLocaleString("en-IN")
+                                      : item.totalPrice}
                                   </p>
                                   {order.loyaltyPointsRedeemed > 0 && (
                                     <div className=" flex text-sm text-orange-600">
                                       <span className="flex items-center text-[#000]">
-                              <img
-                                src="/redeemStar.png"
-                                alt="star"
-                                className="mr-1"
-                                style={{ width: 24, height: 24, display: 'inline-block' }}
-                              />
-                              {typeof item.points === 'number' ? item.points.toLocaleString('en-IN') : item.points}
-                            </span>
-                                      
-                                       {typeof order.loyaltyPointsRedeemed === 'number' ? order.loyaltyPointsRedeemed.toLocaleString('en-IN') : order.loyaltyPointsRedeemed} points used
+                                        <img
+                                          src="/redeemStar.png"
+                                          alt="star"
+                                          className="mr-1"
+                                          style={{
+                                            width: 24,
+                                            height: 24,
+                                            display: "inline-block",
+                                          }}
+                                        />
+                                        {typeof item.points === "number"
+                                          ? item.points.toLocaleString("en-IN")
+                                          : item.points}
+                                      </span>
+                                      {typeof order.loyaltyPointsRedeemed ===
+                                      "number"
+                                        ? order.loyaltyPointsRedeemed.toLocaleString(
+                                            "en-IN"
+                                          )
+                                        : order.loyaltyPointsRedeemed}{" "}
+                                      points used
                                     </div>
                                   )}
                                 </div>
@@ -1203,24 +1433,67 @@ const TransactionStatuss = () => {
                               <div className="flex items-center space-x-4 mb-4 lg:mb-0">
                                 {order.shippingAddress && (
                                   <div className="flex items-center text-sm text-gray-600">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 mr-1"><path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" /></svg>
+                                    <svg
+                                      xmlns="http://www.w3.org/2000/svg"
+                                      fill="none"
+                                      viewBox="0 0 24 24"
+                                      strokeWidth={1.5}
+                                      stroke="currentColor"
+                                      className="w-4 h-4 mr-1"
+                                    >
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"
+                                      />
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"
+                                      />
+                                    </svg>
                                     <span>
-                                      {order.shippingAddress.city}, {order.shippingAddress.state}
+                                      {order.shippingAddress.city},{" "}
+                                      {order.shippingAddress.state}
                                     </span>
                                   </div>
                                 )}
                                 <div className="flex items-center text-sm text-gray-600">
-                                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 mr-1"><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v7.125A2.625 2.625 0 007.125 19.5h9.75a2.625 2.625 0 002.625-2.625V9.75" /></svg>
-                                  <span className="capitalize">{order.paymentStatus}</span>
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    strokeWidth={1.5}
+                                    stroke="currentColor"
+                                    className="w-4 h-4 mr-1"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v7.125A2.625 2.625 0 007.125 19.5h9.75a2.625 2.625 0 002.625-2.625V9.75"
+                                    />
+                                  </svg>
+                                  <span className="capitalize">
+                                    {order.paymentStatus}
+                                  </span>
                                 </div>
                               </div>
                               <div className="text-right">
                                 <p className="text-lg font-semibold text-gray-800">
-                                  Total: ₹{typeof order.totalAmount === 'number' ? order.totalAmount.toLocaleString('en-IN') : order.totalAmount}
+                                  Total: ₹
+                                  {typeof order.totalAmount === "number"
+                                    ? order.totalAmount.toLocaleString("en-IN")
+                                    : order.totalAmount}
                                 </p>
                                 {order.loyaltyDiscountAmount > 0 && (
                                   <p className="text-sm text-green-600">
-                                    Saved: ₹{typeof order.loyaltyDiscountAmount === 'number' ? order.loyaltyDiscountAmount.toLocaleString('en-IN') : order.loyaltyDiscountAmount}
+                                    Saved: ₹
+                                    {typeof order.loyaltyDiscountAmount ===
+                                    "number"
+                                      ? order.loyaltyDiscountAmount.toLocaleString(
+                                          "en-IN"
+                                        )
+                                      : order.loyaltyDiscountAmount}
                                   </p>
                                 )}
                               </div>

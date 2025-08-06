@@ -860,87 +860,98 @@ const ProjectDetail = () => {
 
       {showModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white p-6 rounded shadow-md w-full max-w-md relative">
+          <div className="bg-white p-8 rounded shadow-md w-full max-w-2xl relative">
             <button
               onClick={() => setShowModal(false)}
               className="absolute cursor-pointer top-4 right-4 text-gray-500 hover:text-gray-800"
             >
-              <X size={20} />
+              <X size={24} />
             </button>
-            <h2 className="text-lg font-semibold mb-4">Refer Someone</h2>
-            <select
-              value={newReferral.projectId || ""}
-              onChange={(e) =>
-                setNewReferral({ ...newReferral, projectId: e.target.value })
-              }
-              onBlur={() => handleBlur("projectId")}
-              className="w-full mb-4 p-2 border rounded"
-              disabled={true}
-            >
-              <option value="">Select Project</option>
-              {pirmalData.map((option) => (
-                <option key={option.id} value={option.id}>
-                  {option.project_name}
-                </option>
-              ))}
-            </select>
-            {errors.projectId && (
-              <p className="text-sm text-red-500 mb-2">{errors.projectId}</p>
-            )}
-
-            <input
-              type="text"
-              placeholder="Name"
-              value={newReferral.name || ""}
-              onChange={(e) =>
-                setNewReferral({ ...newReferral, name: e.target.value })
-              }
-              onBlur={() => handleBlur("name")}
-              className="w-full mb-4 p-2 border rounded"
-            />
-            {errors.name && (
-              <p className="text-sm text-red-500 mb-2">{errors.name}</p>
-            )}
-
-            <input
-              type="tel"
-              placeholder="Phone Number"
-              value={newReferral.phone || ""}
-              onChange={(e) =>
-                setNewReferral({ ...newReferral, phone: e.target.value })
-              }
-              onBlur={() => handleBlur("phone")}
-              className="w-full mb-4 p-2 border rounded"
-            />
-            {errors.phone && (
-              <p className="text-sm text-red-500 mb-2">{errors.phone}</p>
-            )}
-
-            {/* <input
+            <h2 className="text-2xl font-semibold mb-6">Refer Someone</h2>
+            <form onSubmit={e => { e.preventDefault(); handleAddReferral(); }}>
+              <div className="mb-4">
+                <select
+                  value={newReferral.projectId || ""}
+                  onChange={(e) =>
+                    setNewReferral({ ...newReferral, projectId: e.target.value })
+                  }
+                  onBlur={() => handleBlur("projectId")}
+                  className="w-full p-3 border rounded text-base"
+                  disabled={true}
+                >
+                  <option value="">Select Project</option>
+                  {pirmalData.map((option) => (
+                    <option key={option.id} value={option.id}>
+                      {option.project_name}
+                    </option>
+                  ))}
+                </select>
+                {errors.projectId && (
+                  <p className="text-sm text-red-500 mt-1">{errors.projectId}</p>
+                )}
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div>
+                  <input
+                    type="text"
+                    placeholder="Name"
+                    value={newReferral.name || ""}
+                    onChange={(e) =>
+                      setNewReferral({ ...newReferral, name: e.target.value })
+                    }
+                    onBlur={() => handleBlur("name")}
+                    className="w-full p-3 border rounded text-base"
+                  />
+                  {errors.name && (
+                    <p className="text-sm text-red-500 mt-1">{errors.name}</p>
+                  )}
+                </div>
+                <div>
+                  <input
+                    type="tel"
+                    placeholder="Phone Number"
+                    value={newReferral.phone || ""}
+                    onChange={(e) =>
+                      setNewReferral({ ...newReferral, phone: e.target.value })
+                    }
+                    onBlur={() => handleBlur("phone")}
+                    className="w-full p-3 border rounded text-base"
+                  />
+                  {errors.phone && (
+                    <p className="text-sm text-red-500 mt-1">{errors.phone}</p>
+                  )}
+                </div>
+              </div>
+              {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div>
+                  <input
                     type="date"
                     value={newReferral.date || ""}
                     onChange={(e) =>
                       setNewReferral({ ...newReferral, date: e.target.value })
                     }
                     onBlur={() => handleBlur("date")}
-                    className="w-full mb-4 p-2 border rounded"
+                    className="w-full p-3 border rounded text-base"
                   />
-                  {errors.date && <p className="text-sm text-red-500 mb-2">{errors.date}</p>} */}
-
-            <div className="flex justify-end gap-2">
-              <button
-                className="px-4 cursor-pointer py-2 bg-gray-300 text-gray-800 rounded"
-                onClick={() => setShowModal(false)}
-              >
-                Cancel
-              </button>
-              <button
-                className="px-4 py-2 cursor-pointer bg-orange-500 text-white rounded"
-                onClick={handleAddReferral}
-              >
-                Add Referral
-              </button>
-            </div>
+                  {errors.date && <p className="text-sm text-red-500 mt-1">{errors.date}</p>}
+                </div>
+              </div> */}
+              <div className="flex justify-end gap-2 mt-6">
+                <button
+                  type="button"
+                  className="px-6 py-2 cursor-pointer bg-gray-300 text-gray-800 rounded text-base font-medium"
+                  onClick={() => setShowModal(false)}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-6 py-2 cursor-pointer bg-orange-500 text-white rounded text-base font-medium hover:bg-orange-600"
+                >
+                  Add Referral
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

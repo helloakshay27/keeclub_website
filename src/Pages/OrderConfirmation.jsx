@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Edit } from 'lucide-react';
 import { toast } from 'react-toastify';
-import promotionAPI from '../services/promotionAPI';
+
+import Modal from '../Component/Modal';
 
 const OrderConfirmation = () => {
     const navigate = useNavigate();
@@ -13,6 +14,61 @@ const OrderConfirmation = () => {
     const [isEditingAddress, setIsEditingAddress] = useState(false);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [showEditModal, setShowEditModal] = useState(false);
+    const [editAddress, setEditAddress] = useState(null);
+    const [editLoading, setEditLoading] = useState(false);
+    // Open edit modal with current address
+    const handleEditAddress = () => {
+        setEditAddress({ ...deliveryAddress });
+        setShowEditModal(true);
+    };
+
+    // Handle address update via PUT API (all fields editable)
+    const handleUpdateAddress = async () => {
+        if (!editAddress) return;
+        setEditLoading(true);
+        try {
+            const authToken = localStorage.getItem('authToken');
+            const addressId = editAddress.id;
+            const payload = {
+                address: {
+                    address: editAddress.address || '',
+                    address_line_two: editAddress.address_line_two || '',
+                    address_line_three: editAddress.address_line_three || '',
+                    city: editAddress.city || '',
+                    state: editAddress.state || '',
+                    pin_code: editAddress.pin_code || '',
+                    country: editAddress.country || 'India',
+                    contact_person: editAddress.name || '',
+                    mobile: editAddress.phone || '',
+                    email: editAddress.email || '',
+                    telephone_number: editAddress.telephone_number || '',
+                    set_as_default: editAddress.set_as_default === undefined ? true : editAddress.set_as_default,
+                    address_type: (editAddress.type || 'home').toLowerCase(),
+                }
+            };
+            const response = await fetch(`https://piramal-loyalty-dev.lockated.com/user_addresses/${addressId}.json`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`
+                },
+                body: JSON.stringify(payload)
+            });
+            const data = await response.json();
+            if (response.ok && data.success !== false) {
+                toast.success('Address updated successfully!');
+                setDeliveryAddress({ ...editAddress });
+                setShowEditModal(false);
+            } else {
+                toast.error(data.message || 'Failed to update address.');
+            }
+        } catch (err) {
+            toast.error('Error updating address.');
+        } finally {
+            setEditLoading(false);
+        }
+    };
 
     // Check authentication and initialize address data on component mount
     useEffect(() => {
@@ -235,13 +291,153 @@ const OrderConfirmation = () => {
                             <div className="bg-gray-50 rounded-lg p-6">
                                 <div className="flex items-center justify-between mb-6">
                                     <h2 className="text-2xl font-semibold">Delivery Address</h2>
-                                    {/* <button 
-                                        onClick={() => setIsEditingAddress(!isEditingAddress)}
-                                        className="text-gray-600 hover:text-gray-800"
+                                    <button
+                                        onClick={handleEditAddress}
+                                        className="text-gray-600 hover:text-gray-800 p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-[#fa4615]"
+                                        title="Edit Address"
                                     >
                                         <Edit size={20} />
-                                    </button> */}
+                                    </button>
                                 </div>
+            {/* Edit Address Modal */}
+            {showEditModal && (
+                <Modal onClose={() => setShowEditModal(false)}>
+                    <div className="bg-white p-8 rounded-lg w-full max-w-2xl">
+                        <h2 className="text-2xl font-semibold mb-6">Edit Delivery Address</h2>
+                        <form onSubmit={e => { e.preventDefault(); handleUpdateAddress(); }}>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                <input
+                                    type="text"
+                                    placeholder="Name"
+                                    value={editAddress.name}
+                                    onChange={e => setEditAddress({ ...editAddress, name: e.target.value })}
+                                    className="border rounded px-3 py-2 w-full"
+                                />
+                                <input
+                                    type="text"
+                                    placeholder="Phone"
+                                    value={editAddress.phone}
+                                    onChange={e => setEditAddress({ ...editAddress, phone: e.target.value })}
+                                    className="border rounded px-3 py-2 w-full"
+                                />
+                                <input
+                                    type="email"
+                                    placeholder="Email"
+                                    value={editAddress.email}
+                                    onChange={e => setEditAddress({ ...editAddress, email: e.target.value })}
+                                    className="border rounded px-3 py-2 w-full"
+                                />
+                                <input
+                                    type="text"
+                                    placeholder="Address (Line 1)"
+                                    value={editAddress.address}
+                                    onChange={e => setEditAddress({ ...editAddress, address: e.target.value })}
+                                    className="border rounded px-3 py-2 w-full"
+                                />
+                                <input
+                                    type="text"
+                                    placeholder="Address Line 2"
+                                    value={editAddress.address_line_two || ''}
+                                    onChange={e => setEditAddress({ ...editAddress, address_line_two: e.target.value })}
+                                    className="border rounded px-3 py-2 w-full"
+                                />
+                                <input
+                                    type="text"
+                                    placeholder="Address Line 3"
+                                    value={editAddress.address_line_three || ''}
+                                    onChange={e => setEditAddress({ ...editAddress, address_line_three: e.target.value })}
+                                    className="border rounded px-3 py-2 w-full"
+                                />
+                                <input
+                                    type="text"
+                                    placeholder="City"
+                                    value={editAddress.city || ''}
+                                    onChange={e => setEditAddress({ ...editAddress, city: e.target.value })}
+                                    className="border rounded px-3 py-2 w-full"
+                                />
+                                <input
+                                    type="text"
+                                    placeholder="State"
+                                    value={editAddress.state || ''}
+                                    onChange={e => setEditAddress({ ...editAddress, state: e.target.value })}
+                                    className="border rounded px-3 py-2 w-full"
+                                />
+                                <input
+                                    type="text"
+                                    placeholder="Pin Code"
+                                    value={editAddress.pin_code || ''}
+                                    onChange={e => setEditAddress({ ...editAddress, pin_code: e.target.value })}
+                                    className="border rounded px-3 py-2 w-full"
+                                />
+                                <input
+                                    type="text"
+                                    placeholder="Country"
+                                    value={editAddress.country || 'India'}
+                                    onChange={e => setEditAddress({ ...editAddress, country: e.target.value })}
+                                    className="border rounded px-3 py-2 w-full"
+                                />
+                                <input
+                                    type="text"
+                                    placeholder="Telephone Number"
+                                    value={editAddress.telephone_number || ''}
+                                    onChange={e => setEditAddress({ ...editAddress, telephone_number: e.target.value })}
+                                    className="border rounded px-3 py-2 w-full"
+                                />
+                            </div>
+                            <div className="flex flex-wrap items-center gap-4 mb-4">
+                                <label className="flex items-center">
+                                    <input
+                                        type="radio"
+                                        name="addressTypeEdit"
+                                        value="Home"
+                                        checked={editAddress.type === 'Home' || editAddress.type === 'home'}
+                                        onChange={e => setEditAddress({ ...editAddress, type: e.target.value })}
+                                        className="mr-2"
+                                    />
+                                    Home
+                                </label>
+                                <label className="flex items-center">
+                                    <input
+                                        type="radio"
+                                        name="addressTypeEdit"
+                                        value="Work"
+                                        checked={editAddress.type === 'Work' || editAddress.type === 'work'}
+                                        onChange={e => setEditAddress({ ...editAddress, type: e.target.value })}
+                                        className="mr-2"
+                                    />
+                                    Work
+                                </label>
+                                <label className="flex items-center">
+                                    <input
+                                        type="checkbox"
+                                        checked={editAddress.set_as_default || false}
+                                        onChange={e => setEditAddress({ ...editAddress, set_as_default: e.target.checked })}
+                                        className="ml-2 mr-1"
+                                    />
+                                    Set as default
+                                </label>
+                            </div>
+                            <div className="flex justify-end mt-6 space-x-3">
+                                <button
+                                    type="button"
+                                    onClick={() => setShowEditModal(false)}
+                                    className="px-6 py-2 rounded bg-gray-200 text-gray-700 hover:bg-gray-300"
+                                    disabled={editLoading}
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="submit"
+                                    className={`px-6 py-2 rounded bg-[#fa4615] text-white font-semibold hover:bg-[#e03d12] ${editLoading ? 'opacity-60 cursor-not-allowed' : ''}`}
+                                    disabled={editLoading}
+                                >
+                                    {editLoading ? 'Saving...' : 'Save Changes'}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </Modal>
+            )}
                                 
                                 {isEditingAddress ? (
                                     <div className="border rounded-lg p-4 space-y-4">
@@ -317,6 +513,8 @@ const OrderConfirmation = () => {
                                                 )}
                                             </div>
                                         </div>
+                                        {console.log(deliveryAddress)
+                                        }
                                         <p className="text-gray-700 ml-8 leading-relaxed">{deliveryAddress.address}</p>
                                         {/* {deliveryAddress.id && (
                                             <p className="text-xs text-gray-500 ml-8 mt-2">Address ID: {deliveryAddress.id}</p>

@@ -356,7 +356,7 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                             {/* Person Name */}
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    Person name
+                                    Person name (As per bank account)
                                 </label>
                                 <input
                                     type="text"

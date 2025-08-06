@@ -122,9 +122,9 @@ const Header = ({ isTransparent }) => {
           <li className={getLinkClasses('/promotions')}>
             <Link to="/promotions">REDEMPTION</Link>
           </li>
-          <li className={getLinkClasses('/projects')}>
+          {/* <li className={getLinkClasses('/projects')}>
             <Link to="/projects">PROJECTS</Link>
-          </li>
+          </li> */}
 
           {isAuthenticated ? (
             <li style={{ marginTop:'-4px'}}>
