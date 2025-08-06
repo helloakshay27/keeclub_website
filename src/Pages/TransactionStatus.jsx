@@ -79,7 +79,7 @@ const TransactionStatus = () => {
 
     // Tab UI state
     const [selectedTab, setSelectedTab] = useState("Featured Product");
-    const tabList = ["Featured Product", "Redemption Market Place", "Encash"];
+    const tabList = ["Featured Product", "Encash"];
 
     return (
         <div className="w-full">

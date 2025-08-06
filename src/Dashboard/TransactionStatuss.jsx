@@ -939,7 +939,7 @@ const TransactionStatuss = () => {
               >
                 {[
                   "Featured Products",
-                  "Redemption Market Place",
+                  // "Redemption Market Place",
                   "Encash",
                   "My Encash Requests",
                 ].map((tab) => (

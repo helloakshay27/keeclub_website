@@ -218,7 +218,7 @@ const Promotions = () => {
             <div className="w-full mt-10 px-4">
                 <div className="flex justify-center">
                     <div className="flex bg-gray-100 rounded-full w-4/5 mx-auto" style={{padding: '4px'}}>
-                        {["Featured Product", "Redemption Market Place", "Encash"].map((tab) => (
+                        {["Featured Product", "Encash"].map((tab) => (
                             <button
                                 key={tab}
                                 onClick={() => setSelectedTab(tab)}
