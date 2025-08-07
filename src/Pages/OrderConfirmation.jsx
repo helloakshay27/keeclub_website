@@ -58,7 +58,16 @@ const OrderConfirmation = () => {
             const data = await response.json();
             if (response.ok && data.success !== false) {
                 toast.success('Address updated successfully!');
-                setDeliveryAddress({ ...editAddress });
+                // Use the API response for delivery address card
+                setDeliveryAddress({
+                    id: data.id,
+                    name: data.contact_person,
+                    type: data.address_type || 'home',
+                    phone: data.mobile,
+                    email: data.email,
+                    address: `${data.address}, ${data.address_line_two}, ${data.address_line_three}, ${data.city}, ${data.state} - ${data.pin_code}`,
+                    fullDetails: data
+                });
                 setShowEditModal(false);
             } else {
                 toast.error(data.message || 'Failed to update address.');
@@ -522,15 +531,16 @@ const OrderConfirmation = () => {
                                             </div>
                                         )}
                                         <div className="flex items-start ml-7">
+                                            {console.log("full",deliveryAddress.fullDetails)}
                                             <span className="text-gray-700 text-sm leading-relaxed">
                                                 {deliveryAddress.fullDetails
                                                     ? [
                                                         deliveryAddress.fullDetails.address,
-                                                        deliveryAddress.fullDetails.addressLineTwo,
-                                                        deliveryAddress.fullDetails.addressLineThree,
+                                                        deliveryAddress.fullDetails.addressLineTwo || deliveryAddress.fullDetails.address_line_two,
+                                                        deliveryAddress.fullDetails.addressLineThree || deliveryAddress.fullDetails.address_line_three,
                                                         deliveryAddress.fullDetails.city,
                                                         deliveryAddress.fullDetails.state,
-                                                        deliveryAddress.fullDetails.pinCode
+                                                        deliveryAddress.fullDetails.pinCode || deliveryAddress.fullDetails.pin_code,
                                                     ]
                                                         .filter(Boolean)
                                                         .join(', ')
