@@ -635,7 +635,7 @@ const OrderConfirmation = () => {
                         {/* Order Summary Info */}
                         <div className="mt-6 text-sm text-gray-600">
                             <p>By confirming, you agree to redeem {(product.loyalty_points_required || product.points || 0).toLocaleString('en-IN')} points for this product.</p>
-                            <p>Estimated delivery: 7-10 business days</p>
+                            <p>Estimated delivery: 30-60 business days</p>
                         </div>
                         
                         {/* Debug Info for Development */}
