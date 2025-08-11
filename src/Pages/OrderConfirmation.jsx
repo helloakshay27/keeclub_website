@@ -4,6 +4,7 @@ import { Edit } from 'lucide-react';
 import { toast } from 'react-toastify';
 
 import Modal from '../Component/Modal';
+import promotionAPI from '../services/promotionAPI';
 
 const OrderConfirmation = () => {
     const navigate = useNavigate();
