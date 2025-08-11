@@ -9,9 +9,18 @@ const Event = () => {
     const categories = ["Entertainment", "Lifestyle"];
     // Use array for multiple selected categories
     const [selectedCategories, setSelectedCategories] = useState(categories);
+    
+    // Add event type tab state
+    const [selectedEventTab, setSelectedEventTab] = useState("upcoming");
+    const eventTabs = [
+        { key: "upcoming", label: "Upcoming Events" },
+        { key: "past", label: "Past Events" }
+    ];
 
     const highlightRef = useRef(null);
     const labelRefs = useRef({});
+    const eventTabHighlightRef = useRef(null);
+    const eventTabLabelRefs = useRef({});
 
     useEffect(() => {
         const currentLabel = labelRefs.current[selectedCategories[0]];
@@ -42,13 +51,48 @@ const Event = () => {
         };
     }, [selectedCategories]);
 
-    const allEvents = data?.events || [];
+    // Effect for event tab highlighting
+    useEffect(() => {
+        const currentEventTabLabel = eventTabLabelRefs.current[selectedEventTab];
+        const eventTabHighlight = eventTabHighlightRef.current;
+        if (!currentEventTabLabel || !eventTabHighlight) return;
+
+        const setEventTabHighlight = () => {
+            const rect = currentEventTabLabel.getBoundingClientRect();
+            const containerRect = currentEventTabLabel.parentElement.getBoundingClientRect();
+            const offset = 4;
+            eventTabHighlight.style.width = `${rect.width}px`;
+            eventTabHighlight.style.transform = `translateX(${rect.left - containerRect.left - offset}px)`;
+        };
+
+        const raf = requestAnimationFrame(() => {
+            setTimeout(setEventTabHighlight, 50);
+        });
+
+        const resizeObserver = new ResizeObserver(() => {
+            setEventTabHighlight();
+        });
+
+        resizeObserver.observe(currentEventTabLabel);
+
+        return () => {
+            cancelAnimationFrame(raf);
+            resizeObserver.disconnect();
+        };
+    }, [selectedEventTab]);
+
+    // Get upcoming and past events from the data
+    const upcomingEvents = data?.upcomming_events || [];
+    const pastEvents = data?.past_events || [];
+    
+    // Determine which events to show based on selected tab
+    const currentEvents = selectedEventTab === "upcoming" ? upcomingEvents : pastEvents;
 
     // Filter events: if none selected, show all; else filter by event_type
     const filteredEvents =
         selectedCategories.length === 0
-            ? allEvents
-            : allEvents.filter(
+            ? currentEvents
+            : currentEvents.filter(
                   (event) =>
                       event.event_type &&
                       selectedCategories.some(
@@ -63,6 +107,9 @@ const Event = () => {
         const year = `'${dateObj.getFullYear().toString().slice(-2)}`;
         return `${day} ${month}${year}`;
     };
+
+    // Get tab index for highlighting
+    const getEventTabIndex = (key) => eventTabs.findIndex((tab) => tab.key === key);
 
     // Checkbox handler
     const handleCategoryChange = (category) => {
@@ -99,8 +146,34 @@ const Event = () => {
 
             {/* Events Section */}
             <div className="py-8 sm:py-10 md:py-12 max-w-7xl mx-auto">
+                {/* Event Type Tabs */}
+                <div className="flex justify-center mb-8">
+                    <div className="relative bg-[#FAFAFA] border border-gray-300 rounded-full flex p-2 w-full max-w-md">
+                        <div
+                            ref={eventTabHighlightRef}
+                            className="absolute top-1 left-1 h-[90%] bg-[#F9461C] rounded-full transition-all duration-300"
+                            style={{
+                                width: `${100 / eventTabs.length}%`,
+                                transform: `translateX(${getEventTabIndex(selectedEventTab) * 100}%)`,
+                            }}
+                        ></div>
+                        {eventTabs.map((tab) => (
+                            <button
+                                key={tab.key}
+                                ref={(el) => (eventTabLabelRefs.current[tab.key] = el)}
+                                onClick={() => setSelectedEventTab(tab.key)}
+                                className={`relative z-10 cursor-pointer flex-1 py-2 text-sm sm:text-base rounded-full font-normal transition-colors duration-300 ${
+                                    selectedEventTab === tab.key ? "text-white" : "text-black"
+                                }`}
+                            >
+                                {tab.label}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
                 <h2 className="text-center text-xl sm:text-3xl font-bold text-orange-600 mb-3 uppercase">
-                    Past Events
+                    {selectedEventTab === "upcoming" ? "Upcoming Events" : "Past Events"}
                 </h2>
                 <hr className="border-t-2 border-orange-600 w-[200px] mx-auto mb-6" />
                 <p className="text-center text-sm sm:text-lg md:text-xl lg:text-2xl font-extralight">
@@ -136,7 +209,10 @@ const Event = () => {
                     {/* Event Cards Grid */}
                     {filteredEvents.length === 0 ? (
                         <div className="w-full text-center py-16 text-gray-500 text-lg font-semibold">
-                            No events to show for the selected category.
+                            {selectedEventTab === "upcoming" 
+                                ? "No upcoming events to show for the selected category." 
+                                : "No past events to show for the selected category."
+                            }
                         </div>
                     ) : (
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
