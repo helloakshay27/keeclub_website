@@ -1,8 +1,24 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import Card from "../../Models/Card";
+import useApiFetch from "../../hooks/useApiFetch";
+import BASE_URL from "../../Confi/baseurl";
 
 const MainCard = () => {
   const id = localStorage.getItem("member_id");
+  const { data } = useApiFetch(`${BASE_URL}events.json`);
+  
+  // Get upcoming events from the data
+  const upcomingEvents = data?.upcomming_events || [];
+
+  // Format date function
+  const formatDate = (dateString) => {
+    const dateObj = new Date(dateString);
+    const day = dateObj.getDate();
+    const month = dateObj.toLocaleString("default", { month: "short" });
+    const year = `'${dateObj.getFullYear().toString().slice(-2)}`;
+    return `${day} ${month}${year}`;
+  };
 
   const cardsData = [
     {
@@ -105,7 +121,7 @@ const MainCard = () => {
         </div>
       ),
       highlightColor: "#f9461c",
-      buttonText: "View Past Events",
+      buttonText: "View Events",
       onButtonClick: () => {
         window.location.href = "/events"; // Navigate to the refer page
       },
@@ -178,6 +194,65 @@ const MainCard = () => {
           return <Card key={index} {...finalProps} />;
         })}
       </div>
+
+      {/* Upcoming Events Section */}
+      {upcomingEvents.length > 0 && (
+        <div className="w-full max-w-7xl mt-16">
+          <h2 className="text-2xl sm:text-3xl font-bold text-orange-600 mb-8 text-center uppercase">
+            Upcoming Events
+          </h2>
+          <hr className="border-t-2 border-orange-600 w-[200px] mx-auto mb-8" />
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-4">
+            {upcomingEvents.map((event, index) => (
+              <Link to={`/event/${event.id}`} key={index}>
+                <div className="rounded shadow-md overflow-hidden relative border-b-2 border-orange-500 w-full h-80 flex flex-col hover:shadow-lg transition-shadow duration-300">
+                  {/* Date Badge */}
+                  <div className="absolute top-0 right-0 bg-black bg-opacity-80 text-white px-2 sm:px-3 py-1 sm:py-2 text-xs sm:text-sm font-semibold z-10 rounded-bl-lg">
+                    <div className="text-sm sm:text-base font-bold leading-tight">
+                      {formatDate(event.from_time).split(" ")[0]}
+                    </div>
+                    <div className="text-xs sm:text-sm">
+                      {formatDate(event.from_time).split(" ")[1]}
+                    </div>
+                  </div>
+
+                  {/* Event Image */}
+                  <img
+                    src={event.attachfile?.document_url || "https://via.placeholder.com/400x300?text=No+Image"}
+                    alt={event.event_name}
+                    className="w-full h-44 sm:h-48 object-cover"
+                    loading="lazy"
+                  />
+
+                  {/* Event Info */}
+                  <div className="p-3 sm:p-4 bg-white flex-grow">
+                    <h3 className="text-sm sm:text-base md:text-lg font-bold mb-1 sm:mb-2">
+                      {event.event_name}
+                    </h3>
+                    <p className="text-xs sm:text-sm md:text-base text-gray-700">
+                      {event.project_name}
+                    </p>
+                    <p className="text-xs sm:text-sm text-gray-500 mt-2">
+                      {event.event_at}
+                    </p>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+          
+          {/* View All Events Button */}
+          <div className="text-center mt-8">
+            <Link 
+              to="/events"
+              className="inline-block bg-[#f9461c] text-white px-8 py-3 rounded-full font-semibold hover:bg-[#e03d12] transition-colors duration-300"
+            >
+              View All Events
+            </Link>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
