@@ -1088,7 +1088,7 @@ const TransactionStatuss = () => {
                 <th className="px-4 py-3">Date & Time</th>
                 <th className="px-4 py-3">Transaction Type</th>
                 <th className="px-4 py-3">Transaction Name</th>
-                <th className="px-4 py-3">Earned Points</th>
+                <th className="px-4 py-3 text-right">Earned Points</th>
               </tr>
             </thead>
             <tbody className="text-gray-700">
@@ -1111,7 +1111,7 @@ const TransactionStatuss = () => {
                       {item?.transaction_type || "--"}
                     </td>
                     <td className="px-4 py-3">{item?.remarks || "--"}</td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-3 text-right">
                       {typeof item?.points === "number"
                         ? formatPoints(item.points)
                         : item?.points || "--"}
@@ -1453,8 +1453,15 @@ const TransactionStatuss = () => {
                                       />
                                     </svg>
                                     <span>
-                                      {order.shippingAddress.city},{" "}
-                                      {order.shippingAddress.state}
+                                      {order.shippingAddress.address},
+                                      {order.shippingAddress.address_line_two
+                                        ? ` ${order.shippingAddress.address_line_two},`
+                                        : ""}{" "}
+                                        {order.shippingAddress.address_line_three
+                                        ? ` ${order.shippingAddress.address_line_three},`
+                                        : ""}{" "}
+                                      {order.shippingAddress.city},
+                                      {order.shippingAddress.state} - {order.shippingAddress.pin_code}
                                     </span>
                                   </div>
                                 )}

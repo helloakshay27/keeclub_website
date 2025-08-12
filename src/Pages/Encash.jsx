@@ -252,7 +252,7 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
 
             <form onSubmit={handleSubmit} className="bg-white rounded-lg border border-gray-200 p-8">
                 <div className="grid lg:grid-cols-2 gap-12">
-                    {/* Left Column - Encash Detail */}
+                    {/* Left Column - Encash Detail & Personal Info */}
                     <div>
                         <h3 className="text-xl font-semibold text-gray-800 mb-6">Encash Detail</h3>
                         <div className="space-y-6">
@@ -272,34 +272,37 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                                 />
                             </div>
 
-                            {/* Facilitation Fees */}
+                            {/* Person Name */}
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    Fascilitation Fees 2%
+                                    Person name (As per Bank Account)
                                 </label>
                                 <input
                                     type="text"
-                                    placeholder="Points"
-                                    value={formData.facilitationFees}
-                                    readOnly
-                                    className="w-full border border-gray-300 rounded-lg px-4 py-3 bg-gray-50 text-gray-600"
+                                    placeholder="Enter person name"
+                                    value={formData.personName}
+                                    onChange={(e) => handleInputChange('personName', e.target.value)}
+                                    className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                                    required
                                 />
                             </div>
 
-                            {/* Amount Payable */}
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    Amount Payable
+                            {/* Terms and Conditions */}
+                            <div className="flex items-start space-x-3">
+                                <input
+                                    type="checkbox"
+                                    id="agreeToTerms"
+                                    checked={formData.agreeToTerms}
+                                    onChange={(e) => handleInputChange('agreeToTerms', e.target.checked)}
+                                    className="w-4 h-4 text-orange-600 border-gray-300 rounded focus:ring-orange-500 mt-1"
+                                    required
+                                />
+                                <label htmlFor="agreeToTerms" className="text-sm text-gray-700">
+                                    I agree to the{' '}
+                                    <span className="text-orange-600 hover:text-orange-700 cursor-pointer underline">
+                                        Terms and Conditions
+                                    </span>
                                 </label>
-                                <div className="relative">
-                                    <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">₹</span>
-                                    <input
-                                        type="text"
-                                        value={formData.amountPayable}
-                                        readOnly
-                                        className="w-full border border-gray-300 rounded-lg pl-8 pr-4 py-3 bg-gray-50 text-gray-600"
-                                    />
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -351,39 +354,6 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                                     className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                                     required
                                 />
-                            </div>
-
-                            {/* Person Name */}
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    Person name (As per Bank Account)
-                                </label>
-                                <input
-                                    type="text"
-                                    placeholder="Enter person name"
-                                    value={formData.personName}
-                                    onChange={(e) => handleInputChange('personName', e.target.value)}
-                                    className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                                    required
-                                />
-                            </div>
-
-                            {/* Terms and Conditions */}
-                            <div className="flex items-start space-x-3">
-                                <input
-                                    type="checkbox"
-                                    id="agreeToTerms"
-                                    checked={formData.agreeToTerms}
-                                    onChange={(e) => handleInputChange('agreeToTerms', e.target.checked)}
-                                    className="w-4 h-4 text-orange-600 border-gray-300 rounded focus:ring-orange-500 mt-1"
-                                    required
-                                />
-                                <label htmlFor="agreeToTerms" className="text-sm text-gray-700">
-                                    I agree to the{' '}
-                                    <span className="text-orange-600 hover:text-orange-700 cursor-pointer underline">
-                                        Terms and Conditions
-                                    </span>
-                                </label>
                             </div>
 
                             {/* Submit Button */}

@@ -42,7 +42,7 @@ const EncashRequests = ({ memberData }) => {
   }
 
   return (
-    <div className="max-w-2xl mx-auto py-6">
+    <div className="w-full py-6">
       <h2 className="text-xl font-bold mb-4 text-gray-800">My Encash Requests</h2>
       {loading ? (
         <div className="flex justify-center items-center py-12">

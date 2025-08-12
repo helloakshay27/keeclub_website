@@ -838,13 +838,7 @@ class PromotionAPI {
                             } : null
                         })),
                         shippingAddress: order.shipping_address ? {
-                            id: order.shipping_address.id,
-                            address: order.shipping_address.address,
-                            city: order.shipping_address.city,
-                            state: order.shipping_address.state,
-                            pinCode: order.shipping_address.pin_code,
-                            mobile: order.shipping_address.mobile,
-                            contactPerson: order.shipping_address.contact_person
+                            ...order.shipping_address
                         } : null
                     })),
                     pagination: response.data.pagination || {
@@ -854,7 +848,7 @@ class PromotionAPI {
                     }
                 };
                 
-                console.log('✅ Orders loaded:', response.data.orders.length);
+                console.log('✅ Orders loaded:', response.data.orders);
             }
             
             return response;
