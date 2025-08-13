@@ -32,62 +32,148 @@ const EventDetail = () => {
         >
           <ArrowLeft size={22} className="sm:size-6" />
         </button>
-        <span className="text-sm sm:text-lg">{event.event_name}</span>
+        <span className="text-sm sm:text-lg">{data?.event_name}</span>
       </div>
 
-      <h2 className="text-base sm:text-xl font-semibold mb-4 uppercase">
-        Event Pictures
-      </h2>
-
-      <div
-        className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5"
-      >
-        {images?.map((img, i) => (
-          <div key={i} className="flex flex-col rounded-xl pb-4" style={{ borderBottom: '2px solid #fa4615' }}>
-            <div className="relative">
-              <img
-                src={img?.document_url}
-                alt={`Event ${i + 1}`}
-                className="w-full h-auto max-h-[220px] object-cover rounded shadow"
-              />
-              {/* From Time Overlay */}
-              {/* {data.from_time && (
-                <div
-                  className="absolute left-2 bottom-2 bg-white/50 px-3 py-1 rounded text-xs font-semibold text-gray-800 shadow"
-                  style={{ pointerEvents: 'none' }}
-                >
-                  {new Date(data.from_time).toLocaleDateString('en-US', {
-                    weekday: 'short',
-                    day: '2-digit',
-                    month: 'long',
-                  }) + ' Onwards'}
-                </div>
-              )} */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Left Column - Event Images */}
+        <div>
+          <h2 className="text-base sm:text-xl font-semibold mb-4">
+            Event Pictures
+          </h2>
+          <div className="space-y-4">
+            {images?.map((img, i) => (
+              <div key={i} className="rounded-lg overflow-hidden shadow-md">
+                <img
+                  src={img?.document_url}
+                  alt={`Event ${i + 1}`}
+                  className="w-full h-auto max-h-[300px] object-cover"
+                />
+              </div>
+            ))}
+          </div>
+          
+          {/* Map Section */}
+          {/* {data?.project_name && (
+            <div className="mt-6">
+              <div className="bg-gray-100 rounded-lg p-4 h-64 flex items-center justify-center">
+                <span className="text-gray-500">Map Location - {data.project_name}</span>
+              </div>
             </div>
-            {/* Event Info Below Each Image */}
-            <div className="mt-2 mx-2" >
-              <div className="text-base font-semibold text-gray-900">
-                {data.event_name || 'EVENT Name'}
-              </div>
-              <div
-                  className=" text-sm text-gray-600"
-                  style={{ pointerEvents: 'none' }}
-                >
-                  {new Date(data.from_time).toLocaleDateString('en-US', {
-                    weekday: 'short',
-                    day: '2-digit',
+          )} */}
+        </div>
+
+        {/* Right Column - Event Details */}
+        <div>
+          <div className="bg-white rounded-lg border border-gray-200 p-6">
+            <h1 className="text-2xl font-bold text-gray-900 mb-4">Event</h1>
+            
+            <div className="space-y-4">
+              <div className="flex items-start gap-2">
+                <span className="text-sm text-gray-600 font-medium">
+                  {data?.from_time ? new Date(data.from_time).toLocaleDateString('en-US', {
+                    year: 'numeric',
                     month: 'long',
-                  }) + ' Onwards'}
-                </div>
-              <div className="text-sm text-gray-600">
-                {data.project_name || 'Location'}
+                    day: 'numeric'
+                  }) : 'Date TBD'}
+                </span>
+                <span className="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                  {data?.event_type || 'Experiences'}
+                </span>
               </div>
-              <div className="text-xs text-gray-500 mt-1">
-                {data.event_type}
+
+              <p className="text-gray-700 text-sm leading-relaxed">
+                {data?.description || `A Premier Outdoors takes place on June 19, July 26, and August 14 at the Picnic Shelter.`}
+              </p>
+
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div>
+                  <span className="text-gray-500">Project:</span>
+                  <div className="font-medium">{data?.project_name || 'Piramal Revanta'}</div>
+                </div>
+                <div>
+                  <span className="text-gray-500">Event ID:</span>
+                  <div className="font-medium">{data?.id || 'N/A'}</div>
+                </div>
+                
+                <div>
+                  <span className="text-gray-500">Event Type:</span>
+                  <div className="font-medium">{data?.event_type || 'Entertainment'}</div>
+                </div>
+                <div>
+                  <span className="text-gray-500">Duration:</span>
+                  <div className="font-medium">
+                    {data?.from_time && data?.to_time ? 
+                      (() => {
+                        const from = new Date(data.from_time);
+                        const to = new Date(data.to_time);
+                        const diffHours = Math.round((to - from) / (1000 * 60 * 60));
+                        return diffHours > 24 ? `${Math.round(diffHours / 24)} days` : `${diffHours} hours`;
+                      })() 
+                      : '2 hours'
+                    }
+                  </div>
+                </div>
+                
+                <div>
+                  <span className="text-gray-500">Event At:</span>
+                  <div className="font-medium">{data?.event_at || 'Mumbai'}</div>
+                </div>
+                <div>
+                  <span className="text-gray-500">Time:</span>
+                  <div className="font-medium">
+                    {data?.from_time ? new Date(data.from_time).toLocaleTimeString('en-US', {
+                      hour: '2-digit',
+                      minute: '2-digit',
+                      hour12: true
+                    }) : '12 PM'}
+                  </div>
+                </div>
+                
+                <div className="col-span-2">
+                  <span className="text-gray-500">Event From:</span>
+                  <div className="font-medium">
+                    {data?.from_time ? new Date(data.from_time).toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric'
+                    }) : '14 August, 2024'}
+                  </div>
+                </div>
+
+                {data?.to_time && (
+                  <div className="col-span-2">
+                    <span className="text-gray-500">Event To:</span>
+                    <div className="font-medium">
+                      {new Date(data.to_time).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {data?.interested !== undefined && (
+                  <div className="col-span-2">
+                    <span className="text-gray-500">Interested People:</span>
+                    <div className="font-medium">{data.interested} people interested</div>
+                  </div>
+                )}
+              </div>
+
+              <div className="pt-4">
+                <p className="text-xs text-gray-500 mb-4">
+                  This is a free event, but registration is required. Click "Get Tickets" to register.
+                </p>
+                
+                <button className="w-full bg-gray-800 text-white py-3 px-6 rounded font-medium hover:bg-gray-900 transition-colors">
+                  Get Ticket
+                </button>
               </div>
             </div>
           </div>
-        ))}
+        </div>
       </div>
     </div>
   );

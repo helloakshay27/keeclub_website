@@ -1430,14 +1430,14 @@ const TransactionStatuss = () => {
                             <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center">
                               <div className="flex items-center space-x-4 mb-4 lg:mb-0">
                                 {order.shippingAddress && (
-                                  <div className="flex items-center text-sm text-gray-600">
+                                  <div className="flex items-start text-sm text-gray-600">
                                     <svg
                                       xmlns="http://www.w3.org/2000/svg"
                                       fill="none"
                                       viewBox="0 0 24 24"
                                       strokeWidth={1.5}
                                       stroke="currentColor"
-                                      className="w-4 h-4 mr-1"
+                                      className="w-4 h-4 mr-1 mt-1"
                                     >
                                       <path
                                         strokeLinecap="round"
@@ -1450,7 +1450,9 @@ const TransactionStatuss = () => {
                                         d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"
                                       />
                                     </svg>
-                                    <span>
+                                    <div>
+
+                                    <p>
                                       {order.shippingAddress.address},
                                       {order.shippingAddress.address_line_two
                                         ? ` ${order.shippingAddress.address_line_two},`
@@ -1458,12 +1460,12 @@ const TransactionStatuss = () => {
                                         {order.shippingAddress.address_line_three
                                         ? ` ${order.shippingAddress.address_line_three},`
                                         : ""}{" "}
+                                    </p>
+                                    <p>
                                       {order.shippingAddress.city},
                                       {order.shippingAddress.state} - {order.shippingAddress.pin_code}
-                                    </span>
-                                  </div>
-                                )}
-                                <div className="flex items-center text-sm text-gray-600">
+                                    </p>
+                                <div className="flex items-center text-sm text-gray-600 mt-1" style={{marginLeft: "-20px"}}>
                                   <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     fill="none"
@@ -1482,6 +1484,9 @@ const TransactionStatuss = () => {
                                     {order.paymentStatus}
                                   </span>
                                 </div>
+                                    </div>
+                                  </div>
+                                )}
                               </div>
                               <div className="text-right">
                                 <p className="text-lg font-semibold text-gray-800">
