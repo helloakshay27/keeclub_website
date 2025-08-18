@@ -10,12 +10,21 @@ const EventDetail = () => {
   const { data } = useApiFetch(`${BASE_URL}events/${id}.json`, token);
 
   const event = data && data.id;
-  // Use data.event_images if available, else fallback to single attachfile
-  const images = Array.isArray(data?.event_images) && data.event_images.length > 0
+  
+  // Process different aspect ratio images
+  const images1by1 = Array.isArray(data?.event_images_1_by_1) ? data.event_images_1_by_1 : [];
+  const images3by2 = Array.isArray(data?.event_images_3_by_2) ? data.event_images_3_by_2 : [];
+  const images9by16 = Array.isArray(data?.event_images_9_by_16) ? data.event_images_9_by_16 : [];
+  const images16by9 = Array.isArray(data?.event_images_16_by_9) ? data.event_images_16_by_9 : [];
+  
+  // Fallback to original logic for backward compatibility
+  const fallbackImages = Array.isArray(data?.event_images) && data.event_images.length > 0
     ? data.event_images
     : data?.attachfile
       ? [data.attachfile]
       : [];
+
+  const hasAnyImages = images1by1.length > 0 || images3by2.length > 0 || images9by16.length > 0 || images16by9.length > 0 || fallbackImages.length > 0;
 
   if (!event)
     return (
@@ -41,17 +50,83 @@ const EventDetail = () => {
           <h2 className="text-base sm:text-xl font-semibold mb-4">
             Event Pictures
           </h2>
-          <div className="space-y-4">
-            {images?.map((img, i) => (
-              <div key={i} className="rounded-lg overflow-hidden shadow-md">
-                <img
-                  src={img?.document_url}
-                  alt={`Event ${i + 1}`}
-                  className="w-full h-auto max-h-[300px] object-cover"
-                />
-              </div>
-            ))}
-          </div>
+          
+          {hasAnyImages ? (
+            <div className="space-y-6">
+              {/* 1:1 Square Images */}
+              {images1by1.length > 0 && (
+                <div>
+                  <h3 className="text-sm font-medium text-gray-600 mb-2">Square Images (1:1)</h3>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    {images1by1.map((img, i) => (
+                      <div key={`1by1-${i}`} className="aspect-square rounded-lg overflow-hidden shadow-md">
+                        <img
+                          src={img?.document_url}
+                          alt={`Square Image ${i + 1}`}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* 9:16 Portrait Images */}
+              {images9by16.length > 0 && (
+                <div>
+                  <h3 className="text-sm font-medium text-gray-600 mb-2">Portrait Images (9:16)</h3>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                    {images9by16.map((img, i) => (
+                      <div key={`9by16-${i}`} className="aspect-[9/16] rounded-lg overflow-hidden shadow-md">
+                        <img
+                          src={img?.document_url}
+                          alt={`Portrait Image ${i + 1}`}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* 16:9 Wide Images */}
+              {images16by9.length > 0 && (
+                <div>
+                  <h3 className="text-sm font-medium text-gray-600 mb-2">Wide Images (16:9)</h3>
+                  <div className="space-y-3">
+                    {images16by9.map((img, i) => (
+                      <div key={`16by9-${i}`} className="aspect-video rounded-lg overflow-hidden shadow-md">
+                        <img
+                          src={img?.document_url}
+                          alt={`Wide Image ${i + 1}`}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Fallback Images */}
+              {fallbackImages.length > 0 && (images1by1.length === 0 && images3by2.length === 0 && images9by16.length === 0 && images16by9.length === 0) && (
+                <div className="space-y-4">
+                  {fallbackImages.map((img, i) => (
+                    <div key={`fallback-${i}`} className="rounded-lg overflow-hidden shadow-md">
+                      <img
+                        src={img?.document_url}
+                        alt={`Event ${i + 1}`}
+                        className="w-full h-auto max-h-[300px] object-cover"
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="bg-gray-100 rounded-lg p-8 text-center">
+              <span className="text-gray-500">No images available for this event</span>
+            </div>
+          )}
           
           {/* Map Section */}
           {/* {data?.project_name && (
