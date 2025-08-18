@@ -4,6 +4,7 @@ import { Menu, X } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import ComLogo from "../assets/ComLogo.png"
 import { useNavigate } from "react-router-dom";
+import { toast } from 'react-toastify';
 
 const Header = ({ isTransparent }) => {
   const [scrolled, setScrolled] = useState(false);
@@ -54,7 +55,11 @@ const Header = ({ isTransparent }) => {
   const handleSignOut = () => {
     localStorage.clear();
     navigate("/");
-     toast.success("Signed out successfully");
+    toast.success("Signed out successfully");
+    // Force page reload after sign out
+    setTimeout(() => {
+      window.location.reload();
+    }, 100);
   };
 
   // Helper function to check if a link is active

@@ -26,7 +26,7 @@ const MainCard = () => {
       title: "One Family Many Rewards",
       subtitle: "An exclusive referral campaign, curated just for you!",
       description:
-        "Piramal Realty knows what it means to build model communities that care for each other, and with One Family Many Rewards, we intend to reward every member who helps build the Piramal family. We bring you the opportunity to include your loved ones in the Piramal family and win exclusive rewards for yourselves and the referred basis various slabs. To know more, please refer to the attached e-brochures.",
+        "Piramal Realty knows what it means to build model communities that care for each other, and with One Family Many Rewards, we intend to reward every member who helps build the Piramal family. We bring you the opportunity to include your loved ones in the Piramal family and win exclusive rewards for yourselves and the referred basis various slabs. To know more, please click below.",
       highlightColor: "#f9461c",
       buttonText: "Know More",
       onButtonClick: () => {
@@ -128,32 +128,32 @@ const MainCard = () => {
       reverse: true,
     },
 
-    {
-      imageUrl:
-        "https://images.pexels.com/photos/6070046/pexels-photo-6070046.jpeg?auto=compress&cs=tinysrgb&w=1200",
-      title: "Infotainment and Interactive Blogs",
-      subtitle: "",
-      description: (
-        <div className="space-y-4">
-          <p>
-            Kee Club understands the power of learning and the role it plays in
-            our lives. We bring you infotainment and interactive blogs that
-            align with our core values of knowledge, action, care, and impact.
-          </p>
-          <p>
-            Our blogs will allow you to learn new things every day in bite-sized
-            reads. You can read our latest pieces and comment on them to start a
-            discussion with your entire community.
-          </p>
-        </div>
-      ),
-      highlightColor: "#f9461c",
-      buttonText: "Read Now",
-      onButtonClick: () => {
-        window.location.href = `/blog/${id}`; // Navigate to the refer page
-      },
-      reverse: false,
-    },
+    // {
+    //   imageUrl:
+    //     "https://images.pexels.com/photos/6070046/pexels-photo-6070046.jpeg?auto=compress&cs=tinysrgb&w=1200",
+    //   title: "Infotainment and Interactive Blogs",
+    //   subtitle: "",
+    //   description: (
+    //     <div className="space-y-4">
+    //       <p>
+    //         Kee Club understands the power of learning and the role it plays in
+    //         our lives. We bring you infotainment and interactive blogs that
+    //         align with our core values of knowledge, action, care, and impact.
+    //       </p>
+    //       <p>
+    //         Our blogs will allow you to learn new things every day in bite-sized
+    //         reads. You can read our latest pieces and comment on them to start a
+    //         discussion with your entire community.
+    //       </p>
+    //     </div>
+    //   ),
+    //   highlightColor: "#f9461c",
+    //   buttonText: "Read Now",
+    //   onButtonClick: () => {
+    //     window.location.href = `/blog/${id}`; // Navigate to the refer page
+    //   },
+    //   reverse: false,
+    // },
   ];
 
   return (
@@ -196,7 +196,7 @@ const MainCard = () => {
       </div>
 
       {/* Upcoming Events Section */}
-      {upcomingEvents.length > 0 && (
+      {/* {upcomingEvents.length > 0 && (
         <div className="w-full max-w-7xl mt-16">
           <h2 className="text-2xl sm:text-3xl font-bold text-orange-600 mb-8 text-center uppercase">
             Upcoming Events
@@ -207,7 +207,6 @@ const MainCard = () => {
             {upcomingEvents.map((event, index) => (
               <Link to={`/event/${event.id}`} key={index}>
                 <div className="rounded shadow-md overflow-hidden relative border-b-2 border-orange-500 w-full h-80 flex flex-col hover:shadow-lg transition-shadow duration-300">
-                  {/* Date Badge */}
                   <div className="absolute top-0 right-0 bg-black bg-opacity-80 text-white px-2 sm:px-3 py-1 sm:py-2 text-xs sm:text-sm font-semibold z-10 rounded-bl-lg">
                     <div className="text-sm sm:text-base font-bold leading-tight">
                       {formatDate(event.from_time).split(" ")[0]}
@@ -217,7 +216,6 @@ const MainCard = () => {
                     </div>
                   </div>
 
-                  {/* Event Image */}
                   <img
                     src={event.attachfile?.document_url || "https://via.placeholder.com/400x300?text=No+Image"}
                     alt={event.event_name}
@@ -225,7 +223,6 @@ const MainCard = () => {
                     loading="lazy"
                   />
 
-                  {/* Event Info */}
                   <div className="p-3 sm:p-4 bg-white flex-grow">
                     <h3 className="text-sm sm:text-base md:text-lg font-bold mb-1 sm:mb-2">
                       {event.event_name}
@@ -242,7 +239,6 @@ const MainCard = () => {
             ))}
           </div>
           
-          {/* View All Events Button */}
           <div className="text-center mt-8">
             <Link 
               to="/events"
@@ -252,7 +248,7 @@ const MainCard = () => {
             </Link>
           </div>
         </div>
-      )}
+      )} */}
     </div>
   );
 };

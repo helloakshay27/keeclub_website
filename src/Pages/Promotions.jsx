@@ -159,9 +159,9 @@ const Promotions = () => {
                                                         {formatPrice(item.originalPrice)}
                                                     </div>
                                                 )}
-                                                <div className="text-2xl text-[#B3B3B3] font-bold mb-2" style={{textDecoration: 'line-through', fontSize:'16px'}}>{formatPrice(item.currentPrice)}</div>
+                                                {/* <div className="text-2xl text-[#B3B3B3] font-bold mb-2" style={{textDecoration: 'line-through', fontSize:'16px'}}>{formatPrice(item.currentPrice)}</div> */}
                                                 {/* Redeem Row */}
-                                                <div className=" mb-6" style={{fontSize:'14px', fontWeight:'bold'}}>
+                                                <div style={{fontSize:'14px', fontWeight:'bold'}}>
                                                     <span className="text-gray-500 mr-2" >Redeem using</span>
                                                     <span className="flex items-center text-[#000]">
                                                         <img

@@ -64,7 +64,7 @@ const DashHeader = () => {
                 <Link to="/events">EVENTS</Link>
               </li>
               <li className={getLinkClasses('/promotions')}>
-                <Link to="/promotions">REDEMPTION</Link>
+                <Link to="/promotions">REDEMPTmlmklmlION</Link>
               </li>
               {/* <li className="hover:text-[#fa4615] cursor-pointer">
                 <Link to="/blogs">BLOGS</Link>

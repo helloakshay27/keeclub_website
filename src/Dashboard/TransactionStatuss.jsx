@@ -1002,7 +1002,7 @@ const TransactionStatuss = () => {
                               {formatPrice(item.originalPrice)}
                             </div>
                           )}
-                          <div
+                          {/* <div
                             className="text-2xl text-[#B3B3B3] font-bold mb-2"
                             style={{
                               textDecoration: "line-through",
@@ -1010,7 +1010,7 @@ const TransactionStatuss = () => {
                             }}
                           >
                             {formatPrice(item.currentPrice)}
-                          </div>
+                          </div> */}
                           {/* Redeem Row */}
                           <div
                             className=" mb-6"
