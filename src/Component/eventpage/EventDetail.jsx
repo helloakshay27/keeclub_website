@@ -82,9 +82,9 @@ const EventDetail = () => {
                 </span>
               </div>
 
-              <p className="text-gray-700 text-sm leading-relaxed">
+              {/* <p className="text-gray-700 text-sm leading-relaxed">
                 {data?.description || `A Premier Outdoors takes place on June 19, July 26, and August 14 at the Picnic Shelter.`}
-              </p>
+              </p> */}
 
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
@@ -154,15 +154,15 @@ const EventDetail = () => {
                   </div>
                 )}
 
-                {data?.interested !== undefined && (
+                {/* {data?.interested !== undefined && (
                   <div className="col-span-2">
                     <span className="text-gray-500">Interested People:</span>
                     <div className="font-medium">{data.interested} people interested</div>
                   </div>
-                )}
+                )} */}
               </div>
 
-              <div className="pt-4">
+              {/* <div className="pt-4">
                 <p className="text-xs text-gray-500 mb-4">
                   This is a free event, but registration is required. Click "Get Tickets" to register.
                 </p>
@@ -170,7 +170,7 @@ const EventDetail = () => {
                 <button className="w-full bg-gray-800 text-white py-3 px-6 rounded font-medium hover:bg-gray-900 transition-colors">
                   Get Ticket
                 </button>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
