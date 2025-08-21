@@ -11,9 +11,9 @@ const Event = () => {
     const [selectedCategories, setSelectedCategories] = useState(categories);
     
     // Add event type tab state
-    const [selectedEventTab, setSelectedEventTab] = useState("upcoming");
+    const [selectedEventTab, setSelectedEventTab] = useState("past");
     const eventTabs = [
-        { key: "upcoming", label: "Upcoming Events" },
+        // { key: "upcoming", label: "Upcoming Events" },
         { key: "past", label: "Past Events" }
     ];
 
@@ -82,11 +82,11 @@ const Event = () => {
     }, [selectedEventTab]);
 
     // Get upcoming and past events from the data
-    const upcomingEvents = data?.upcomming_events || [];
+    // const upcomingEvents = data?.upcomming_events || [];
     const pastEvents = data?.past_events || [];
     
     // Determine which events to show based on selected tab
-    const currentEvents = selectedEventTab === "upcoming" ? upcomingEvents : pastEvents;
+    const currentEvents = pastEvents; // selectedEventTab === "upcoming" ? upcomingEvents : pastEvents
 
     // Filter events: if none selected, show all; else filter by event_type
     const filteredEvents =
@@ -147,7 +147,7 @@ const Event = () => {
             {/* Events Section */}
             <div className="py-8 sm:py-10 md:py-12 max-w-7xl mx-auto">
                 {/* Event Type Tabs */}
-                <div className="flex justify-center mb-8">
+                {/* <div className="flex justify-center mb-8">
                     <div className="relative bg-[#FAFAFA] border border-gray-300 rounded-full flex p-2 w-full max-w-md">
                         <div
                             ref={eventTabHighlightRef}
@@ -170,10 +170,10 @@ const Event = () => {
                             </button>
                         ))}
                     </div>
-                </div>
+                </div> */}
 
                 <h2 className="text-center text-xl sm:text-3xl font-bold text-orange-600 mb-3 uppercase">
-                    {selectedEventTab === "upcoming" ? "Upcoming Events" : "Past Events"}
+                    Past Events
                 </h2>
                 <hr className="border-t-2 border-orange-600 w-[200px] mx-auto mb-6" />
                 <p className="text-center text-sm sm:text-lg md:text-xl lg:text-2xl font-extralight">
@@ -209,10 +209,7 @@ const Event = () => {
                     {/* Event Cards Grid */}
                     {filteredEvents.length === 0 ? (
                         <div className="w-full text-center py-16 text-gray-500 text-lg font-semibold">
-                            {selectedEventTab === "upcoming" 
-                                ? "No upcoming events to show for the selected category." 
-                                : "No past events to show for the selected category."
-                            }
+                            No past events to show for the selected category.
                         </div>
                     ) : (
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
