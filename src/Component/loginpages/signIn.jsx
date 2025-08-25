@@ -96,11 +96,15 @@ const SignIn = () => {
 
     setError("");
     setLoading(true);
-    https://piramal-realty.my.salesforce.com/services/apexrest/getValidation?ValidationCred=$userName&ValidationType=Mobile
 
     try {
       const response = await axios.get(
-        `https://piramal-realty--preprd.sandbox.my.salesforce.com/services/apexrest/getValidation?ValidationCred=${mobile}&ValidationType=Mobile`
+        `https://piramal-realty--preprd.sandbox.my.salesforce.com/services/apexrest/getValidation?ValidationCred=${mobile}&ValidationType=Mobile`,
+        {
+          headers: {
+            Authorization: `Bearer 00De10000006JPl!AQEAQATuKY05AsQzxPHBgCHFA4Z7s5f.lZnSXT6_RtX3RJT_2gxj4OBkF0jECWtZGFEVXCwrUagII1gCNE.6G..0sP.cbWfA`,
+          },
+        }
       );
 
       if (response.status === 200) {
