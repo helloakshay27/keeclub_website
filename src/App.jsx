@@ -72,11 +72,47 @@ const routeConfigs = [
   { path: '*', element: <PageNotFound />, transparent: true, hideLayout: true },
 ];
 
+
+
+
 function App() {
   const location = useLocation();
   const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
+  const [walletData, setWalletData] = useState(null); // store API response
+  const [error, setError] = useState(null);
 
-  // Update isMobile on resize
+  // // inside useEffect in App()
+  // useEffect(() => {
+  //   const fetchWalletDetails = async () => {
+  //     try {
+  //       const response = await fetch(
+  //         "/salesforce/services/data/v64.0/query/?q=SELECT+Id,Name,Loyalty_Balance__c,Opportunity__c,Phone_Mobile_Number__c,Total_Points_Credited__c,Total_Points_Debited__c,Total_Points_Expired__c,Active__c+FROM+Loyalty_Member__c+WHERE+Name+=+'PRLxLM-100000'",
+  //         {
+  //           method: "GET",
+  //           headers: {
+  //             Authorization: `Bearer 00De0000006JPl!AQEATuKY05AsQzxPHBgCHFA4Z7s5f.lZnSXT6_RtX3RJT_2gxj40BkF0jECWtZGFEVXCwrUagII1gCNE.6G..0sPcbWfA`,
+  //             "Content-Type": "application/json",
+  //           },
+  //         }
+  //       );
+
+  //       if (!response.ok) {
+  //         throw new Error(`HTTP error! Status: ${response.status}`);
+  //       }
+
+  //       const data = await response.json();
+  //       console.log("✅ Wallet API Response:", data);
+  //       setWalletData(data);
+  //     } catch (err) {
+  //       console.error("❌ Wallet API Error:", err);
+  //       setError(err.message);
+  //     }
+  //   };
+
+  //   fetchWalletDetails();
+  // }, []);
+
+  // your existing resize, matchedRoute, etc.
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 1024);
     window.addEventListener('resize', handleResize);
@@ -103,10 +139,20 @@ function App() {
   return (
     <div className="flex flex-col min-h-screen">
       {!hideLayout && <Header key={location.pathname} isTransparent={isTransparent} />}
-      <main
-        className="flex-1"
-        style={{ paddingTop: hideLayout ? 0 : `${headerHeightPx}px` }}
-      >
+      <main className="flex-1" style={{ paddingTop: hideLayout ? 0 : `${headerHeightPx}px` }}>
+
+        {/* Just for testing: show API status */}
+        {walletData && (
+          <div style={{ background: "#d1fae5", padding: "10px", margin: "10px" }}>
+            ✅ API Working: Loyalty Balance = {walletData?.records?.[0]?.Loyalty_Balance__c}
+          </div>
+        )}
+        {error && (
+          <div style={{ background: "#fee2e2", padding: "10px", margin: "10px" }}>
+            ❌ API Error: {error}
+          </div>
+        )}
+
         <Routes>
           {routeConfigs.map(({ path, element }) => (
             <Route key={path} path={path} element={element} />
@@ -124,19 +170,7 @@ function App() {
           </Route>
         </Routes>
 
-        <ToastContainer
-          position="top-right"
-          autoClose={4000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="light"
-          toastStyle={{ backgroundColor: 'white' }}
-        />
+        <ToastContainer />
         {!hideLayout && <Footer />}
       </main>
     </div>
@@ -144,3 +178,4 @@ function App() {
 }
 
 export default App;
+

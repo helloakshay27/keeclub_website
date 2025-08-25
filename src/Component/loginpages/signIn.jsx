@@ -96,10 +96,11 @@ const SignIn = () => {
 
     setError("");
     setLoading(true);
+    https://piramal-realty.my.salesforce.com/services/apexrest/getValidation?ValidationCred=$userName&ValidationType=Mobile
 
     try {
       const response = await axios.get(
-        `${BASE_URL}get_otps/generate_otp?mobile=${mobile}`
+        `https://piramal-realty--preprd.sandbox.my.salesforce.com/services/apexrest/getValidation?ValidationCred=${mobile}&ValidationType=Mobile`
       );
 
       if (response.status === 200) {
@@ -135,7 +136,7 @@ const SignIn = () => {
 
     try {
       const response = await axios.get(
-        `${BASE_URL}get_otps/verify_otp?mobile=${mobile}&otp=${otp}`
+        `https://snagging.lockated.com/get_otps/verify_otp.json?mobile=${mobile}&otp=${otp}`
       );
 
       const data = response.data;
@@ -171,70 +172,6 @@ const SignIn = () => {
     }
   };
 
-
-  // const renderPasswordLogin = () => {
-  //   return (
-  //     <div className="mt-2 w-full max-w-[380px]">
-
-
-  //       <div className="form-group relative mb-2">
-  //         <label className="mb-1 block text-white" htmlFor="email">
-  //           Email ID
-  //         </label>
-  //         <input
-  //           type="email"
-  //           id="email"
-  //           className="w-full px-3 py-2 rounded mb-2 bg-white placeholder-gray-400 text-black outline-none"
-  //           placeholder="Enter email id here..."
-  //           value={email}
-  //           onChange={(e) => setEmail(e.target.value)}
-  //           required
-  //         />
-  //       </div>
-  //       <div className="form-group relative mb-4">
-  //         <label className="mb-1 block text-white" htmlFor="password">
-  //           Password
-  //         </label>
-  //         <div className="relative">
-  //           <input
-  //             type={showPassword ? "text" : "password"}
-  //             id="password"
-  //             className="w-full px-3 py-2 rounded mb-2 bg-white placeholder-gray-400 text-black outline-none"
-  //             placeholder="Enter password here..."
-  //             value={password}
-  //             onChange={(e) => setPassword(e.target.value)}
-  //             required
-  //           />
-  //           <button
-  //             type="button"
-  //             onClick={() => setShowPassword(!showPassword)}
-  //             className="absolute top-1/2 right-3 transform -translate-y-1/2 bg-transparent border-none p-0 cursor-pointer"
-  //           >
-  //             {showPassword ? (
-  //               <EyeOff size={18} className="text-[#de7008]" />
-  //             ) : (
-  //               <Eye size={18} className="text-[#de7008]" />
-  //             )}
-  //           </button>
-  //         </div>
-  //       </div>
-
-
-  //       {error && <p className="text-red-500">{error}</p>}
-
-  //       <button
-  //         onClick={handlePasswordLogin}
-  //         type="submit"
-  //         className="w-full  h-11 cursor-pointer bg-[#de7008] text-white py-2 px-4 rounded mt-2 mx-auto hover:bg-[#de7008] block"
-  //         disabled={loading}
-  //       >
-  //         {loading ? "Logging in..." : "LOGIN"}
-  //       </button>
-
-
-  //     </div>
-  //   );
-  // };
 
   const handleBackToMobileInput = () => {
     setShowOtpSection(false);   // hide OTP input section

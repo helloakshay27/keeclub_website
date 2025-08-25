@@ -20,6 +20,10 @@ const TransactionStatuss = () => {
     useState("Featured Products");
   const [memberData, setMemberData] = useState(null);
   const [loading, setLoading] = useState(true);
+  // Add wallet data state
+  const [walletData, setWalletData] = useState(null);
+  const [walletLoading, setWalletLoading] = useState(false);
+  const [walletError, setWalletError] = useState(null);
   // Fetch member data from API on mount
   useEffect(() => {
     const fetchMemberData = async () => {
@@ -42,6 +46,7 @@ const TransactionStatuss = () => {
       }
     };
     fetchMemberData();
+    fetchWalletDetails();
   }, []);
   const [referrals, setReferrals] = useState([]);
   const [showModal, setShowModal] = useState(false);
@@ -224,6 +229,15 @@ const TransactionStatuss = () => {
     }
   }, [memberData]);
 
+  // Always keep sessionStorage in sync if memberData changes (for any reason)
+  useEffect(() => {
+    if (memberData) {
+      sessionStorage.setItem("memberData", JSON.stringify(memberData));
+    } else {
+      sessionStorage.removeItem("memberData");
+    }
+  }, [memberData]);
+
   const fetchReferrals = async () => {
     try {
       const token = localStorage.getItem("authToken");
@@ -321,20 +335,52 @@ const TransactionStatuss = () => {
         setIsSubmitted(false);
         toast.success("Referral added successfully!");
       }
-      // Always keep sessionStorage in sync if memberData changes (for any reason)
-      useEffect(() => {
-        if (memberData) {
-          sessionStorage.setItem("memberData", JSON.stringify(memberData));
-        } else {
-          sessionStorage.removeItem("memberData");
-        }
-      }, [memberData]);
     } catch (error) {
       if (error.response?.status === 422 && error.response?.data?.mobile) {
         toast.error(
           "This phone number has already been referred by this user for this project."
         );
       }
+    }
+  };
+
+   // Add function to fetch wallet details from Salesforce
+  const fetchWalletDetails = async () => {
+    setWalletLoading(true);
+    setWalletError(null);
+    try {
+      // This will fail due to CORS, which is expected
+      const memberName = "PRLxLM-100000";
+      const salesforceToken = "00DIp0000000WGU!AQEAQAibqjH_a7k6Z58qt.Jnik1plTgzNCKPjbS5CWHTxiRQOcll9NpVCmYAsGKPJx5mA5zVaj3ZpdqfPN2a6hbW59_8GPaa";
+      const salesforceUrl = `https://piramal-realty--preprd.sandbox.my.salesforce.com/services/data/v64.0/query/?q=SELECT+Id,Name,Loyalty_Balance__c,Opportunity__c,Phone_Mobile_Number__c,Total_Points_Credited__c,Total_Points_Debited__c,Total_Points_Expired__c,Active__c+FROM+Loyalty_Member__c+WHERE+Name+='${memberName}'`;
+
+      const response = await axios.get(salesforceUrl, {
+        headers: {
+          'Authorization': `Bearer ${salesforceToken}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      console.log("Salesforce Response:", response.data);
+      if (response.data && response.data.records && response.data.records.length > 0) {
+        setWalletData(response.data.records[0]);
+      } else {
+        setWalletError("No wallet data found");
+        setWalletData(null);
+      }
+    } catch (error) {
+      console.error("Error fetching wallet details:", error);
+      
+      // This handles the CORS error gracefully
+      if (error.code === 'ERR_NETWORK' || error.message.includes('CORS')) {
+        console.log("CORS error detected - API call blocked by browser security");
+        setWalletError("Unable to fetch live data due to browser security restrictions. Using existing member data.");
+        setWalletData(null); // Falls back to memberData
+      } else {
+        setWalletError(`Failed to fetch wallet details: ${error.message}`);
+        setWalletData(null);
+      }
+    } finally {
+      setWalletLoading(false);
     }
   };
 
@@ -394,24 +440,48 @@ const TransactionStatuss = () => {
       <div className="text-center mt-8 text-red-500">Member not found.</div>
     );
 
-  const summaryCards = [
-    {
-      title: "Earned Points",
-      value: formatPoints(memberData?.earned_points || 0),
-    },
-    {
-      title: "Redeemed Points",
-      value: formatPoints(memberData?.reedem_points || 0),
-    },
-    {
-      title: "Expired Points",
-      value: formatPoints(memberData?.expired_points || 0),
-    },
-    {
-      title: "Balance Points",
-      value: formatPoints(memberData?.current_loyalty_points || 0),
-    },
-  ];
+  // Update summary cards to use wallet data
+  const summaryCards = walletData
+    ? [
+        {
+          title: "Earned Points",
+          value: formatPoints(walletData.Total_Credit_Txn_Amount__c || 0),
+        },
+        {
+          title: "Redeemed Points",
+          value: formatPoints(walletData.Total_Debit_Txn_Amount__c || 0),
+        },
+        {
+          title: "Expired Points",
+          value: formatPoints(walletData.Total_Expired_Txn_Amount__c || 0),
+        },
+        {
+          title: "Balance Points",
+          value: formatPoints(walletData.Loyalty_Balance__c || 0),
+        },
+      ]
+    : [
+        {
+          title: "Earned Points",
+          value: formatPoints(memberData?.earned_points || 0),
+        },
+        {
+          title: "Redeemed Points",
+          value: formatPoints(memberData?.reedem_points || 0),
+        },
+        {
+          title: "Expired Points",
+          value: formatPoints(memberData?.expired_points || 0),
+        },
+        {
+          title: "Balance Points",
+          value: formatPoints(memberData?.current_loyalty_points || 0),
+        },
+      ];
+
+  // Update the current points calculation to use wallet data if available
+  const currentPoints =
+    walletData?.Loyalty_Balance__c || memberData?.current_loyalty_points || 0;
 
   console.log("Member Data:", memberData);
 
@@ -440,7 +510,6 @@ const TransactionStatuss = () => {
     },
   ];
 
-  const currentPoints = memberData?.current_loyalty_points || 0;
   const allTiers = memberData?.tier_progress?.all_tiers || [];
 
   let currentTier = "--";
@@ -514,6 +583,8 @@ const TransactionStatuss = () => {
   // Dynamic star image
   const starImagePath =
     currentTier !== "--" ? `/${currentTier.toLowerCase()}-star.png` : null;
+
+ 
 
   return (
     <div className="max-w-7xl mx-auto p-4">
@@ -880,20 +951,40 @@ const TransactionStatuss = () => {
 
       {/* Summary Cards */}
       <div className="flex justify-between gap-4 mt-6">
-        {summaryCards.map((item, index) => (
-          <div
-            key={index}
-            className="flex-1 rounded-lg p-4 flex items-center gap-4 border border-gray-200"
-          >
-            <div className="bg-[#FA46151A] rounded-full w-16 h-16 flex items-center justify-center">
-              <span className="text-3xl text-[#A78847]">✦</span>
-            </div>
-            <div>
-              <div className="text-sm text-gray-500">{item.title}</div>
-              <div className="text-xl font-bold">{item.value} Points</div>
-            </div>
+        {walletLoading ? (
+          <div className="flex-1 rounded-lg p-4 flex items-center justify-center border border-gray-200">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#fa4615]"></div>
+            <span className="ml-2 text-gray-600">Loading wallet...</span>
           </div>
-        ))}
+        ) : walletError ? (
+          <div className="flex-1 rounded-lg p-4 flex items-center justify-center border border-red-200 bg-red-50">
+            <span className="text-red-600 text-sm">{walletError}</span>
+            <button
+              onClick={fetchWalletDetails}
+              className="ml-2 text-xs bg-red-600 text-white px-2 py-1 rounded hover:bg-red-700"
+            >
+              Retry
+            </button>
+          </div>
+        ) : (
+          summaryCards.map((item, index) => (
+            <div
+              key={index}
+              className="flex-1 rounded-lg p-4 flex items-center gap-4 border border-gray-200"
+            >
+              <div className="bg-[#FA46151A] rounded-full w-16 h-16 flex items-center justify-center">
+                <span className="text-3xl text-[#A78847]">✦</span>
+              </div>
+              <div>
+                <div className="text-sm text-gray-500">{item.title}</div>
+                <div className="text-xl font-bold">{item.value} Points</div>
+                {walletData && (
+                  <div className="text-xs text-green-600 mt-1">✓ Live data</div>
+                )}
+              </div>
+            </div>
+          ))
+        )}
       </div>
 
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mt-10">
@@ -1148,7 +1239,6 @@ const TransactionStatuss = () => {
               {referrals.length > 0 ? (
                 referrals.map((item, index) => (
                   <tr key={index}>
-                    {console.log("Referral Item:", item)}
                     <td className="px-4 py-3">
                       {item?.created_at
                         ? new Date(item.created_at).toLocaleString("en-US", {
@@ -1313,7 +1403,7 @@ const TransactionStatuss = () => {
                                       <path
                                         strokeLinecap="round"
                                         strokeLinejoin="round"
-                                        d="M6.75 3v2.25M17.25 3v2.25M3.75 7.5h16.5M4.5 21h15a2.25 2.25 0 002.25-2.25V7.5a2.25 2.25 0 00-2.25-2.25h-15A2.25 2.25 0 002.25 7.5v11.25A2.25 2.25 0 004.5 21z"
+                                        d="M6.75 3v2.25M17.25 3v2.25M3.75 7.5h16.5M4.5 21h15a2.25 2.25 0 002.25-2.25V7.5a2.25 2.25 0 00-2.25-2.25h-15A2.25 2.25 0 004.5 7.5v11.25A2.25 2.25 0 006.75 24h10.5a2.25 2.25 0 002.25-2.25L21 3M3 3h18"
                                       />
                                     </svg>
                                     {formatOrderDate(order.createdAt)}
@@ -1451,39 +1541,42 @@ const TransactionStatuss = () => {
                                       />
                                     </svg>
                                     <div>
-
-                                    <p>
-                                      {order.shippingAddress.address},
-                                      {order.shippingAddress.address_line_two
-                                        ? ` ${order.shippingAddress.address_line_two},`
-                                        : ""}{" "}
+                                      <p>
+                                        {order.shippingAddress.address},
+                                        {order.shippingAddress.address_line_two
+                                          ? ` ${order.shippingAddress.address_line_two},`
+                                          : ""}{" "}
                                         {order.shippingAddress.address_line_three
-                                        ? ` ${order.shippingAddress.address_line_three},`
-                                        : ""}{" "}
-                                    </p>
-                                    <p>
-                                      {order.shippingAddress.city},
-                                      {order.shippingAddress.state} - {order.shippingAddress.pin_code}
-                                    </p>
-                                <div className="flex items-center text-sm text-gray-600 mt-1" style={{marginLeft: "-20px"}}>
-                                  <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    strokeWidth={1.5}
-                                    stroke="currentColor"
-                                    className="w-4 h-4 mr-1"
-                                  >
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v7.125A2.625 2.625 0 007.125 19.5h9.75a2.625 2.625 0 002.625-2.625V9.75"
-                                    />
-                                  </svg>
-                                  <span className="capitalize">
-                                    {order.paymentStatus}
-                                  </span>
-                                </div>
+                                          ? ` ${order.shippingAddress.address_line_three},`
+                                          : ""}{" "}
+                                      </p>
+                                      <p>
+                                        {order.shippingAddress.city},
+                                        {order.shippingAddress.state} -{" "}
+                                        {order.shippingAddress.pin_code}
+                                      </p>
+                                      <div
+                                        className="flex items-center text-sm text-gray-600 mt-1"
+                                        style={{ marginLeft: "-20px" }}
+                                      >
+                                        <svg
+                                          xmlns="http://www.w3.org/2000/svg"
+                                          fill="none"
+                                          viewBox="0 0 24 24"
+                                          strokeWidth={1.5}
+                                          stroke="currentColor"
+                                          className="w-4 h-4 mr-1"
+                                        >
+                                          <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v7.125A2.625 2.625 0 007.125 19.5h9.75a2.625 2.625 0 002.625-2.625V9.75a2.625 2.625 0 00-2.625-2.625h-15A2.625 2.625 0 004.5 9.75v11.25A2.625 2.625 0 007.125 19.5h9.75a2.625 2.625 0 002.625-2.625V9.75"
+                                          />
+                                        </svg>
+                                        <span className="capitalize">
+                                          {order.paymentStatus}
+                                        </span>
+                                      </div>
                                     </div>
                                   </div>
                                 )}
@@ -1611,3 +1704,4 @@ const TransactionStatuss = () => {
 };
 
 export default TransactionStatuss;
+
