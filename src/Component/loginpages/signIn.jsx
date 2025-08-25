@@ -152,6 +152,8 @@ const SignIn = () => {
         localStorage.setItem("firstName", data.first_name);
         localStorage.setItem("lastName", data.last_name);
         localStorage.setItem("email", data.email);
+        localStorage.setItem("co_id", data.co_id);
+
 
         toast.success("Login successful!");
 
