@@ -112,7 +112,7 @@ const SignIn = () => {
         localStorage.setItem("Id", record.Id);
         localStorage.setItem("Opportunity_Name__c", record.Opportunity_Name__c);
         
-        navigate(`/dashboard/transactions/${record.Opportunity_Name__c}`);
+        navigate(`/dashboard/transactions/${record.Id}`);
         toast.success("Login successful!");
       } else {
         toast.error("Failed to login. Please try again.");
