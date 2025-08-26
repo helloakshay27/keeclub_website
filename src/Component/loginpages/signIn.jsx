@@ -109,11 +109,18 @@ const SignIn = () => {
 
       if (response.status === 200 && response.data && response.data.records && response.data.records.length > 0) {
         const record = response.data.records[0];
-        localStorage.setItem("Id", record.Id);
-        localStorage.setItem("Opportunity_Name__c", record.Opportunity_Name__c);
-        
-        navigate(`/dashboard/transactions/${record.Id}`);
-        toast.success("Login successful!");
+        const sapCode = record.Opportunity_Name__r?.SAP_SalesOrder_Code__c;
+
+        if (sapCode) {
+          localStorage.setItem("Id", record.Id);
+          localStorage.setItem("Opportunity_Name__c", record.Opportunity_Name__c);
+          localStorage.setItem("SAP_SalesOrder_Code__c", sapCode);
+          
+          navigate(`/dashboard/transactions/${sapCode}`);
+          toast.success("Login successful!");
+        } else {
+          toast.error("Could not find customer identifier. Please contact support.");
+        }
       } else {
         toast.error("Failed to login. Please try again.");
       }
