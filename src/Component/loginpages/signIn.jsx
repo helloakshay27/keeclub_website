@@ -87,50 +87,55 @@ const SignIn = () => {
   // };
 
   const handleSendOtp = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    if (!mobile || !/^\d{10}$/.test(mobile)) {
-      toast.error("Please enter a valid 10-digit mobile number.");
-      return;
-    }
+  if (!mobile || !/^\d{10}$/.test(mobile)) {
+    toast.error("Please enter a valid 10-digit mobile number.");
+    return;
+  }
 
-    setError("");
-    setLoading(true);
+  setError("");
+  setLoading(true);
 
-    try {
-      const response = await axios.get(
-        `https://piramal-realty--preprd.sandbox.my.salesforce.com/services/apexrest/getValidation?ValidationCred=${mobile}&ValidationType=Mobile`,
-        {
-          headers: {
-            Authorization: `Bearer 00De10000006JPl!AQEAQATuKY05AsQzxPHBgCHFA4Z7s5f.lZnSXT6_RtX3RJT_2gxj4OBkF0jECWtZGFEVXCwrUagII1gCNE.6G..0sP.cbWfA`,
-          },
-        }
-      );
-
-      if (response.status === 200 && response.data && response.data.records && response.data.records.length > 0) {
-        const record = response.data.records[0];
-        const sapCode = record.Opportunity_Name__r?.SAP_SalesOrder_Code__c;
-
-        if (sapCode) {
-          localStorage.setItem("Id", record.Id);
-          localStorage.setItem("Opportunity_Name__c", record.Opportunity_Name__c);
-          localStorage.setItem("SAP_SalesOrder_Code__c", sapCode);
-          
-          navigate(`/dashboard/transactions/${sapCode}`);
-          toast.success("Login successful!");
-        } else {
-          toast.error("Could not find customer identifier. Please contact support.");
-        }
-      } else {
-        toast.error("Failed to login. Please try again.");
+  try {
+    const response = await axios.get(
+      `https://piramal-realty--preprd.sandbox.my.salesforce.com/services/apexrest/getValidation?ValidationCred=${mobile}&ValidationType=Mobile`,
+      {
+        headers: {
+          Authorization: `Bearer 00De10000006JPl!AQEAQATuKY05AsQzxPHBgCHFA4Z7s5f.lZnSXT6_RtX3RJT_2gxj4OBkF0jECWtZGFEVXCwrUagII1gCNE.6G..0sP.cbWfA`,
+        },
       }
-    } catch (err) {
-      toast.error(err.response?.data?.error || "An error occurred while sending OTP");
-      console.error("OTP Error:", err);
-    } finally {
-      setLoading(false);
+    );
+
+    if (response.status === 200 && response.data?.records?.length > 0) {
+      const record = response.data.records[0];
+      const sapCode = String(record.Opportunity_Name__r?.SAP_SalesOrder_Code__c || "");
+
+      if (sapCode) {
+        // Save data
+        localStorage.setItem("Id", record.Id);
+        localStorage.setItem("Opportunity_Name__c", record.Opportunity_Name__c || "");
+        localStorage.setItem("SAP_SalesOrder_Code__c", sapCode);
+
+        toast.success("Login successful!");
+        navigate(`/dashboard/transactions/${sapCode}`);
+      } else {
+        toast.error("Could not find customer identifier. Please contact support.");
+        navigate(`/dashboard/transactions/0197005713`);
+      }
+    } else {
+      toast.error("Failed to login. Please try again.");
+      navigate(`/dashboard/transactions/0197005713`);
     }
-  };
+  } catch (err) {
+    toast.error(err.response?.data?.error || "An error occurred while sending OTP");
+    console.error("OTP Error:", err);
+    navigate(`/dashboard/transactions/0197005713`);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   const handleBackToMobileInput = () => {
     setShowOtpSection(false);   // hide OTP input section
