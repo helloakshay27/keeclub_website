@@ -87,55 +87,51 @@ const SignIn = () => {
   // };
 
   const handleSendOtp = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  if (!mobile || !/^\d{10}$/.test(mobile)) {
-    toast.error("Please enter a valid 10-digit mobile number.");
-    return;
-  }
-
-  setError("");
-  setLoading(true);
-
-  try {
-    const response = await axios.get(
-      `https://piramal-realty--preprd.sandbox.my.salesforce.com/services/apexrest/getValidation?ValidationCred=${mobile}&ValidationType=Mobile`,
-      {
-        headers: {
-          Authorization: `Bearer 00De10000006JPl!AQEAQATuKY05AsQzxPHBgCHFA4Z7s5f.lZnSXT6_RtX3RJT_2gxj4OBkF0jECWtZGFEVXCwrUagII1gCNE.6G..0sP.cbWfA`,
-        },
-      }
-    );
-
-    if (response.status === 200 && response.data?.records?.length > 0) {
-      const record = response.data.records[0];
-      const sapCode = String(record.Opportunity_Name__r?.SAP_SalesOrder_Code__c || "");
-
-      if (sapCode) {
-        // Save data
-        localStorage.setItem("Id", record.Id);
-        localStorage.setItem("Opportunity_Name__c", record.Opportunity_Name__c || "");
-        localStorage.setItem("SAP_SalesOrder_Code__c", sapCode);
-
-        toast.success("Login successful!");
-        navigate(`/dashboard/transactions/${sapCode}`);
-      } else {
-        toast.error("Could not find customer identifier. Please contact support.");
-        navigate(`/dashboard/transactions/0197005713`);
-      }
-    } else {
-      toast.error("Failed to login. Please try again.");
-      navigate(`/dashboard/transactions/0197005713`);
+    if (!mobile || !/^\d{10}$/.test(mobile)) {
+      toast.error("Please enter a valid 10-digit mobile number.");
+      return;
     }
-  } catch (err) {
-    toast.error(err.response?.data?.error || "An error occurred while sending OTP");
-    console.error("OTP Error:", err);
-    navigate(`/dashboard/transactions/0197005713`);
-  } finally {
-    setLoading(false);
-  }
-};
 
+    setError("");
+    setLoading(true);
+
+    try {
+      const soqlQuery = `SELECT Id, Name, Loyalty_Balance__c, Opportunity__c, Loyalty_Member_Unique_Id__c, Phone_Mobile_Number__c, Total_Points_Credited__c, Total_Points_Debited__c, Total_Points_Expired__c, Active__c FROM Loyalty_Member__c WHERE Phone_Mobile_Number__c = '${mobile}'`;
+      const encodedQuery = encodeURIComponent(soqlQuery);
+      const url = `https://piramal-realty--preprd.sandbox.my.salesforce.com/services/data/v64.0/query/?q=${encodedQuery}`;
+
+      const response = await axios.get(url, {
+        headers: {
+          Authorization: `Bearer 00De10000006JPl!AQEAQG_UYduQzALU.DhKG4BgkK04D2FN2gI0lwThnDkJPe8M1dv3Yflo3uj166YYxpfj6ywR5RSaAcuGCFzQAiNs_IWuHocn`,
+        },
+      });
+
+      if (response.status === 200 && response.data && response.data.records && response.data.records.length > 0) {
+        const record = response.data.records[0];
+        const loyaltyId = record.Loyalty_Member_Unique_Id__c;
+
+        if (loyaltyId) {
+          localStorage.setItem("Id", record.Id);
+          localStorage.setItem("Loyalty_Member_Unique_Id__c", loyaltyId);
+          localStorage.setItem("Opportunity__c", record.Opportunity__c);
+          
+          navigate(`/dashboard/transactions/${loyaltyId}`);
+          toast.success("Login successful!");
+        } else {
+          toast.error("Could not find customer identifier. Please contact support.");
+        }
+      } else {
+        toast.error("Failed to login. Please try again.");
+      }
+    } catch (err) {
+      toast.error(err.response?.data?.[0]?.message || "An error occurred during login.");
+      console.error("Login Error:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleBackToMobileInput = () => {
     setShowOtpSection(false);   // hide OTP input section
