@@ -9,58 +9,41 @@ const LoginPage = () => {
   const [mobile, setMobile] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [showOtpSection, setShowOtpSection] = useState(false);
   const [OtpSection, setOtpSection] = useState(true);
-  const [selectedContent, setSelectedContent] = useState("content1");
+  const [showOtpSection, setShowOtpSection] = useState(false);
   const navigate = useNavigate();
-
-  const toggleContent = (content) => {
-    setSelectedContent(content);
-    setError("");
-  };
-
-  const regiterPage = () => {
-    navigate("/register");
-  };
 
   const handleSendOtp = async (e) => {
     e.preventDefault();
-
-    if (!mobile || !/^\d{10}$/.test(mobile)) {
-      toast.error("Please enter a valid 10-digit mobile number.");
-      return;
-    }
-
-    setError("");
     setLoading(true);
+    setError("");
 
-    const soqlQuery = `SELECT Id, Name, Loyalty_Balance__c, Opportunity__c, Loyalty_Member_Unique_Id__c, Phone_Mobile_Number__c, Total_Points_Credited__c, Total_Points_Debited__c, Total_Points_Expired__c, Active__c FROM Loyalty_Member__c WHERE Phone_Mobile_Number__c = '${mobile}'`;
-    const encodedQuery = encodeURIComponent(soqlQuery);
-    const url = `/services/data/v64.0/query/?q=${encodedQuery}`;
-
+    const url = `/your/salesforce/api/endpoint?mobile=${mobile}`; // Replace with your actual endpoint
     let response;
     try {
+      // Always use the latest token from localStorage
+      const token = localStorage.getItem('salesforce_access_token');
+      if (token) {
+        api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      }
       response = await api.get(url);
     } catch (err) {
-      // If 401, try to refresh token and retry
       if (err.response && err.response.status === 401) {
         try {
           const params = new URLSearchParams();
-          params.append("grant_type", "password");
-          params.append("client_id", import.meta.env.VITE_SF_CLIENT_ID);
-          params.append("client_secret", import.meta.env.VITE_SF_CLIENT_SECRET);
-          params.append("username", import.meta.env.VITE_SF_USERNAME);
-          params.append("password", import.meta.env.VITE_SF_PASSWORD);
-
+          params.append('grant_type', 'refresh_token');
+          params.append('client_id', import.meta.env.VITE_SF_CLIENT_ID);
+          params.append('client_secret', import.meta.env.VITE_SF_CLIENT_SECRET);
+          params.append('refresh_token', import.meta.env.VITE_SF_REFRESH_TOKEN);
           const tokenResponse = await fetch(import.meta.env.VITE_SF_TOKEN_URL, {
-            method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: params,
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: params
           });
-
           const tokenData = await tokenResponse.json();
           if (tokenData.access_token) {
-            localStorage.setItem("salesforce_access_token", tokenData.access_token);
+            localStorage.setItem('salesforce_access_token', tokenData.access_token);
+            api.defaults.headers.common['Authorization'] = `Bearer ${tokenData.access_token}`;
             response = await api.get(url);
           } else {
             toast.error("Could not refresh token. Please try again later.");
@@ -73,9 +56,7 @@ const LoginPage = () => {
           return;
         }
       } else {
-        toast.error(
-          err.response?.data?.[0]?.message || "An error occurred during login."
-        );
+        toast.error(err.response?.data?.[0]?.message || "An error occurred during login.");
         setLoading(false);
         return;
       }
