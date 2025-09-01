@@ -40,6 +40,7 @@ import TrackOrder from './Pages/TrackOrder';
 import HotelsRedemption from './Pages/HotelsRedemption';
 import Orders from './Pages/Orders';
 import OrderDetail from './Pages/OrderDetail';
+import LoginPage from './Component/loginpages/loginPage';
 
 const routeConfigs = [
   { path: '/', element: <Home />, transparent: true },
@@ -61,7 +62,7 @@ const routeConfigs = [
   { path: '/track-order/:orderId', element: <TrackOrder />, transparent: false },
   { path: '/hotels-redemption', element: <HotelsRedemption />, transparent: false },
 
-  { path: '/login', element: <SignIn />, transparent: true, hideLayout: true },
+  { path: '/login', element: <LoginPage />, transparent: true, hideLayout: true },
   { path: '/register', element: <Register />, transparent: true, hideLayout: true },
   { path: '/forgot-password', element: <Forgot />, transparent: true, hideLayout: true },
   { path: '/forgot-otp', element: <ForgotOtp />, transparent: true, hideLayout: true },

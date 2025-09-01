@@ -99,7 +99,7 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
         const authToken = localStorage.getItem('authToken');
         if (!authToken || authToken === 'null') {
             toast.error('Your session has expired. Please login again.');
-            navigate('/signin');
+            navigate('/login');
             return;
         }
         

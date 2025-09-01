@@ -1,90 +1,85 @@
 import React, { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { FaRegEyeSlash } from "react-icons/fa";
+import { FaRegEye } from "react-icons/fa";
+import api from '../../api/salesforce'; // Import the new api utility
 import axios from "axios";
 import { toast } from "react-toastify";
 import BASE_URL from "../../Confi/baseurl"
 import logo from "../../assets/piramal_bg.png";
 import ComLogo from "../../assets/ComLogo.png";
 
-const SignIn = () => {
+const LoginPage = () => {
   const [mobile, setMobile] = useState("");
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [showOtpSection, setShowOtpSection] = useState(false);
   const [OtpSection, setOtpSection] = useState(true);
-
-  // const [showPassword, setShowPassword] = useState(false);
-  // const [selectedContent, setSelectedContent] = useState("content1");
-  // const [email, setEmail] = useState("");
-  // const [password, setPassword] = useState("");
-
-
-
-
+  const [showPassword, setShowPassword] = useState(false);
+  const [selectedContent, setSelectedContent] = useState("content1");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const navigate = useNavigate();
-  const location = useLocation();
+
+  const toggleContent = (content) => {
+    setSelectedContent(content);
+    setError("");
+  };
+
+  const regiterPage = () => {
+    navigate("/register");
+  };
+
+  const handlePasswordLogin = async (e) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(username)) {
+      toast.error("Please enter a valid email address.");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        `https://piramal-loyalty-dev.lockated.com/api/users/sign_in`,
+        null,
+        {
+          params: {
+            email: username,
+            password,
+          },
+        }
+      );
+
+      const data = response.data;
+
+      if (data.access_token && data.member_id) {
+        localStorage.setItem("authToken", data.access_token);
+        localStorage.setItem("member_id", data.member_id);
+        localStorage.setItem("id", data.id);
 
 
+        localStorage.setItem("firstName", data.first_name);
+        localStorage.setItem("lastName", data.last_name);
+        localStorage.setItem("email", data.email);
+        toast.success("Login successful!");
+        const from = location.state?.from || `/dashboard/transactions/${data.member_id}`;
+        navigate(from);
+      } else {
+        toast.error("Invalid credentials. Please try again.");
+      }
+    } catch (error) {
+      toast.error("Login failed. Please try again.");
+      console.error("Login error:", error);
+    }
 
-  // const toggleContent = (content) => {
-  //   setSelectedContent(content);
-  //   setError("");
-  // };
-
-  // const regiterPage = () => {
-  //   navigate("/register");
-  // };
-
-  // const handlePasswordLogin = async (e) => {
-  //   e.preventDefault();
-  //   setError("");
-  //   setLoading(true);
-
-  //   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  //   if (!emailRegex.test(email)) {
-  //     toast.error("Please enter a valid email address.");
-  //     setLoading(false);
-  //     return;
-  //   }
-
-  //   try {
-  //     const response = await axios.post(
-  //       `https://piramal-loyalty-dev.lockated.com/api/users/sign_in`,
-  //       null,
-  //       {
-  //         params: {
-  //           email,
-  //           password,
-  //         },
-  //       }
-  //     );
-
-  //     const data = response.data;
-
-  //     if (data.access_token && data.member_id) {
-  //       localStorage.setItem("authToken", data.access_token);
-  //       localStorage.setItem("member_id", data.member_id);
-  //       localStorage.setItem("id", data.id);
-
-
-  //       localStorage.setItem("firstName", data.first_name);
-  //       localStorage.setItem("lastName", data.last_name);
-  //       localStorage.setItem("email", data.email);
-  //       toast.success("Login successful!");
-  //       const from = location.state?.from || `/dashboard/transactions/${data.member_id}`;
-  //       navigate(from);
-  //     } else {
-  //       toast.error("Invalid credentials. Please try again.");
-  //     }
-  //   } catch (error) {
-  //     toast.error("Login failed. Please try again.");
-  //     console.error("Login error:", error);
-  //   }
-
-  //   setLoading(false);
-  // };
+    setLoading(false);
+  };
 
   const handleSendOtp = async (e) => {
     e.preventDefault();
@@ -100,13 +95,9 @@ const SignIn = () => {
     try {
       const soqlQuery = `SELECT Id, Name, Loyalty_Balance__c, Opportunity__c, Loyalty_Member_Unique_Id__c, Phone_Mobile_Number__c, Total_Points_Credited__c, Total_Points_Debited__c, Total_Points_Expired__c, Active__c FROM Loyalty_Member__c WHERE Phone_Mobile_Number__c = '${mobile}'`;
       const encodedQuery = encodeURIComponent(soqlQuery);
-      const url = `https://piramal-realty--preprd.sandbox.my.salesforce.com/services/data/v64.0/query/?q=${encodedQuery}`;
+      const url = `/services/data/v64.0/query/?q=${encodedQuery}`;
 
-      const response = await axios.get(url, {
-        headers: {
-          Authorization: `Bearer 00De10000006JPl!AQEAQG_UYduQzALU.DhKG4BgkK04D2FN2gI0lwThnDkJPe8M1dv3Yflo3uj166YYxpfj6ywR5RSaAcuGCFzQAiNs_IWuHocn`,
-        },
-      });
+      const response = await api.get(url);
 
       if (response.status === 200 && response.data && response.data.records && response.data.records.length > 0) {
         const record = response.data.records[0];
@@ -247,4 +238,4 @@ const SignIn = () => {
   );
 };
 
-export default SignIn;
+export default LoginPage;
