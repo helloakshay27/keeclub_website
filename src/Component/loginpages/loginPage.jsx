@@ -13,6 +13,8 @@ const LoginPage = () => {
 
   // ✅ On page load → fetch Salesforce access token
   useEffect(() => {
+    console.log(import.meta.env.VITE_SF_CLIENT_ID, import.meta.env.VITE_SF_CLIENT_SECRET, import.meta.env.VITE_SF_REFRESH_TOKEN);
+
     const fetchToken = async () => {
       try {
         const params = new URLSearchParams();
