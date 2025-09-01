@@ -3,7 +3,7 @@ import { Eye, EyeOff } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaRegEyeSlash } from "react-icons/fa";
 import { FaRegEye } from "react-icons/fa";
-import api from '../../api/salesforce'; // Import the new api utility
+import api from '../../../salesforce'; // Import the new api utility
 import axios from "axios";
 import { toast } from "react-toastify";
 import BASE_URL from "../../Confi/baseurl"
