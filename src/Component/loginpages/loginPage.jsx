@@ -91,9 +91,10 @@ const LoginPage = () => {
 
     try {
       if (response && response.status === 200) {
-        console.log("Login successful:", response.data);
-        if (response.data.records.length > 0) {
-          const record = response.data.records[0];
+        // Defensive: ensure records is an array
+        const records = Array.isArray(response.data.records) ? response.data.records : [];
+        if (records.length > 0) {
+          const record = records[0];
           const loyaltyId = record.Loyalty_Member_Unique_Id__c;
           if (loyaltyId) {
             localStorage.setItem("Id", record.Id);
@@ -108,11 +109,13 @@ const LoginPage = () => {
         } else {
           toast.error("No record found for this mobile number.");
         }
+      } else if (response) {
+        toast.error(`Unexpected response: ${response.status}`);
       } else {
         toast.error("Failed to login. Please try again.");
       }
     } catch (err) {
-      toast.error("An error occurred during login.");
+      toast.error(err?.message || "An unexpected error occurred during login.");
     } finally {
       setLoading(false);
     }
