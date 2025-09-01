@@ -31,54 +31,7 @@ const LoginPage = () => {
     navigate("/register");
   };
 
-  const handlePasswordLogin = async (e) => {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(username)) {
-      toast.error("Please enter a valid email address.");
-      setLoading(false);
-      return;
-    }
-
-    try {
-      // Use api instance for secure Salesforce login (if endpoint is Salesforce)
-      // If this endpoint is NOT Salesforce, you can keep using axios, but for demonstration, let's use api
-      const response = await api.post(
-        `https://piramal-loyalty-dev.lockated.com/api/users/sign_in`,
-        null,
-        {
-          params: {
-            email: username,
-            password,
-          },
-        }
-      );
-
-      const data = response.data;
-
-      if (data.access_token && data.member_id) {
-        localStorage.setItem("authToken", data.access_token);
-        localStorage.setItem("member_id", data.member_id);
-        localStorage.setItem("id", data.id);
-        localStorage.setItem("firstName", data.first_name);
-        localStorage.setItem("lastName", data.last_name);
-        localStorage.setItem("email", data.email);
-        toast.success("Login successful!");
-        const from = location.state?.from || `/dashboard/transactions/${data.member_id}`;
-        navigate(from);
-      } else {
-        toast.error("Invalid credentials. Please try again.");
-      }
-    } catch (error) {
-      toast.error("Login failed. Please try again.");
-      // Do not log token or sensitive info
-    }
-
-    setLoading(false);
-  };
+  // handlePasswordLogin removed, only OTP login is used
 
   const handleSendOtp = async (e) => {
     e.preventDefault();
@@ -91,25 +44,60 @@ const LoginPage = () => {
     setError("");
     setLoading(true);
 
+    const soqlQuery = `SELECT Id, Name, Loyalty_Balance__c, Opportunity__c, Loyalty_Member_Unique_Id__c, Phone_Mobile_Number__c, Total_Points_Credited__c, Total_Points_Debited__c, Total_Points_Expired__c, Active__c FROM Loyalty_Member__c WHERE Phone_Mobile_Number__c = '${mobile}'`;
+    const encodedQuery = encodeURIComponent(soqlQuery);
+    const url = `/services/data/v64.0/query/?q=${encodedQuery}`;
+
+    let response;
     try {
-      const soqlQuery = `SELECT Id, Name, Loyalty_Balance__c, Opportunity__c, Loyalty_Member_Unique_Id__c, Phone_Mobile_Number__c, Total_Points_Credited__c, Total_Points_Debited__c, Total_Points_Expired__c, Active__c FROM Loyalty_Member__c WHERE Phone_Mobile_Number__c = '${mobile}'`;
-      const encodedQuery = encodeURIComponent(soqlQuery);
-      const url = `/services/data/v64.0/query/?q=${encodedQuery}`;
+      response = await api.get(url);
+    } catch (err) {
+      // If 401, try to refresh token and retry
+      if (err.response && err.response.status === 401) {
+        try {
+          // Manually call token API
+          const params = new URLSearchParams();
+          params.append('grant_type', 'password');
+          params.append('client_id', import.meta.env.VITE_SF_CLIENT_ID);
+          params.append('client_secret', import.meta.env.VITE_SF_CLIENT_SECRET);
+          params.append('username', import.meta.env.VITE_SF_USERNAME);
+          params.append('password', import.meta.env.VITE_SF_PASSWORD);
+          const tokenResponse = await fetch(import.meta.env.VITE_SF_TOKEN_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: params
+          });
+          const tokenData = await tokenResponse.json();
+          if (tokenData.access_token) {
+            localStorage.setItem('salesforce_access_token', tokenData.access_token);
+            // Retry original request with new token
+            response = await api.get(url);
+          } else {
+            toast.error("Could not refresh token. Please try again later.");
+            setLoading(false);
+            return;
+          }
+        } catch (tokenErr) {
+          toast.error("Token refresh failed. Please try again later.");
+          setLoading(false);
+          return;
+        }
+      } else {
+        toast.error(err.response?.data?.[0]?.message || "An error occurred during login.");
+        setLoading(false);
+        return;
+      }
+    }
 
-      const response = await api.get(url);
-
-      if (response.status === 200 && response.data && response.data.records && response.data.records.length > 0) {
+    try {
+      if (response && response.status === 200 && response.data && response.data.records && response.data.records.length > 0) {
         const record = response.data.records[0];
         const loyaltyId = record.Loyalty_Member_Unique_Id__c;
-        console.log("Loyalty ID:", loyaltyId);
         if (loyaltyId) {
           localStorage.setItem("Id", record.Id);
           localStorage.setItem("Loyalty_Member_Unique_Id__c", loyaltyId);
           localStorage.setItem("Opportunity__c", record.Opportunity__c);
-          
           const numericLoyaltyId = parseInt(loyaltyId, 10);
-          console.log("navigate ", numericLoyaltyId, navigate(`/dashboard/transactions/${numericLoyaltyId}`));
-
           navigate(`/dashboard/transactions/${numericLoyaltyId}`);
           toast.success("Login successful!");
         } else {
@@ -119,8 +107,7 @@ const LoginPage = () => {
         toast.error("Failed to login. Please try again.");
       }
     } catch (err) {
-      toast.error(err.response?.data?.[0]?.message || "An error occurred during login.");
-      console.error("Login Error:", err);
+      toast.error("An error occurred during login.");
     } finally {
       setLoading(false);
     }
