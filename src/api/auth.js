@@ -1,15 +1,30 @@
 
 
 export async function getAccessToken() {
-    console.log(`${import.meta.env.VITE_API_BASE_URL}/services/oauth2/token`);
-    
-const url = `${import.meta.env.VITE_API_BASE_URL}/services/oauth2/token`;
-    const body = new URLSearchParams({
-      grant_type: "refresh_token",
-      client_id: import.meta.env.VITE_CLIENT_ID,
-      client_secret: import.meta.env.VITE_CLIENT_SECRET,
-      refresh_token: import.meta.env.VITE_REFRESH_TOKEN,
-    })
+  // Check for required environment variables
+  const baseUrl = import.meta.env.VITE_API_BASE_URL;
+  const clientId = import.meta.env.VITE_CLIENT_ID;
+  const clientSecret = import.meta.env.VITE_CLIENT_SECRET;
+  const refreshToken = import.meta.env.VITE_REFRESH_TOKEN;
+
+  if (!baseUrl || !clientId || !clientSecret || !refreshToken) {
+    console.error("Missing required environment variables for Salesforce authentication.", {
+      VITE_API_BASE_URL: baseUrl,
+      VITE_CLIENT_ID: clientId,
+      VITE_CLIENT_SECRET: clientSecret,
+      VITE_REFRESH_TOKEN: refreshToken,
+    });
+    throw new Error("One or more Salesforce environment variables are missing. Please check your deployment environment settings.");
+  }
+
+  const url = `${baseUrl}/services/oauth2/token`;
+  console.log("🔗 Salesforce token URL:", url);
+  const body = new URLSearchParams({
+    grant_type: "refresh_token",
+    client_id: clientId,
+    client_secret: clientSecret,
+    refresh_token: refreshToken,
+  });
   try {
     const response = await fetch(url, {
       method: "POST",
@@ -23,7 +38,7 @@ const url = `${import.meta.env.VITE_API_BASE_URL}/services/oauth2/token`;
       throw new Error(`Failed to fetch token: ${response.status}`);
     }
 
-    const data = await res.json();
+    const data = await response.json();
     console.log("🔑 Token Data:", data); // includes access_token & instance_url
     return data; // return full object
   } catch (err) {
