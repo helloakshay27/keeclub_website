@@ -16,7 +16,7 @@ const LoginPage = () => {
     const fetchToken = async () => {
       try {
         const params = new URLSearchParams();
-        params.append("grant_type", "password");
+        params.append("grant_type", "refresh_token");
         params.append("client_id", import.meta.env.VITE_SF_CLIENT_ID);
         params.append("client_secret", import.meta.env.VITE_SF_CLIENT_SECRET);
         params.append("refresh_token", import.meta.env.VITE_SF_REFRESH_TOKEN);
