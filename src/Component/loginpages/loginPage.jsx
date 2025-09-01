@@ -90,18 +90,22 @@ const LoginPage = () => {
     }
 
     try {
-      if (response && response.status === 200 && response.data && response.data.records && response.data.records.length > 0) {
-        const record = response.data.records[0];
-        const loyaltyId = record.Loyalty_Member_Unique_Id__c;
-        if (loyaltyId) {
-          localStorage.setItem("Id", record.Id);
-          localStorage.setItem("Loyalty_Member_Unique_Id__c", loyaltyId);
-          localStorage.setItem("Opportunity__c", record.Opportunity__c);
-          const numericLoyaltyId = parseInt(loyaltyId, 10);
-          navigate(`/dashboard/transactions/${numericLoyaltyId}`);
-          toast.success("Login successful!");
+      if (response && response.status === 200 && response.data && Array.isArray(response.data.records)) {
+        if (response.data.records.length > 0) {
+          const record = response.data.records[0];
+          const loyaltyId = record.Loyalty_Member_Unique_Id__c;
+          if (loyaltyId) {
+            localStorage.setItem("Id", record.Id);
+            localStorage.setItem("Loyalty_Member_Unique_Id__c", loyaltyId);
+            localStorage.setItem("Opportunity__c", record.Opportunity__c);
+            const numericLoyaltyId = parseInt(loyaltyId, 10);
+            navigate(`/dashboard/transactions/${numericLoyaltyId}`);
+            toast.success("Login successful!");
+          } else {
+            toast.error("Could not find customer identifier. Please contact support.");
+          }
         } else {
-          toast.error("Could not find customer identifier. Please contact support.");
+          toast.error("No record found for this mobile number.");
         }
       } else {
         toast.error("Failed to login. Please try again.");
