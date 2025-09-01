@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import api from "../../../salesforce"; // Secure Salesforce API instance
+import axios from "axios";
 import { toast } from "react-toastify";
 import logo from "../../assets/piramal_bg.png";
 import ComLogo from "../../assets/ComLogo.png";
@@ -9,63 +9,78 @@ const LoginPage = () => {
   const [mobile, setMobile] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [OtpSection, setOtpSection] = useState(true);
-  const [showOtpSection, setShowOtpSection] = useState(false);
   const navigate = useNavigate();
 
+  // ✅ On page load → fetch Salesforce access token
+  useEffect(() => {
+    const fetchToken = async () => {
+      try {
+        const params = new URLSearchParams();
+        params.append("grant_type", "password");
+        params.append("client_id", import.meta.env.VITE_SF_CLIENT_ID);
+        params.append("client_secret", import.meta.env.VITE_SF_CLIENT_SECRET);
+        params.append("refresh_token", import.meta.env.VITE_SF_REFRESH_TOKEN);
+
+        const tokenResponse = await fetch(import.meta.env.VITE_SF_TOKEN_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: params,
+        });
+
+        const tokenData = await tokenResponse.json();
+        console.log("🔑 Token response:", tokenData);
+
+        if (tokenData.access_token) {
+          localStorage.setItem("salesforce_access_token", tokenData.access_token);
+          localStorage.setItem("salesforce_instance_url", tokenData.instance_url);
+        } else {
+          toast.error("Failed to get Salesforce token.");
+        }
+      } catch (err) {
+        console.error("Token fetch error:", err);
+        toast.error("Could not connect to Salesforce.");
+      }
+    };
+
+    fetchToken();
+  }, []);
+
+  // ✅ Login (SOQL query with stored token)
   const handleSendOtp = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    setError("");
 
-    const url = `/your/salesforce/api/endpoint?mobile=${mobile}`; // Replace with your actual endpoint
-    let response;
-    try {
-      // Always use the latest token from localStorage
-      const token = localStorage.getItem('salesforce_access_token');
-      if (token) {
-        api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      }
-      response = await api.get(url);
-    } catch (err) {
-      if (err.response && err.response.status === 401) {
-        try {
-          const params = new URLSearchParams();
-          params.append('grant_type', 'refresh_token');
-          params.append('client_id', import.meta.env.VITE_SF_CLIENT_ID);
-          params.append('client_secret', import.meta.env.VITE_SF_CLIENT_SECRET);
-          params.append('refresh_token', import.meta.env.VITE_SF_REFRESH_TOKEN);
-          const tokenResponse = await fetch(import.meta.env.VITE_SF_TOKEN_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: params
-          });
-          const tokenData = await tokenResponse.json();
-          if (tokenData.access_token) {
-            localStorage.setItem('salesforce_access_token', tokenData.access_token);
-            api.defaults.headers.common['Authorization'] = `Bearer ${tokenData.access_token}`;
-            response = await api.get(url);
-          } else {
-            toast.error("Could not refresh token. Please try again later.");
-            setLoading(false);
-            return;
-          }
-        } catch (tokenErr) {
-          toast.error("Token refresh failed. Please try again later.");
-          setLoading(false);
-          return;
-        }
-      } else {
-        toast.error(err.response?.data?.[0]?.message || "An error occurred during login.");
-        setLoading(false);
-        return;
-      }
+    if (!mobile || !/^\d{10}$/.test(mobile)) {
+      toast.error("Please enter a valid 10-digit mobile number.");
+      return;
     }
 
-    try {
-      if (response && response.status === 200) {
-        console.log("Salesforce response:", response.data); // 🔎 Debug
+    setError("");
+    setLoading(true);
 
+    const accessToken = localStorage.getItem("salesforce_access_token");
+    const instanceUrl = localStorage.getItem("salesforce_instance_url");
+
+    if (!accessToken || !instanceUrl) {
+      toast.error("No Salesforce session. Please refresh page.");
+      setLoading(false);
+      return;
+    }
+
+    const soqlQuery = `SELECT Id, Name, Loyalty_Balance__c, Opportunity__c, Loyalty_Member_Unique_Id__c, Phone_Mobile_Number__c, Total_Points_Credited__c, Total_Points_Debited__c, Total_Points_Expired__c, Active__c FROM Loyalty_Member__c WHERE Phone_Mobile_Number__c = '${mobile}'`;
+    const encodedQuery = encodeURIComponent(soqlQuery);
+    const url = `${instanceUrl}/services/data/v64.0/query/?q=${encodedQuery}`;
+
+    try {
+      const response = await axios.get(url, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      console.log("📦 Salesforce query response:", response.data);
+
+      if (response.status === 200) {
         const records = Array.isArray(response.data.records)
           ? response.data.records
           : [];
@@ -89,52 +104,46 @@ const LoginPage = () => {
           }
         } else {
           toast.error(
-            "No record found for this mobile number. Please verify how the number is stored in Salesforce (maybe with country code)."
+            "No record found for this mobile number. Please check if Salesforce stores it with +91."
           );
         }
-      } else if (response) {
-        toast.error(`Unexpected response: ${response.status}`);
       } else {
-        toast.error("Failed to login. Please try again.");
+        toast.error(`Unexpected response: ${response.status}`);
       }
     } catch (err) {
-      toast.error(err?.message || "An unexpected error occurred during login.");
+      console.error("Login error:", err);
+      toast.error(
+        err.response?.data?.[0]?.message ||
+          "An error occurred while querying Salesforce."
+      );
     } finally {
       setLoading(false);
     }
   };
 
-  const handleBackToMobileInput = () => {
-    setShowOtpSection(false);
-    setOtpSection(true);
-    setError("");
-  };
-
   const renderOtpLogin = () => (
     <form onSubmit={handleSendOtp} className="mt-3 w-full max-w-[380px]">
-      {OtpSection && !showOtpSection && (
-        <div className="form-group relative mb-4">
-          <label className="mb-1 block text-white mt-4" htmlFor="mobile">
-            Mobile Number
-          </label>
-          <input
-            type="tel"
-            id="mobile"
-            className="w-full px-3 py-2 rounded mb-2 bg-white placeholder-gray-400 text-black outline-none"
-            placeholder="Enter registered mobile number..."
-            value={mobile}
-            onChange={(e) => setMobile(e.target.value)}
-            required
-          />
-          <button
-            type="submit"
-            className="w-full cursor-pointer h-11 bg-[#de7008] text-white py-2 px-4 rounded mt-2 mx-auto hover:bg-[#de7008] block"
-            disabled={loading}
-          >
-            {loading ? "Loading..." : "LOGIN"}
-          </button>
-        </div>
-      )}
+      <div className="form-group relative mb-4">
+        <label className="mb-1 block text-white mt-4" htmlFor="mobile">
+          Mobile Number
+        </label>
+        <input
+          type="tel"
+          id="mobile"
+          className="w-full px-3 py-2 rounded mb-2 bg-white placeholder-gray-400 text-black outline-none"
+          placeholder="Enter registered mobile number..."
+          value={mobile}
+          onChange={(e) => setMobile(e.target.value)}
+          required
+        />
+        <button
+          type="submit"
+          className="w-full cursor-pointer h-11 bg-[#de7008] text-white py-2 px-4 rounded mt-2 mx-auto hover:bg-[#de7008] block"
+          disabled={loading}
+        >
+          {loading ? "Loading..." : "LOGIN"}
+        </button>
+      </div>
 
       {error && <p className="text-red-500 mt-2">{error}</p>}
     </form>
@@ -155,16 +164,6 @@ const LoginPage = () => {
                   src={ComLogo}
                   alt="Logo"
                 />
-
-                <div className="flex flex-col sm:flex-row gap-3 items-center sm:items-start justify-center w-full mt-4 px-0 sm:px-4">
-                  <div className="form-group flex items-center justify-center h-full">
-                    <div className="form-check flex items-center">
-                      <h3 className="text-center font-[500] text-white text-lg">
-                        Login With OTP
-                      </h3>
-                    </div>
-                  </div>
-                </div>
                 <div className="flex justify-center w-full">{renderOtpLogin()}</div>
               </div>
             </div>
