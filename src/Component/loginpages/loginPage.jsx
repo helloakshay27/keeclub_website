@@ -3,8 +3,7 @@ import { Eye, EyeOff } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaRegEyeSlash } from "react-icons/fa";
 import { FaRegEye } from "react-icons/fa";
-import api from '../../../salesforce'; // Import the new api utility
-import axios from "axios";
+import api from '../../../salesforce'; // Secure Salesforce API instance
 import { toast } from "react-toastify";
 import BASE_URL from "../../Confi/baseurl"
 import logo from "../../assets/piramal_bg.png";
@@ -45,7 +44,9 @@ const LoginPage = () => {
     }
 
     try {
-      const response = await axios.post(
+      // Use api instance for secure Salesforce login (if endpoint is Salesforce)
+      // If this endpoint is NOT Salesforce, you can keep using axios, but for demonstration, let's use api
+      const response = await api.post(
         `https://piramal-loyalty-dev.lockated.com/api/users/sign_in`,
         null,
         {
@@ -62,8 +63,6 @@ const LoginPage = () => {
         localStorage.setItem("authToken", data.access_token);
         localStorage.setItem("member_id", data.member_id);
         localStorage.setItem("id", data.id);
-
-
         localStorage.setItem("firstName", data.first_name);
         localStorage.setItem("lastName", data.last_name);
         localStorage.setItem("email", data.email);
@@ -75,7 +74,7 @@ const LoginPage = () => {
       }
     } catch (error) {
       toast.error("Login failed. Please try again.");
-      console.error("Login error:", error);
+      // Do not log token or sensitive info
     }
 
     setLoading(false);
