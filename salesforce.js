@@ -5,11 +5,10 @@ const apiBaseUrl = import.meta.env.VITE_SF_API_BASE_URL;
 
 const getNewToken = async () => {
     const params = new URLSearchParams();
-    params.append('grant_type', 'password');
+    params.append('grant_type', 'refresh_token');
     params.append('client_id', import.meta.env.VITE_SF_CLIENT_ID);
     params.append('client_secret', import.meta.env.VITE_SF_CLIENT_SECRET);
-    params.append('username', import.meta.env.VITE_SF_USERNAME);
-    params.append('password', import.meta.env.VITE_SF_PASSWORD);
+    params.append('refresh_token', import.meta.env.VITE_SF_REFRESH_TOKEN);
 
     try {
         const response = await axios.post(tokenUrl, params, {
