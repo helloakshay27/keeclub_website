@@ -90,7 +90,8 @@ const LoginPage = () => {
     }
 
     try {
-      if (response && response.status === 200 && response.data && Array.isArray(response.data.records)) {
+      if (response && response.status === 200) {
+        console.log("Login successful:", response.data);
         if (response.data.records.length > 0) {
           const record = response.data.records[0];
           const loyaltyId = record.Loyalty_Member_Unique_Id__c;
