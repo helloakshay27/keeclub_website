@@ -19,9 +19,9 @@ const LoginPage = () => {
 //       try {
 //         const params = new URLSearchParams();
 //         params.append("grant_type", "refresh_token");
-//         params.append("client_id", import.meta.env.VITE_SF_CLIENT_ID);
-//         params.append("client_secret", import.meta.env.VITE_SF_CLIENT_SECRET);
-//         params.append("refresh_token", import.meta.env.VITE_SF_REFRESH_TOKEN);
+//         params.append("client_id", import.meta.env.VITE_CLIENT_ID);
+//         params.append("client_secret", import.meta.env.VITE_CLIENT_SECRET);
+//         params.append("refresh_token", import.meta.env.VITE_REFRESH_TOKEN);
 
 //         // 👇 Use Vite proxy path
 //         const tokenResponse = await fetch(
@@ -52,7 +52,7 @@ const LoginPage = () => {
 //   }, []);
 
   // ✅ Login (SOQL query with stored token)
-  const handleSendOtp = async (e) => {
+ const handleSendOtp = async (e) => {
   e.preventDefault();
 
   if (!mobile || !/^\d{10}$/.test(mobile)) {
@@ -64,13 +64,13 @@ const LoginPage = () => {
   setLoading(true);
 
   try {
-    // 🔑 Get token (from localStorage or fetch new)
+    // 🔑 Get token (reuse if exists, else fetch)
     let accessToken = localStorage.getItem("salesforce_access_token");
     let instanceUrl = localStorage.getItem("salesforce_instance_url");
 
     if (!accessToken || !instanceUrl) {
       const tokenData = await getAccessToken();
-      if (!tokenData?.access_token) {
+      if (!tokenData?.access_token || !tokenData?.instance_url) {
         toast.error("Unable to authenticate with Salesforce.");
         setLoading(false);
         return;
@@ -90,7 +90,7 @@ const LoginPage = () => {
       FROM Loyalty_Member__c 
       WHERE Phone_Mobile_Number__c IN ('${mobile}', '+91${mobile}')
     `;
-    const encodedQuery = encodeURIComponent(soqlQuery);
+    const encodedQuery = encodeURIComponent(soqlQuery.trim());
     const url = `${instanceUrl}/services/data/v64.0/query/?q=${encodedQuery}`;
 
     const response = await axios.get(url, {
@@ -138,6 +138,7 @@ const LoginPage = () => {
     setLoading(false);
   }
 };
+
 
   const renderOtpLogin = () => (
     <form onSubmit={handleSendOtp} className="mt-3 w-full max-w-[380px]">

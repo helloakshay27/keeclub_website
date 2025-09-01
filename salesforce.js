@@ -1,14 +1,14 @@
 import axios from 'axios';
 
-const tokenUrl = import.meta.env.VITE_SF_TOKEN_URL;
-const apiBaseUrl = import.meta.env.VITE_SF_API_BASE_URL;
+const tokenUrl = import.meta.env.VITE_TOKEN_URL;
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
 const getNewToken = async () => {
     const params = new URLSearchParams();
     params.append('grant_type', 'refresh_token');
-    params.append('client_id', import.meta.env.VITE_SF_CLIENT_ID);
-    params.append('client_secret', import.meta.env.VITE_SF_CLIENT_SECRET);
-    params.append('refresh_token', import.meta.env.VITE_SF_REFRESH_TOKEN);
+    params.append('client_id', import.meta.env.VITE_CLIENT_ID);
+    params.append('client_secret', import.meta.env.VITE_CLIENT_SECRET);
+    params.append('refresh_token', import.meta.env.VITE_REFRESH_TOKEN);
 
     try {
         const response = await axios.post(tokenUrl, params, {
