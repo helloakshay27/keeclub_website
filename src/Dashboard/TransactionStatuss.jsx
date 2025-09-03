@@ -13,8 +13,8 @@ import EncashRequests from "../Component/EncashRequests";
 import promotionAPI from "../services/promotionAPI";
 import Card1 from "../assets/Hotel/Card1.png";
 
-import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+// import React, { useState, useEffect } from "react";
+// import { useParams } from "react-router-dom";
 
 // ...existing code above...
 
