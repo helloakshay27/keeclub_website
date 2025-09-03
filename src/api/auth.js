@@ -4,7 +4,7 @@ import { PROD_ENV } from "../env.prod";
 
 export async function getAccessToken() {
   // Detect deployed domain (customize this check for your domain)
-  const isProd = window.location.hostname === "keeclub.com" || window.location.hostname === "www.keeclub.com";
+    const isProd = window.location.hostname === "keeclub.lockated.com" || window.location.hostname === "www.keeclub.com";
 
   // Use env variables accordingly
   const env = isProd ? PROD_ENV : import.meta.env;
