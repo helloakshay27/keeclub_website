@@ -13,6 +13,13 @@ export async function getAccessToken() {
   const clientSecret = env.VITE_CLIENT_SECRET;
   const refreshToken = env.VITE_REFRESH_TOKEN;
 
+  console.log(isProd ? "Using PROD_ENV variables" : "Using local .env variables", "env data`",{
+    VITE_API_BASE_URL: baseUrl,
+    VITE_CLIENT_ID: clientId,
+    VITE_CLIENT_SECRET: clientSecret,
+    VITE_REFRESH_TOKEN: refreshToken,
+  });
+
   if (!baseUrl || !clientId || !clientSecret || !refreshToken) {
     console.error("Missing required environment variables for Salesforce authentication.", {
       VITE_API_BASE_URL: baseUrl,
