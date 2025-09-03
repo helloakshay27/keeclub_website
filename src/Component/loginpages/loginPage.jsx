@@ -109,7 +109,7 @@ const LoginPage = () => {
 
       if (records.length > 0) {
         const record = records[0];
-        const loyaltyId = record.Loyalty_Member_Unique_Id__c;
+        var loyaltyId = record.Loyalty_Member_Unique_Id__c.replace(/^0+/, '');  
 
         if (loyaltyId) {
           localStorage.setItem("Id", record.Id);
