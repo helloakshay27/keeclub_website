@@ -116,8 +116,12 @@ const LoginPage = () => {
           localStorage.setItem("Loyalty_Member_Unique_Id__c", loyaltyId);
           localStorage.setItem("Opportunity__c", record.Opportunity__c);
 
-          const numericLoyaltyId = parseInt(loyaltyId, 10);
-          navigate(`/dashboard/transactions/${numericLoyaltyId}`);
+        //   const numericLoyaltyId = parseInt(loyaltyId, 10);
+        console.log("Loyalty ID:", loyaltyId);
+
+          navigate(`/dashboard/transactions/${loyaltyId}`);
+          console.log("Navigating to:", `/dashboard/transactions/${loyaltyId}`);
+
           toast.success("Login successful!");
         } else {
           toast.error("Could not find customer identifier. Please contact support.");
