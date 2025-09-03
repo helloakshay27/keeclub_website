@@ -1,24 +1,30 @@
 
 
-import { PROD_ENV } from "../env.prod";
 
 export async function getAccessToken() {
   // Detect deployed domain (customize this check for your domain)
-    const isProd = window.location.hostname === "keeclub.lockated.com" || window.location.hostname === "www.keeclub.com";
+  const isProd = window.location.hostname === "keeclub.lockated.com" || window.location.hostname === "www.keeclub.com";
 
-  // Use env variables accordingly
-  const env = isProd ? PROD_ENV : import.meta.env;
+  let env;
+  if (isProd) {
+    // Dynamically import env.prod.js only on production
+    try {
+      const prodModule = await import("../env.prod.js");
+      env = prodModule.PROD_ENV;
+      console.log("Using PROD_ENV variables", env);
+    } catch (e) {
+      console.error("Failed to load PROD_ENV from env.prod.js", e);
+      throw new Error("Production environment variables missing. Please check src/env.prod.js.");
+    }
+  } else {
+    env = import.meta.env;
+    console.log("Using local .env variables", env);
+  }
+
   const baseUrl = env.VITE_API_BASE_URL;
   const clientId = env.VITE_CLIENT_ID;
   const clientSecret = env.VITE_CLIENT_SECRET;
   const refreshToken = env.VITE_REFRESH_TOKEN;
-
-  console.log(isProd ? "Using PROD_ENV variables" : "Using local .env variables", "env data`",{
-    VITE_API_BASE_URL: baseUrl,
-    VITE_CLIENT_ID: clientId,
-    VITE_CLIENT_SECRET: clientSecret,
-    VITE_REFRESH_TOKEN: refreshToken,
-  });
 
   if (!baseUrl || !clientId || !clientSecret || !refreshToken) {
     console.error("Missing required environment variables for Salesforce authentication.", {

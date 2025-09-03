@@ -119,7 +119,7 @@ const Header = ({ isTransparent }) => {
             <Link to="/refer-now">REFER AND EARN</Link>
           </li>
           <li className={getLinkClasses('/events')}>
-            <Link to="/events">EVENTS</Link>
+            <Link to="/dashboard/transactions">EVENTS</Link>
           </li>
           {/* <li className={getLinkClasses('/blogs')}>
             <Link to="/blogs">BLOGS</Link>
