@@ -160,7 +160,7 @@ function App() {
           <Route path="/dashboard" element={<PrivateRoute />}>
             <Route element={<RootLayout />}>
               <Route index element={<Navigate to="transactions" replace />} />
-              <Route path="transactions/:sapCode" element={<TransactionStatuss />} />
+              <Route path="transactions/:id" element={<TransactionStatuss />} />
               <Route path="hotel-list" element={<HotelList />} />
               <Route path="hotel-checkout" element={<HotelCheckout />} />
               <Route path="hotel-book" element={<HotelBooks />} />
