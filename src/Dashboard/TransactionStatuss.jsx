@@ -15,26 +15,18 @@ import Card1 from "../assets/Hotel/Card1.png";
 
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-// ...other imports as needed...
+
+// ...existing code above...
 
 const TransactionStatuss = () => {
   const { id } = useParams();
-  const [selectedTab, setSelectedTab] = useState("referrals");
-  const [selectedRedemptionTab, setSelectedRedemptionTab] = useState("Featured Products");
-  const [memberData, setMemberData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  // Add wallet data state
-  const [walletData, setWalletData] = useState(null);
-  const [walletLoading, setWalletLoading] = useState(false);
-  const [walletError, setWalletError] = useState(null);
-
+  // ...existing code for state, effects, and logic...
+  // For debugging, log the id param:
   useEffect(() => {
     console.log("TransactionStatuss id param:", id);
-    // ...existing fetch logic...
   }, [id]);
 
-  // ...rest of your component logic (uncomment and use as needed)...
-
+  // ...existing code for UI...
   return (
     <div>
       <h2>Transaction Status Page</h2>
