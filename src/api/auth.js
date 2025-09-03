@@ -1,11 +1,17 @@
 
 
+import { PROD_ENV } from "../env.prod";
+
 export async function getAccessToken() {
-  // Check for required environment variables
-  const baseUrl = import.meta.env.VITE_API_BASE_URL;
-  const clientId = import.meta.env.VITE_CLIENT_ID;
-  const clientSecret = import.meta.env.VITE_CLIENT_SECRET;
-  const refreshToken = import.meta.env.VITE_REFRESH_TOKEN;
+  // Detect deployed domain (customize this check for your domain)
+  const isProd = window.location.hostname === "keeclub.com" || window.location.hostname === "www.keeclub.com";
+
+  // Use env variables accordingly
+  const env = isProd ? PROD_ENV : import.meta.env;
+  const baseUrl = env.VITE_API_BASE_URL;
+  const clientId = env.VITE_CLIENT_ID;
+  const clientSecret = env.VITE_CLIENT_SECRET;
+  const refreshToken = env.VITE_REFRESH_TOKEN;
 
   if (!baseUrl || !clientId || !clientSecret || !refreshToken) {
     console.error("Missing required environment variables for Salesforce authentication.", {
@@ -14,7 +20,7 @@ export async function getAccessToken() {
       VITE_CLIENT_SECRET: clientSecret,
       VITE_REFRESH_TOKEN: refreshToken,
     });
-    throw new Error("One or more Salesforce environment variables are missing. Please check your deployment environment settings.");
+    throw new Error("One or more Salesforce environment variables are missing. Please check your deployment environment settings or src/env.prod.js.");
   }
 
   const url = `${baseUrl}/services/oauth2/token`;
