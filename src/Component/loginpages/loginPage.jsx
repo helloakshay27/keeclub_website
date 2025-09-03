@@ -119,8 +119,8 @@ const LoginPage = () => {
         //   const numericLoyaltyId = parseInt(loyaltyId, 10);
         console.log("Loyalty ID:", loyaltyId);
 
-          navigate(`/dashboard/transactions/${loyaltyId}`);
-          console.log("Navigating to:", `/dashboard/transactions/${loyaltyId}`);
+navigate(`/dashboard/transactionStatus`, { state: { loyaltyId } });
+          console.log("Navigating to:", `/dashboard/transactionStatus`, { state: { loyaltyId } });
 
           toast.success("Login successful!");
         } else {
