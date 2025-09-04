@@ -14,16 +14,17 @@ import promotionAPI from "../services/promotionAPI";
 import Card1 from "../assets/Hotel/Card1.png";
 
 const TransactionStatuss = () => {
+  const [selectedTab, setSelectedTab] = useState("transactions");
   const [referrals, setReferrals] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [newReferral, setNewReferral] = useState({});
   const [pirmalData, setPirmalData] = useState([]);
   const [errors, setErrors] = useState({});
-   const [touched, setTouched] = useState({});
-   const [isSubmitted, setIsSubmitted] = useState(false);
-   const [showTierBenefit, setShowTierBenefit] = useState(false);
-   const [promotionData, setPromotionData] = useState([]);
-   const [promotionLoading, setPromotionLoading] = useState(false);
+  const [touched, setTouched] = useState({});
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [showTierBenefit, setShowTierBenefit] = useState(false);
+  const [promotionData, setPromotionData] = useState([]);
+  const [promotionLoading, setPromotionLoading] = useState(false);
 
    const tabs = [
      { key: "referrals", label: "My Referrals" },
