@@ -155,19 +155,22 @@ const Transactions = () => {
     ];
 
     return (
-        <div className="max-w-4xl mx-auto p-4">
+        <div className="max-w-7xl mx-auto p-4">
             <h2 className="text-2xl font-bold mb-4">Transaction Ledger</h2>
 
             {/* Summary Cards */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
-                {summaryCards.map((card) => (
+            <div className="flex flex-col sm:flex-row gap-4 mb-8">
+                {summaryCards.map((item, index) => (
                     <div
-                        key={card.title}
-                        className="bg-white border border-gray-200 rounded-lg shadow-sm p-4 text-center"
+                        key={index}
+                        className="flex-1 rounded-lg p-4 flex items-center gap-4 border border-gray-200"
                     >
-                        <div className="text-sm text-gray-500 mb-1">{card.title}</div>
-                        <div className="text-xl font-bold text-orange-600">
-                            {formatPoints(card.value)}
+                        <div className="bg-[#FA46151A] rounded-full w-16 h-16 flex items-center justify-center">
+                            <span className="text-3xl text-[#A78847]">✦</span>
+                        </div>
+                        <div>
+                            <div className="text-sm text-gray-500">{item.title}</div>
+                            <div className="text-xl font-bold">{item.value} Points</div>
                         </div>
                     </div>
                 ))}
