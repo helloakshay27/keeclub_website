@@ -4,7 +4,7 @@ import useApiFetch from "../../hooks/useApiFetch";
 import BASE_URL from "../../Confi/baseurl";
 
 const EventDetail = () => {
-  const token = localStorage.getItem("authToken");
+  const token = localStorage.getItem("salesforce_access_token");
   const { id } = useParams();
   const navigate = useNavigate();
   const { data } = useApiFetch(`${BASE_URL}events/${id}.json`, token);

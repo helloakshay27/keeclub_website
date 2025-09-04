@@ -40,7 +40,7 @@ const ProjectDetail = () => {
   const handleEnquireClick = () => {
     
     console.log("Enquire button clicked");
-    if (localStorage.getItem("authToken")) {
+    if (localStorage.getItem("salesforce_access_token")) {
       setShowEnquiryModal(true);
       sessionStorage.setItem("enquireClicked", "true");
       setEnquireDisabled(true);
@@ -50,7 +50,7 @@ const ProjectDetail = () => {
   };
 
   const handleSiteVisitClick = () => {
-    if (localStorage.getItem("authToken")) {
+    if (localStorage.getItem("salesforce_access_token")) {
       setShowSiteVisitModal(true);
     } else {
       navigate("/login", { state: { from: location.pathname } });
@@ -64,7 +64,7 @@ const ProjectDetail = () => {
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: "Bearer " + localStorage.getItem("authToken"),
+            Authorization: "Bearer " + localStorage.getItem("salesforce_access_token"),
           }
           // withCredentials: true, // if cookies needed
         }
@@ -198,7 +198,7 @@ const ProjectDetail = () => {
       return;
     }
 
-    const token = localStorage.getItem("authToken");
+    const token = localStorage.getItem("salesforce_access_token");
     console.log("token", token);
     
     try {
@@ -464,7 +464,7 @@ const ProjectDetail = () => {
           </button>
           <button
             onClick={() => {
-               const authToken = localStorage.getItem("authToken");
+               const authToken = localStorage.getItem("salesforce_access_token");
                             if (authToken) {
                               setShowModal(true)
                             } else {

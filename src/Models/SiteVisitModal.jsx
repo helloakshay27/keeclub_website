@@ -46,7 +46,7 @@ const SiteVisitModal = ({ isOpen, onClose, onSubmit, projectId }) => {
                         method: "GET",
                         headers: {
                             "Content-Type": "application/json",
-                            Authorization: "Bearer " + localStorage.getItem("authToken"),
+                            Authorization: "Bearer " + localStorage.getItem("salesforce_access_token"),
                         },
                     }
                 );
@@ -93,7 +93,7 @@ const SiteVisitModal = ({ isOpen, onClose, onSubmit, projectId }) => {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
-                        Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+                        Authorization: `Bearer ${localStorage.getItem("salesforce_access_token")}`,
                     },
                     body: JSON.stringify(payload),
                 }

@@ -22,7 +22,7 @@ const ReferNow = () => {
           <button
             className="bg-[#FF5722] hover:bg-[#e64a19] text-white font-Poppins py-2 px-8 rounded-sm text-[16px]"
             onClick={() => {
-              const authToken = localStorage.getItem("authToken");
+              const authToken = localStorage.getItem("salesforce_access_token");
               if (authToken) {
                 navigate(`/dashboard/transactions/${id}`);
               } else {

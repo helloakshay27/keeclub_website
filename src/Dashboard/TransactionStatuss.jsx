@@ -206,7 +206,7 @@ const TransactionStatuss = () => {
 
    const fetchReferrals = async () => {
      try {
-       const token = localStorage.getItem("authToken");
+       const token = localStorage.getItem("salesforce_access_token");
        const response = await axios.get(
          `${BASE_URL}referrals.json?access_token=${token}`
        );
@@ -255,7 +255,7 @@ const TransactionStatuss = () => {
        return;
      }
 
-     const token = localStorage.getItem("authToken");
+     const token = localStorage.getItem("salesforce_access_token");
 
      try {
        const payload = {

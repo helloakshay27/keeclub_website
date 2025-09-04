@@ -11,7 +11,7 @@ const EncashRequests = ({ memberData }) => {
       if (!memberData?.user_id) return;
       setLoading(true);
       try {
-        const token = localStorage.getItem("authToken");
+        const token = localStorage.getItem("salesforce_access_token");
         const res = await fetch(
           `${BASE_URL}/encash_requests.json`,
           {

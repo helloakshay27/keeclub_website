@@ -25,7 +25,7 @@ const PromotionDetail = () => {
 
   // Check authentication status
   useEffect(() => {
-    const authToken = localStorage.getItem("authToken");
+    const authToken = localStorage.getItem("salesforce_access_token");
     setIsAuthenticated(!!authToken);
   }, []);
 
