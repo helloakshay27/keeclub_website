@@ -1,7 +1,7 @@
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 
 export default function PrivateRoute() {
-  const isAuthenticated = Boolean(localStorage.getItem('authToken'));
+  const isAuthenticated = Boolean(localStorage.getItem('salesforce_access_token'));
   const location = useLocation();
 
   return isAuthenticated ? (

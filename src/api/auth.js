@@ -3,13 +3,14 @@
 
 export async function getAccessToken() {
   // Detect deployed domain (customize this check for your domain)
+  const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
   const isProd = window.location.hostname === "keeclub.lockated.com" || window.location.hostname === "www.keeclub.com";
 
   let env;
-  if (isProd) {
-    // Dynamically import env.prod.js only on production
+  if (isProd && !isLocal) {
+    // Only attempt import if running on production domain and not local
     try {
-      const prodModule = await import("../env.prod.js");
+      const prodModule = await import("/src/env.prod.js");
       env = prodModule.PROD_ENV;
       console.log("Using PROD_ENV variables", env);
     } catch (e) {
