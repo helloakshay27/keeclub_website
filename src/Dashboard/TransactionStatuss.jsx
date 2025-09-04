@@ -1710,4 +1710,5 @@ const TransactionStatuss = () => {
        )}
      </div>
   );
+}
 export default TransactionStatuss;
