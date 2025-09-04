@@ -129,6 +129,24 @@ const Transactions = () => {
             ],
         },
     ];
+    const summaryCards = [
+        {
+            title: "Earned Points",
+            value: formatPoints(100 || 0),
+        },
+        {
+            title: "Redeemed Points",
+            value: formatPoints(50 || 0),
+        },
+        {
+            title: "Expired Points",
+            value: formatPoints(0 || 0),
+        },
+        {
+            title: "Balance Points",
+            value: formatPoints(50 || 0),
+        },
+    ];
     return (
         <div className="max-w-4xl mx-auto p-4">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0">
@@ -422,8 +440,8 @@ const Transactions = () => {
                 <div className="mt-6">
                     <div
                         className={`flex flex-wrap gap-6 ${tierBenefits.length % 2 === 1
-                                ? "justify-start sm:justify-center"
-                                : "justify-start"
+                            ? "justify-start sm:justify-center"
+                            : "justify-start"
                             }`}
                     >
                         {tierBenefits.map((tier, index) => {
