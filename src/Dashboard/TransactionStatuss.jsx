@@ -1669,4 +1669,6 @@ const TransactionStatuss = () => {
    );
  };
 
+ export default TransactionStatuss;
+
 
