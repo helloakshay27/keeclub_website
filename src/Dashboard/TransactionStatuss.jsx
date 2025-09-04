@@ -15,6 +15,7 @@ import Card1 from "../assets/Hotel/Card1.png";
 
 const TransactionStatuss = () => {
   const [selectedTab, setSelectedTab] = useState("transactions");
+  const [selectedRedemptionTab, setSelectedRedemptionTab] = useState("Featured Products");
   const [referrals, setReferrals] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [newReferral, setNewReferral] = useState({});
