@@ -89,11 +89,11 @@ const LoginPage = () => {
     });
 
     const validationRecords = validationResponse.data?.records || [];
-    if (validationRecords.length === 0) {
-      toast.error("Mobile number not found.");
-      setLoading(false);
-      return;
-    }
+    // if (validationRecords.length === 0) {
+    //   toast.error("Mobile number not found.");
+    //   setLoading(false);
+    //   return;
+    // }
 
     // 2. Generate OTP
     const otpGenUrl = `https://snagging.lockated.com/get_otps/generate_otp_pre_prod.json?mobile=${mobile}`;
@@ -143,12 +143,13 @@ const LoginPage = () => {
 
       if (records.length > 0) {
         const record = records[0];
-        var loyaltyId = record.Loyalty_Member_Unique_Id__c.replace(/^0+/, '');  
+        var loyaltyId = record.Loyalty_Member_Unique_Id__c.replace(/^0+/, '') || 1;  
 
         if (loyaltyId) {
           localStorage.setItem("Id", record.Id);
           localStorage.setItem("Loyalty_Member_Unique_Id__c", loyaltyId);
           localStorage.setItem("Opportunity__c", record.Opportunity__c);
+          localStorage.setItem("salesforce_mobile", record.Phone_Mobile_Number__c || mobile);
 
           console.log("Loyalty ID:", loyaltyId);
 
