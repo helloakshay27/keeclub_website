@@ -14,6 +14,15 @@ import promotionAPI from "../services/promotionAPI";
 import Card1 from "../assets/Hotel/Card1.png";
 
 const TransactionStatuss = () => {
+  // ...existing code...
+  if (typeof loading !== "undefined" && loading) {
+    return <div className="text-center mt-8">Loading...</div>;
+  }
+  if (typeof memberData !== "undefined" && !memberData) {
+    return (
+      <div className="text-center mt-8 text-red-500">Member not found.</div>
+    );
+  }
   const [selectedTab, setSelectedTab] = useState("transactions");
   const [selectedRedemptionTab, setSelectedRedemptionTab] = useState("Featured Products");
   const [referrals, setReferrals] = useState([
@@ -431,11 +440,6 @@ const TransactionStatuss = () => {
      return description.substring(0, maxLength).trim() + "...";
    };
 
-   if (loading) return <div className="text-center mt-8">Loading...</div>;
-   if (!memberData)
-     return (
-       <div className="text-center mt-8 text-red-500">Member not found.</div>
-     );
 
    // Update summary cards to use wallet data
    const summaryCards = walletData
