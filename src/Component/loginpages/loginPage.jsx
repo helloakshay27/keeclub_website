@@ -79,6 +79,7 @@ const LoginPage = () => {
       localStorage.setItem("salesforce_access_token", accessToken);
       localStorage.setItem("salesforce_instance_url", instanceUrl);
     }
+
     // 1. Validate mobile with Salesforce REST API
     const validationUrl = `${instanceUrl}/services/apexrest/getValidation?ValidationCred=${mobile}&ValidationType=Mobile`;
     const validationResponse = await axios.get(validationUrl, {
@@ -114,8 +115,7 @@ const LoginPage = () => {
       return;
     }
 
-    // 4. Proceed with Salesforce login logic (existing code)
-
+    // 2. Proceed with Salesforce login logic (SOQL query)
     const soqlQuery = `
       SELECT Id, Name, Loyalty_Balance__c, Opportunity__c, 
              Loyalty_Member_Unique_Id__c, Phone_Mobile_Number__c, 
@@ -127,44 +127,87 @@ const LoginPage = () => {
     const encodedQuery = encodeURIComponent(soqlQuery.trim());
     const url = `${instanceUrl}/services/data/v64.0/query/?q=${encodedQuery}`;
 
-    const response = await axios.get(url, {
+    let response = await axios.get(url, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
         "Content-Type": "application/json",
       },
     });
 
-    console.log("📦 Salesforce query response:", response.data);
+    let records = Array.isArray(response.data.records)
+      ? response.data.records
+      : [];
 
-    if (response.status === 200) {
-      const records = Array.isArray(response.data.records)
+    // If no record found, create a new Loyalty Member and re-query
+    if (records.length === 0 && validationRecords.length > 0) {
+      // Extract names from Full_Name__c
+      const fullName = validationRecords[0].Full_Name__c || "";
+      let firstName = "";
+      let lastName = "";
+      if (fullName) {
+        const nameParts = fullName.replace(/^Mr\.|^Ms\.|^Mrs\./i, "").trim().split(" ");
+        firstName = nameParts[0] || "";
+        lastName = nameParts.slice(1).join(" ") || "";
+      }
+      // Fallback if Full_Name__c is not present
+      if (!firstName) firstName = "User";
+      if (!lastName) lastName = " ";
+
+      const opportunityId = validationRecords[0].Opportunity_Name__c || "";
+
+      const createMemberBody = {
+        Phone_Mobile_Number__c: mobile,
+        First_Name__c: firstName,
+        Last_Name__c: lastName,
+        Opportunity__c: opportunityId,
+        Active__c: true,
+      };
+
+      const createMemberUrl = `${instanceUrl}/services/data/v64.0/sobjects/Loyalty_Member__c/`;
+      await axios.post(createMemberUrl, createMemberBody, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      // Re-run the SOQL query to get the new member
+      response = await axios.get(url, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+      });
+      records = Array.isArray(response.data.records)
         ? response.data.records
         : [];
+    }
 
-      if (records.length > 0) {
-        const record = records[0];
-        var loyaltyId = record.Loyalty_Member_Unique_Id__c.replace(/^0+/, '') || 1;  
+    if (records.length > 0) {
+      const record = records[0];
+      var loyaltyId = record.Loyalty_Member_Unique_Id__c?.replace(/^0+/, '') || 1;
 
-        if (loyaltyId) {
-          localStorage.setItem("Id", record.Id);
-          localStorage.setItem("Loyalty_Member_Unique_Id__c", loyaltyId);
-          localStorage.setItem("Opportunity__c", record.Opportunity__c);
-          localStorage.setItem("salesforce_mobile", record.Phone_Mobile_Number__c || mobile);
+      if (loyaltyId) {
+        localStorage.setItem("Id", record.Id);
+        localStorage.setItem("Loyalty_Member_Unique_Id__c", loyaltyId);
+        localStorage.setItem("Opportunity__c", record.Opportunity__c);
+        localStorage.setItem("salesforce_mobile", record.Phone_Mobile_Number__c || mobile);
+        localStorage.setItem("Loyalty_Balance__c", record.Loyalty_Balance__c || 0);
+        localStorage.setItem("Total_Points_Credited__c", record.Total_Points_Credited__c || 0);
+        localStorage.setItem("Total_Points_Debited__c", record.Total_Points_Debited__c || 0);
+        localStorage.setItem("Total_Points_Expired__c", record.Total_Points_Expired__c || 0);
 
-          console.log("Loyalty ID:", loyaltyId);
+        console.log("Loyalty ID:", loyaltyId);
 
-          navigate(`/dashboard/transactions/${loyaltyId}`);
-          console.log("Navigating to:", `/dashboard/transactions/${loyaltyId}`);
+        navigate(`/dashboard/transactions/${loyaltyId}`);
+        console.log("Navigating to:", `/dashboard/transactions/${loyaltyId}`);
 
-          toast.success("Login successful!");
-        } else {
-          toast.error("Could not find customer identifier. Please contact support.");
-        }
+        toast.success("Login successful!");
       } else {
-        toast.error("No record found for this mobile number (with or without +91).");
+        toast.error("Could not find customer identifier. Please contact support.");
       }
     } else {
-      toast.error(`Unexpected response: ${response.status}`);
+      toast.error("No record found for this mobile number (with or without +91).");
     }
   } catch (err) {
     console.error("Login error:", err);
