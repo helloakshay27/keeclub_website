@@ -90,11 +90,11 @@ const LoginPage = () => {
     });
 
     const validationRecords = validationResponse.data?.records || [];
-    // if (validationRecords.length === 0) {
-    //   toast.error("Mobile number not found.");
-    //   setLoading(false);
-    //   return;
-    // }
+    if (validationRecords.length === 0) {
+      toast.error("Mobile number not found.");
+      setLoading(false);
+      return;
+    }
 
     // 2. Generate OTP
     const otpGenUrl = `https://snagging.lockated.com/get_otps/generate_otp_pre_prod.json?mobile=${mobile}`;
@@ -185,7 +185,7 @@ const LoginPage = () => {
 
     if (records.length > 0) {
       const record = records[0];
-      var loyaltyId = record.Loyalty_Member_Unique_Id__c?.replace(/^0+/, '') || 1;
+      var loyaltyId = record.Loyalty_Member_Unique_Id__c?.replace(/^0+/, '');
 
       if (loyaltyId) {
         localStorage.setItem("Id", record.Id);
