@@ -170,7 +170,8 @@ const TransactionStatuss = () => {
 
    const fetchMemberData = async () => {
      try {
-       const response = await axios.get(`${BASE_URL}loyalty/members/${id}.json`);
+       const memberId = localStorage.getItem("Loyalty_Member_Unique_Id__c");
+       const response = await axios.get(`${BASE_URL}loyalty/members/${memberId}.json`);
        setMemberData(response.data || null);
        if (response.data) {
          sessionStorage.setItem("memberData", JSON.stringify(response.data));
@@ -188,12 +189,12 @@ const TransactionStatuss = () => {
 
    useEffect(() => {
      fetchMemberData();
-   }, [id]);
+   }, []);
 
    // Store user_id in localStorage when memberData is available
    useEffect(() => {
-     if (memberData?.user_id) {
-       localStorage.setItem("userId", memberData.user_id);
+     if (memberData?.Loyalty_Member_Unique_Id__c) {
+       localStorage.setItem("Loyalty_Member_Unique_Id__c", memberData.Loyalty_Member_Unique_Id__c);
      }
    }, [memberData]);
 
