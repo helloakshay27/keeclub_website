@@ -16,15 +16,50 @@ import Card1 from "../assets/Hotel/Card1.png";
 const TransactionStatuss = () => {
   const [selectedTab, setSelectedTab] = useState("transactions");
   const [selectedRedemptionTab, setSelectedRedemptionTab] = useState("Featured Products");
-  const [referrals, setReferrals] = useState([]);
+  const [referrals, setReferrals] = useState([
+    {
+      created_at: "2025-09-01T10:00:00Z",
+      name: "John Doe",
+      project_name: "Piramal Mahalaxmi",
+      status: "Confirmed",
+      mobile: "9876543210",
+    },
+    {
+      created_at: "2025-08-15T14:30:00Z",
+      name: "Jane Smith",
+      project_name: "Piramal Vaikunth",
+      status: "Pending",
+      mobile: "9123456789",
+    },
+  ]);
   const [showModal, setShowModal] = useState(false);
   const [newReferral, setNewReferral] = useState({});
-  const [pirmalData, setPirmalData] = useState([]);
+  const [pirmalData, setPirmalData] = useState([
+    { id: 1, project_name: "Piramal Mahalaxmi" },
+    { id: 2, project_name: "Piramal Vaikunth" },
+  ]);
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [showTierBenefit, setShowTierBenefit] = useState(false);
-  const [promotionData, setPromotionData] = useState([]);
+  const [promotionData, setPromotionData] = useState([
+    {
+      id: 1,
+      name: "Titanium Watch",
+      image: "/titanium-star.png",
+      originalPrice: 15000,
+      currentPrice: 12000,
+      points: 12000,
+    },
+    {
+      id: 2,
+      name: "Gold Pen",
+      image: "/gold-star.png",
+      originalPrice: 5000,
+      currentPrice: 4000,
+      points: 4000,
+    },
+  ]);
   const [promotionLoading, setPromotionLoading] = useState(false);
 
    const tabs = [
@@ -35,63 +70,56 @@ const TransactionStatuss = () => {
    ];
 
    // My Orders tab state and logic
-   const [orders, setOrders] = useState([]);
+  const [orders, setOrders] = useState([
+    {
+      id: 1,
+      name: "Titanium Watch",
+      status: "Delivered",
+      created_at: "2025-08-20T09:00:00Z",
+      points: 12000,
+    },
+    {
+      id: 2,
+      name: "Gold Pen",
+      status: "Pending",
+      created_at: "2025-08-25T11:30:00Z",
+      points: 4000,
+    },
+  ]);
    const [ordersLoading, setOrdersLoading] = useState(false);
    const [ordersError, setOrdersError] = useState(null);
    const [selectedOrderFilter, setSelectedOrderFilter] = useState("All");
-
-   useEffect(() => {
-     if (selectedTab === "orders") {
-       fetchOrders();
-     }
-     // eslint-disable-next-line
-   }, [selectedTab]);
-
-   const fetchOrders = async () => {
-     setOrdersLoading(true);
-     setOrdersError(null);
-     try {
-       const authToken = localStorage.getItem("salesforce_access_token");
-       const memberId = localStorage.getItem("Loyalty_Member_Unique_Id__c");
-       if (
-         !authToken ||
-         !memberId ||
-         authToken === "null" ||
-         memberId === "null"
-       ) {
-         setOrdersError("Please login to access your orders.");
-         setOrders([]);
-         setOrdersLoading(false);
-         return;
-       }
-       const response = await promotionAPI.getUserOrders();
-       if (response.success) {
-         setOrders(response.data.orders);
-       } else {
-         setOrdersError("Failed to load orders");
-         setOrders([]);
-       }
-     } catch (error) {
-       setOrdersError("Network error while loading orders");
-       setOrders([]);
-     } finally {
-       setOrdersLoading(false);
-     }
-   };
-
-   const getOrderStatusBadge = (status) => {
-     const statusConfig = {
-       pending: { color: "bg-yellow-100 text-yellow-800", text: "Pending" },
-       confirmed: { color: "bg-blue-100 text-blue-800", text: "Confirmed" },
-       processing: {
-         color: "bg-indigo-100 text-indigo-800",
-         text: "Processing",
+   // Static member data
+   const memberData = {
+     Loyalty_Member_Unique_Id__c: "1",
+     earned_points: 25000,
+     reedem_points: 12000,
+     expired_points: 2000,
+     current_loyalty_points: 11000,
+     member_transactions: [
+       {
+         created_at: "2025-08-10T08:00:00Z",
+         transaction_type: "Credit",
+         remarks: "Referral Bonus",
+         points: 5000,
        },
-       shipped: { color: "bg-purple-100 text-purple-800", text: "Shipped" },
-       delivered: { color: "bg-green-100 text-green-800", text: "Delivered" },
-       cancelled: { color: "bg-red-100 text-red-800", text: "Cancelled" },
-       refunded: { color: "bg-gray-100 text-gray-800", text: "Refunded" },
-     };
+       {
+         created_at: "2025-08-15T09:30:00Z",
+         transaction_type: "Debit",
+         remarks: "Redeemed for Watch",
+         points: -12000,
+       },
+     ],
+     tier_progress: {
+       all_tiers: [
+         { name: "Bronze", exit_points: 0 },
+         { name: "Silver", exit_points: 5000 },
+         { name: "Gold", exit_points: 10000 },
+         { name: "Platinum", exit_points: 20000 },
+         { name: "Titanium", exit_points: 30000 },
+       ],
+     },
+   };
      const config = statusConfig[status] || statusConfig.pending;
      return (
        <span
@@ -1670,7 +1698,7 @@ const TransactionStatuss = () => {
        )}
      </div>
    );
- };
+ 
 
  export default TransactionStatuss;
 
