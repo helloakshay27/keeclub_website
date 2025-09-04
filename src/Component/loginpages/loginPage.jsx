@@ -64,7 +64,6 @@ const LoginPage = () => {
   setLoading(true);
 
   try {
-    // 🔑 Get token (reuse if exists, else fetch)
     let accessToken = localStorage.getItem("salesforce_access_token");
     let instanceUrl = localStorage.getItem("salesforce_instance_url");
 
@@ -80,8 +79,43 @@ const LoginPage = () => {
       localStorage.setItem("salesforce_access_token", accessToken);
       localStorage.setItem("salesforce_instance_url", instanceUrl);
     }
+    // 1. Validate mobile with Salesforce REST API
+    const validationUrl = `${instanceUrl}/services/apexrest/getValidation?ValidationCred=${mobile}&ValidationType=Mobile`;
+    const validationResponse = await axios.get(validationUrl, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
+    });
 
-    // 📱 Try both plain and +91 formatted mobile
+    const validationRecords = validationResponse.data?.records || [];
+    if (validationRecords.length === 0) {
+      toast.error("Mobile number not found.");
+      setLoading(false);
+      return;
+    }
+
+    // 2. Generate OTP
+    const otpGenUrl = `https://snagging.lockated.com/get_otps/generate_otp_pre_prod.json?mobile=${mobile}`;
+    const otpGenResponse = await axios.get(otpGenUrl);
+    const otp = otpGenResponse.data?.get_otp?.otp;
+    if (!otp) {
+      toast.error("Failed to generate OTP.");
+      setLoading(false);
+      return;
+    }
+
+    // 3. Verify OTP
+    const otpVerifyUrl = `https://snagging.lockated.com/get_otps/verify_otp.json?mobile=${mobile}&otp=${otp}`;
+    const otpVerifyResponse = await axios.get(otpVerifyUrl);
+    if (!otpVerifyResponse.data?.otp_valid) {
+      toast.error("OTP verification failed.");
+      setLoading(false);
+      return;
+    }
+
+    // 4. Proceed with Salesforce login logic (existing code)
+
     const soqlQuery = `
       SELECT Id, Name, Loyalty_Balance__c, Opportunity__c, 
              Loyalty_Member_Unique_Id__c, Phone_Mobile_Number__c, 
@@ -116,10 +150,9 @@ const LoginPage = () => {
           localStorage.setItem("Loyalty_Member_Unique_Id__c", loyaltyId);
           localStorage.setItem("Opportunity__c", record.Opportunity__c);
 
-        //   const numericLoyaltyId = parseInt(loyaltyId, 10);
-        console.log("Loyalty ID:", loyaltyId);
+          console.log("Loyalty ID:", loyaltyId);
 
-navigate(`/dashboard/transactions/${loyaltyId}`);
+          navigate(`/dashboard/transactions/${loyaltyId}`);
           console.log("Navigating to:", `/dashboard/transactions/${loyaltyId}`);
 
           toast.success("Login successful!");
