@@ -1701,9 +1701,7 @@ const TransactionStatuss = () => {
          </div>
        )}
      </div>
-   );
- 
-
- export default TransactionStatuss;
+  );
+export default TransactionStatuss;
 
 
