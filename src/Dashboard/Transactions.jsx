@@ -2,161 +2,163 @@
 import React, { useState } from "react";
 
 const staticMemberData = {
-  earned_points: 25000,
-  reedem_points: 12000,
-  expired_points: 2000,
-  current_loyalty_points: 11000,
-  member_transactions: [
-    {
-      created_at: "2025-08-10T08:00:00Z",
-      transaction_type: "Credit",
-      remarks: "Referral Bonus",
-      points: 5000,
-    },
-    {
-      created_at: "2025-08-15T09:30:00Z",
-      transaction_type: "Debit",
-      remarks: "Redeemed for Watch",
-      points: -12000,
-    },
-    {
-      created_at: "2025-08-20T11:00:00Z",
-      transaction_type: "Credit",
-      remarks: "Promotion Bonus",
-      points: 7000,
-    },
-  ],
+    earned_points: 25000,
+    reedem_points: 12000,
+    expired_points: 2000,
+    current_loyalty_points: 11000,
+    member_transactions: [
+        {
+            created_at: "2025-08-10T08:00:00Z",
+            transaction_type: "Credit",
+            remarks: "Referral Bonus",
+            points: 5000,
+        },
+        {
+            created_at: "2025-08-15T09:30:00Z",
+            transaction_type: "Debit",
+            remarks: "Redeemed for Watch",
+            points: -12000,
+        },
+        {
+            created_at: "2025-08-20T11:00:00Z",
+            transaction_type: "Credit",
+            remarks: "Promotion Bonus",
+            points: 7000,
+        },
+    ],
 };
 
 const summaryCards = [
-  {
-    title: "Earned Points",
-    value: staticMemberData.earned_points,
-  },
-  {
-    title: "Redeemed Points",
-    value: staticMemberData.reedem_points,
-  },
-  {
-    title: "Expired Points",
-    value: staticMemberData.expired_points,
-  },
-  {
-    title: "Balance Points",
-    value: staticMemberData.current_loyalty_points,
-  },
+    {
+        title: "Earned Points",
+        value: staticMemberData.earned_points,
+    },
+    {
+        title: "Redeemed Points",
+        value: staticMemberData.reedem_points,
+    },
+    {
+        title: "Expired Points",
+        value: staticMemberData.expired_points,
+    },
+    {
+        title: "Balance Points",
+        value: staticMemberData.current_loyalty_points,
+    },
 ];
 
 const formatPoints = (points) => {
-  if (typeof points !== "number") return points;
-  return points.toLocaleString("en-IN");
+    if (typeof points !== "number") return points;
+    return points.toLocaleString("en-IN");
 };
 
 const formatOrderDate = (dateString) => {
-  return new Date(dateString).toLocaleDateString("en-IN", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+    return new Date(dateString).toLocaleDateString("en-IN", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+    });
 };
 
 const getStatusBadge = (type) => {
-  const config =
-    type === "Credit"
-      ? { color: "bg-green-100 text-green-800", text: "Credit" }
-      : { color: "bg-red-100 text-red-800", text: "Debit" };
-  return (
-    <span className={`px-3 py-1 rounded-full text-sm font-medium ${config.color}`}>
-      {config.text}
-    </span>
-  );
+    const config =
+        type === "Credit"
+            ? { color: "bg-green-100 text-green-800", text: "Credit" }
+            : { color: "bg-red-100 text-red-800", text: "Debit" };
+    return (
+        <span className={`px-3 py-1 rounded-full text-sm font-medium ${config.color}`}>
+            {config.text}
+        </span>
+    );
 };
 
 const Transactions = () => {
-  const [transactions] = useState(staticMemberData.member_transactions);
+    const [transactions] = useState(staticMemberData.member_transactions);
+    const [showTierBenefit, setShowTierBenefit] = useState(false);
+
     let currentTier = "--";
 
     const tierBenefits = [
-    {
-      tier: "Bronze",
-      title: "Bronze Tier",
-      points: [
-        "Every purchase earns you reward points that bring you closer to exclusive experiences.",
-        "You’ll be invited to member-only events, receive curated monthly recommendations, and get a warm welcome gift as a new member.",
-        "This tier opens the door to thoughtful perks and sets the stage for something truly rewarding.",
-        "It’s the foundation for your relationship with Kee Club personal, consistent, and curated with care.",
-      ],
-    },
-    {
-      tier: "Silver",
-      title: "Silver Tier",
-      points: [
-        "As a Silver member, you’re celebrated with extra care. You earn points at a faster pace and get access to new arrivals and sales before anyone else.",
-        "Your birthday is special here we’ll make sure of it with a curated surprise just for you. Enjoy complimentary standard shipping, priority assistance from our support team, and seasonal offers crafted for your preferences.",
-        "With Silver, you step into a space where service is smoother, selections are smarter, and your loyalty is felt.",
-      ],
-    },
-    {
-      tier: "Gold",
-      title: "Gold Tier",
-      points: [
-        "Gold membership is an invitation to go deeper with Kee Club.",
-        "Enjoy faster rewards, free express shipping, and a dedicated line for quicker support.",
-        "You’ll be among the first to access new collections and exclusive drops, with personal invitations to member-only experiences. Receive curated gifts for special milestones, thoughtful service throughout your journey, and styling or shopping recommendations based on your tastes.",
-        "Gold is more than a tier it’s a partnership built on trust, taste, and attention.",
-      ],
-    },
-    {
-      tier: "Platinum",
-      title: "Platinum Tier",
-      points: [
-        "Platinum is our most exclusive tier, designed for those who truly live the brand.",
-        "Your rewards accelerate even further, and your service becomes white-glove. A dedicated concierge is available for personalized styling, private previews, and seamless support.",
-        "Enjoy luxury gifting, access to high-touch brand experiences, and invitations to exclusive dinners, launches, or one-on-one sessions. You’ll also receive special recognition, early reservations, and priority access to limited-edition pieces.",
-      ],
-    },
-    {
-      tier: "Titanium",
-      title: "Titanium Tier",
-      points: [
-        "Titanium is our most exclusive tier, designed for those who truly live the brand.",
-        "Your rewards accelerate even further, and your service becomes white-glove. A dedicated concierge is available for personalized styling, private previews, and seamless support.",
-        "Enjoy luxury gifting, access to high-touch brand experiences, and invitations to exclusive dinners, launches, or one-on-one sessions. You’ll also receive special recognition, early reservations, and priority access to limited-edition pieces.",
-      ],
-    },
-  ];
-  return (
-    <div className="max-w-4xl mx-auto p-4">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0">
-        <p className="text-lg font-semibold">
-          {currentTier === "--" ? (
-            "You are not in any tier"
-          ) : (
-            <span>
-              You are on the{" "}
-              {/* <span className="text-orange-500 font-bold capitalize">
+        {
+            tier: "Bronze",
+            title: "Bronze Tier",
+            points: [
+                "Every purchase earns you reward points that bring you closer to exclusive experiences.",
+                "You’ll be invited to member-only events, receive curated monthly recommendations, and get a warm welcome gift as a new member.",
+                "This tier opens the door to thoughtful perks and sets the stage for something truly rewarding.",
+                "It’s the foundation for your relationship with Kee Club personal, consistent, and curated with care.",
+            ],
+        },
+        {
+            tier: "Silver",
+            title: "Silver Tier",
+            points: [
+                "As a Silver member, you’re celebrated with extra care. You earn points at a faster pace and get access to new arrivals and sales before anyone else.",
+                "Your birthday is special here we’ll make sure of it with a curated surprise just for you. Enjoy complimentary standard shipping, priority assistance from our support team, and seasonal offers crafted for your preferences.",
+                "With Silver, you step into a space where service is smoother, selections are smarter, and your loyalty is felt.",
+            ],
+        },
+        {
+            tier: "Gold",
+            title: "Gold Tier",
+            points: [
+                "Gold membership is an invitation to go deeper with Kee Club.",
+                "Enjoy faster rewards, free express shipping, and a dedicated line for quicker support.",
+                "You’ll be among the first to access new collections and exclusive drops, with personal invitations to member-only experiences. Receive curated gifts for special milestones, thoughtful service throughout your journey, and styling or shopping recommendations based on your tastes.",
+                "Gold is more than a tier it’s a partnership built on trust, taste, and attention.",
+            ],
+        },
+        {
+            tier: "Platinum",
+            title: "Platinum Tier",
+            points: [
+                "Platinum is our most exclusive tier, designed for those who truly live the brand.",
+                "Your rewards accelerate even further, and your service becomes white-glove. A dedicated concierge is available for personalized styling, private previews, and seamless support.",
+                "Enjoy luxury gifting, access to high-touch brand experiences, and invitations to exclusive dinners, launches, or one-on-one sessions. You’ll also receive special recognition, early reservations, and priority access to limited-edition pieces.",
+            ],
+        },
+        {
+            tier: "Titanium",
+            title: "Titanium Tier",
+            points: [
+                "Titanium is our most exclusive tier, designed for those who truly live the brand.",
+                "Your rewards accelerate even further, and your service becomes white-glove. A dedicated concierge is available for personalized styling, private previews, and seamless support.",
+                "Enjoy luxury gifting, access to high-touch brand experiences, and invitations to exclusive dinners, launches, or one-on-one sessions. You’ll also receive special recognition, early reservations, and priority access to limited-edition pieces.",
+            ],
+        },
+    ];
+    return (
+        <div className="max-w-4xl mx-auto p-4">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0">
+                <p className="text-lg font-semibold">
+                    {currentTier === "--" ? (
+                        "You are not in any tier"
+                    ) : (
+                        <span>
+                            You are on the{" "}
+                            {/* <span className="text-orange-500 font-bold capitalize">
                 {currentTier}
               </span>{" "} */}
-              Tier!
-            </span>
-          )}
-        </p>
+                            Tier!
+                        </span>
+                    )}
+                </p>
 
-        <button
-          href="#"
-          onClick={() => setShowModal(true)}
-          className="text-sm font-semibold bg-orange-600 text-white px-4 py-2 rounded-md hover:bg-orange-700 transition-colors"
-        >
-          REFER & EARN
-        </button>
-      </div>
+                <button
+                    href="#"
+                    onClick={() => setShowModal(true)}
+                    className="text-sm font-semibold bg-orange-600 text-white px-4 py-2 rounded-md hover:bg-orange-700 transition-colors"
+                >
+                    REFER & EARN
+                </button>
+            </div>
 
-      {/* Progress Section */}
-      <div className="bg-white border border-gray-300 rounded-lg mt-4 p-5 sm:p-7 shadow-sm flex flex-col md:flex-row gap-9 md:gap-40 items-center relative">
-        {/* Info Icon Top-Right */}
-        {/* <div
+            {/* Progress Section */}
+            <div className="bg-white border border-gray-300 rounded-lg mt-4 p-5 sm:p-7 shadow-sm flex flex-col md:flex-row gap-9 md:gap-40 items-center relative">
+                {/* Info Icon Top-Right */}
+                {/* <div
           className="absolute top-1 right-1 z-10 group"
           style={{ minWidth: 40 }}
         >
@@ -407,130 +409,129 @@ const Transactions = () => {
           })()}
         </div> */}
 
-        <div className="md:items-end">
-          <button
-            onClick={() => setShowTierBenefit(!showTierBenefit)}
-            className="bg-gray-900 text-white px-4 py-3 md:py-4 rounded text-sm font-medium uppercase whitespace-nowrap"
-          >
-            {showTierBenefit ? "HIDE TIER BENEFITS" : "VIEW TIER BENEFITS"}
-          </button>
-        </div>
-      </div>
-      {showTierBenefit && (
-        <div className="mt-6">
-          <div
-            className={`flex flex-wrap gap-6 ${
-              tierBenefits.length % 2 === 1
-                ? "justify-start sm:justify-center"
-                : "justify-start"
-            }`}
-          >
-            {tierBenefits.map((tier, index) => {
-              const isLast = index === tierBenefits.length - 1;
-              const isOdd = tierBenefits.length % 2 === 1;
-              // If last and odd, center the last card on desktop
-              const cardClass =
-                isLast && isOdd
-                  ? "w-full sm:w-[48%] mx-auto"
-                  : "w-full sm:w-[48%]";
-              return (
-                <div
-                  key={index}
-                  className={`relative transition-all duration-300 ease-in-out border border-gray-300 rounded-lg bg-[#e8ecf7] p-6 sm:p-8 shadow-md overflow-hidden ${cardClass}`}
-                >
-                  {/* Decorative Background Stars */}
-                  <img
-                    src={`/${tier.tier.toLowerCase()}-star.png`}
-                    alt="star"
-                    className="absolute w-8 h-8 top-4 left-4 opacity-20 pointer-events-none"
-                  />
-                  <img
-                    src={`/${tier.tier.toLowerCase()}-star.png`}
-                    alt="star"
-                    className="absolute w-6 h-6 bottom-8 left-10 opacity-10 pointer-events-none"
-                  />
-                  <img
-                    src={`/${tier.tier.toLowerCase()}-star.png`}
-                    alt="star"
-                    className="absolute w-24 h-24 top-3 right-3 opacity-100 pointer-events-none"
-                  />
-                  <img
-                    src={`/${tier.tier.toLowerCase()}-star.png`}
-                    alt="star"
-                    className="absolute w-10 h-10 bottom-4 right-10 opacity-20 pointer-events-none"
-                  />
-                  {/* Benefit Card Content */}
-                  <div className="relative z-10 pr-10">
-                    <h3 className="text-xl font-semibold text-[#d6451d] mb-3">
-                      {tier.title}
-                    </h3>
-                    <ul className="list-disc list-outside px-6 text-gray-800 space-y-2 text-sm leading-relaxed">
-                      {tier.points.map((point, idx) => (
-                        <li key={idx} className="pl-1">
-                          {point}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+                <div className="md:items-end">
+                    <button
+                        onClick={() => setShowTierBenefit(!showTierBenefit)}
+                        className="bg-gray-900 text-white px-4 py-3 md:py-4 rounded text-sm font-medium uppercase whitespace-nowrap"
+                    >
+                        {showTierBenefit ? "HIDE TIER BENEFITS" : "VIEW TIER BENEFITS"}
+                    </button>
                 </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
-      <h2 className="text-2xl font-bold mb-4">Transaction Ledger</h2>
-
-      {/* Summary Cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
-        {summaryCards.map((card) => (
-          <div
-            key={card.title}
-            className="bg-white border border-gray-200 rounded-lg shadow-sm p-4 text-center"
-          >
-            <div className="text-sm text-gray-500 mb-1">{card.title}</div>
-            <div className="text-xl font-bold text-orange-600">
-              {formatPoints(card.value)}
             </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Transactions Table */}
-      <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-4">
-        <h3 className="text-lg font-semibold mb-3">History</h3>
-        <table className="w-full text-left">
-          <thead>
-            <tr className="border-b">
-              <th className="py-2 px-2">Date</th>
-              <th className="py-2 px-2">Type</th>
-              <th className="py-2 px-2">Remarks</th>
-              <th className="py-2 px-2">Points</th>
-            </tr>
-          </thead>
-          <tbody>
-            {transactions.length === 0 ? (
-              <tr>
-                <td colSpan={4} className="text-center py-4 text-gray-500">
-                  No transactions found.
-                </td>
-              </tr>
-            ) : (
-              transactions.map((txn, idx) => (
-                <tr key={idx} className="border-b hover:bg-gray-50">
-                  <td className="py-2 px-2">{formatOrderDate(txn.created_at)}</td>
-                  <td className="py-2 px-2">{getStatusBadge(txn.transaction_type)}</td>
-                  <td className="py-2 px-2">{txn.remarks}</td>
-                  <td className="py-2 px-2 font-bold text-orange-600">
-                    {formatPoints(txn.points)}
-                  </td>
-                </tr>
-              ))
+            {showTierBenefit && (
+                <div className="mt-6">
+                    <div
+                        className={`flex flex-wrap gap-6 ${tierBenefits.length % 2 === 1
+                                ? "justify-start sm:justify-center"
+                                : "justify-start"
+                            }`}
+                    >
+                        {tierBenefits.map((tier, index) => {
+                            const isLast = index === tierBenefits.length - 1;
+                            const isOdd = tierBenefits.length % 2 === 1;
+                            // If last and odd, center the last card on desktop
+                            const cardClass =
+                                isLast && isOdd
+                                    ? "w-full sm:w-[48%] mx-auto"
+                                    : "w-full sm:w-[48%]";
+                            return (
+                                <div
+                                    key={index}
+                                    className={`relative transition-all duration-300 ease-in-out border border-gray-300 rounded-lg bg-[#e8ecf7] p-6 sm:p-8 shadow-md overflow-hidden ${cardClass}`}
+                                >
+                                    {/* Decorative Background Stars */}
+                                    <img
+                                        src={`/${tier.tier.toLowerCase()}-star.png`}
+                                        alt="star"
+                                        className="absolute w-8 h-8 top-4 left-4 opacity-20 pointer-events-none"
+                                    />
+                                    <img
+                                        src={`/${tier.tier.toLowerCase()}-star.png`}
+                                        alt="star"
+                                        className="absolute w-6 h-6 bottom-8 left-10 opacity-10 pointer-events-none"
+                                    />
+                                    <img
+                                        src={`/${tier.tier.toLowerCase()}-star.png`}
+                                        alt="star"
+                                        className="absolute w-24 h-24 top-3 right-3 opacity-100 pointer-events-none"
+                                    />
+                                    <img
+                                        src={`/${tier.tier.toLowerCase()}-star.png`}
+                                        alt="star"
+                                        className="absolute w-10 h-10 bottom-4 right-10 opacity-20 pointer-events-none"
+                                    />
+                                    {/* Benefit Card Content */}
+                                    <div className="relative z-10 pr-10">
+                                        <h3 className="text-xl font-semibold text-[#d6451d] mb-3">
+                                            {tier.title}
+                                        </h3>
+                                        <ul className="list-disc list-outside px-6 text-gray-800 space-y-2 text-sm leading-relaxed">
+                                            {tier.points.map((point, idx) => (
+                                                <li key={idx} className="pl-1">
+                                                    {point}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
             )}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
+            <h2 className="text-2xl font-bold mb-4">Transaction Ledger</h2>
+
+            {/* Summary Cards */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+                {summaryCards.map((card) => (
+                    <div
+                        key={card.title}
+                        className="bg-white border border-gray-200 rounded-lg shadow-sm p-4 text-center"
+                    >
+                        <div className="text-sm text-gray-500 mb-1">{card.title}</div>
+                        <div className="text-xl font-bold text-orange-600">
+                            {formatPoints(card.value)}
+                        </div>
+                    </div>
+                ))}
+            </div>
+
+            {/* Transactions Table */}
+            <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-4">
+                <h3 className="text-lg font-semibold mb-3">History</h3>
+                <table className="w-full text-left">
+                    <thead>
+                        <tr className="border-b">
+                            <th className="py-2 px-2">Date</th>
+                            <th className="py-2 px-2">Type</th>
+                            <th className="py-2 px-2">Remarks</th>
+                            <th className="py-2 px-2">Points</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {transactions.length === 0 ? (
+                            <tr>
+                                <td colSpan={4} className="text-center py-4 text-gray-500">
+                                    No transactions found.
+                                </td>
+                            </tr>
+                        ) : (
+                            transactions.map((txn, idx) => (
+                                <tr key={idx} className="border-b hover:bg-gray-50">
+                                    <td className="py-2 px-2">{formatOrderDate(txn.created_at)}</td>
+                                    <td className="py-2 px-2">{getStatusBadge(txn.transaction_type)}</td>
+                                    <td className="py-2 px-2">{txn.remarks}</td>
+                                    <td className="py-2 px-2 font-bold text-orange-600">
+                                        {formatPoints(txn.points)}
+                                    </td>
+                                </tr>
+                            ))
+                        )}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    );
 };
 
 export default Transactions;
