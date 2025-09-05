@@ -8,6 +8,8 @@ import { getAccessToken } from "../../api/auth";
 
 const LoginPage = () => {
   const [mobile, setMobile] = useState("");
+  const [otp, setOtp] = useState("");
+  const [showOtpInput, setShowOtpInput] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [token, setToken] = useState(null);
@@ -51,178 +53,213 @@ const LoginPage = () => {
 //     fetchToken();
 //   }, []);
 
-  // ✅ Login (SOQL query with stored token)
- const handleSendOtp = async (e) => {
-  e.preventDefault();
+  // Step 1: Handle mobile submit, generate OTP
+  const handleSendOtp = async (e) => {
+    e.preventDefault();
 
-  if (!mobile || !/^\d{10}$/.test(mobile)) {
-    toast.error("Please enter a valid 10-digit mobile number.");
-    return;
-  }
+    if (!mobile || !/^\d{10}$/.test(mobile)) {
+      toast.error("Please enter a valid 10-digit mobile number.");
+      return;
+    }
 
-  setError("");
-  setLoading(true);
+    setError("");
+    setLoading(true);
 
-  try {
-    let accessToken = localStorage.getItem("salesforce_access_token");
-    let instanceUrl = localStorage.getItem("salesforce_instance_url");
+    try {
+      // Validate mobile with Salesforce REST API
+      let accessToken = localStorage.getItem("salesforce_access_token");
+      let instanceUrl = localStorage.getItem("salesforce_instance_url");
 
-    if (!accessToken || !instanceUrl) {
-      const tokenData = await getAccessToken();
-      if (!tokenData?.access_token || !tokenData?.instance_url) {
-        toast.error("Unable to authenticate with Salesforce.");
+      if (!accessToken || !instanceUrl) {
+        const tokenData = await getAccessToken();
+        if (!tokenData?.access_token || !tokenData?.instance_url) {
+          toast.error("Unable to authenticate with Salesforce.");
+          setLoading(false);
+          return;
+        }
+        accessToken = tokenData.access_token;
+        instanceUrl = tokenData.instance_url;
+        localStorage.setItem("salesforce_access_token", accessToken);
+        localStorage.setItem("salesforce_instance_url", instanceUrl);
+      }
+
+      const validationUrl = `${instanceUrl}/services/apexrest/getValidation?ValidationCred=${mobile}&ValidationType=Mobile`;
+      const validationResponse = await axios.get(validationUrl, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      const validationRecords = validationResponse.data?.records || [];
+      if (validationRecords.length === 0) {
+        toast.error("Mobile number not found.");
         setLoading(false);
         return;
       }
-      accessToken = tokenData.access_token;
-      instanceUrl = tokenData.instance_url;
-      localStorage.setItem("salesforce_access_token", accessToken);
-      localStorage.setItem("salesforce_instance_url", instanceUrl);
-    }
 
-    // 1. Validate mobile with Salesforce REST API
-    const validationUrl = `${instanceUrl}/services/apexrest/getValidation?ValidationCred=${mobile}&ValidationType=Mobile`;
-    const validationResponse = await axios.get(validationUrl, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        "Content-Type": "application/json",
-      },
-    });
+      // Generate OTP
+      const otpGenUrl = `https://snagging.lockated.com/get_otps/generate_otp_pre_prod.json?mobile=${mobile}`;
+      await axios.get(otpGenUrl);
 
-    const validationRecords = validationResponse.data?.records || [];
-    if (validationRecords.length === 0) {
-      toast.error("Mobile number not found.");
+      setShowOtpInput(true);
+      toast.success("OTP sent to your mobile.");
+    } catch (err) {
+      toast.error("Failed to send OTP.");
+    } finally {
       setLoading(false);
+    }
+  };
+
+  // Step 2: Handle OTP verification and login
+  const handleVerifyOtp = async (e) => {
+    e.preventDefault();
+
+    if (!otp || otp.length < 4) {
+      toast.error("Please enter the OTP sent to your mobile.");
       return;
     }
 
-    // 2. Generate OTP
-    const otpGenUrl = `https://snagging.lockated.com/get_otps/generate_otp_pre_prod.json?mobile=${mobile}`;
-    const otpGenResponse = await axios.get(otpGenUrl);
-    const otp = otpGenResponse.data?.get_otp?.otp;
-    if (!otp) {
-      toast.error("Failed to generate OTP.");
-      setLoading(false);
-      return;
-    }
+    setLoading(true);
+    setError("");
 
-    // 3. Verify OTP
-    const otpVerifyUrl = `https://snagging.lockated.com/get_otps/verify_otp.json?mobile=${mobile}&otp=${otp}`;
-    const otpVerifyResponse = await axios.get(otpVerifyUrl);
-    if (!otpVerifyResponse.data?.otp_valid) {
-      toast.error("OTP verification failed.");
-      setLoading(false);
-      return;
-    }
-
-    // 2. Proceed with Salesforce login logic (SOQL query)
-    const soqlQuery = `
-      SELECT Id, Name, Loyalty_Balance__c, Opportunity__c, 
-             Loyalty_Member_Unique_Id__c, Phone_Mobile_Number__c, 
-             Total_Points_Credited__c, Total_Points_Debited__c, 
-             Total_Points_Expired__c, Active__c
-      FROM Loyalty_Member__c 
-      WHERE Phone_Mobile_Number__c IN ('${mobile}', '+91${mobile}')
-    `;
-    const encodedQuery = encodeURIComponent(soqlQuery.trim());
-    const url = `${instanceUrl}/services/data/v64.0/query/?q=${encodedQuery}`;
-
-    let response = await axios.get(url, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        "Content-Type": "application/json",
-      },
-    });
-
-    let records = Array.isArray(response.data.records)
-      ? response.data.records
-      : [];
-
-    // If no record found, create a new Loyalty Member and re-query
-    if (records.length === 0 && validationRecords.length > 0) {
-      // Extract names from Full_Name__c
-      const fullName = validationRecords[0].Full_Name__c || "";
-      let firstName = "";
-      let lastName = "";
-      if (fullName) {
-        const nameParts = fullName.replace(/^Mr\.|^Ms\.|^Mrs\./i, "").trim().split(" ");
-        firstName = nameParts[0] || "";
-        lastName = nameParts.slice(1).join(" ") || "";
+    try {
+      // Verify OTP
+      const otpVerifyUrl = `https://snagging.lockated.com/get_otps/verify_otp.json?mobile=${mobile}&otp=${otp}`;
+      const otpVerifyResponse = await axios.get(otpVerifyUrl);
+      if (!otpVerifyResponse.data?.otp_valid) {
+        toast.error("OTP verification failed.");
+        setLoading(false);
+        return;
       }
-      // Fallback if Full_Name__c is not present
-      if (!firstName) firstName = "User";
-      if (!lastName) lastName = " ";
 
-      const opportunityId = validationRecords[0].Opportunity_Name__c || "";
+      // Proceed with Salesforce login logic (SOQL query)
+      let accessToken = localStorage.getItem("salesforce_access_token");
+      let instanceUrl = localStorage.getItem("salesforce_instance_url");
 
-      const createMemberBody = {
-        Phone_Mobile_Number__c: mobile,
-        First_Name__c: firstName,
-        Last_Name__c: lastName,
-        Opportunity__c: opportunityId,
-        Active__c: true,
-      };
+      if (!accessToken || !instanceUrl) {
+        const tokenData = await getAccessToken();
+        if (!tokenData?.access_token || !tokenData?.instance_url) {
+          toast.error("Unable to authenticate with Salesforce.");
+          setLoading(false);
+          return;
+        }
+        accessToken = tokenData.access_token;
+        instanceUrl = tokenData.instance_url;
+        localStorage.setItem("salesforce_access_token", accessToken);
+        localStorage.setItem("salesforce_instance_url", instanceUrl);
+      }
 
-      const createMemberUrl = `${instanceUrl}/services/data/v64.0/sobjects/Loyalty_Member__c/`;
-      await axios.post(createMemberUrl, createMemberBody, {
+      const validationUrl = `${instanceUrl}/services/apexrest/getValidation?ValidationCred=${mobile}&ValidationType=Mobile`;
+      const validationResponse = await axios.get(validationUrl, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+      });
+      const validationRecords = validationResponse.data?.records || [];
+
+      const soqlQuery = `
+        SELECT Id, Name, Loyalty_Balance__c, Opportunity__c, 
+               Loyalty_Member_Unique_Id__c, Phone_Mobile_Number__c, 
+               Total_Points_Credited__c, Total_Points_Debited__c, 
+               Total_Points_Expired__c, Active__c
+        FROM Loyalty_Member__c 
+        WHERE Phone_Mobile_Number__c IN ('${mobile}', '+91${mobile}')
+      `;
+      const encodedQuery = encodeURIComponent(soqlQuery.trim());
+      const url = `${instanceUrl}/services/data/v64.0/query/?q=${encodedQuery}`;
+
+      let response = await axios.get(url, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
           "Content-Type": "application/json",
         },
       });
 
-      // Re-run the SOQL query to get the new member
-      response = await axios.get(url, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "Content-Type": "application/json",
-        },
-      });
-      records = Array.isArray(response.data.records)
+      let records = Array.isArray(response.data.records)
         ? response.data.records
         : [];
-    }
 
-    if (records.length > 0) {
-      const record = records[0];
-      var loyaltyId = record.Loyalty_Member_Unique_Id__c?.replace(/^0+/, '');
+      // If no record found, create a new Loyalty Member and re-query
+      if (records.length === 0 && validationRecords.length > 0) {
+        // Extract names from Full_Name__c
+        const fullName = validationRecords[0].Full_Name__c || "";
+        let firstName = "";
+        let lastName = "";
+        if (fullName) {
+          const nameParts = fullName.replace(/^Mr\.|^Ms\.|^Mrs\./i, "").trim().split(" ");
+          firstName = nameParts[0] || "";
+          lastName = nameParts.slice(1).join(" ") || "";
+        }
+        if (!firstName) firstName = "User";
+        if (!lastName) lastName = " ";
 
-      if (loyaltyId) {
-        localStorage.setItem("Id", record.Id);
-        localStorage.setItem("Loyalty_Member_Unique_Id__c", loyaltyId);
-        localStorage.setItem("Opportunity__c", record.Opportunity__c);
-        localStorage.setItem("salesforce_mobile", record.Phone_Mobile_Number__c || mobile);
-        localStorage.setItem("Loyalty_Balance__c", record.Loyalty_Balance__c || 0);
-        localStorage.setItem("Total_Points_Credited__c", record.Total_Points_Credited__c || 0);
-        localStorage.setItem("Total_Points_Debited__c", record.Total_Points_Debited__c || 0);
-        localStorage.setItem("Total_Points_Expired__c", record.Total_Points_Expired__c || 0);
+        const opportunityId = validationRecords[0].Opportunity_Name__c || "";
 
-        console.log("Loyalty ID:", loyaltyId);
+        const createMemberBody = {
+          Phone_Mobile_Number__c: mobile,
+          First_Name__c: firstName,
+          Last_Name__c: lastName,
+          Opportunity__c: opportunityId,
+          Active__c: true,
+        };
 
-        navigate(`/dashboard/transactions/${loyaltyId}`);
-        console.log("Navigating to:", `/dashboard/transactions/${loyaltyId}`);
+        const createMemberUrl = `${instanceUrl}/services/data/v64.0/sobjects/Loyalty_Member__c/`;
+        await axios.post(createMemberUrl, createMemberBody, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
+          },
+        });
 
-        toast.success("Login successful!");
-      } else {
-        toast.error("Could not find customer identifier. Please contact support.");
+        // Re-run the SOQL query to get the new member
+        response = await axios.get(url, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
+          },
+        });
+        records = Array.isArray(response.data.records)
+          ? response.data.records
+          : [];
       }
-    } else {
-      toast.error("No record found for this mobile number (with or without +91).");
-    }
-  } catch (err) {
-    console.error("Login error:", err);
-    toast.error(
-      err.response?.data?.[0]?.message ||
+
+      if (records.length > 0) {
+        const record = records[0];
+        var loyaltyId = record.Loyalty_Member_Unique_Id__c?.replace(/^0+/, '');
+
+        if (loyaltyId) {
+          localStorage.setItem("Id", record.Id);
+          localStorage.setItem("Loyalty_Member_Unique_Id__c", loyaltyId);
+          localStorage.setItem("Opportunity__c", record.Opportunity__c);
+          localStorage.setItem("salesforce_mobile", record.Phone_Mobile_Number__c || mobile);
+          localStorage.setItem("Loyalty_Balance__c", record.Loyalty_Balance__c || 0);
+          localStorage.setItem("Total_Points_Credited__c", record.Total_Points_Credited__c || 0);
+          localStorage.setItem("Total_Points_Debited__c", record.Total_Points_Debited__c || 0);
+          localStorage.setItem("Total_Points_Expired__c", record.Total_Points_Expired__c || 0);
+
+          navigate(`/dashboard/transactions/${loyaltyId}`);
+          toast.success("Login successful!");
+        } else {
+          toast.error("Could not find customer identifier. Please contact support.");
+        }
+      } else {
+        toast.error("No record found for this mobile number (with or without +91).");
+      }
+    } catch (err) {
+      toast.error(
+        err.response?.data?.[0]?.message ||
         "An error occurred while querying Salesforce."
-    );
-  } finally {
-    setLoading(false);
-  }
-};
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
-
+  // UI for mobile and OTP entry
   const renderOtpLogin = () => (
-    <form onSubmit={handleSendOtp} className="mt-3 w-full max-w-[380px]">
+    <form onSubmit={showOtpInput ? handleVerifyOtp : handleSendOtp} className="mt-3 w-full max-w-[380px]">
       <div className="form-group relative mb-4">
         <label className="mb-1 block text-white mt-4" htmlFor="mobile">
           Mobile Number
@@ -235,16 +272,33 @@ const LoginPage = () => {
           value={mobile}
           onChange={(e) => setMobile(e.target.value)}
           required
+          disabled={showOtpInput}
         />
+        {showOtpInput && (
+          <>
+            <label className="mb-1 block text-white mt-4" htmlFor="otp">
+              Enter OTP
+            </label>
+            <input
+              type="text"
+              id="otp"
+              className="w-full px-3 py-2 rounded mb-2 bg-white placeholder-gray-400 text-black outline-none"
+              placeholder="Enter OTP"
+              value={otp}
+              onChange={(e) => setOtp(e.target.value)}
+              required
+              maxLength={6}
+            />
+          </>
+        )}
         <button
           type="submit"
           className="w-full cursor-pointer h-11 bg-[#de7008] text-white py-2 px-4 rounded mt-2 mx-auto hover:bg-[#de7008] block"
           disabled={loading}
         >
-          {loading ? "Loading..." : "LOGIN"}
+          {loading ? "Loading..." : showOtpInput ? "VERIFY OTP" : "LOGIN"}
         </button>
       </div>
-
       {error && <p className="text-red-500 mt-2">{error}</p>}
     </form>
   );
