@@ -241,7 +241,9 @@ const Transactions = () => {
                         </button>
                         <h2 className="text-lg font-semibold mb-4">Refer Someone</h2>
                         {/* First Name */}
+                        <label htmlFor="referral-first-name" className="block mb-1 font-medium">First Name</label>
                         <input
+                            id="referral-first-name"
                             type="text"
                             placeholder="First Name"
                             value={newReferral.firstName || ""}
@@ -251,7 +253,9 @@ const Transactions = () => {
                         />
                         {errors.firstName && <p className="text-sm text-red-500 mb-2">{errors.firstName}</p>}
                         {/* Last Name */}
+                        <label htmlFor="referral-last-name" className="block mb-1 font-medium">Last Name</label>
                         <input
+                            id="referral-last-name"
                             type="text"
                             placeholder="Last Name"
                             value={newReferral.lastName || ""}
@@ -261,7 +265,9 @@ const Transactions = () => {
                         />
                         {errors.lastName && <p className="text-sm text-red-500 mb-2">{errors.lastName}</p>}
                         {/* Phone */}
+                        <label htmlFor="referral-phone" className="block mb-1 font-medium">Phone Number</label>
                         <input
+                            id="referral-phone"
                             type="tel"
                             placeholder="Phone Number"
                             value={newReferral.phone || ""}
@@ -271,7 +277,9 @@ const Transactions = () => {
                         />
                         {errors.phone && <p className="text-sm text-red-500 mb-2">{errors.phone}</p>}
                         {/* Rating Dropdown */}
+                        <label htmlFor="referral-rating" className="block mb-1 font-medium">Rating</label>
                         <select
+                            id="referral-rating"
                             value={newReferral.rating || ""}
                             onChange={(e) => setNewReferral({ ...newReferral, rating: e.target.value })}
                             onBlur={() => handleBlur("rating")}
@@ -284,7 +292,9 @@ const Transactions = () => {
                         </select>
                         {errors.rating && <p className="text-sm text-red-500 mb-2">{errors.rating}</p>}
                         {/* Project Interested Dropdown */}
+                        <label htmlFor="referral-project-interested" className="block mb-1 font-medium">Project Interested</label>
                         <select
+                            id="referral-project-interested"
                             value={newReferral.projectInterested || ""}
                             onChange={(e) => setNewReferral({ ...newReferral, projectInterested: e.target.value })}
                             onBlur={() => handleBlur("projectInterested")}
@@ -298,7 +308,9 @@ const Transactions = () => {
                         </select>
                         {errors.projectInterested && <p className="text-sm text-red-500 mb-2">{errors.projectInterested}</p>}
                         {/* Type of Customer Dropdown */}
+                        <label htmlFor="referral-type-customer" className="block mb-1 font-medium">Type of Customer</label>
                         <select
+                            id="referral-type-customer"
                             value={newReferral.typeOfCustomer || ""}
                             onChange={(e) => setNewReferral({ ...newReferral, typeOfCustomer: e.target.value })}
                             onBlur={() => handleBlur("typeOfCustomer")}
