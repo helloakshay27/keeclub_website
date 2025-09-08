@@ -1531,11 +1531,10 @@ const TransactionStatuss = () => {
               <X size={20} />
             </button>
             <h2 className="text-lg font-semibold mb-4">Refer Someone</h2>
+            {/* Project Dropdown */}
             <select
               value={newReferral.projectId || ""}
-              onChange={(e) =>
-                setNewReferral({ ...newReferral, projectId: e.target.value })
-              }
+              onChange={(e) => setNewReferral({ ...newReferral, projectId: e.target.value })}
               onBlur={() => handleBlur("projectId")}
               className="w-full mb-4 p-2 border rounded"
             >
@@ -1550,27 +1549,30 @@ const TransactionStatuss = () => {
               <p className="text-sm text-red-500 mb-2">{errors.projectId}</p>
             )}
 
+            {/* First Name */}
             <input
               type="text"
-              placeholder="Name"
-              value={newReferral.name || ""}
-              onChange={(e) =>
-                setNewReferral({ ...newReferral, name: e.target.value })
-              }
-              onBlur={() => handleBlur("name")}
+              placeholder="First Name"
+              value={newReferral.firstName || ""}
+              onChange={(e) => setNewReferral({ ...newReferral, firstName: e.target.value })}
+              onBlur={() => handleBlur("firstName")}
               className="w-full mb-4 p-2 border rounded"
             />
-            {errors.name && (
-              <p className="text-sm text-red-500 mb-2">{errors.name}</p>
-            )}
-
+            {/* Last Name */}
+            <input
+              type="text"
+              placeholder="Last Name"
+              value={newReferral.lastName || ""}
+              onChange={(e) => setNewReferral({ ...newReferral, lastName: e.target.value })}
+              onBlur={() => handleBlur("lastName")}
+              className="w-full mb-4 p-2 border rounded"
+            />
+            {/* Phone */}
             <input
               type="tel"
               placeholder="Phone Number"
               value={newReferral.phone || ""}
-              onChange={(e) =>
-                setNewReferral({ ...newReferral, phone: e.target.value })
-              }
+              onChange={(e) => setNewReferral({ ...newReferral, phone: e.target.value })}
               onBlur={() => handleBlur("phone")}
               className="w-full mb-4 p-2 border rounded"
             />
@@ -1578,16 +1580,41 @@ const TransactionStatuss = () => {
               <p className="text-sm text-red-500 mb-2">{errors.phone}</p>
             )}
 
-            {/* <input
-              type="date"
-              value={newReferral.date || ""}
-              onChange={(e) =>
-                setNewReferral({ ...newReferral, date: e.target.value })
-              }
-              onBlur={() => handleBlur("date")}
+            {/* Rating Dropdown */}
+            <select
+              value={newReferral.rating || ""}
+              onChange={(e) => setNewReferral({ ...newReferral, rating: e.target.value })}
               className="w-full mb-4 p-2 border rounded"
-            />
-            {errors.date && <p className="text-sm text-red-500 mb-2">{errors.date}</p>} */}
+            >
+              <option value="">Select Rating</option>
+              <option value="Hot">Hot</option>
+              <option value="Warm">Warm</option>
+              <option value="Cold">Cold</option>
+            </select>
+
+            {/* Project Interested Dropdown */}
+            <select
+              value={newReferral.projectInterested || ""}
+              onChange={(e) => setNewReferral({ ...newReferral, projectInterested: e.target.value })}
+              className="w-full mb-4 p-2 border rounded"
+            >
+              <option value="">Project Interested</option>
+              <option value="Piramal Aranya">Piramal Aranya</option>
+              <option value="Piramal Mahalaxmi">Piramal Mahalaxmi</option>
+              <option value="Piramal Revanta">Piramal Revanta</option>
+              <option value="Piramal Vaikunth">Piramal Vaikunth</option>
+            </select>
+
+            {/* Type of Customer Dropdown */}
+            <select
+              value={newReferral.typeOfCustomer || ""}
+              onChange={(e) => setNewReferral({ ...newReferral, typeOfCustomer: e.target.value })}
+              className="w-full mb-4 p-2 border rounded"
+            >
+              <option value="">Type of Customer</option>
+              <option value="Individual">Individual</option>
+              <option value="Company">Company</option>
+            </select>
 
             <div className="flex justify-end gap-2">
               <button
@@ -1598,7 +1625,37 @@ const TransactionStatuss = () => {
               </button>
               <button
                 className="px-4 py-2 cursor-pointer bg-orange-500 text-white rounded"
-                onClick={handleAddReferral}
+                onClick={async () => {
+                  // Call Lead Creation API
+                  try {
+                    // Get token and loyalty id from localStorage if not in memberData
+                    const accessToken = localStorage.getItem("salesforce_access_token");
+                    let loyaltyId = localStorage.getItem("Loyalty_Member_Unique_Id__c") || "";
+                    const body = {
+                      firstName: newReferral.firstName || "",
+                      lastName: newReferral.lastName || "",
+                      Rating: newReferral.rating || "Hot",
+                      LeadSource: "Lockated-PRL-Loyalty",
+                      Project_Interested__c: newReferral.projectInterested || "",
+                      Type_of_Customer__c: newReferral.typeOfCustomer || "Individual",
+                      Loyalty_Member_Unique_Id__c: loyaltyId || "",
+                    };
+                    await axios.post(
+                      "https://piramal-realty--preprd.sandbox.my.salesforce.com/services/data/v64.0/sobjects/Lead/",
+                      body,
+                      {
+                        headers: {
+                          Authorization: `Bearer ${accessToken}`,
+                          "Content-Type": "application/json",
+                        },
+                      }
+                    );
+                    toast.success("Lead created successfully!");
+                    setShowModal(false);
+                  } catch (err) {
+                    toast.error("Failed to create lead.");
+                  }
+                }}
               >
                 Add Referral
               </button>
