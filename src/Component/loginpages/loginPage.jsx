@@ -231,7 +231,7 @@ const LoginPage = () => {
 
         if (loyaltyId) {
           localStorage.setItem("Id", record.Id);
-          localStorage.setItem("Loyalty_Member_Unique_Id__c", loyaltyId);
+          localStorage.setItem("Loyalty_Member_Unique_Id__c", record.Loyalty_Member_Unique_Id__c);
           localStorage.setItem("Opportunity__c", record.Opportunity__c);
           localStorage.setItem("salesforce_mobile", record.Phone_Mobile_Number__c || mobile);
           localStorage.setItem("Loyalty_Balance__c", record.Loyalty_Balance__c || 0);
