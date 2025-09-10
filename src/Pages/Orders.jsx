@@ -13,7 +13,6 @@ const Orders = () => {
 
     useEffect(() => {
         const authToken = localStorage.getItem('authToken');
-        const memberId = localStorage.getItem('member_id');
         
         // Check if user is properly authenticated
         if (!authToken || authToken === 'null') {

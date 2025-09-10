@@ -69,7 +69,6 @@ const Redemptions = () => {
     const handleCategoryClick = (categoryTitle) => {
         // Check if user is authenticated
         const isAuthenticated = localStorage.getItem('authToken');
-        const memberId = localStorage.getItem('member_id');
         
         if (!isAuthenticated) {
             // Redirect to login if not authenticated

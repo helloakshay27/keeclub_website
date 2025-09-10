@@ -29,7 +29,6 @@ const RedeemPoints = () => {
     // Check authentication and fetch addresses on component mount
     useEffect(() => {
         const authToken = localStorage.getItem('authToken');
-        const memberId = localStorage.getItem('member_id');
         
         // Check if user is properly authenticated
         if (!authToken || authToken === 'null') {

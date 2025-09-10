@@ -83,7 +83,6 @@ const OrderConfirmation = () => {
     // Check authentication and initialize address data on component mount
     useEffect(() => {
         const authToken = localStorage.getItem('authToken');
-        const memberId = localStorage.getItem('member_id');
         
         // Check if user is properly authenticated
         if (!authToken || authToken === 'null') {

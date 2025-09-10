@@ -368,7 +368,7 @@ class PromotionAPI {
         console.log('🏨 Booking Hotel:', hotelData);
         
         const payload = {
-            user_id: localStorage.getItem('member_id') || 'user123',
+            user_id: localStorage.getItem('Loyalty_Member_Unique_Id__c')?.replace(/^0+/, '') || 'user123',
             hotel_id: hotelData.id,
             check_in: hotelData.checkIn,
             check_out: hotelData.checkOut,

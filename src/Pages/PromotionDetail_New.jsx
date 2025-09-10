@@ -17,15 +17,13 @@ const PromotionDetail = () => {
     // Check authentication status
     useEffect(() => {
         const authToken = localStorage.getItem('authToken');
-        const memberId = localStorage.getItem('member_id');
         
         // More robust authentication check
-        const isUserAuthenticated = authToken && memberId && authToken !== 'null' && memberId !== 'null';
+        const isUserAuthenticated = authToken && authToken !== 'null' ;
         setIsAuthenticated(isUserAuthenticated);
         
         console.log('🔐 Authentication Check:', {
             hasToken: !!authToken,
-            hasMemberId: !!memberId,
             isAuthenticated: isUserAuthenticated
         });
     }, []);
@@ -136,7 +134,6 @@ const PromotionDetail = () => {
 
     const handleClaimNow = () => {
         const authToken = localStorage.getItem('authToken');
-        const memberId = localStorage.getItem('member_id');
         
         // Check if user is properly authenticated
         if (!authToken || authToken === 'null') {

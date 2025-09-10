@@ -38,7 +38,7 @@ const slides = [
 const HeroSection = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const navigate = useNavigate(); // ✅ MUST be inside component function
-  let id = localStorage.getItem("member_id");
+  let id = localStorage.getItem("Loyalty_Member_Unique_Id__c")?.replace(/^0+/, '');
 
   useEffect(() => {
     const interval = setInterval(() => {

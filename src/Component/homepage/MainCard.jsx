@@ -5,7 +5,7 @@ import useApiFetch from "../../hooks/useApiFetch";
 import BASE_URL from "../../Confi/baseurl";
 
 const MainCard = () => {
-  const id = localStorage.getItem("member_id");
+  const id = localStorage.getItem("Loyalty_Member_Unique_Id__c")?.replace(/^0+/, '');
   const { data } = useApiFetch(`${BASE_URL}events.json`);
   
   // Get upcoming events from the data

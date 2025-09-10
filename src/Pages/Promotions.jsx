@@ -110,7 +110,7 @@ const Promotions = () => {
             case 'Redemption Market Place':
                 return <Redemptions />;
             case 'Encash': {
-                const memberId = localStorage.getItem('member_id');
+                const memberId = localStorage.getItem('Loyalty_Member_Unique_Id__c');
                 
                 return <Encash memberData={memberId ? memberData : []} />;
             }

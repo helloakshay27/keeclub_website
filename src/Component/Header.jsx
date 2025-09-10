@@ -16,7 +16,7 @@ const Header = ({ isTransparent }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  let id = localStorage.getItem("member_id");
+  let id = localStorage.getItem("Loyalty_Member_Unique_Id__c")?.replace(/^0+/, '');
 
   useEffect(() => {
     const handleScroll = () => {
