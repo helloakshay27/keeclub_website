@@ -158,33 +158,60 @@ const OrderConfirmation = () => {
     const handleConfirmOrder = async () => {
         try {
             setLoading(true);
-            
             // Validate required data
             if (!deliveryAddress.id) {
                 toast.error('Address ID is required. Please ensure you have a saved address.');
                 return;
             }
-            
             if (!product.id) {
                 toast.error('Product ID is required. Please try again.');
                 return;
             }
-            
+
+            // Check points and only proceed if sufficient
+            const loyaltyMemberId = localStorage.getItem('Id');
+            const loyaltyBalance = Number(localStorage.getItem('Loyalty_Balance__c')) || 0;
+            const pointsToDebit = Number(product.loyalty_points_required || product.points || 0);
+            if (!loyaltyMemberId) {
+                toast.error('Loyalty Member ID not found. Please login again.');
+                return;
+            }
+            if (pointsToDebit > loyaltyBalance) {
+                toast.error('Insufficient points to redeem this product.');
+                return;
+            }
+
+            // Call Salesforce Debit API
+            const accessToken = localStorage.getItem('salesforce_access_token');
+            const debitBody = {
+                Loyalty_Member__c: loyaltyMemberId,
+                Transaction_Type__c: 'Debit',
+                Loyalty_Points__c: pointsToDebit
+            };
+            const debitUrl = 'https://piramal-realty--preprd.sandbox.my.salesforce.com/services/data/v64.0/sobjects/Loyalty_Transaction__c/';
+            await fetch(debitUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${accessToken}`
+                },
+                body: JSON.stringify(debitBody)
+            });
+            // Update localStorage
+            localStorage.setItem('Loyalty_Balance__c', String(loyaltyBalance - pointsToDebit));
+
             // Create order via real API
             const orderData = {
                 addressId: deliveryAddress.id,
                 product: product,
                 deliveryAddress: deliveryAddress
             };
-            
             console.log('📦 Creating order with data:', orderData);
             toast.info('Creating your order...');
             const response = await promotionAPI.createOrder(orderData);
-            
             if (response.success) {
                 console.log('✅ Order created successfully:', response.data);
                 toast.success(`Order #${response.data.order_number} created successfully!`);
-                
                 // Navigate to order success with real order details
                 navigate('/order-success', {
                     state: {
