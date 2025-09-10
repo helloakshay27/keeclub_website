@@ -100,7 +100,7 @@ const LoginPage = () => {
       }
 
       // Generate OTP
-      const otpGenUrl = `${BASE_URL}get_otps/generateotp?mobile=${mobile}`;
+      const otpGenUrl = `${BASE_URL}get_otps/generate_otp?mobile=${mobile}`;
       await axios.get(otpGenUrl);
 
       setShowOtpInput(true);
