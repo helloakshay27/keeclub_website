@@ -67,33 +67,45 @@ const Transactions = () => {
     const [touched, setTouched] = useState({});
     const [isSubmitted, setIsSubmitted] = useState(false);
 
-    // Get loyalty member data from localStorage
-    const loyaltyBalance = Number(localStorage.getItem("Loyalty_Balance__c")) || 0;
-    const totalCredited = Number(localStorage.getItem("Total_Points_Credited__c")) || 0;
-    const totalDebited = Number(localStorage.getItem("Total_Points_Debited__c")) || 0;
-    const totalExpired = Number(localStorage.getItem("Total_Points_Expired__c")) || 0;
+    // Get loyalty member data from localStorage and state
+    const [summaryCards, setSummaryCards] = useState([
+        { title: "Earned Points", value: 0 },
+        { title: "Redeemed Points", value: 0 },
+        { title: "Expired Points", value: 0 },
+        { title: "Balance Points", value: 0 },
+    ]);
     const loyaltyMemberId = localStorage.getItem("Id");
     const mobile = localStorage.getItem("salesforce_mobile");
     const accessToken = localStorage.getItem("salesforce_access_token");
 
-    const summaryCards = [
-        {
-            title: "Earned Points",
-            value: formatPoints(totalCredited),
-        },
-        {
-            title: "Redeemed Points",
-            value: formatPoints(totalDebited),
-        },
-        {
-            title: "Expired Points",
-            value: formatPoints(totalExpired),
-        },
-        {
-            title: "Balance Points",
-            value: formatPoints(loyaltyBalance),
-        },
-    ];
+    // Fetch summary card data from Salesforce
+    const fetchSummaryCards = async () => {
+        try {
+            const soqlQuery = `SELECT Loyalty_Balance__c, Total_Points_Credited__c, Total_Points_Debited__c, Total_Points_Expired__c FROM Loyalty_Member__c WHERE Phone_Mobile_Number__c IN ('${mobile}', '+91${mobile}') LIMIT 1`;
+            const url = `https://piramal-realty--preprd.sandbox.my.salesforce.com/services/data/v64.0/query/?q=${encodeURIComponent(soqlQuery)}`;
+            const res = await axios.get(url, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                    "Content-Type": "application/json",
+                },
+            });
+            const record = res.data?.records?.[0];
+            setSummaryCards([
+                { title: "Earned Points", value: formatPoints(record?.Total_Points_Credited__c || 0) },
+                { title: "Redeemed Points", value: formatPoints(record?.Total_Points_Debited__c || 0) },
+                { title: "Expired Points", value: formatPoints(record?.Total_Points_Expired__c || 0) },
+                { title: "Balance Points", value: formatPoints(record?.Loyalty_Balance__c || 0) },
+            ]);
+        } catch (err) {
+            // fallback to 0s
+            setSummaryCards([
+                { title: "Earned Points", value: 0 },
+                { title: "Redeemed Points", value: 0 },
+                { title: "Expired Points", value: 0 },
+                { title: "Balance Points", value: 0 },
+            ]);
+        }
+    };
 
     // Fetch transactions from Salesforce
     // Transaction fetch function, now accessible for referral refresh
@@ -150,7 +162,10 @@ const Transactions = () => {
         }
     };
     useEffect(() => {
-        if (mobile && accessToken) fetchTransactions();
+        if (mobile && accessToken) {
+            fetchTransactions();
+            fetchSummaryCards();
+        }
     }, [mobile, accessToken, loyaltyMemberId]);
 
     // Referral Modal validation
@@ -370,8 +385,9 @@ const Transactions = () => {
                                         );
                                         toast.success("Lead created successfully!");
                                         setShowModal(false);
-                                        // Fetch updated transactions after referral
+                                        // Fetch updated transactions and summary cards after referral
                                         await fetchTransactions();
+                                        await fetchSummaryCards();
                                     } catch (err) {
                                         toast.error("Failed to create lead.");
                                     }
