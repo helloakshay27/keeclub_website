@@ -100,7 +100,7 @@ const LoginPage = () => {
       }
 
       // Generate OTP
-      const otpGenUrl = `${BASE_URL}/get_otps/generateotp?mobile=${mobile}`;
+      const otpGenUrl = `${BASE_URL}get_otps/generateotp?mobile=${mobile}`;
       await axios.get(otpGenUrl);
 
       setShowOtpInput(true);
@@ -126,7 +126,7 @@ const LoginPage = () => {
 
     try {
       // Verify OTP
-      const otpVerifyUrl = `${BASE_URL}/get_otps/verify_otp.json?mobile=${mobile}&otp=${otp}`;
+      const otpVerifyUrl = `${BASE_URL}get_otps/verify_otp.json?mobile=${mobile}&otp=${otp}`;
       const otpVerifyResponse = await axios.get(otpVerifyUrl);
       if (!otpVerifyResponse.data?.otp_valid) {
         toast.error("OTP verification failed.");
