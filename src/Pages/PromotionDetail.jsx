@@ -27,6 +27,8 @@ const PromotionDetail = () => {
   useEffect(() => {
     const authToken = localStorage.getItem("salesforce_access_token");
     setIsAuthenticated(!!authToken);
+    console.log("🔑 Authentication status:", !!authToken, isAuthenticated);
+    
   }, []);
 
   // Fetch product data from API

@@ -139,7 +139,7 @@ const PromotionDetail = () => {
         const memberId = localStorage.getItem('member_id');
         
         // Check if user is properly authenticated
-        if (!authToken || !memberId || authToken === 'null' || memberId === 'null') {
+        if (!authToken || authToken === 'null') {
             console.log('🔐 User not authenticated, showing login modal');
             toast.warning('Please login to claim this promotion');
             setShowLoginModal(true);

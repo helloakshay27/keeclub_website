@@ -32,7 +32,7 @@ const RedeemPoints = () => {
         const memberId = localStorage.getItem('member_id');
         
         // Check if user is properly authenticated
-        if (!authToken || !memberId || authToken === 'null' || memberId === 'null') {
+        if (!authToken || authToken === 'null') {
             console.log('🔐 User not authenticated, redirecting to login');
             toast.error('Please login to access this page');
             navigate('/login');
