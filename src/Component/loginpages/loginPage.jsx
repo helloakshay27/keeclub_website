@@ -134,6 +134,15 @@ const LoginPage = () => {
         return;
       }
 
+      // Store auth token from OTP response
+      if (otpVerifyResponse.data?.token) {
+        localStorage.setItem("authToken", otpVerifyResponse.data.token);
+      }
+
+      // Use validation data from OTP response
+      const sapData = otpVerifyResponse.data?.sap_data;
+      const validationRecords = sapData?.records || [];
+
       // Proceed with Salesforce login logic (SOQL query)
       let accessToken = localStorage.getItem("salesforce_access_token");
       let instanceUrl = localStorage.getItem("salesforce_instance_url");
@@ -150,15 +159,6 @@ const LoginPage = () => {
         localStorage.setItem("salesforce_access_token", accessToken);
         localStorage.setItem("salesforce_instance_url", instanceUrl);
       }
-
-      const validationUrl = `${instanceUrl}/services/apexrest/getValidation?ValidationCred=${mobile}&ValidationType=Mobile`;
-      const validationResponse = await axios.get(validationUrl, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "Content-Type": "application/json",
-        },
-      });
-      const validationRecords = validationResponse.data?.records || [];
 
       const soqlQuery = `
         SELECT Id, Name, Loyalty_Balance__c, Opportunity__c, 
