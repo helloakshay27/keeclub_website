@@ -96,59 +96,60 @@ const Transactions = () => {
     ];
 
     // Fetch transactions from Salesforce
-    useEffect(() => {
-        const fetchTransactions = async () => {
-            setLoading(true);
-            try {
-                const query = `SELECT Id, Name, Loyalty_Points__c, Loyalty_Member__c, Transaction_Type__c, CreatedDate FROM Loyalty_Transaction__c WHERE Loyalty_Member__r.Phone_Mobile_Number__c = '${mobile}' ORDER BY CreatedDate DESC LIMIT 2000`;
-                const url = `https://piramal-realty--preprd.sandbox.my.salesforce.com/services/data/v64.0/query/?q=${encodeURIComponent(query)}`;
-                const res = await axios.get(url, {
+    // Transaction fetch function, now accessible for referral refresh
+    const fetchTransactions = async () => {
+        setLoading(true);
+        try {
+            const query = `SELECT Id, Name, Loyalty_Points__c, Loyalty_Member__c, Transaction_Type__c, CreatedDate FROM Loyalty_Transaction__c WHERE Loyalty_Member__r.Phone_Mobile_Number__c = '${mobile}' ORDER BY CreatedDate DESC LIMIT 2000`;
+            const url = `https://piramal-realty--preprd.sandbox.my.salesforce.com/services/data/v64.0/query/?q=${encodeURIComponent(query)}`;
+            const res = await axios.get(url, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                    "Content-Type": "application/json",
+                },
+            });
+            let records = res.data?.records || [];
+            // If no transactions, create a default credit entry and refetch
+            if (records.length === 0 && loyaltyMemberId) {
+                await axios.post(
+                    "https://piramal-realty--preprd.sandbox.my.salesforce.com/services/data/v64.0/sobjects/Loyalty_Transaction__c/",
+                    {
+                        Loyalty_Member__c: loyaltyMemberId,
+                        Transaction_Type__c: "Credit",
+                        Loyalty_Points__c: 10000,
+                    },
+                    {
+                        headers: {
+                            Authorization: `Bearer ${accessToken}`,
+                            "Content-Type": "application/json",
+                        },
+                    }
+                );
+                // Refetch after creation
+                const refetch = await axios.get(url, {
                     headers: {
                         Authorization: `Bearer ${accessToken}`,
                         "Content-Type": "application/json",
                     },
                 });
-                let records = res.data?.records || [];
-                // If no transactions, create a default credit entry and refetch
-                if (records.length === 0 && loyaltyMemberId) {
-                    await axios.post(
-                        "https://piramal-realty--preprd.sandbox.my.salesforce.com/services/data/v64.0/sobjects/Loyalty_Transaction__c/",
-                        {
-                            Loyalty_Member__c: loyaltyMemberId,
-                            Transaction_Type__c: "Credit",
-                            Loyalty_Points__c: 10000,
-                        },
-                        {
-                            headers: {
-                                Authorization: `Bearer ${accessToken}`,
-                                "Content-Type": "application/json",
-                            },
-                        }
-                    );
-                    // Refetch after creation
-                    const refetch = await axios.get(url, {
-                        headers: {
-                            Authorization: `Bearer ${accessToken}`,
-                            "Content-Type": "application/json",
-                        },
-                    });
-                    records = refetch.data?.records || [];
-                }
-                // Map to UI format
-                setTransactions(
-                    records.map((item) => ({
-                        created_at: item.CreatedDate,
-                        transaction_type: item.Transaction_Type__c,
-                        remarks: item.Name,
-                        points: item.Loyalty_Points__c,
-                    }))
-                );
-            } catch (err) {
-                setTransactions([]);
-            } finally {
-                setLoading(false);
+                records = refetch.data?.records || [];
             }
-        };
+            // Map to UI format
+            setTransactions(
+                records.map((item) => ({
+                    created_at: item.CreatedDate,
+                    transaction_type: item.Transaction_Type__c,
+                    remarks: item.Name,
+                    points: item.Loyalty_Points__c,
+                }))
+            );
+        } catch (err) {
+            setTransactions([]);
+        } finally {
+            setLoading(false);
+        }
+    };
+    useEffect(() => {
         if (mobile && accessToken) fetchTransactions();
     }, [mobile, accessToken, loyaltyMemberId]);
 
@@ -369,6 +370,8 @@ const Transactions = () => {
                                         );
                                         toast.success("Lead created successfully!");
                                         setShowModal(false);
+                                        // Fetch updated transactions after referral
+                                        await fetchTransactions();
                                     } catch (err) {
                                         toast.error("Failed to create lead.");
                                     }
