@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import logo from "../../assets/piramal_bg.png";
 import ComLogo from "../../assets/ComLogo.png";
 import { getAccessToken } from "../../api/auth";
+import BASE_URL from "../../Confi/baseurl";
 
 const LoginPage = () => {
   const [mobile, setMobile] = useState("");
@@ -99,7 +100,7 @@ const LoginPage = () => {
       }
 
       // Generate OTP
-      const otpGenUrl = `https://snagging.lockated.com/get_otps/generate_otp_pre_prod.json?mobile=${mobile}`;
+      const otpGenUrl = `${BASE_URL}/get_otps/generateotp?mobile=${mobile}`;
       await axios.get(otpGenUrl);
 
       setShowOtpInput(true);
@@ -125,7 +126,7 @@ const LoginPage = () => {
 
     try {
       // Verify OTP
-      const otpVerifyUrl = `https://snagging.lockated.com/get_otps/verify_otp.json?mobile=${mobile}&otp=${otp}`;
+      const otpVerifyUrl = `${BASE_URL}/get_otps/verify_otp.json?mobile=${mobile}&otp=${otp}`;
       const otpVerifyResponse = await axios.get(otpVerifyUrl);
       if (!otpVerifyResponse.data?.otp_valid) {
         toast.error("OTP verification failed.");
