@@ -98,6 +98,8 @@ const Orders = () => {
     };
 
     const handleTrackOrder = (order) => {
+        console.log('🚚 Tracking order:', order);
+        
         navigate(`/track-order/${order.id}`, {
             state: {
                 orderDetails: order,
