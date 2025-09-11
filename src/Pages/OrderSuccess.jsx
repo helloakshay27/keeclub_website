@@ -231,7 +231,7 @@ const OrderSuccess = () => {
                 {/* Action Buttons */}
                 <div className="mt-12 text-center space-y-4">
                     <button
-                        onClick={() => navigate(`/track-order/${orderId}`, { 
+                        onClick={() => navigate(`/orders`, { 
                             state: { 
                                 orderId: orderId,
                                 orderNumber: orderNumber,
