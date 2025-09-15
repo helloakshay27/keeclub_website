@@ -124,7 +124,7 @@ useEffect(() => {
     if (loginTimestamp) {
       const now = Date.now();
       const diff = now - Number(loginTimestamp);
-      if (diff > 30 * 1000) { // 1 minute in ms
+      if (diff > 24 * 60 * 60 * 1000) { // 24 hours in ms
         localStorage.clear();
         setSessionExpired(true);
         toast.info("Session expired. Please login again.");
