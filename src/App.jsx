@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 import { Routes, Route, useLocation, matchPath, Navigate } from 'react-router-dom';
+import { useNavigate, useLocation } from "react-router-dom";
 import './App.css';
 
 // Pages and Components
@@ -77,11 +79,14 @@ const routeConfigs = [
 
 
 
+
 function App() {
   const location = useLocation();
   const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
   const [walletData, setWalletData] = useState(null); // store API response
   const [error, setError] = useState(null);
+  const [sessionExpired, setSessionExpired] = useState(false);
+  const navigate = useNavigate();
 
   // // inside useEffect in App()
   // useEffect(() => {
@@ -120,10 +125,10 @@ useEffect(() => {
     if (loginTimestamp) {
       const now = Date.now();
       const diff = now - Number(loginTimestamp);
-      if (diff > 60 * 1000) { // 1 minute in ms
+      if (diff > 30 * 1000) { // 1 minute in ms
         localStorage.clear();
+        setSessionExpired(true);
         toast.info("Session expired. Please login again.");
-        window.location.href = "/login";
       }
     }
   };
@@ -131,6 +136,17 @@ useEffect(() => {
   const interval = setInterval(checkSessionExpiry, 60 * 1000); // check every minute
   return () => clearInterval(interval);
 }, []);
+
+// Redirect to login after session expiry and toast
+useEffect(() => {
+  if (sessionExpired) {
+    // Use a timeout to allow the toast to show before redirect
+    const timeout = setTimeout(() => {
+      navigate("/login", { replace: true });
+    }, 1500);
+    return () => clearTimeout(timeout);
+  }
+}, [sessionExpired, navigate]);
   // your existing resize, matchedRoute, etc.
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 1024);
