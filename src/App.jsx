@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
-import { Routes, Route, useLocation, matchPath, Navigate } from 'react-router-dom';
-import { useNavigate, useLocation } from "react-router-dom";
+import { Routes, Route, useLocation, matchPath, Navigate, useNavigate } from 'react-router-dom';
 import './App.css';
 
 // Pages and Components
