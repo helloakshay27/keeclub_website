@@ -113,7 +113,24 @@ function App() {
 
   //   fetchWalletDetails();
   // }, []);
-
+// Auto-logout after 24 hours
+useEffect(() => {
+  const checkSessionExpiry = () => {
+    const loginTimestamp = localStorage.getItem("loginTimestamp");
+    if (loginTimestamp) {
+      const now = Date.now();
+      const diff = now - Number(loginTimestamp);
+      if (diff > 60 * 1000) { // 1 minute in ms
+        localStorage.clear();
+        toast.info("Session expired. Please login again.");
+        window.location.href = "/login";
+      }
+    }
+  };
+  checkSessionExpiry();
+  const interval = setInterval(checkSessionExpiry, 60 * 1000); // check every minute
+  return () => clearInterval(interval);
+}, []);
   // your existing resize, matchedRoute, etc.
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 1024);
