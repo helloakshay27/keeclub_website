@@ -215,6 +215,27 @@ const LoginPage = () => {
           },
         });
 
+        // Fetch wallet details after member creation
+        const walletQuery = `SELECT Id, Name, Loyalty_Balance__c, Opportunity__c, Loyalty_Member_Unique_Id__c, Phone_Mobile_Number__c, Total_Points_Credited__c, Total_Points_Debited__c, Total_Points_Expired__c, Active__c FROM Loyalty_Member__c WHERE Phone_Mobile_Number__c = '${mobile}'`;
+        const walletUrl = `${instanceUrl}/services/data/v64.0/query/?q=${encodeURIComponent(walletQuery)}`;
+        const walletRes = await axios.get(walletUrl, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
+          },
+        });
+        const walletRecord = walletRes.data?.records?.[0];
+        if (walletRecord) {
+          localStorage.setItem("Id", walletRecord.Id);
+          localStorage.setItem("Loyalty_Member_Unique_Id__c", walletRecord.Loyalty_Member_Unique_Id__c);
+          localStorage.setItem("Opportunity__c", walletRecord.Opportunity__c);
+          localStorage.setItem("salesforce_mobile", walletRecord.Phone_Mobile_Number__c || mobile);
+          localStorage.setItem("Loyalty_Balance__c", walletRecord.Loyalty_Balance__c || 0);
+          localStorage.setItem("Total_Points_Credited__c", walletRecord.Total_Points_Credited__c || 0);
+          localStorage.setItem("Total_Points_Debited__c", walletRecord.Total_Points_Debited__c || 0);
+          localStorage.setItem("Total_Points_Expired__c", walletRecord.Total_Points_Expired__c || 0);
+        }
+
         // Re-run the SOQL query to get the new member
         response = await axios.get(url, {
           headers: {
