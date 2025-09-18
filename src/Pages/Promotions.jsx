@@ -159,7 +159,6 @@ const Promotions = () => {
                                                         {formatPrice(item.originalPrice)}
                                                     </div>
                                                 )}
-                                                {/* <div className="text-2xl text-[#B3B3B3] font-bold mb-2" style={{textDecoration: 'line-through', fontSize:'16px'}}>{formatPrice(item.currentPrice)}</div> */}
                                                 {/* Redeem Row */}
                                                 <div style={{fontSize:'14px', fontWeight:'bold'}}>
                                                     <span className="text-gray-500 mr-2" >Redeem using</span>
@@ -214,29 +213,77 @@ const Promotions = () => {
                 </div>
             </section>
 
-            {/* Tab Navigation */}
-            <div className="w-full mt-10 px-4">
-                <div className="flex justify-center">
-                    <div className="flex bg-gray-100 rounded-full w-4/5 mx-auto" style={{padding: '4px'}}>
-                        {["Featured Product", "Encash"].map((tab) => (
-                            <button
-                                key={tab}
-                                onClick={() => setSelectedTab(tab)}
-                                className={`flex-1 px-6 py-2 rounded-full font-medium transition-all duration-300 ${
-                                    selectedTab === tab
-                                        ? "bg-[#f9461c] text-white shadow-md"
-                                        : "text-gray-600 hover:text-gray-800"
-                                }`}
+            {/* Featured Products Content Only */}
+            <div className="px-4 py-8 max-w-7xl mx-auto">
+                {loading ? (
+                    <div className="flex justify-center items-center py-20">
+                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#f9461c]"></div>
+                        <span className="ml-3 text-gray-600">Loading promotions...</span>
+                    </div>
+                ) : error ? (
+                    <div className="text-center py-20">
+                        <div className="text-red-500 mb-4">❌ {error}</div>
+                        <button 
+                            onClick={fetchPromotions}
+                            className="bg-[#f9461c] text-white px-6 py-2 rounded-lg hover:bg-[#e63e0f]"
+                        >
+                            Retry
+                        </button>
+                    </div>
+                ) : (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {filteredPromotions.map((item) => (
+                            <div
+                                key={item.id}
+                                className="flex flex-col justify-between bg-white rounded-[12px] overflow-hidden min-h-[440px] transition-all duration-300"
+                                style={{ boxShadow: '0px 2px 4px 0px rgba(0, 0, 0, 0.15)', borderBottom: '2px solid #f9461c' }}
                             >
-                                {tab}
-                            </button>
+                                {/* Watch Image */}
+                                <div className="flex justify-center items-end bg-white pt-8 pb-2 px-4" style={{minHeight: 230}}>
+                                    <img
+                                        src={item.image}
+                                        alt={item.name}
+                                        className="h-56 object-contain"
+                                        style={{maxHeight: '200px'}}
+                                    />
+                                </div>
+                                {/* Card Content */}
+                                <div className="flex flex-col flex-1 px-8 pb-8 pt-2">
+                                    <h3 className="text-xl font-bold mb-1">{item.name}</h3>
+                                    {item.originalPrice > item.currentPrice && (
+                                        <div className="text-base text-gray-400 font-semibold line-through mb-1" >
+                                            {formatPrice(item.originalPrice)}
+                                        </div>
+                                    )}
+                                    {/* Redeem Row */}
+                                    <div style={{fontSize:'14px', fontWeight:'bold'}}>
+                                        <span className="text-gray-500 mr-2" >Redeem using</span>
+                                        <span className="flex items-center text-[#000]">
+                                            <img
+                                                src="/redeemStar.png"
+                                                alt="star"
+                                                className="mr-1"
+                                                style={{ width: 24, height: 24, display: 'inline-block' }}
+                                            />
+                                            {typeof item.points === 'number' ? item.points.toLocaleString('en-IN') : item.points}
+                                        </span>
+                                    </div>
+                                    {/* View Details Button */}
+                                    <div className="flex justify-end mt-auto">
+                                        <Link
+                                            to={`/promotion-detail/${item.id}`}
+                                            className="bg-[#24293c] text-white px-8 py-3 rounded-full font-semibold text-base hover:bg-[#1a1f2e] transition-colors duration-300 shadow-none"
+                                            style={{minWidth: 170, textAlign: 'center'}}
+                                        >
+                                            View Details
+                                        </Link>
+                                    </div>
+                                </div>
+                            </div>
                         ))}
                     </div>
-                </div>
+                )}
             </div>
-
-            {/* Tab Content */}
-            {renderTabContent()}
 
         </div>
     );
