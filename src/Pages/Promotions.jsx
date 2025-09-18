@@ -215,6 +215,7 @@ const Promotions = () => {
 
             {/* Featured Products Content Only */}
             <div className="px-4 py-8 max-w-7xl mx-auto">
+                <h2 className="text-2xl font-bold mb-6">Featured Promotions</h2>
                 {loading ? (
                     <div className="flex justify-center items-center py-20">
                         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#f9461c]"></div>
