@@ -212,6 +212,27 @@ const Promotions = () => {
                 </div>
             </section>
 
+            {/* Tab Navigation */}
+            <div className="w-full mt-10 px-4">
+                <div className="flex justify-center">
+                    <div className="flex bg-gray-100 rounded-full w-4/5 mx-auto" style={{ padding: '4px' }}>
+                        {["Featured Product", "Encash"].map((tab) => (
+                            <button
+                                key={tab}
+                                onClick={() => setSelectedTab(tab)}
+                                className={`flex-1 px-6 py-2 rounded-full font-medium transition-all duration-300 ${
+                                    selectedTab === tab
+                                        ? "bg-[#f9461c] text-white shadow-md"
+                                        : "text-gray-600 hover:text-gray-800"
+                                }`}
+                            >
+                                {tab}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            </div>
+
             {renderTabContent()}
 
         </div>
