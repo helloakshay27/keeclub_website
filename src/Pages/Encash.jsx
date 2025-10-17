@@ -19,6 +19,8 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
     const [success, setSuccess] = useState(false);
     const [encashRequests, setEncashRequests] = useState([]);
     const [encashLoading, setEncashLoading] = useState(false);
+
+    const BalancePoints = localStorage.getItem('Loyalty_Balance__c') || 0;
     // Fetch encash requests on mount
     useEffect(() => {
         const fetchEncashRequests = async () => {
@@ -267,7 +269,7 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                                     value={formData.pointsToEncash}
                                     onChange={(e) => handleInputChange('pointsToEncash', e.target.value)}
                                     className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                                    max={currentPoints}
+                                    // max={currentPoints}
                                     required
                                 />
                             </div>
