@@ -55,25 +55,25 @@ const EncashRequests = ({ memberData }) => {
         <div className="space-y-4">
           {requests.map((req, idx) => (
             <div key={req.id || idx} className="bg-white rounded-lg shadow-sm overflow-hidden border border-gray-200">
-                                <div className="p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                                    <div className="flex-1">
-                                        <div className="flex items-center space-x-4 mb-2">
-                                            <h4 className="text-lg font-semibold text-gray-800">
-                                                Request #{req.id}
-                                            </h4>
-                                            <span className={`px-3 py-1 rounded-full text-xs font-medium capitalize ${req.status === 'completed' ? 'bg-green-100 text-green-800' : req.status === 'rejected' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800'}`}>{req.status || '--'}</span>
-                                        </div>
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2 text-sm text-gray-700 mb-2">
-                                            <div className="flex"><span className="font-medium w-32 inline-block">Date</span><span className="">{req.created_at ? new Date(req.created_at).toLocaleString('en-IN') : '--'}</span></div>
-                                            <div className="flex"><span className="font-medium w-32 inline-block">Points</span><span className="">{req.points_to_encash?.toLocaleString('en-IN') || '--'}</span></div>
-                                            <div className="flex"><span className="font-medium w-32 inline-block">Amount</span><span className="">₹{req.amount_payable?.toLocaleString('en-IN') || '--'}</span></div>
-                                            <div className="flex"><span className="font-medium w-32 inline-block">Branch</span><span className="">{req.branch_name || '--'}</span></div>
-                                            <div className="flex"><span className="font-medium w-32 inline-block">IFSC</span><span className="">{req.ifsc_code || '--'}</span></div>
-                                            <div className="flex"><span className="font-medium w-32 inline-block">User Name</span><span className="">{req.person_name || '--'}</span></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+              <div className="p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div className="flex-1">
+                  <div className="flex items-center space-x-4 mb-2">
+                    <h4 className="text-lg font-semibold text-gray-800">
+                      Request #{req.id}
+                    </h4>
+                    <span className={`px-3 py-1 rounded-full text-xs font-medium capitalize ${req.status === 'completed' ? 'bg-green-100 text-green-800' : req.status === 'rejected' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800'}`}>{req.status || '--'}</span>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2 text-sm text-gray-700 mb-2">
+                    <div className="flex"><span className="font-medium w-32 inline-block">Date</span><span className="">{req.created_at ? new Date(req.created_at).toLocaleString('en-IN') : '--'}</span></div>
+                    <div className="flex"><span className="font-medium w-32 inline-block">Points</span><span className="">{req.points_to_encash?.toLocaleString('en-IN') || '--'}</span></div>
+                    <div className="flex"><span className="font-medium w-32 inline-block">Amount</span><span className="">₹{req.amount_payable?.toLocaleString('en-IN') || '--'}</span></div>
+                    <div className="flex"><span className="font-medium w-32 inline-block">Branch</span><span className="">{req.branch_name || '--'}</span></div>
+                    <div className="flex"><span className="font-medium w-32 inline-block">IFSC</span><span className="">{req.ifsc_code || '--'}</span></div>
+                    <div className="flex"><span className="font-medium w-32 inline-block">User Name</span><span className="">{req.person_name || '--'}</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
           ))}
         </div>
       )}
