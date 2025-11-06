@@ -124,6 +124,31 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
         });
     };
 
+    const [opportunityOptions, setOpportunityOptions] = useState([]);
+    const [selectedOpportunity, setSelectedOpportunity] = useState(null);
+
+    // Fetch opportunity dropdown data
+    useEffect(() => {
+        const fetchOpportunities = async () => {
+            try {
+                const loyaltyId = localStorage.getItem("Loyalty_Member_Unique_Id__c") || "";
+                const accessToken = localStorage.getItem("salesforce_access_token");
+                const url = `https://piramal-realty--preprd.sandbox.my.salesforce.com/services/data/v64.0/query/?q=SELECT+Id,AccountNameText__c,Agreement_Value__c,Project_Finalized__r.Onboarding_Referral_Percentage__c,Apartment_Finalized__r.Name,Project_Finalized__r.Name,Tower_Finalized__r.Name,SAP_SalesOrder_Code__c+FROM+Opportunity+WHERE+StageName+=+'WC+/+Onboarding+done'+AND+Loyalty_Member_Unique_Id__c='${loyaltyId}'`;
+                const res = await fetch(url, {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                        "Content-Type": "application/json",
+                    },
+                });
+                const data = await res.json();
+                setOpportunityOptions(data?.records || []);
+            } catch (err) {
+                setOpportunityOptions([]);
+            }
+        };
+        fetchOpportunities();
+    }, []);
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -144,7 +169,7 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
         try {
             setLoading(true);
 
-            // Build request body as per API spec
+            // Build request body as per API spec, include selected opportunity fields
             const encashRequestBody = {
                 encash_request: {
                     points_to_encash: Number(formData.pointsToEncash),
@@ -154,7 +179,11 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                     ifsc_code: formData.ifscCode,
                     branch_name: formData.branchName,
                     person_name: formData.personName,
-                    terms_accepted: !!formData.agreeToTerms
+                    terms_accepted: !!formData.agreeToTerms,
+                    application_value: selectedOpportunity?.Agreement_Value__c || "",
+                    brokerage_percentages: selectedOpportunity?.Project_Finalized__r?.Onboarding_Referral_Percentage__c || "",
+                    referral_name: selectedOpportunity?.AccountNameText__c || "",
+                    booking_unit: selectedOpportunity?.Apartment_Finalized__r?.Name || "",
                 }
             };
 
@@ -301,6 +330,68 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
             </div>
 
             <form onSubmit={handleSubmit} className="bg-white rounded-lg border border-gray-200 p-8">
+                {/* Opportunity Dropdown */}
+                <div className="mb-8">
+                    <label className="block mb-2 font-medium text-gray-700">
+                        Name of the Referred Person
+                    </label>
+                    <select
+                        className="w-full p-2 border rounded mb-4"
+                        value={selectedOpportunity?.Id || ""}
+                        onChange={e => {
+                            const found = opportunityOptions.find(opt => opt.Id === e.target.value);
+                            setSelectedOpportunity(found || null);
+                        }}
+                        required
+                    >
+                        <option value="">Select Name</option>
+                        {opportunityOptions.map(opt => (
+                            <option key={opt.Id} value={opt.Id}>
+                                {opt.AccountNameText__c}
+                            </option>
+                        ))}
+                    </select>
+                    {selectedOpportunity && (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                            <div>
+                                <label className="block text-sm text-gray-500 mb-1">Application Value</label>
+                                <input
+                                    type="text"
+                                    className="w-full p-2 border rounded bg-gray-100"
+                                    value={selectedOpportunity.Agreement_Value__c || ""}
+                                    disabled
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm text-gray-500 mb-1">Booking Unit</label>
+                                <input
+                                    type="text"
+                                    className="w-full p-2 border rounded bg-gray-100"
+                                    value={selectedOpportunity.Apartment_Finalized__r?.Name || ""}
+                                    disabled
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm text-gray-500 mb-1">Brokerage Percentage</label>
+                                <input
+                                    type="text"
+                                    className="w-full p-2 border rounded bg-gray-100"
+                                    value={selectedOpportunity.Project_Finalized__r?.Onboarding_Referral_Percentage__c || ""}
+                                    disabled
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm text-gray-500 mb-1">Name of the Referred Person</label>
+                                <input
+                                    type="text"
+                                    className="w-full p-2 border rounded bg-gray-100"
+                                    value={selectedOpportunity.AccountNameText__c || ""}
+                                    disabled
+                                />
+                            </div>
+                        </div>
+                    )}
+                </div>
                 <div className="grid lg:grid-cols-2 gap-12">
                     {/* Left Column - Encash Detail & Personal Info */}
                     <div>

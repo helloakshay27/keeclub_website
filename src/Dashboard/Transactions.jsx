@@ -3,6 +3,20 @@ import axios from "axios";
 import { X } from "lucide-react";
 import { toast } from "react-toastify";
 
+// https://piramal-realty--preprd.sandbox.my.salesforce.com/services/data/v64.0/sobjects/Loyalty_Transaction__c/
+// Category__c
+// : 
+// "Purchase"
+// Loyalty_Member__c
+// : 
+// "a5Ce100000006BtEAI"
+// Loyalty_Points__c
+// : 
+// 1000
+// Transaction_Type__c
+// : 
+// "Debit"
+
 const tierBenefits = [
     {
         tier: "Bronze",
