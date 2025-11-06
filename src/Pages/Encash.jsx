@@ -173,7 +173,7 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
             });
             const response = await res.json();
 
-            if (res.ok && response.success) {
+            if (res.ok && response.success || response.status === '201' || response.status === 201 || response.statusCode === 201) {
                 setSuccess(true);
                 toast.success('Encash request submitted successfully! You will receive confirmation shortly.');
                 setFormData({
