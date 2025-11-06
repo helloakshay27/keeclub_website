@@ -186,7 +186,8 @@ const OrderConfirmation = () => {
             const debitBody = {
                 Loyalty_Member__c: loyaltyMemberId,
                 Transaction_Type__c: 'Debit',
-                Loyalty_Points__c: pointsToDebit
+                Loyalty_Points__c: pointsToDebit,
+                Category__c: 'Purchase'
             };
             const debitUrl = 'https://piramal-realty--preprd.sandbox.my.salesforce.com/services/data/v64.0/sobjects/Loyalty_Transaction__c/';
             await fetch(debitUrl, {

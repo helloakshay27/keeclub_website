@@ -20,6 +20,10 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
     const [encashRequests, setEncashRequests] = useState([]);
     const [encashLoading, setEncashLoading] = useState(false);
 
+    // track pending encash amount from backend
+    const [pendingEncashAmount, setPendingEncashAmount] = useState(null);
+    const PENDING_URL_BASE = 'https://piramal-loyalty-dev.lockated.com/';
+
     const BalancePoints = localStorage.getItem('Loyalty_Balance__c') || 0;
     // Fetch encash requests on mount
     useEffect(() => {
@@ -52,7 +56,33 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
             }
         };
         fetchEncashRequests();
+        // optional: initial pending amount fetch
+        // fetchPendingEncashAmount(); // (uncomment if you want to fetch on mount)
     }, []);
+    
+    const fetchPendingEncashAmount = async () => {
+        try {
+            const authToken = localStorage.getItem('authToken');
+            if (!authToken) return;
+            const res = await fetch(`${PENDING_URL_BASE}pending_encash_amount`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`
+                }
+            });
+            if (!res.ok) return;
+            const data = await res.json();
+            if (data && typeof data.total_pending_encash_amount !== 'undefined') {
+                setPendingEncashAmount(Number(data.total_pending_encash_amount));
+                toast.info(`Pending encash amount: ${Number(data.total_pending_encash_amount).toLocaleString('en-IN')}`);
+            }
+        } catch (err) {
+            // fail silently
+            console.error('Failed to fetch pending encash amount', err);
+        }
+    };
+
     const [isCheckingAuth, setIsCheckingAuth] = useState(true);
 
     // Check authentication on component mount
@@ -96,7 +126,7 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
+
         // Check authentication before submission
         const authToken = localStorage.getItem('authToken');
         if (!authToken || authToken === 'null') {
@@ -113,20 +143,39 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
         
         try {
             setLoading(true);
-            
-            console.log('Submitting encash request with data:', formData);
-            console.log('Current member data:', memberData);
-            console.log('Auth token:', localStorage.getItem('authToken'));
-            
-            // Submit encash request directly to the API
-            const response = await promotionAPI.submitEncashRequest(formData);
-            
-            console.log('API Response:', response);
-            
-            if (response.success) {
+
+            // Build request body as per API spec
+            const encashRequestBody = {
+                encash_request: {
+                    points_to_encash: Number(formData.pointsToEncash),
+                    facilitation_fee: Number(formData.facilitationFees),
+                    amount_payable: Number(formData.amountPayable),
+                    account_number: formData.accountNumber,
+                    ifsc_code: formData.ifscCode,
+                    branch_name: formData.branchName,
+                    person_name: formData.personName,
+                    terms_accepted: !!formData.agreeToTerms
+                }
+            };
+
+            const authToken = localStorage.getItem('authToken');
+            const res = await fetch('https://piramal-loyalty-dev.lockated.com/encash_requests.json', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`,
+                    'Accept': '*/*',
+                    'Accept-Language': 'en-GB,en-US;q=0.9,en;q=0.8,ar;q=0.7',
+                    'Origin': window.location.origin,
+                    'Referer': window.location.origin + '/',
+                },
+                body: JSON.stringify(encashRequestBody)
+            });
+            const response = await res.json();
+
+            if (res.ok && response.success) {
                 setSuccess(true);
                 toast.success('Encash request submitted successfully! You will receive confirmation shortly.');
-                // Reset form
                 setFormData({
                     pointsToEncash: '',
                     facilitationFees: '',
@@ -137,12 +186,11 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                     personName: '',
                     agreeToTerms: false
                 });
-                // Switch to My Encash Requests tab if handler provided
                 if (typeof setSelectedRedemptionTab === 'function') {
                     setSelectedRedemptionTab('My Encash Requests');
                 }
+                await fetchPendingEncashAmount();
             } else {
-                console.error('Encash request failed:', response);
                 toast.error(response.message || 'Failed to submit encash request. Please try again.');
             }
         } catch (error) {
