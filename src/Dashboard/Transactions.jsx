@@ -66,6 +66,7 @@ const Transactions = () => {
     const [errors, setErrors] = useState({});
     const [touched, setTouched] = useState({});
     const [isSubmitted, setIsSubmitted] = useState(false);
+    const [pendingEncashAmount, setPendingEncashAmount] = useState(0);
 
     // Get loyalty member data from localStorage and state
     const [summaryCards, setSummaryCards] = useState([
@@ -161,10 +162,34 @@ const Transactions = () => {
             setLoading(false);
         }
     };
+
+    // Fetch pending encash amount from backend
+    const fetchPendingEncashAmount = async () => {
+        try {
+            const authToken = localStorage.getItem('authToken');
+            if (!authToken) return;
+            const res = await fetch('https://piramal-loyalty-dev.lockated.com/pending_encash_amount', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`
+                }
+            });
+            if (!res.ok) return;
+            const data = await res.json();
+            if (data && typeof data.total_pending_encash_amount !== 'undefined') {
+                setPendingEncashAmount(Number(data.total_pending_encash_amount));
+            }
+        } catch (err) {
+            // fail silently
+        }
+    };
+
     useEffect(() => {
         if (mobile && accessToken) {
             fetchTransactions();
             fetchSummaryCards();
+            fetchPendingEncashAmount();
         }
     }, [mobile, accessToken, loyaltyMemberId]);
 
@@ -219,23 +244,30 @@ const Transactions = () => {
     return (
         <div className="max-w-7xl mx-auto p-4">
             <h2 className="text-2xl font-bold mb-4">Transaction Ledger</h2>
-
             {/* Summary Cards */}
             <div className="flex flex-col sm:flex-row gap-4 mb-8">
-                {summaryCards.map((item, index) => (
-                    <div
-                        key={index}
-                        className="flex-1 rounded-lg p-4 flex items-center gap-4 border border-gray-200"
-                    >
-                        <div className="bg-[#FA46151A] rounded-full w-16 h-16 flex items-center justify-center">
-                            <span className="text-3xl text-[#A78847]">✦</span>
+                {summaryCards.map((item, index) => {
+                    let value = item.value;
+                    if (item.title === "Balance Points") {
+                        // Remove commas for calculation, then format again
+                        let numericValue = Number(String(value).replace(/,/g, '')) || 0;
+                        value = formatPoints(numericValue - pendingEncashAmount);
+                    }
+                    return (
+                        <div
+                            key={index}
+                            className="flex-1 rounded-lg p-4 flex items-center gap-4 border border-gray-200"
+                        >
+                            <div className="bg-[#FA46151A] rounded-full w-16 h-16 flex items-center justify-center">
+                                <span className="text-3xl text-[#A78847]">✦</span>
+                            </div>
+                            <div>
+                                <div className="text-sm text-gray-500">{item.title}</div>
+                                <div className="text-xl font-bold">{value} Points</div>
+                            </div>
                         </div>
-                        <div>
-                            <div className="text-sm text-gray-500">{item.title}</div>
-                            <div className="text-xl font-bold">{item.value} Points</div>
-                        </div>
-                    </div>
-                ))}
+                    );
+                })}
             </div>
 
             <button
