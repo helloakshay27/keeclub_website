@@ -73,7 +73,7 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                                             'Authorization': `Bearer ${accessToken}`
                                         },
                                         body: JSON.stringify({
-                                            Category__c: "encash",
+                                            Category__c: "Encash",
                                             Loyalty_Member__c: loyaltyMemberId,
                                             Loyalty_Points__c: req.points_to_encash,
                                             Transaction_Type__c: "Debit"
