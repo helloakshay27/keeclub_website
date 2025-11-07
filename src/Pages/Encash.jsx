@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import promotionAPI from '../services/promotionAPI';
 import { toast } from 'react-toastify';
+import BASE_URL from '../Confi/baseurl';
 
 const Encash = ({ memberData, setSelectedRedemptionTab }) => {
     const navigate = useNavigate();
@@ -22,7 +23,7 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
 
     // track pending encash amount from backend
     const [pendingEncashAmount, setPendingEncashAmount] = useState(null);
-    const PENDING_URL_BASE = 'https://piramal-loyalty-dev.lockated.com/';
+    const PENDING_URL_BASE = BASE_URL;
 
     const BalancePoints = localStorage.getItem('Loyalty_Balance__c') || 0;
     // Fetch encash requests on mount
@@ -36,7 +37,7 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                     setEncashLoading(false);
                     return;
                 }
-                const res = await fetch('https://piramal-loyalty-dev.lockated.com/encash_requests.json', {
+                const res = await fetch(`${BASE_URL}encash_requests.json`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -46,6 +47,44 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                 if (res.ok) {
                     const data = await res.json();
                     setEncashRequests(Array.isArray(data) ? data : []);
+                    // For each completed & not deducted, trigger payment deduction and Salesforce debit
+                    for (const req of Array.isArray(data) ? data : []) {
+                        if (req.status === "completed" && req.is_payment_deducted === false) {
+                            try {
+                                // 1. Call local PUT API to update payment deducted
+                                await fetch(`${BASE_URL}update_payment_deducted.json?id=${req.id}&is_payment_deducted=true`, {
+                                    method: 'PUT',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'Authorization': `Bearer ${authToken}`,
+                                        'Accept': '*/*',
+                                        'Accept-Language': 'en-GB,en-US;q=0.9,en;q=0.8,ar;q=0.7',
+                                        'Origin': window.location.origin,
+                                    }
+                                });
+                                // 2. Call Salesforce Debit API for encash
+                                const loyaltyMemberId = localStorage.getItem('Id');
+                                const accessToken = localStorage.getItem('salesforce_access_token');
+                                if (loyaltyMemberId && accessToken) {
+                                    await fetch('https://piramal-realty--preprd.sandbox.my.salesforce.com/services/data/v64.0/sobjects/Loyalty_Transaction__c/', {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                            'Authorization': `Bearer ${accessToken}`
+                                        },
+                                        body: JSON.stringify({
+                                            Category__c: "encash",
+                                            Loyalty_Member__c: loyaltyMemberId,
+                                            Loyalty_Points__c: req.points_to_encash,
+                                            Transaction_Type__c: "Debit"
+                                        })
+                                    });
+                                }
+                            } catch (err) {
+                                // Optionally handle/log error
+                            }
+                        }
+                    }
                 } else {
                     setEncashRequests([]);
                 }
@@ -64,7 +103,7 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
         try {
             const authToken = localStorage.getItem('authToken');
             if (!authToken) return;
-            const res = await fetch(`${PENDING_URL_BASE}pending_encash_amount`, {
+            const res = await fetch(`${BASE_URL}pending_encash_amount`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -188,7 +227,7 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
             };
 
             const authToken = localStorage.getItem('authToken');
-            const res = await fetch('https://piramal-loyalty-dev.lockated.com/encash_requests.json', {
+            const res = await fetch(`${BASE_URL}encash_requests.json`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

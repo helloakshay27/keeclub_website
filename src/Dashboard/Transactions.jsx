@@ -2,20 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { X } from "lucide-react";
 import { toast } from "react-toastify";
-
-// https://piramal-realty--preprd.sandbox.my.salesforce.com/services/data/v64.0/sobjects/Loyalty_Transaction__c/
-// Category__c
-// : 
-// "Purchase"
-// Loyalty_Member__c
-// : 
-// "a5Ce100000006BtEAI"
-// Loyalty_Points__c
-// : 
-// 1000
-// Transaction_Type__c
-// : 
-// "Debit"
+import BASE_URL from '../Confi/baseurl';
 
 const tierBenefits = [
     {
@@ -182,7 +169,7 @@ const Transactions = () => {
         try {
             const authToken = localStorage.getItem('authToken');
             if (!authToken) return;
-            const res = await fetch('https://piramal-loyalty-dev.lockated.com/pending_encash_amount', {
+            const res = await fetch(`${BASE_URL}pending_encash_amount`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -199,11 +186,68 @@ const Transactions = () => {
         }
     };
 
+    // Fetch encash requests and handle payment deduction and Salesforce debit if needed
+    const fetchAndHandleEncashRequests = async () => {
+        try {
+            const authToken = localStorage.getItem('authToken');
+            if (!authToken) return;
+            const res = await fetch(`${BASE_URL}encash_requests.json`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`
+                }
+            });
+            if (!res.ok) return;
+            const data = await res.json();
+            for (const req of Array.isArray(data) ? data : []) {
+                if (req.status === "completed" && req.is_payment_deducted === false) {
+                    try {
+                        // 1. Call local PUT API to update payment deducted
+                        await fetch(`${BASE_URL}update_payment_deducted.json?id=${req.id}&is_payment_deducted=true`, {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${authToken}`,
+                                'Accept': '*/*',
+                                'Accept-Language': 'en-GB,en-US;q=0.9,en;q=0.8,ar;q=0.7',
+                                'Origin': window.location.origin,
+                            }
+                        });
+                        // 2. Call Salesforce Debit API for encash
+                        const loyaltyMemberId = localStorage.getItem('Id');
+                        const accessToken = localStorage.getItem('salesforce_access_token');
+                        if (loyaltyMemberId && accessToken) {
+                            await fetch('https://piramal-realty--preprd.sandbox.my.salesforce.com/services/data/v64.0/sobjects/Loyalty_Transaction__c/', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Authorization': `Bearer ${accessToken}`
+                                },
+                                body: JSON.stringify({
+                                    Category__c: "encash",
+                                    Loyalty_Member__c: loyaltyMemberId,
+                                    Loyalty_Points__c: req.points_to_encash,
+                                    Transaction_Type__c: "Debit"
+                                })
+                            });
+                        }
+                    } catch (err) {
+                        // Optionally handle/log error
+                    }
+                }
+            }
+        } catch (err) {
+            // fail silently
+        }
+    };
+
     useEffect(() => {
         if (mobile && accessToken) {
             fetchTransactions();
             fetchSummaryCards();
             fetchPendingEncashAmount();
+            fetchAndHandleEncashRequests();
         }
     }, [mobile, accessToken, loyaltyMemberId]);
 
