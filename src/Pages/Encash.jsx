@@ -180,10 +180,10 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                     branch_name: formData.branchName,
                     person_name: formData.personName,
                     terms_accepted: !!formData.agreeToTerms,
-                    application_value: selectedOpportunity?.Agreement_Value__c || "",
                     brokerage_percentages: selectedOpportunity?.Project_Finalized__r?.Onboarding_Referral_Percentage__c || "",
                     referral_name: selectedOpportunity?.AccountNameText__c || "",
                     booking_unit: selectedOpportunity?.Apartment_Finalized__r?.Name || "",
+                    application_value: selectedOpportunity?.Agreement_Value__c || "",
                 }
             };
 
@@ -196,7 +196,6 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                     'Accept': '*/*',
                     'Accept-Language': 'en-GB,en-US;q=0.9,en;q=0.8,ar;q=0.7',
                     'Origin': window.location.origin,
-                    'Referer': window.location.origin + '/',
                 },
                 body: JSON.stringify(encashRequestBody)
             });
