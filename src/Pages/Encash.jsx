@@ -418,7 +418,7 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                         ))}
                     </select>
                     {selectedOpportunity && (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
                             <div>
                                 <label className="block text-sm text-gray-500 mb-1">Agreement Value</label>
                                 <input
@@ -474,18 +474,14 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                                     disabled
                                 />
                             </div>
-                            
                         </div>
                     )}
                 </div>
                 {/* Bank Details Section */}
-                <div className="grid lg:grid-cols-6 gap-12">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
                     <div>
                         <h3 className="text-xl font-semibold text-gray-800 mb-6">Bank Detail</h3>
                         <div className="space-y-6">
-                            {/* Account Number and Confirm Account Number */}
-                            <div className="grid md:grid-cols-2 gap-4">
-                                {/* Person Name */}
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">
                                     Person name (As per Bank Account)
@@ -499,6 +495,7 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                                     required
                                 />
                             </div>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-2">
                                         Account No.
@@ -529,8 +526,6 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                                     )}
                                 </div>
                             </div>
-
-                            {/* IFSC Code */}
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">
                                     IFSC Code
@@ -544,8 +539,6 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                                     required
                                 />
                             </div>
-
-                            {/* Branch Name */}
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">
                                     Branch name
