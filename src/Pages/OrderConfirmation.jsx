@@ -598,12 +598,24 @@ const OrderConfirmation = () => {
                                         <span> Points To Redeem</span>
                                         <span className="text-orange-500 flex items-center">
                                             <img
-                                src="/redeemStar.png"
-                                alt="star"
-                                className="mr-1"
-                                style={{ width: 24, height: 24, display: 'inline-block' }}
-                              />
+                                                src="/redeemStar.png"
+                                                alt="star"
+                                                className="mr-1"
+                                                style={{ width: 24, height: 24, display: 'inline-block' }}
+                                            />
                                             {(product.loyalty_points_required || product.points || 0).toLocaleString('en-IN')}
+                                        </span>
+                                    </div>
+                                    <div className="flex justify-between text-lg">
+                                        <span>Available Points</span>
+                                        <span className="text-green-600 flex items-center">
+                                            <img
+                                                src="/redeemStar.png"
+                                                alt="star"
+                                                className="mr-1"
+                                                style={{ width: 24, height: 24, display: 'inline-block' }}
+                                            />
+                                            {(localStorage.getItem('Loyalty_Balance__c') || 0).toLocaleString('en-IN')}
                                         </span>
                                     </div>
                                     {product.originalPrice && product.originalPrice > (product.currentPrice || 0) && (
