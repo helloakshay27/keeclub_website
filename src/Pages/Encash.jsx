@@ -11,6 +11,7 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
         facilitationFees: '',
         amountPayable: '',
         accountNumber: '',
+        confirmAccountNumber: '', // Added confirm account number
         ifscCode: '',
         branchName: '',
         personName: '',
@@ -188,6 +189,9 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
         fetchOpportunities();
     }, []);
 
+    // Account number match validation
+    const isAccountNumberMatched = formData.accountNumber === formData.confirmAccountNumber;
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -200,6 +204,10 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
         }
         
         // Validation
+        if (!isAccountNumberMatched) {
+            toast.error('Account number and confirm account number do not match.');
+            return;
+        }
         if (!formData.agreeToTerms) {
             toast.error('Please agree to the Terms and Conditions');
             return;
@@ -248,6 +256,7 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                     facilitationFees: '',
                     amountPayable: '',
                     accountNumber: '',
+                    confirmAccountNumber: '',
                     ifscCode: '',
                     branchName: '',
                     personName: '',
@@ -405,7 +414,13 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                                 <input
                                     type="text"
                                     className="w-full p-2 border rounded bg-gray-100"
-                                    value={selectedOpportunity.Apartment_Finalized__r?.Name || ""}
+                                    value={
+                                        [
+                                            selectedOpportunity.Project_Finalized__r?.Name,
+                                            selectedOpportunity.Tower_Finalized__r?.Name,
+                                            selectedOpportunity.Apartment_Finalized__r?.Name
+                                        ].filter(Boolean).join(' - ')
+                                    }
                                     disabled
                                 />
                             </div>
@@ -446,7 +461,6 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                                     value={formData.pointsToEncash}
                                     onChange={(e) => handleInputChange('pointsToEncash', e.target.value)}
                                     className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                                    // max={currentPoints}
                                     required
                                 />
                             </div>
@@ -465,24 +479,6 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                                     required
                                 />
                             </div>
-
-                            {/* Terms and Conditions */}
-                            <div className="flex items-start space-x-3">
-                                <input
-                                    type="checkbox"
-                                    id="agreeToTerms"
-                                    checked={formData.agreeToTerms}
-                                    onChange={(e) => handleInputChange('agreeToTerms', e.target.checked)}
-                                    className="w-4 h-4 text-orange-600 border-gray-300 rounded focus:ring-orange-500 mt-1"
-                                    required
-                                />
-                                <label htmlFor="agreeToTerms" className="text-sm text-gray-700">
-                                    I agree to the{' '}
-                                    <span className="text-orange-600 hover:text-orange-700 cursor-pointer underline">
-                                        Terms and Conditions
-                                    </span>
-                                </label>
-                            </div>
                         </div>
                     </div>
 
@@ -490,7 +486,7 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                     <div>
                         <h3 className="text-xl font-semibold text-gray-800 mb-6">Bank Detail</h3>
                         <div className="space-y-6">
-                            {/* Account Number and IFSC Code */}
+                            {/* Account Number and Confirm Account Number */}
                             <div className="grid md:grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -507,17 +503,35 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                                        IFSC Code
+                                        Confirm Account No.
                                     </label>
                                     <input
                                         type="text"
-                                        placeholder="Enter IFSC code"
-                                        value={formData.ifscCode}
-                                        onChange={(e) => handleInputChange('ifscCode', e.target.value)}
+                                        placeholder="Confirm bank account no."
+                                        value={formData.confirmAccountNumber}
+                                        onChange={(e) => handleInputChange('confirmAccountNumber', e.target.value)}
                                         className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                                         required
                                     />
+                                    {!isAccountNumberMatched && formData.confirmAccountNumber && (
+                                        <p className="text-sm text-red-500 mt-1">Account numbers do not match.</p>
+                                    )}
                                 </div>
+                            </div>
+
+                            {/* IFSC Code */}
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                    IFSC Code
+                                </label>
+                                <input
+                                    type="text"
+                                    placeholder="Enter IFSC code"
+                                    value={formData.ifscCode}
+                                    onChange={(e) => handleInputChange('ifscCode', e.target.value)}
+                                    className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                                    required
+                                />
                             </div>
 
                             {/* Branch Name */}
@@ -534,22 +548,38 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                                     required
                                 />
                             </div>
-
-                            {/* Submit Button */}
-                            <button
-                                type="submit"
-                                disabled={loading || !formData.agreeToTerms}
-                                className={`w-full py-4 px-6 rounded-lg font-semibold text-lg transition-colors duration-300 ${
-                                    loading || !formData.agreeToTerms
-                                        ? 'bg-gray-400 cursor-not-allowed text-white'
-                                        : 'bg-orange-600 hover:bg-orange-700 text-white'
-                                }`}
-                            >
-                                {loading ? 'Submitting...' : 'Submit'}
-                            </button>
                         </div>
                     </div>
                 </div>
+                {/* Terms and Conditions - moved to last before submit */}
+                <div className="flex items-start space-x-3 mt-8">
+                    <input
+                        type="checkbox"
+                        id="agreeToTerms"
+                        checked={formData.agreeToTerms}
+                        onChange={(e) => handleInputChange('agreeToTerms', e.target.checked)}
+                        className="w-4 h-4 text-orange-600 border-gray-300 rounded focus:ring-orange-500 mt-1"
+                        required
+                    />
+                    <label htmlFor="agreeToTerms" className="text-sm text-gray-700">
+                        I agree to the{' '}
+                        <span className="text-orange-600 hover:text-orange-700 cursor-pointer underline">
+                            Terms and Conditions
+                        </span>
+                    </label>
+                </div>
+                {/* Submit Button */}
+                <button
+                    type="submit"
+                    disabled={loading || !formData.agreeToTerms}
+                    className={`w-full py-4 px-6 rounded-lg font-semibold text-lg transition-colors duration-300 ${
+                        loading || !formData.agreeToTerms
+                            ? 'bg-gray-400 cursor-not-allowed text-white'
+                            : 'bg-orange-600 hover:bg-orange-700 text-white'
+                    }`}
+                >
+                    {loading ? 'Submitting...' : 'Submit'}
+                </button>
             </form>
             {/* Encash Requests List */}
             <div className="mt-12">
@@ -560,7 +590,7 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                     <div className="text-gray-500">No encash requests found.</div>
                 ) : (
                     <div className="space-y-4">
-                        {encashRequests.map((req, idx) => (
+                        {[...encashRequests].reverse().map((req, idx) => (
                             <div key={req.id || idx} className="bg-white rounded-lg shadow-sm overflow-hidden border border-gray-200">
                                 <div className="p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
                                     <div className="flex-1">
