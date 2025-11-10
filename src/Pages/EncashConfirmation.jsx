@@ -7,13 +7,26 @@ const EncashConfirmation = () => {
     const navigate = useNavigate();
     const { encashRequest } = location.state || {};
 
+    // Helper to get loyaltyId from localStorage
+    const getLoyaltyId = () => {
+        const loyaltyIdRaw = localStorage.getItem("Loyalty_Member_Unique_Id__c");
+        return loyaltyIdRaw ? loyaltyIdRaw.replace(/^0+/, '') : '';
+    };
+
     if (!encashRequest) {
         return (
             <div className="min-h-screen flex items-center justify-center">
                 <div className="text-center">
                     <h1 className="text-xl font-semibold text-gray-800 mb-4">Encash request not found</h1>
                     <button 
-                        onClick={() => navigate('/dashboard/transactions')}
+                        onClick={() => {
+                            const loyaltyId = getLoyaltyId();
+                            if (loyaltyId) {
+                                navigate(`/dashboard/transactions/${loyaltyId}`);
+                            } else {
+                                navigate('/dashboard/transactions');
+                            }
+                        }}
                         className="px-6 py-3 bg-[#f9461c] text-white rounded-lg hover:bg-[#e63e0f]"
                     >
                         Go to Dashboard
@@ -86,7 +99,14 @@ const EncashConfirmation = () => {
                 </div>
                 <div className="mt-8 text-center">
                     <button
-                        onClick={() => navigate('/dashboard/transactions')}
+                        onClick={() => {
+                            const loyaltyId = getLoyaltyId();
+                            if (loyaltyId) {
+                                navigate(`/dashboard/transactions/${loyaltyId}`);
+                            } else {
+                                navigate('/dashboard/transactions');
+                            }
+                        }}
                         className="inline-flex items-center px-8 py-3 border-2 border-[#f9461c] text-[#f9461c] font-semibold rounded-lg hover:bg-[#f9461c] hover:text-white transition-colors duration-300"
                     >
                         <Home className="mr-2" size={20} />
