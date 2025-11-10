@@ -43,6 +43,7 @@ import OrderDetail from './Pages/OrderDetail';
 import LoginPage from './Component/loginpages/loginPage';
 import TransactionStatus from './Pages/TransactionStatus';
 import Transactions from './Dashboard/Transactions';
+import EncashConfirmation from './Pages/EncashConfirmation';
 
 const routeConfigs = [
   { path: '/', element: <Home />, transparent: true },
@@ -63,6 +64,7 @@ const routeConfigs = [
   { path: '/order-detail/:orderId', element: <OrderDetail />, transparent: false },
   { path: '/track-order/:orderId', element: <TrackOrder />, transparent: false },
   { path: '/hotels-redemption', element: <HotelsRedemption />, transparent: false },
+  { path: '/encash-confirmation', element: <EncashConfirmation />, transparent: false },
 
   { path: '/login', element: <LoginPage />, transparent: true, hideLayout: true },
   { path: '/register', element: <Register />, transparent: true, hideLayout: true },
@@ -74,10 +76,6 @@ const routeConfigs = [
   { path: '/blog/:id', element: <BlogDetailPage />, transparent: true },
   { path: '*', element: <PageNotFound />, transparent: true, hideLayout: true },
 ];
-
-
-
-
 
 function App() {
   const location = useLocation();
@@ -206,6 +204,8 @@ useEffect(() => {
               <Route path="*" element={<PageNotFound />} />
             </Route>
           </Route>
+          {/* Catch-all route for 404 */}
+          <Route path="*" element={<PageNotFound />} />
         </Routes>
 
         <ToastContainer />
