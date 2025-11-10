@@ -15,7 +15,8 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
         ifscCode: '',
         branchName: '',
         personName: '',
-        agreeToTerms: false
+        agreeToTerms: false,
+        email: '' // Add email field
     });
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
@@ -229,6 +230,12 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
             toast.error('Please agree to the Terms and Conditions');
             return;
         }
+        // Email validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!formData.email || !emailRegex.test(formData.email)) {
+            toast.error('Please enter a valid email address.');
+            return;
+        }
         // Ensure sufficient points to encash
         const pointsToEncash = Number(formData.pointsToEncash) || 0;
         if (pointsToEncash > currentPoints) {
@@ -254,6 +261,7 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                     referral_name: selectedOpportunity?.AccountNameText__c || "",
                     booking_unit: selectedOpportunity?.Apartment_Finalized__r?.Name || "",
                     application_value: selectedOpportunity?.Agreement_Value__c || "",
+                    email: formData.email // Pass email in payload
                 }
             };
 
@@ -283,7 +291,8 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                     ifscCode: '',
                     branchName: '',
                     personName: '',
-                    agreeToTerms: false
+                    agreeToTerms: false,
+                    email: '' // Reset email field
                 });
                 if (typeof setSelectedRedemptionTab === 'function') {
                     setSelectedRedemptionTab('My Encash Requests');
@@ -469,6 +478,17 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                                     className="w-full p-2 border rounded bg-gray-100"
                                     value={selectedOpportunity.Project_Finalized__r?.Onboarding_Referral_Percentage__c || ""}
                                     disabled
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm text-gray-500 mb-1">Email</label>
+                                <input
+                                    type="email"
+                                    className="w-full p-2 border rounded"
+                                    placeholder="Enter your email"
+                                    value={formData.email}
+                                    onChange={e => handleInputChange('email', e.target.value)}
+                                    required
                                 />
                             </div>
                             <div>
