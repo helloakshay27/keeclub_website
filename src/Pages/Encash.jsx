@@ -474,7 +474,18 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                                     disabled
                                 />
                             </div>
-                            {/* Person Name */}
+                            
+                        </div>
+                    )}
+                </div>
+                {/* Bank Details Section */}
+                <div className="grid lg:grid-cols-6 gap-12">
+                    <div>
+                        <h3 className="text-xl font-semibold text-gray-800 mb-6">Bank Detail</h3>
+                        <div className="space-y-6">
+                            {/* Account Number and Confirm Account Number */}
+                            <div className="grid md:grid-cols-2 gap-4">
+                                {/* Person Name */}
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">
                                     Person name (As per Bank Account)
@@ -488,16 +499,6 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                                     required
                                 />
                             </div>
-                        </div>
-                    )}
-                </div>
-                {/* Bank Details Section */}
-                <div className="grid lg:grid-cols-2 gap-12">
-                    <div>
-                        <h3 className="text-xl font-semibold text-gray-800 mb-6">Bank Detail</h3>
-                        <div className="space-y-6">
-                            {/* Account Number and Confirm Account Number */}
-                            <div className="grid md:grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-2">
                                         Account No.
