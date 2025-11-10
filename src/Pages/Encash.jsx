@@ -219,7 +219,7 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
             navigate('/login');
             return;
         }
-        
+
         // Validation
         if (!isAccountNumberMatched) {
             toast.error('Account number and confirm account number do not match.');
@@ -227,6 +227,12 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
         }
         if (!formData.agreeToTerms) {
             toast.error('Please agree to the Terms and Conditions');
+            return;
+        }
+        // Ensure sufficient points to encash
+        const pointsToEncash = Number(formData.pointsToEncash) || 0;
+        if (pointsToEncash > currentPoints) {
+            toast.error('You do not have sufficient points to encash.');
             return;
         }
         
