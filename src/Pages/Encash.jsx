@@ -189,6 +189,23 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
         fetchOpportunities();
     }, []);
 
+    // Calculate points to encash based on agreement value and brokerage percentage
+    useEffect(() => {
+        if (selectedOpportunity) {
+            const agreementValue = Number(selectedOpportunity.Agreement_Value__c) || 0;
+            const brokerage = Number(selectedOpportunity.Project_Finalized__r?.Onboarding_Referral_Percentage__c) || 0;
+            const calculatedPoints = Math.round((agreementValue * brokerage) / 100);
+            setFormData(prev => ({
+                ...prev,
+                pointsToEncash: calculatedPoints ? calculatedPoints.toString() : '',
+                facilitationFees: calculatedPoints ? Math.round(calculatedPoints * 0.02).toString() : '',
+                amountPayable: calculatedPoints
+                    ? (calculatedPoints - Math.round(calculatedPoints * 0.02)).toString()
+                    : ''
+            }));
+        }
+    }, [selectedOpportunity]);
+
     // Account number match validation
     const isAccountNumberMatched = formData.accountNumber === formData.confirmAccountNumber;
 
@@ -266,6 +283,8 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                     setSelectedRedemptionTab('My Encash Requests');
                 }
                 await fetchPendingEncashAmount();
+                // Navigate to Encash Confirmation page with encash request details
+                navigate('/encash-confirmation', { state: { encashRequest: response } });
             } else {
                 toast.error(response.message || 'Failed to submit encash request. Please try again.');
             }
@@ -401,7 +420,7 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                     {selectedOpportunity && (
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
                             <div>
-                                <label className="block text-sm text-gray-500 mb-1">Application Value</label>
+                                <label className="block text-sm text-gray-500 mb-1">Agreement Value</label>
                                 <input
                                     type="text"
                                     className="w-full p-2 border rounded bg-gray-100"
@@ -424,6 +443,19 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                                     disabled
                                 />
                             </div>
+                            {/* Points to Encash (autopopulated, disabled) */}
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                    How many points you want to encash ?
+                                </label>
+                                <input
+                                    type="number"
+                                    placeholder="Points"
+                                    value={formData.pointsToEncash}
+                                    disabled
+                                    className="w-full border border-gray-300 rounded-lg px-4 py-3 bg-gray-100"
+                                />
+                            </div>
                             <div>
                                 <label className="block text-sm text-gray-500 mb-1">Brokerage Percentage</label>
                                 <input
@@ -442,29 +474,6 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                                     disabled
                                 />
                             </div>
-                        </div>
-                    )}
-                </div>
-                <div className="grid lg:grid-cols-2 gap-12">
-                    {/* Left Column - Encash Detail & Personal Info */}
-                    <div>
-                        <h3 className="text-xl font-semibold text-gray-800 mb-6">Encash Detail</h3>
-                        <div className="space-y-6">
-                            {/* Points to Encash */}
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    How many points you want to encash ?
-                                </label>
-                                <input
-                                    type="number"
-                                    placeholder="Points"
-                                    value={formData.pointsToEncash}
-                                    onChange={(e) => handleInputChange('pointsToEncash', e.target.value)}
-                                    className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                                    required
-                                />
-                            </div>
-
                             {/* Person Name */}
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -480,9 +489,10 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                                 />
                             </div>
                         </div>
-                    </div>
-
-                    {/* Right Column - Bank Detail */}
+                    )}
+                </div>
+                {/* Bank Details Section */}
+                <div className="grid lg:grid-cols-2 gap-12">
                     <div>
                         <h3 className="text-xl font-semibold text-gray-800 mb-6">Bank Detail</h3>
                         <div className="space-y-6">
