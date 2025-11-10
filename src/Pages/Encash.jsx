@@ -556,7 +556,7 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                     </div>
                 </div>
                 {/* Terms and Conditions - moved to last before submit */}
-                <div className="flex items-start space-x-3 mt-8">
+                <div className="flex items-start space-x-3 my-8">
                     <input
                         type="checkbox"
                         id="agreeToTerms"
