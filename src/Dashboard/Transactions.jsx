@@ -260,8 +260,10 @@ const Transactions = () => {
         if (!referral.lastName || referral.lastName.trim().length < 2) {
             errors.lastName = "Last name must be at least 2 characters long.";
         }
-        if (!referral.phone || !/^\d{10}$/.test(referral.phone)) {
-            errors.phone = "Phone number must be 10 digits.";
+        // Indian phone number regex: starts with 6-9 and has 10 digits
+        const indianPhoneRegex = /^[6-9]\d{9}$/;
+        if (!referral.phone || !indianPhoneRegex.test(referral.phone)) {
+            errors.phone = "Phone number must be a valid 10-digit Indian number starting with 6-9.";
         }
         if (!referral.rating) {
             errors.rating = "Please select a rating.";
@@ -375,11 +377,17 @@ const Transactions = () => {
                         <input
                             id="referral-phone"
                             type="tel"
-                            placeholder="Phone Number"
+                            placeholder="Phone Number (10 digits starting with 6-9)"
                             value={newReferral.phone || ""}
-                            onChange={(e) => setNewReferral({ ...newReferral, phone: e.target.value })}
+                            onChange={(e) => {
+                                // Only allow digits and limit to 10 characters
+                                const value = e.target.value.replace(/\D/g, '').slice(0, 10);
+                                setNewReferral({ ...newReferral, phone: value });
+                            }}
                             onBlur={() => handleBlur("phone")}
                             className="w-full mb-4 p-2 border rounded"
+                            maxLength="10"
+                            pattern="[6-9][0-9]{9}"
                         />
                         {errors.phone && <p className="text-sm text-red-500 mb-2">{errors.phone}</p>}
                         {/* Rating Dropdown */}
