@@ -145,8 +145,8 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
         checkAuthentication();
     }, [navigate]);
 
-    // Use currentPoints from memberData prop
-    const currentPoints = memberData?.current_loyalty_points || 0;
+    // Use currentPoints from memberData prop or localStorage
+    const currentPoints = memberData?.current_loyalty_points || Number(localStorage.getItem('Loyalty_Balance__c')) || 0;
 
     const handleInputChange = (field, value) => {
         let processedValue = value;
@@ -172,6 +172,11 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
             } else {
                 delete newErrors.branchName;
             }
+        }
+
+        // Validation for Account Number (numeric only)
+        if (field === 'accountNumber' || field === 'confirmAccountNumber') {
+            processedValue = value.replace(/[^0-9]/g, '');
         }
 
         // Validation for IFSC Code (alphanumeric only)
@@ -200,6 +205,9 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
 
     // Check if all mandatory fields are valid
     const isFormValid = () => {
+        // Email validation regex
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        
         return (
             selectedOpportunity &&
             formData.pointsToEncash &&
@@ -209,6 +217,7 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
             formData.ifscCode &&
             formData.branchName &&
             formData.email &&
+            emailRegex.test(formData.email) &&
             formData.agreeToTerms &&
             Object.keys(validationErrors).length === 0 &&
             isAccountNumberMatched
@@ -489,7 +498,7 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                                 <input
                                     type="text"
                                     className="w-full p-2 border rounded bg-gray-100"
-                                    value={selectedOpportunity.Agreement_Value__c || ""}
+                                    value={selectedOpportunity.Agreement_Value__c ? selectedOpportunity.Agreement_Value__c.toLocaleString('en-IN') : "N/A"}
                                     disabled
                                 />
                             </div>
@@ -499,11 +508,14 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                                     type="text"
                                     className="w-full p-2 border rounded bg-gray-100"
                                     value={
-                                        [
-                                            selectedOpportunity.Project_Finalized__r?.Name,
-                                            selectedOpportunity.Tower_Finalized__r?.Name,
-                                            selectedOpportunity.Apartment_Finalized__r?.Name
-                                        ].filter(Boolean).join(' - ')
+                                        (() => {
+                                            const parts = [
+                                                selectedOpportunity.Project_Finalized__r?.Name,
+                                                selectedOpportunity.Tower_Finalized__r?.Name,
+                                                selectedOpportunity.Apartment_Finalized__r?.Name
+                                            ].filter(Boolean);
+                                            return parts.length > 0 ? parts.join(' - ') : "N/A";
+                                        })()
                                     }
                                     disabled
                                 />
@@ -516,7 +528,7 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                                 <input
                                     type="number"
                                     placeholder="Points"
-                                    value={formData.pointsToEncash}
+                                    value={formData.pointsToEncash || "0"}
                                     disabled
                                     className="w-full border border-gray-300 rounded-lg px-4 py-3 bg-gray-100"
                                 />
@@ -526,7 +538,7 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                                 <input
                                     type="text"
                                     className="w-full p-2 border rounded bg-gray-100"
-                                    value={selectedOpportunity.Project_Finalized__r?.Onboarding_Referral_Percentage__c || ""}
+                                    value={selectedOpportunity.Project_Finalized__r?.Onboarding_Referral_Percentage__c || "N/A"}
                                     disabled
                                 />
                             </div>
