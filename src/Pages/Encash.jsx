@@ -523,7 +523,7 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                             {/* Points to Encash (autopopulated, disabled) */}
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    How many points you want to encash ?
+                                    points want to encash
                                 </label>
                                 <input
                                     type="number"
