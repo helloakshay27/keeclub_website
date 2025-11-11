@@ -522,58 +522,49 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
             <form onSubmit={handleSubmit} className="bg-white rounded-lg border border-gray-200 p-8">
                 {/* Opportunity Dropdown */}
                 <div className="mb-8">
-                    <label className="block mb-2 font-medium text-gray-700">
-                        Name of the Referred Person <span className="text-red-500">*</span>
-                    </label>
-                    <select
-                        className="w-full p-2 border rounded mb-4"
-                        value={selectedOpportunity?.Id || ""}
-                        onChange={e => {
-                            const found = opportunityOptions.find(opt => opt.Id === e.target.value);
-                            setSelectedOpportunity(found || null);
-                        }}
-                        required
-                    >
-                        <option value="">Select Name</option>
-                        {opportunityOptions.map(opt => (
-                            <option key={opt.Id} value={opt.Id}>
-                                {opt.AccountNameText__c}
-                            </option>
-                        ))}
-                    </select>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div>
+                            <label className="block mb-2 font-medium text-gray-700">
+                                Name of the Referred Person <span className="text-red-500">*</span>
+                            </label>
+                            <select
+                                className="w-full p-2 border rounded mb-4"
+                                value={selectedOpportunity?.Id || ""}
+                                onChange={e => {
+                                    const found = opportunityOptions.find(opt => opt.Id === e.target.value);
+                                    setSelectedOpportunity(found || null);
+                                }}
+                                required
+                            >
+                                <option value="">Select Name</option>
+                                {opportunityOptions.map(opt => (
+                                    <option key={opt.Id} value={opt.Id}>
+                                        {opt.AccountNameText__c}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                        <div>
+                            <label className="block text-sm text-gray-500 mb-1">Booking Unit</label>
+                            <input
+                                type="text"
+                                className="w-full p-2 border rounded bg-gray-100"
+                                value={
+                                    (() => {
+                                        const parts = [
+                                            selectedOpportunity?.Project_Finalized__r?.Name,
+                                            selectedOpportunity?.Tower_Finalized__r?.Name,
+                                            selectedOpportunity?.Apartment_Finalized__r?.Name
+                                        ].filter(Boolean);
+                                        return parts.length > 0 ? parts.join(' - ') : "N/A";
+                                    })()
+                                }
+                                disabled
+                            />
+                        </div>
+                    </div>
                     {selectedOpportunity && (
                         <div className="grid grid-cols-1 gap-6 mb-6">
-                            {/* First Row: Name of Referred Person and Booking Unit */}
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                                <div>
-                                    <label className="block text-sm text-gray-500 mb-1">Name of the Referred Person</label>
-                                    <input
-                                        type="text"
-                                        className="w-full p-2 border rounded bg-gray-100"
-                                        value={selectedOpportunity.AccountNameText__c || ""}
-                                        disabled
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-sm text-gray-500 mb-1">Booking Unit</label>
-                                    <input
-                                        type="text"
-                                        className="w-full p-2 border rounded bg-gray-100"
-                                        value={
-                                            (() => {
-                                                const parts = [
-                                                    selectedOpportunity.Project_Finalized__r?.Name,
-                                                    selectedOpportunity.Tower_Finalized__r?.Name,
-                                                    selectedOpportunity.Apartment_Finalized__r?.Name
-                                                ].filter(Boolean);
-                                                return parts.length > 0 ? parts.join(' - ') : "N/A";
-                                            })()
-                                        }
-                                        disabled
-                                    />
-                                </div>
-                            </div>
-
                             {/* Second Row: Agreement Value and Brokerage Percentage */}
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                 <div>
@@ -595,7 +586,6 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                                     />
                                 </div>
                             </div>
-
                             {/* Third Row: Points to Encash (full width) */}
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -609,7 +599,6 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                                     className="w-full border border-gray-300 rounded-lg px-4 py-3 bg-gray-100"
                                 />
                             </div>
-
                             {/* Fourth Row: Email (full width) */}
                             <div>
                                 <label className="block text-sm text-gray-500 mb-1">Email <span className="text-red-500">*</span></label>
