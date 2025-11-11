@@ -92,6 +92,15 @@ const Transactions = () => {
                 },
             });
             const record = res.data?.records?.[0];
+            
+            if (record) {
+                // Update localStorage with fresh data
+                localStorage.setItem("Loyalty_Balance__c", record.Loyalty_Balance__c || 0);
+                localStorage.setItem("Total_Points_Credited__c", record.Total_Points_Credited__c || 0);
+                localStorage.setItem("Total_Points_Debited__c", record.Total_Points_Debited__c || 0);
+                localStorage.setItem("Total_Points_Expired__c", record.Total_Points_Expired__c || 0);
+            }
+            
             setSummaryCards([
                 { title: "Earned Points", value: formatPoints(record?.Total_Points_Credited__c || 0) },
                 { title: "Redeemed Points", value: formatPoints(record?.Total_Points_Debited__c || 0) },
@@ -250,6 +259,21 @@ const Transactions = () => {
             fetchAndHandleEncashRequests();
         }
     }, [mobile, accessToken, loyaltyMemberId]);
+
+    // Additional useEffect to fetch data when component mounts for newly logged in users
+    useEffect(() => {
+        const loginTimestamp = localStorage.getItem("loginTimestamp");
+        const currentTime = Date.now();
+        const timeDifference = currentTime - parseInt(loginTimestamp || "0");
+        
+        // If user logged in within the last 5 minutes, ensure data is fetched
+        if (loginTimestamp && timeDifference < 5 * 60 * 1000 && mobile && accessToken) {
+            setTimeout(() => {
+                fetchSummaryCards();
+                fetchTransactions();
+            }, 1000); // Small delay to ensure all data is ready
+        }
+    }, []);
 
     // Referral Modal validation
     const validateReferral = (referral) => {

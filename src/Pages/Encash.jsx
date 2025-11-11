@@ -207,7 +207,12 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
     const isFormValid = () => {
         // Email validation regex
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        
+        const pointsToEncash = Number(formData.pointsToEncash) || 0;
+        const balancePoints = Number(localStorage.getItem('Loyalty_Balance__c')) || 0;
+
+        // Disable if points to encash > balance
+        if (pointsToEncash > balancePoints) return false;
+
         return (
             selectedOpportunity &&
             formData.pointsToEncash &&
@@ -449,7 +454,7 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
     return (
         <div className="max-w-6xl mx-auto px-4 py-8">
             {/* Points Balance Header */}
-            <div className="bg-orange-50 rounded-lg p-6 mb-8 flex items-center justify-between">
+            <div className="bg-orange-50 rounded-lg p-6 mb-8 flex items-center justify-between relative">
                 <h2 className="text-2xl font-bold text-gray-800">Encash Form</h2>
                 <div className="flex items-center space-x-4">
                     {currentPoints > 0 && (
@@ -465,7 +470,54 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                             </span>
                         </div>
                     )}
-              
+                </div>
+                
+                {/* Balance Points with Info Icon */}
+                <div className="absolute top-1 right-1 z-10 group" style={{ minWidth: 40 }}>
+                    <div className="flex items-center relative">
+                        {/* Info Icon */}
+                        <span
+                            className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-[#fa46151a] text-[#fa4615] cursor-pointer relative transition-all duration-4000"
+                            style={{
+                                boxShadow: "0 2px 8px 0 rgba(250,70,22,0.08)",
+                                zIndex: 2,
+                            }}
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                strokeWidth={2}
+                                stroke="currentColor"
+                                className="w-5 h-5"
+                            >
+                                <circle
+                                    cx="12"
+                                    cy="12"
+                                    r="10"
+                                    stroke="#fa4615"
+                                    strokeWidth="2"
+                                    fill="#fff"
+                                />
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    d="M12 16v-4m0-4h.01"
+                                    stroke="#fa4615"
+                                    strokeWidth="2"
+                                />
+                            </svg>
+                        </span>
+                        {/* Balance Points Message */}
+                        <span
+                            className="absolute right-9 top-1/2 -translate-y-1/2 bg-white border border-[#fa4615] text-[#fa4615] px-3 py-1 rounded shadow text-xs font-semibold whitespace-nowrap opacity-100"
+                            style={{
+                                boxShadow: "0 2px 8px 0 rgba(250,70,22,0.08)",
+                            }}
+                        >
+                            Balance: {Number(localStorage.getItem('Loyalty_Balance__c') || 0).toLocaleString('en-IN')} Points
+                        </span>
+                    </div>
                 </div>
             </div>
 
@@ -492,38 +544,64 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                         ))}
                     </select>
                     {selectedOpportunity && (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
-                            <div>
-                                <label className="block text-sm text-gray-500 mb-1">Agreement Value</label>
-                                <input
-                                    type="text"
-                                    className="w-full p-2 border rounded bg-gray-100"
-                                    value={selectedOpportunity.Agreement_Value__c ? selectedOpportunity.Agreement_Value__c.toLocaleString('en-IN') : "N/A"}
-                                    disabled
-                                />
+                        <div className="grid grid-cols-1 gap-6 mb-6">
+                            {/* First Row: Name of Referred Person and Booking Unit */}
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                <div>
+                                    <label className="block text-sm text-gray-500 mb-1">Name of the Referred Person</label>
+                                    <input
+                                        type="text"
+                                        className="w-full p-2 border rounded bg-gray-100"
+                                        value={selectedOpportunity.AccountNameText__c || ""}
+                                        disabled
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm text-gray-500 mb-1">Booking Unit</label>
+                                    <input
+                                        type="text"
+                                        className="w-full p-2 border rounded bg-gray-100"
+                                        value={
+                                            (() => {
+                                                const parts = [
+                                                    selectedOpportunity.Project_Finalized__r?.Name,
+                                                    selectedOpportunity.Tower_Finalized__r?.Name,
+                                                    selectedOpportunity.Apartment_Finalized__r?.Name
+                                                ].filter(Boolean);
+                                                return parts.length > 0 ? parts.join(' - ') : "N/A";
+                                            })()
+                                        }
+                                        disabled
+                                    />
+                                </div>
                             </div>
-                            <div>
-                                <label className="block text-sm text-gray-500 mb-1">Booking Unit</label>
-                                <input
-                                    type="text"
-                                    className="w-full p-2 border rounded bg-gray-100"
-                                    value={
-                                        (() => {
-                                            const parts = [
-                                                selectedOpportunity.Project_Finalized__r?.Name,
-                                                selectedOpportunity.Tower_Finalized__r?.Name,
-                                                selectedOpportunity.Apartment_Finalized__r?.Name
-                                            ].filter(Boolean);
-                                            return parts.length > 0 ? parts.join(' - ') : "N/A";
-                                        })()
-                                    }
-                                    disabled
-                                />
+
+                            {/* Second Row: Agreement Value and Brokerage Percentage */}
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                <div>
+                                    <label className="block text-sm text-gray-500 mb-1">Agreement Value</label>
+                                    <input
+                                        type="text"
+                                        className="w-full p-2 border rounded bg-gray-100"
+                                        value={selectedOpportunity.Agreement_Value__c ? selectedOpportunity.Agreement_Value__c.toLocaleString('en-IN') : "N/A"}
+                                        disabled
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm text-gray-500 mb-1">Brokerage Percentage</label>
+                                    <input
+                                        type="text"
+                                        className="w-full p-2 border rounded bg-gray-100"
+                                        value={selectedOpportunity.Project_Finalized__r?.Onboarding_Referral_Percentage__c || "N/A"}
+                                        disabled
+                                    />
+                                </div>
                             </div>
-                            {/* Points to Encash (autopopulated, disabled) */}
+
+                            {/* Third Row: Points to Encash (full width) */}
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    points want to encash
+                                    Points want to encash
                                 </label>
                                 <input
                                     type="number"
@@ -533,15 +611,8 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                                     className="w-full border border-gray-300 rounded-lg px-4 py-3 bg-gray-100"
                                 />
                             </div>
-                            <div>
-                                <label className="block text-sm text-gray-500 mb-1">Brokerage Percentage</label>
-                                <input
-                                    type="text"
-                                    className="w-full p-2 border rounded bg-gray-100"
-                                    value={selectedOpportunity.Project_Finalized__r?.Onboarding_Referral_Percentage__c || "N/A"}
-                                    disabled
-                                />
-                            </div>
+
+                            {/* Fourth Row: Email (full width) */}
                             <div>
                                 <label className="block text-sm text-gray-500 mb-1">Email <span className="text-red-500">*</span></label>
                                 <input
@@ -551,15 +622,6 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                                     value={formData.email}
                                     onChange={e => handleInputChange('email', e.target.value)}
                                     required
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm text-gray-500 mb-1">Name of the Referred Person</label>
-                                <input
-                                    type="text"
-                                    className="w-full p-2 border rounded bg-gray-100"
-                                    value={selectedOpportunity.AccountNameText__c || ""}
-                                    disabled
                                 />
                             </div>
                         </div>
@@ -671,6 +733,18 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                     </label>
                 </div>
                 {/* Submit Button */}
+                {Number(formData.pointsToEncash) > Number(localStorage.getItem('Loyalty_Balance__c') || 0) && (
+                    <div className="mb-6 p-4 bg-red-50 border border-red-400 rounded text-red-700 font-semibold">
+                        Insufficient points!<br />
+                        <span>
+                            Points to Encash: <strong>{Number(formData.pointsToEncash).toLocaleString('en-IN')}</strong>
+                        </span>
+                        <br />
+                        <span>
+                            Balance Points: <strong>{Number(localStorage.getItem('Loyalty_Balance__c') || 0).toLocaleString('en-IN')}</strong>
+                        </span>
+                    </div>
+                )}
                 <button
                     type="submit"
                     disabled={loading || !isFormValid()}

@@ -264,8 +264,11 @@ const LoginPage = () => {
           // Set login timestamp for 24hr auto-logout
           localStorage.setItem("loginTimestamp", Date.now().toString());
 
-          navigate(`/dashboard/transactions/${loyaltyId}`);
-          toast.success("Login successful!");
+          // Small delay to ensure localStorage is set before navigation
+          setTimeout(() => {
+            navigate(`/dashboard/transactions/${loyaltyId}`);
+            toast.success("Login successful!");
+          }, 1500);
         } else {
           toast.error("Could not find customer identifier. Please contact support.");
         }
