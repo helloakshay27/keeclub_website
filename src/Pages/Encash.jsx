@@ -524,7 +524,7 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                 <div className="mb-8">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                         <div>
-                            <label className="block mb-2 font-medium text-gray-700">
+                            <label className="block text-sm text-gray-500 mb-1">
                                 Name of the Referred Person <span className="text-red-500">*</span>
                             </label>
                             <select
