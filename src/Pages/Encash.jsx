@@ -528,7 +528,7 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                                 Name of the Referred Person <span className="text-red-500">*</span>
                             </label>
                             <select
-                                className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 mb-4"
+                                className="w-full text-sm font-medium border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 mb-4"
                                 value={selectedOpportunity?.Id || ""}
                                 onChange={e => {
                                     const found = opportunityOptions.find(opt => opt.Id === e.target.value);
@@ -545,7 +545,7 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                             </select>
                         </div>
                         <div>
-                            <label className="block text-sm text-gray-500 mb-1">Booking Unit</label>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">Booking Unit</label>
                             <input
                                 type="text"
                                 className="w-full border border-gray-300 rounded-lg px-4 py-3 bg-gray-100"
@@ -568,7 +568,7 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                             {/* Second Row: Agreement Value and Brokerage Percentage */}
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                 <div>
-                                    <label className="block text-sm text-gray-500 mb-1">Agreement Value</label>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">Agreement Value</label>
                                     <input
                                         type="text"
                                         className="w-full border border-gray-300 rounded-lg px-4 py-3 bg-gray-100"
@@ -577,7 +577,7 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm text-gray-500 mb-1">Brokerage Percentage</label>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">Brokerage Percentage</label>
                                     <input
                                         type="text"
                                         className="w-full border border-gray-300 rounded-lg px-4 py-3 bg-gray-100"
@@ -601,7 +601,7 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                             </div>
                             {/* Fourth Row: Email (full width) */}
                             <div>
-                                <label className="block text-sm text-gray-500 mb-1">Email <span className="text-red-500">*</span></label>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">Email <span className="text-red-500">*</span></label>
                                 <input
                                     type="email"
                                     className="w-full border border-gray-300 rounded-lg px-4 py-3"
