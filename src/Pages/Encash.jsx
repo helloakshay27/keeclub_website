@@ -101,7 +101,7 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
         // optional: initial pending amount fetch
         // fetchPendingEncashAmount(); // (uncomment if you want to fetch on mount)
     }, []);
-    
+
     const fetchPendingEncashAmount = async () => {
         try {
             const authToken = localStorage.getItem('authToken');
@@ -132,13 +132,13 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
         const checkAuthentication = () => {
             const authToken = localStorage.getItem('authToken');
             const isLoggedIn = authToken && authToken !== 'null';
-            
+
             if (!isLoggedIn) {
                 toast.error('Please login to access the Encash feature');
                 navigate('/login'); // Redirect to login page
                 return;
             }
-            
+
             setIsCheckingAuth(false);
         };
 
@@ -188,17 +188,17 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
 
         setFormData(prev => {
             const updated = { ...prev, [field]: processedValue };
-            
+
             // Auto-calculate facilitation fees and amount payable
             if (field === 'pointsToEncash' && processedValue) {
                 const points = parseInt(processedValue) || 0;
                 const fees = Math.round(points * 0.02); // 2% facilitation fee
                 const amount = points - fees;
-                
+
                 updated.facilitationFees = fees.toString();
                 updated.amountPayable = amount.toString();
             }
-            
+
             return updated;
         });
     };
@@ -306,7 +306,7 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
             toast.error('You do not have sufficient points to encash.');
             return;
         }
-        
+
         try {
             setLoading(true);
 
@@ -374,7 +374,7 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                 stack: error.stack,
                 name: error.name
             });
-            
+
             // More detailed error message
             let errorMessage = 'An error occurred while submitting your request.';
             if (error.message) {
@@ -383,7 +383,7 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
             if (error.name === 'TypeError' && error.message.includes('fetch')) {
                 errorMessage += ' Please check your internet connection.';
             }
-            
+
             toast.error(errorMessage);
         } finally {
             setLoading(false);
@@ -396,7 +396,7 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
         console.log('Base URL:', 'https://piramal-loyalty-dev.lockated.com/');
         console.log('Auth Token:', localStorage.getItem('authToken'));
         console.log('Member Data:', memberData);
-        
+
         try {
             const testPayload = {
                 encash_request: {
@@ -410,9 +410,9 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                     terms_accepted: true
                 }
             };
-            
+
             console.log('Test payload:', testPayload);
-            
+
             const response = await fetch('https://piramal-loyalty-dev.lockated.com/encash_requests.json', {
                 method: 'POST',
                 headers: {
@@ -421,13 +421,13 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                 },
                 body: JSON.stringify(testPayload)
             });
-            
+
             console.log('Response status:', response.status);
             console.log('Response headers:', response.headers);
-            
+
             const data = await response.json();
             console.log('Response data:', data);
-            
+
             if (response.ok) {
                 toast.success(`Test API call successful! Status: ${response.status}. Check console for details.`);
             } else {
@@ -460,18 +460,18 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                     {currentPoints > 0 && (
                         <div className="flex items-center space-x-2">
                             <img
-                                    src="/redeemStar.png"
-                                    alt="star"
-                                    className="mr-1"
-                                    style={{ width: 24, height: 24, display: 'inline-block' }}
-                                  />
+                                src="/redeemStar.png"
+                                alt="star"
+                                className="mr-1"
+                                style={{ width: 24, height: 24, display: 'inline-block' }}
+                            />
                             <span className="text-xl font-bold text-gray-800">
                                 {currentPoints.toLocaleString('en-IN')} Point
                             </span>
                         </div>
                     )}
                 </div>
-                
+
                 {/* Balance Points with Info Icon */}
                 {/* <div className="absolute top-1 right-1 z-10 group" style={{ minWidth: 40 }}>
                     <div className="flex items-center relative">
@@ -528,7 +528,7 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                                 Name of the Referred Person <span className="text-red-500">*</span>
                             </label>
                             <select
-                                className="w-full text-sm font-medium border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 mb-4"
+                                className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                                 value={selectedOpportunity?.Id || ""}
                                 onChange={e => {
                                     const found = opportunityOptions.find(opt => opt.Id === e.target.value);
@@ -604,7 +604,7 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                                 <label className="block text-sm font-medium text-gray-700 mb-2">Email <span className="text-red-500">*</span></label>
                                 <input
                                     type="email"
-                                    className="w-full border border-gray-300 rounded-lg px-4 py-3"
+                                    className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                                     placeholder="Enter your email"
                                     value={formData.email}
                                     onChange={e => handleInputChange('email', e.target.value)}
@@ -735,11 +735,10 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                 <button
                     type="submit"
                     disabled={loading || !isFormValid()}
-                    className={`w-full py-4 px-6 rounded-lg font-semibold text-lg transition-colors duration-300 ${
-                        loading || !isFormValid()
-                            ? 'bg-gray-400 cursor-not-allowed text-white'
-                            : 'bg-orange-600 hover:bg-orange-700 text-white'
-                    }`}
+                    className={`w-full py-4 px-6 rounded-lg font-semibold text-lg transition-colors duration-300 ${loading || !isFormValid()
+                        ? 'bg-gray-400 cursor-not-allowed text-white'
+                        : 'bg-orange-600 hover:bg-orange-700 text-white'
+                        }`}
                 >
                     {loading ? 'Submitting...' : 'Submit'}
                 </button>
