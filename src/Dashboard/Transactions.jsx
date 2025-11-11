@@ -339,8 +339,8 @@ const Transactions = () => {
 
             {/* Referral Modal */}
             {showModal && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-                    <div className="bg-white p-6 rounded shadow-md w-full max-w-md relative">
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 overflow-y-auto">
+                    <div className="bg-white p-6 rounded shadow-md w-full max-w-md relative my-4 max-h-[90vh] overflow-y-auto">
                         <button
                             onClick={() => setShowModal(false)}
                             className="absolute cursor-pointer top-4 right-4 text-gray-500 hover:text-gray-800"
@@ -355,9 +355,13 @@ const Transactions = () => {
                             type="text"
                             placeholder="First Name"
                             value={newReferral.firstName || ""}
-                            onChange={(e) => setNewReferral({ ...newReferral, firstName: e.target.value })}
+                            onChange={(e) => {
+                                const value = e.target.value.slice(0, 50);
+                                setNewReferral({ ...newReferral, firstName: value });
+                            }}
                             onBlur={() => handleBlur("firstName")}
                             className="w-full mb-4 p-2 border rounded"
+                            maxLength="50"
                         />
                         {errors.firstName && <p className="text-sm text-red-500 mb-2">{errors.firstName}</p>}
                         {/* Last Name */}
@@ -367,9 +371,13 @@ const Transactions = () => {
                             type="text"
                             placeholder="Last Name"
                             value={newReferral.lastName || ""}
-                            onChange={(e) => setNewReferral({ ...newReferral, lastName: e.target.value })}
+                            onChange={(e) => {
+                                const value = e.target.value.slice(0, 50);
+                                setNewReferral({ ...newReferral, lastName: value });
+                            }}
                             onBlur={() => handleBlur("lastName")}
                             className="w-full mb-4 p-2 border rounded"
+                            maxLength="50"
                         />
                         {errors.lastName && <p className="text-sm text-red-500 mb-2">{errors.lastName}</p>}
                         {/* Phone */}
@@ -462,9 +470,9 @@ const Transactions = () => {
                                     try {
                                         const accessToken = localStorage.getItem("salesforce_access_token");
                                         let loyaltyId = localStorage.getItem("Loyalty_Member_Unique_Id__c") || "";
-                                        
-                                        // Check if same phone number and project already exists for this user
-                                        const checkDuplicateQuery = `SELECT Id FROM Lead WHERE Phone = '${newReferral.phone}' AND Project_Interested__c = '${newReferral.projectInterested}' AND Loyalty_Member_Unique_Id__c = '${loyaltyId}' LIMIT 1`;
+                                                
+                                        // Check if phone number already exists for this user (regardless of project)
+                                        const checkDuplicateQuery = `SELECT Id FROM Lead WHERE Phone = '${newReferral.phone}' AND Loyalty_Member_Unique_Id__c = '${loyaltyId}' LIMIT 1`;
                                         const checkUrl = `https://piramal-realty--preprd.sandbox.my.salesforce.com/services/data/v64.0/query/?q=${encodeURIComponent(checkDuplicateQuery)}`;
                                         
                                         const duplicateCheckResponse = await axios.get(checkUrl, {
@@ -475,7 +483,7 @@ const Transactions = () => {
                                         });
                                         
                                         if (duplicateCheckResponse.data?.records && duplicateCheckResponse.data.records.length > 0) {
-                                            toast.error("This phone number has already been referred for the selected project.");
+                                            toast.error("Referral already exists.");
                                             return;
                                         }
                                         

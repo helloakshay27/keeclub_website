@@ -506,11 +506,11 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                 {/* Bank Details Section */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
                     <div>
-                        <h3 className="text-xl font-semibold text-gray-800 mb-6">Bank Detail</h3>
+                        <h3 className="text-xl font-semibold text-gray-800 mb-6">Bank Details</h3>
                         <div className="space-y-6">
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    Person name (As per Bank Account)
+                                    Person Name (as per Bank Account)
                                 </label>
                                 <input
                                     type="text"
@@ -567,7 +567,7 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    Branch name
+                                    Branch Name
                                 </label>
                                 <input
                                     type="text"
