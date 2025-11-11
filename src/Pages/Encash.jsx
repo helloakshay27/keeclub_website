@@ -473,9 +473,8 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                 </div>
                 
                 {/* Balance Points with Info Icon */}
-                <div className="absolute top-1 right-1 z-10 group" style={{ minWidth: 40 }}>
+                {/* <div className="absolute top-1 right-1 z-10 group" style={{ minWidth: 40 }}>
                     <div className="flex items-center relative">
-                        {/* Info Icon */}
                         <span
                             className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-[#fa46151a] text-[#fa4615] cursor-pointer relative transition-all duration-4000"
                             style={{
@@ -508,7 +507,6 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                                 />
                             </svg>
                         </span>
-                        {/* Balance Points Message */}
                         <span
                             className="absolute right-9 top-1/2 -translate-y-1/2 bg-white border border-[#fa4615] text-[#fa4615] px-3 py-1 rounded shadow text-xs font-semibold whitespace-nowrap opacity-100"
                             style={{
@@ -518,7 +516,7 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                             Balance: {Number(localStorage.getItem('Loyalty_Balance__c') || 0).toLocaleString('en-IN')} Points
                         </span>
                     </div>
-                </div>
+                </div> */}
             </div>
 
             <form onSubmit={handleSubmit} className="bg-white rounded-lg border border-gray-200 p-8">
