@@ -462,9 +462,27 @@ const Transactions = () => {
                                     try {
                                         const accessToken = localStorage.getItem("salesforce_access_token");
                                         let loyaltyId = localStorage.getItem("Loyalty_Member_Unique_Id__c") || "";
+                                        
+                                        // Check if same phone number and project already exists for this user
+                                        const checkDuplicateQuery = `SELECT Id FROM Lead WHERE Phone = '${newReferral.phone}' AND Project_Interested__c = '${newReferral.projectInterested}' AND Loyalty_Member_Unique_Id__c = '${loyaltyId}' LIMIT 1`;
+                                        const checkUrl = `https://piramal-realty--preprd.sandbox.my.salesforce.com/services/data/v64.0/query/?q=${encodeURIComponent(checkDuplicateQuery)}`;
+                                        
+                                        const duplicateCheckResponse = await axios.get(checkUrl, {
+                                            headers: {
+                                                Authorization: `Bearer ${accessToken}`,
+                                                "Content-Type": "application/json",
+                                            },
+                                        });
+                                        
+                                        if (duplicateCheckResponse.data?.records && duplicateCheckResponse.data.records.length > 0) {
+                                            toast.error("This phone number has already been referred for the selected project.");
+                                            return;
+                                        }
+                                        
                                         const body = {
                                             firstName: newReferral.firstName || "",
                                             lastName: newReferral.lastName || "",
+                                            Phone: newReferral.phone || "",
                                             Rating: newReferral.rating || "Hot",
                                             LeadSource: "Lockated-PRL-Loyalty",
                                             Project_Interested__c: newReferral.projectInterested || "",
