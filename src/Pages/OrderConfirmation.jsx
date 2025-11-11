@@ -425,24 +425,27 @@ const OrderConfirmation = () => {
                                 />
                                 <input
                                     type="text"
-                                    placeholder="City"
+                                    placeholder="City *"
                                     value={editAddress.city || ''}
                                     onChange={e => setEditAddress({ ...editAddress, city: e.target.value })}
                                     className="border rounded px-3 py-2 w-full"
+                                    required
                                 />
                                 <input
                                     type="text"
-                                    placeholder="State"
+                                    placeholder="State *"
                                     value={editAddress.state || ''}
                                     onChange={e => setEditAddress({ ...editAddress, state: e.target.value })}
                                     className="border rounded px-3 py-2 w-full"
+                                    required
                                 />
                                 <input
                                     type="text"
-                                    placeholder="Pin Code"
+                                    placeholder="Pin Code *"
                                     value={editAddress.pin_code || ''}
                                     onChange={e => setEditAddress({ ...editAddress, pin_code: e.target.value })}
                                     className="border rounded px-3 py-2 w-full"
+                                    required
                                 />
                                 <input
                                     type="text"
