@@ -22,6 +22,7 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
     const [success, setSuccess] = useState(false);
     const [encashRequests, setEncashRequests] = useState([]);
     const [encashLoading, setEncashLoading] = useState(false);
+    const [validationErrors, setValidationErrors] = useState({});
 
     // track pending encash amount from backend
     const [pendingEncashAmount, setPendingEncashAmount] = useState(null);
@@ -148,12 +149,44 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
     const currentPoints = memberData?.current_loyalty_points || 0;
 
     const handleInputChange = (field, value) => {
+        let processedValue = value;
+        let newErrors = { ...validationErrors };
+
+        // Validation for Person Name
+        if (field === 'personName') {
+            // Only allow alphabets and spaces, max 50 chars
+            processedValue = value.replace(/[^a-zA-Z\s]/g, '').slice(0, 50);
+            if (processedValue !== value && value.length > 0) {
+                newErrors.personName = "Invalid name. Enter valid name as per bank account.";
+            } else {
+                delete newErrors.personName;
+            }
+        }
+
+        // Validation for Branch Name
+        if (field === 'branchName') {
+            // Only allow alphabets and spaces, max 50 chars
+            processedValue = value.replace(/[^a-zA-Z\s]/g, '').slice(0, 50);
+            if (processedValue !== value && value.length > 0) {
+                newErrors.branchName = "Enter valid branch name.";
+            } else {
+                delete newErrors.branchName;
+            }
+        }
+
+        // Validation for IFSC Code (alphanumeric only)
+        if (field === 'ifscCode') {
+            processedValue = value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+        }
+
+        setValidationErrors(newErrors);
+
         setFormData(prev => {
-            const updated = { ...prev, [field]: value };
+            const updated = { ...prev, [field]: processedValue };
             
             // Auto-calculate facilitation fees and amount payable
-            if (field === 'pointsToEncash' && value) {
-                const points = parseInt(value) || 0;
+            if (field === 'pointsToEncash' && processedValue) {
+                const points = parseInt(processedValue) || 0;
                 const fees = Math.round(points * 0.02); // 2% facilitation fee
                 const amount = points - fees;
                 
@@ -163,6 +196,23 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
             
             return updated;
         });
+    };
+
+    // Check if all mandatory fields are valid
+    const isFormValid = () => {
+        return (
+            selectedOpportunity &&
+            formData.pointsToEncash &&
+            formData.personName &&
+            formData.accountNumber &&
+            formData.confirmAccountNumber &&
+            formData.ifscCode &&
+            formData.branchName &&
+            formData.email &&
+            formData.agreeToTerms &&
+            Object.keys(validationErrors).length === 0 &&
+            isAccountNumberMatched
+        );
     };
 
     const [opportunityOptions, setOpportunityOptions] = useState([]);
@@ -414,7 +464,7 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                 {/* Opportunity Dropdown */}
                 <div className="mb-8">
                     <label className="block mb-2 font-medium text-gray-700">
-                        Name of the Referred Person
+                        Name of the Referred Person <span className="text-red-500">*</span>
                     </label>
                     <select
                         className="w-full p-2 border rounded mb-4"
@@ -481,7 +531,7 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm text-gray-500 mb-1">Email</label>
+                                <label className="block text-sm text-gray-500 mb-1">Email <span className="text-red-500">*</span></label>
                                 <input
                                     type="email"
                                     className="w-full p-2 border rounded"
@@ -510,7 +560,7 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                         <div className="space-y-6">
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    Person Name (as per Bank Account)
+                                    Person Name (as per Bank Account) <span className="text-red-500">*</span>
                                 </label>
                                 <input
                                     type="text"
@@ -519,12 +569,16 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                                     onChange={(e) => handleInputChange('personName', e.target.value)}
                                     className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                                     required
+                                    maxLength="50"
                                 />
+                                {validationErrors.personName && (
+                                    <p className="text-sm text-red-500 mt-1">{validationErrors.personName}</p>
+                                )}
                             </div>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                                        Account No.
+                                        Account No. <span className="text-red-500">*</span>
                                     </label>
                                     <input
                                         type="text"
@@ -537,7 +591,7 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                                        Confirm Account No.
+                                        Confirm Account No. <span className="text-red-500">*</span>
                                     </label>
                                     <input
                                         type="text"
@@ -554,20 +608,22 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    IFSC Code
+                                    IFSC Code <span className="text-red-500">*</span>
                                 </label>
                                 <input
                                     type="text"
-                                    placeholder="Enter IFSC code"
+                                    placeholder="Enter IFSC code (alphanumeric)"
                                     value={formData.ifscCode}
                                     onChange={(e) => handleInputChange('ifscCode', e.target.value)}
                                     className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                                     required
+                                    pattern="[A-Z0-9]{11}"
+                                    maxLength="11"
                                 />
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    Branch Name
+                                    Branch Name <span className="text-red-500">*</span>
                                 </label>
                                 <input
                                     type="text"
@@ -576,7 +632,11 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                                     onChange={(e) => handleInputChange('branchName', e.target.value)}
                                     className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                                     required
+                                    maxLength="50"
                                 />
+                                {validationErrors.branchName && (
+                                    <p className="text-sm text-red-500 mt-1">{validationErrors.branchName}</p>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -595,15 +655,15 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                         I agree to the{' '}
                         <span className="text-orange-600 hover:text-orange-700 cursor-pointer underline">
                             Terms and Conditions
-                        </span>
+                        </span> <span className="text-red-500">*</span>
                     </label>
                 </div>
                 {/* Submit Button */}
                 <button
                     type="submit"
-                    disabled={loading || !formData.agreeToTerms}
+                    disabled={loading || !isFormValid()}
                     className={`w-full py-4 px-6 rounded-lg font-semibold text-lg transition-colors duration-300 ${
-                        loading || !formData.agreeToTerms
+                        loading || !isFormValid()
                             ? 'bg-gray-400 cursor-not-allowed text-white'
                             : 'bg-orange-600 hover:bg-orange-700 text-white'
                     }`}
