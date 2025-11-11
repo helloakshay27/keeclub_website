@@ -19,8 +19,25 @@ const OrderConfirmation = () => {
     const [editAddress, setEditAddress] = useState(null);
     const [editLoading, setEditLoading] = useState(false);
     // Open edit modal with current address
+    console.log("deliveryAddress:--",deliveryAddress);
+    
     const handleEditAddress = () => {
-        setEditAddress({ ...deliveryAddress });
+        setEditAddress({
+            id: deliveryAddress.id,
+            name: deliveryAddress.fullDetails?.contact_person || deliveryAddress.name || '',
+            phone: deliveryAddress.fullDetails?.mobile || deliveryAddress.phone || '',
+            email: deliveryAddress.fullDetails?.email || deliveryAddress.email || '',
+            address: deliveryAddress.fullDetails?.address || '',
+            address_line_two: deliveryAddress.fullDetails?.address_line_two || '',
+            address_line_three: deliveryAddress.fullDetails?.address_line_three || '',
+            city: deliveryAddress.fullDetails?.city || '',
+            state: deliveryAddress.fullDetails?.state || '',
+            pin_code: deliveryAddress.fullDetails?.pin_code || '',
+            country: deliveryAddress.fullDetails?.country || 'India',
+            telephone_number: deliveryAddress.fullDetails?.telephone_number || '',
+            type: deliveryAddress.fullDetails?.address_type || deliveryAddress.type || 'home',
+            set_as_default: deliveryAddress.fullDetails?.set_as_default || false
+        });
         setShowEditModal(true);
     };
 
@@ -59,14 +76,23 @@ const OrderConfirmation = () => {
             const data = await response.json();
             if (response.ok && data.success !== false) {
                 toast.success('Address updated successfully!');
-                // Use the API response for delivery address card
+                // Use the API response for delivery address card with proper filtering
+                const addressParts = [
+                    data.address,
+                    data.address_line_two,
+                    data.address_line_three,
+                    data.city,
+                    data.state
+                ].filter(part => part && part.trim() !== '');
+                const addressString = addressParts.join(', ') + (data.pin_code ? ` - ${data.pin_code}` : '');
+                
                 setDeliveryAddress({
                     id: data.id,
                     name: data.contact_person,
                     type: data.address_type || 'home',
                     phone: data.mobile,
                     email: data.email,
-                    address: `${data.address}, ${data.address_line_two}, ${data.address_line_three}, ${data.city}, ${data.state} - ${data.pin_code}`,
+                    address: addressString,
                     fullDetails: data
                 });
                 setShowEditModal(false);
@@ -559,7 +585,6 @@ const OrderConfirmation = () => {
                                             </div>
                                         )}
                                         <div className="flex items-start ml-7">
-                                            {console.log("full",deliveryAddress.fullDetails)}
                                             <span className="text-gray-700 text-sm leading-relaxed">
                                                 {deliveryAddress.fullDetails
                                                     ? [
@@ -568,10 +593,12 @@ const OrderConfirmation = () => {
                                                         deliveryAddress.fullDetails.addressLineThree || deliveryAddress.fullDetails.address_line_three,
                                                         deliveryAddress.fullDetails.city,
                                                         deliveryAddress.fullDetails.state,
-                                                        deliveryAddress.fullDetails.pinCode || deliveryAddress.fullDetails.pin_code,
                                                     ]
-                                                        .filter(Boolean)
-                                                        .join(', ')
+                                                        .filter(part => part && part.trim() !== '')
+                                                        .join(', ') + 
+                                                    (deliveryAddress.fullDetails.pinCode || deliveryAddress.fullDetails.pin_code 
+                                                        ? ` - ${deliveryAddress.fullDetails.pinCode || deliveryAddress.fullDetails.pin_code}` 
+                                                        : '')
                                                     : deliveryAddress.address}
                                             </span>
                                         </div>
