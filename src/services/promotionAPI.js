@@ -760,7 +760,7 @@ class PromotionAPI {
                 pin_code: addressData.pinCode,
                 contact_person: addressData.name,
                 mobile: addressData.contactNumber,
-                email: addressData.email || localStorage.getItem('user_email') || 'user@example.com',
+                email: addressData.email || localStorage.getItem('user_email'),
                 telephone_number: '',
                 fax_number: '',
                 address_type: addressData.addressType.toLowerCase() || 'home'
