@@ -56,7 +56,7 @@ const tierBenefits = [
 
 const formatPoints = (points) => {
     if (typeof points !== "number") return points;
-    return points.toLocaleString("en-IN");
+    return points.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 };
 
 const Transactions = () => {
@@ -135,7 +135,7 @@ const Transactions = () => {
             // If no transactions, create a default credit entry and refetch
             if (records.length === 0 && loyaltyMemberId) {
                 await axios.post(
-                    "https://piramal-realty--preprd.sandbox.my.salesforce.com/services/data/v64.0/sobjects/Loyalty_Transaction__c/",
+                    "https://piram-realty--preprd.sandbox.my.salesforce.com/services/data/v64.0/sobjects/Loyalty_Transaction__c/",
                     {
                         Loyalty_Member__c: loyaltyMemberId,
                         Transaction_Type__c: "Credit",
@@ -335,8 +335,12 @@ const Transactions = () => {
                     if (item.title === "Balance Points") {
                         // Remove commas for calculation, then format again
                         let numericValue = Number(String(value).replace(/,/g, '')) || 0;
-                        value = formatPoints(numericValue - pendingEncashAmount);
+                        value = numericValue - pendingEncashAmount;
                     }
+                    // Ensure value always has two decimal places
+                    const displayValue = typeof value === "number"
+                        ? value.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+                        : value;
                     return (
                         <div
                             key={index}
@@ -347,7 +351,7 @@ const Transactions = () => {
                             </div>
                             <div>
                                 <div className="text-sm text-gray-500">{item.title}</div>
-                                <div className="text-xl font-bold">{value} Points</div>
+                                <div className="text-xl font-bold">{displayValue} Points</div>
                             </div>
                         </div>
                     );
