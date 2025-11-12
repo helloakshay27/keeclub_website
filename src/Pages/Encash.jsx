@@ -466,7 +466,7 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                                 style={{ width: 24, height: 24, display: 'inline-block' }}
                             />
                             <span className="text-xl font-bold text-gray-800">
-                                {currentPoints.toLocaleString('en-IN')} Point
+                                {currentPoints.toLocaleString('en-IN')} Balance Point
                             </span>
                         </div>
                     )}
