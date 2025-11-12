@@ -44,7 +44,7 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="space-y-2">
+        {/* <div className="space-y-2">
           <h4 className="text-sm text-gray-400">Subscribe to our newsletter</h4>
           <div className="flex w-full max-w-md mx-auto">
             <input
@@ -56,7 +56,7 @@ const Footer = () => {
               Subscribe
             </button>
           </div>
-        </div>
+        </div> */}
       </div>
 
       {/* Bottom Bar */}

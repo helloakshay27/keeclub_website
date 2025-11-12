@@ -22,6 +22,8 @@ const RedeemPoints = () => {
         state: 'Select State',
         landmark: '',
         fullAddress: '',
+        addressLineTwo: '',
+        addressLineThree: '',
         addressType: 'home',
         email: ''
     });
@@ -227,10 +229,10 @@ const RedeemPoints = () => {
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Contact Number</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
                                         <input
                                             type="tel"
-                                            placeholder="Contact Number"
+                                            placeholder="Phone"
                                             value={addressForm.contactNumber}
                                             onChange={(e) => handleInputChange('contactNumber', e.target.value)}
                                             className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#fa4615]"
@@ -238,38 +240,76 @@ const RedeemPoints = () => {
                                     </div>
                                 </div>
 
-                                {/* Email Field */}
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Email *</label>
-                                    <input
-                                        type="email"
-                                        placeholder="Enter Email Address"
-                                        value={addressForm.email}
-                                        onChange={(e) => handleInputChange('email', e.target.value)}
-                                        className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#fa4615]"
-                                    />
+                                {/* Email and Address Line 1 */}
+                                <div className="grid md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Email <span className="text-red-500">*</span></label>
+                                        <input
+                                            type="email"
+                                            placeholder="Enter Email Address"
+                                            value={addressForm.email}
+                                            onChange={(e) => handleInputChange('email', e.target.value)}
+                                            className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#fa4615]"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Address (Line 1)</label>
+                                        <input
+                                            type="text"
+                                            placeholder="Address (Line 1)"
+                                            value={addressForm.fullAddress}
+                                            onChange={(e) => handleInputChange('fullAddress', e.target.value)}
+                                            className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#fa4615]"
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* Address Line 2 and Address Line 3 */}
+                                <div className="grid md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Address Line 2</label>
+                                        <input
+                                            type="text"
+                                            placeholder="Address Line 2"
+                                            value={addressForm.addressLineTwo}
+                                            onChange={(e) => handleInputChange('addressLineTwo', e.target.value)}
+                                            className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#fa4615]"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Address Line 3</label>
+                                        <input
+                                            type="text"
+                                            placeholder="Address Line 3"
+                                            value={addressForm.addressLineThree}
+                                            onChange={(e) => handleInputChange('addressLineThree', e.target.value)}
+                                            className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#fa4615]"
+                                        />
+                                    </div>
                                 </div>
 
                                 {/* Pin Code and City */}
                                 <div className="grid md:grid-cols-2 gap-4">
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Pin Code</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Pin Code <span className="text-red-500">*</span></label>
                                         <input
                                             type="text"
                                             placeholder="Pin Code"
                                             value={addressForm.pinCode}
                                             onChange={(e) => handleInputChange('pinCode', e.target.value)}
                                             className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#fa4615]"
+                                            required
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">City</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">City <span className="text-red-500">*</span></label>
                                         <input
                                             type="text"
                                             placeholder="City"
                                             value={addressForm.city}
                                             onChange={(e) => handleInputChange('city', e.target.value)}
                                             className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#fa4615]"
+                                            required
                                         />
                                     </div>
                                 </div>
@@ -277,22 +317,15 @@ const RedeemPoints = () => {
                                 {/* State and Landmark */}
                                 <div className="grid md:grid-cols-2 gap-4">
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">State</label>
-                                        <select
-                                            value={addressForm.state}
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">State <span className="text-red-500">*</span></label>
+                                        <input
+                                            type="text"
+                                            value={addressForm.state === 'Select State' ? '' : addressForm.state}
                                             onChange={(e) => handleInputChange('state', e.target.value)}
                                             className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#fa4615]"
-                                        >
-                                            <option>Select State</option>
-                                            <option>Maharashtra</option>
-                                            <option>Delhi</option>
-                                            <option>Karnataka</option>
-                                            <option>Tamil Nadu</option>
-                                            <option>Gujarat</option>
-                                            <option>Rajasthan</option>
-                                            <option>West Bengal</option>
-                                            <option>Uttar Pradesh</option>
-                                        </select>
+                                            required
+                                            placeholder="Enter State"
+                                        />
                                     </div>
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">Landmark</label>
@@ -304,17 +337,6 @@ const RedeemPoints = () => {
                                             className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#fa4615]"
                                         />
                                     </div>
-                                </div>
-
-                                {/* Full Address */}
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Full Address</label>
-                                    <textarea
-                                        placeholder="Full Address"
-                                        value={addressForm.fullAddress}
-                                        onChange={(e) => handleInputChange('fullAddress', e.target.value)}
-                                        className="w-full border border-gray-300 rounded px-3 py-2 h-24 focus:outline-none focus:ring-2 focus:ring-[#fa4615]"
-                                    />
                                 </div>
 
                                 {/* Address Type */}

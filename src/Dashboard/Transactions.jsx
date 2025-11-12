@@ -71,7 +71,7 @@ const Transactions = () => {
 
     // Get loyalty member data from localStorage and state
     const [summaryCards, setSummaryCards] = useState([
-        { title: "Earned Points", value: 0 },
+        { title: "Points", value: 0 },
         { title: "Redeemed Points", value: 0 },
         { title: "Expired Points", value: 0 },
         { title: "Balance Points", value: 0 },
@@ -102,7 +102,7 @@ const Transactions = () => {
             }
             
             setSummaryCards([
-                { title: "Earned Points", value: formatPoints(record?.Total_Points_Credited__c || 0) },
+                { title: "Points", value: formatPoints(record?.Total_Points_Credited__c || 0) },
                 { title: "Redeemed Points", value: formatPoints(record?.Total_Points_Debited__c || 0) },
                 { title: "Expired Points", value: formatPoints(record?.Total_Points_Expired__c || 0) },
                 { title: "Balance Points", value: formatPoints(record?.Loyalty_Balance__c || 0) },
@@ -110,7 +110,7 @@ const Transactions = () => {
         } catch (err) {
             // fallback to 0s
             setSummaryCards([
-                { title: "Earned Points", value: 0 },
+                { title: "Points", value: 0 },
                 { title: "Redeemed Points", value: 0 },
                 { title: "Expired Points", value: 0 },
                 { title: "Balance Points", value: 0 },

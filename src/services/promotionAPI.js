@@ -752,17 +752,17 @@ class PromotionAPI {
         const payload = {
             address: {
                 address: addressData.fullAddress,
-                address_line_two: addressData.landmark || '',
-                address_line_three: '',
+                address_line_two: addressData.addressLineTwo || addressData.landmark || '',
+                address_line_three: addressData.addressLineThree || '',
                 city: addressData.city,
                 state: addressData.state,
-                pin_code: addressData.pinCode,
                 country: 'India',
+                pin_code: addressData.pinCode,
                 contact_person: addressData.name,
                 mobile: addressData.contactNumber,
                 email: addressData.email || localStorage.getItem('user_email') || 'user@example.com',
                 telephone_number: '',
-                set_as_default: 'false',
+                fax_number: '',
                 address_type: addressData.addressType.toLowerCase() || 'home'
             }
         };
@@ -786,14 +786,12 @@ class PromotionAPI {
             return response;
         } catch (error) {
             console.error('❌ Failed to create address:', error);
-            // Mock success response for demo
+            // Return structured error response instead of throwing
             return {
-                success: true,
-                data: {
-                    id: Math.floor(Math.random() * 1000),
-                    message: 'Address created successfully (mock response)'
-                },
-                message: 'Address created (mock response)'
+                success: false,
+                message: error.message || 'Network error occurred while creating address',
+                data: null,
+                error: error
             };
         }
     }
