@@ -368,6 +368,12 @@ const Transactions = () => {
         setTouched((prev) => ({ ...prev, [field]: true }));
     };
 
+    const tabs = [
+        { key: 'ledger', label: 'Transaction Ledger' },
+        { key: 'referrals', label: 'Referral List' }
+    ];
+    const getTabIndex = (key) => tabs.findIndex(tab => tab.key === key);
+
     // Tab switch handler
     const handleTabSwitch = (tab) => {
         setActiveTab(tab);
@@ -379,314 +385,306 @@ const Transactions = () => {
     return (
         <div className="max-w-7xl mx-auto p-4">
             <h2 className="text-2xl font-bold mb-4">Transaction & Referrals</h2>
-            {/* Tabs */}
-            <div className="flex mb-6 border-b">
-                <button
-                    className={`px-6 py-3 font-semibold text-sm border-b-2 transition-colors ${
-                        activeTab === 'ledger'
-                            ? 'border-[#fa4615] text-[#fa4615]'
-                            : 'border-transparent text-gray-600 hover:text-gray-800'
-                    }`}
-                    onClick={() => handleTabSwitch('ledger')}
-                >
-                    Transaction Ledger
-                </button>
-                <button
-                    className={`px-6 py-3 font-semibold text-sm border-b-2 transition-colors ${
-                        activeTab === 'referrals'
-                            ? 'border-[#fa4615] text-[#fa4615]'
-                            : 'border-transparent text-gray-600 hover:text-gray-800'
-                    }`}
-                    onClick={() => handleTabSwitch('referrals')}
-                >
-                    Referral List
-                </button>
-            </div>
-
-            {/* Tab Content */}
-            {activeTab === 'ledger' && (
-                <>
-                    {/* Summary Cards */}
-                    <div className="flex flex-col sm:flex-row gap-4 mb-8">
-                        {summaryCards.map((item, index) => {
-                            let value = item.value;
-                            if (item.title === "Balance Points") {
-                                // Remove commas for calculation, then format again
-                                let numericValue = Number(String(value).replace(/,/g, '')) || 0;
-                                value = numericValue - pendingEncashAmount;
-                            }
-                            // Ensure value always has two decimal places
-                            const displayValue = typeof value === "number"
-                                ? value.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-                                : value;
-                            return (
-                                <div
-                                    key={index}
-                                    className="flex-1 rounded-lg p-4 flex items-center gap-4 border border-gray-200"
-                                >
-                                    <div className="bg-[#FA46151A] rounded-full w-16 h-16 flex items-center justify-center">
-                                        <span className="text-3xl text-[#A78847]">✦</span>
-                                    </div>
-                                    <div>
-                                        <div className="text-sm text-gray-500">{item.title}</div>
-                                        <div className="text-xl font-bold">{displayValue} Points</div>
-                                    </div>
-                                </div>
-                            );
-                        })}
-                    </div>
-
-                    <button
-                        onClick={() => setShowModal(true)}
-                        className="mb-6 bg-orange-600 text-white px-4 py-2 rounded-md hover:bg-orange-700 transition-colors"
-                    >
-                        REFER & EARN
-                    </button>
-
-                    {/* Referral Modal */}
-                    {showModal && (
-                        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 overflow-y-auto">
-                            <div className="bg-white p-6 rounded shadow-md w-full max-w-md relative my-4 max-h-[90vh] overflow-y-auto">
-                                <button
-                                    onClick={() => setShowModal(false)}
-                                    className="absolute cursor-pointer top-4 right-4 text-gray-500 hover:text-gray-800"
-                                >
-                                    <X size={20} />
-                                </button>
-                                <h2 className="text-lg font-semibold mb-4">Refer Someone</h2>
-                                {/* First Name */}
-                                <label htmlFor="referral-first-name" className="block mb-1 font-medium">First Name</label>
-                                <input
-                                    id="referral-first-name"
-                                    type="text"
-                                    placeholder="First Name"
-                                    value={newReferral.firstName || ""}
-                                    onChange={(e) => {
-                                        const value = e.target.value.slice(0, 50);
-                                        setNewReferral({ ...newReferral, firstName: value });
-                                    }}
-                                    onBlur={() => handleBlur("firstName")}
-                                    className="w-full mb-4 p-2 border rounded"
-                                    maxLength="50"
-                                />
-                                {errors.firstName && <p className="text-sm text-red-500 mb-2">{errors.firstName}</p>}
-                                {/* Last Name */}
-                                <label htmlFor="referral-last-name" className="block mb-1 font-medium">Last Name</label>
-                                <input
-                                    id="referral-last-name"
-                                    type="text"
-                                    placeholder="Last Name"
-                                    value={newReferral.lastName || ""}
-                                    onChange={(e) => {
-                                        const value = e.target.value.slice(0, 50);
-                                        setNewReferral({ ...newReferral, lastName: value });
-                                    }}
-                                    onBlur={() => handleBlur("lastName")}
-                                    className="w-full mb-4 p-2 border rounded"
-                                    maxLength="50"
-                                />
-                                {errors.lastName && <p className="text-sm text-red-500 mb-2">{errors.lastName}</p>}
-                                {/* Phone */}
-                                <label htmlFor="referral-phone" className="block mb-1 font-medium">Phone Number</label>
-                                <input
-                                    id="referral-phone"
-                                    type="tel"
-                                    placeholder="Phone Number (10 digits starting with 6-9)"
-                                    value={newReferral.phone || ""}
-                                    onChange={(e) => {
-                                        // Only allow digits and limit to 10 characters
-                                        const value = e.target.value.replace(/\D/g, '').slice(0, 10);
-                                        setNewReferral({ ...newReferral, phone: value });
-                                    }}
-                                    onBlur={() => handleBlur("phone")}
-                                    className="w-full mb-4 p-2 border rounded"
-                                    maxLength="10"
-                                    pattern="[6-9][0-9]{9}"
-                                />
-                                {errors.phone && <p className="text-sm text-red-500 mb-2">{errors.phone}</p>}
-                                {/* Rating Dropdown */}
-                                <label htmlFor="referral-rating" className="block mb-1 font-medium">Rating</label>
-                                <select
-                                    id="referral-rating"
-                                    value={newReferral.rating || ""}
-                                    onChange={(e) => setNewReferral({ ...newReferral, rating: e.target.value })}
-                                    onBlur={() => handleBlur("rating")}
-                                    className="w-full mb-4 p-2 border rounded"
-                                >
-                                    <option value="">Select Rating</option>
-                                    <option value="Hot">Hot</option>
-                                    <option value="Warm">Warm</option>
-                                    <option value="Cold">Cold</option>
-                                </select>
-                                {errors.rating && <p className="text-sm text-red-500 mb-2">{errors.rating}</p>}
-                                {/* Project Interested Dropdown */}
-                                <label htmlFor="referral-project-interested" className="block mb-1 font-medium">Project Interested</label>
-                                <select
-                                    id="referral-project-interested"
-                                    value={newReferral.projectInterested || ""}
-                                    onChange={(e) => setNewReferral({ ...newReferral, projectInterested: e.target.value })}
-                                    onBlur={() => handleBlur("projectInterested")}
-                                    className="w-full mb-4 p-2 border rounded"
-                                >
-                                    <option value="">Project Interested</option>
-                                    <option value="Piramal Aranya">Piramal Aranya</option>
-                                    <option value="Piramal Mahalaxmi">Piramal Mahalaxmi</option>
-                                    <option value="Piramal Revanta">Piramal Revanta</option>
-                                    <option value="Piramal Vaikunth">Piramal Vaikunth</option>
-                                </select>
-                                {errors.projectInterested && <p className="text-sm text-red-500 mb-2">{errors.projectInterested}</p>}
-                                {/* Type of Customer Dropdown */}
-                                <label htmlFor="referral-type-customer" className="block mb-1 font-medium">Type of Customer</label>
-                                <select
-                                    id="referral-type-customer"
-                                    value={newReferral.typeOfCustomer || ""}
-                                    onChange={(e) => setNewReferral({ ...newReferral, typeOfCustomer: e.target.value })}
-                                    onBlur={() => handleBlur("typeOfCustomer")}
-                                    className="w-full mb-4 p-2 border rounded"
-                                >
-                                    <option value="">Type of Customer</option>
-                                    <option value="Individual">Individual</option>
-                                    <option value="Company">Company</option>
-                                </select>
-                                {errors.typeOfCustomer && <p className="text-sm text-red-500 mb-2">{errors.typeOfCustomer}</p>}
-                                <div className="flex justify-end gap-2">
-                                    <button
-                                        className="px-4 cursor-pointer py-2 bg-gray-300 text-gray-800 rounded"
-                                        onClick={() => setShowModal(false)}
-                                    >
-                                        Cancel
-                                    </button>
-                                    <button
-                                        className="px-4 py-2 cursor-pointer bg-orange-500 text-white rounded"
-                                        onClick={async () => {
-                                            setIsSubmitted(true);
-                                            const validationErrors = validateReferral(newReferral);
-                                            if (Object.keys(validationErrors).length > 0) {
-                                                setErrors(validationErrors);
-                                                setTouched({
-                                                    firstName: true,
-                                                    lastName: true,
-                                                    phone: true,
-                                                    rating: true,
-                                                    projectInterested: true,
-                                                    typeOfCustomer: true,
-                                                });
-                                                return;
-                                            }
-                                            try {
-                                                const accessToken = localStorage.getItem("salesforce_access_token");
-                                                let loyaltyId = localStorage.getItem("Loyalty_Member_Unique_Id__c") || "";
-                                                
-                                                // Check if phone number already exists for this user (regardless of project)
-                                                const checkDuplicateQuery = `SELECT Id FROM Lead WHERE Phone = '${newReferral.phone}' AND Loyalty_Member_Unique_Id__c = '${loyaltyId}' LIMIT 1`;
-                                                const checkUrl = `https://piramal-realty--preprd.sandbox.my.salesforce.com/services/data/v64.0/query/?q=${encodeURIComponent(checkDuplicateQuery)}`;
-                                                
-                                                const duplicateCheckResponse = await axios.get(checkUrl, {
-                                                    headers: {
-                                                        Authorization: `Bearer ${accessToken}`,
-                                                        "Content-Type": "application/json",
-                                                    },
-                                                });
-                                                
-                                                if (duplicateCheckResponse.data?.records && duplicateCheckResponse.data.records.length > 0) {
-                                                    toast.error("Referral already exists.");
-                                                    return;
-                                                }
-                                                
-                                                const body = {
-                                                    firstName: newReferral.firstName || "",
-                                                    lastName: newReferral.lastName || "",
-                                                    Phone: newReferral.phone || "",
-                                                    Rating: newReferral.rating || "Hot",
-                                                    LeadSource: "Lockated-PRL-Loyalty",
-                                                    Project_Interested__c: newReferral.projectInterested || "",
-                                                    Type_of_Customer__c: newReferral.typeOfCustomer || "Individual",
-                                                    Loyalty_Member_Unique_Id__c: loyaltyId || "",
-                                                };
-                                                await axios.post(
-                                                    "https://piramal-realty--preprd.sandbox.my.salesforce.com/services/data/v64.0/sobjects/Lead/",
-                                                    body,
-                                                    {
-                                                        headers: {
-                                                            Authorization: `Bearer ${accessToken}`,
-                                                            "Content-Type": "application/json",
-                                                        },
-                                                    }
-                                                );
-                                                toast.success("Lead created successfully!");
-                                                setShowModal(false);
-                                                // Fetch updated transactions and summary cards after referral
-                                                await fetchTransactions();
-                                                await fetchSummaryCards();
-                                            } catch (err) {
-                                                toast.error("Failed to create lead.");
-                                            }
-                                        }}
-                                    >
-                                        Add Referral
-                                    </button>
-                                </div>
+            {/* Summary Cards */}
+            <div className="flex flex-col sm:flex-row gap-4 mb-8">
+                {summaryCards.map((item, index) => {
+                    let value = item.value;
+                    if (item.title === "Balance Points") {
+                        // Remove commas for calculation, then format again
+                        let numericValue = Number(String(value).replace(/,/g, '')) || 0;
+                        value = numericValue - pendingEncashAmount;
+                    }
+                    // Ensure value always has two decimal places
+                    const displayValue = typeof value === "number"
+                        ? value.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+                        : value;
+                    return (
+                        <div
+                            key={index}
+                            className="flex-1 rounded-lg p-4 flex items-center gap-4 border border-gray-200"
+                        >
+                            <div className="bg-[#FA46151A] rounded-full w-16 h-16 flex items-center justify-center">
+                                <span className="text-3xl text-[#A78847]">✦</span>
+                            </div>
+                            <div>
+                                <div className="text-sm text-gray-500">{item.title}</div>
+                                <div className="text-xl font-bold">{displayValue} Points</div>
                             </div>
                         </div>
-                    )}
-
-                    {/* Transactions Table */}
-                    <div className="overflow-x-auto mt-6">
-                        <table className="min-w-full text-sm text-left">
-                            <thead className="bg-red-100 text-gray-600 uppercase text-xs">
-                                <tr>
-                                    <th className="px-4 py-3">Date & Time</th>
-                                    <th className="px-4 py-3">Transaction Type</th>
-                                    <th className="px-4 py-3">Transaction Name</th>
-                                    <th className="px-4 py-3 text-right">Earned Points</th>
-                                </tr>
-                            </thead>
-                            <tbody className="text-gray-700">
-                                {loading ? (
-                                    <tr>
-                                        <td colSpan="4" className="text-center text-gray-500 px-4 py-4">
-                                            Loading...
-                                        </td>
-                                    </tr>
-                                ) : transactions.length > 0 ? (
-                                    [...transactions].map((item, index) => (
-                                        <tr key={index}>
-                                            <td className="px-4 py-3">
-                                                {item?.created_at
-                                                    ? new Date(item.created_at).toLocaleString("en-US", {
-                                                        year: "numeric",
-                                                        month: "short",
-                                                        day: "numeric",
-                                                        hour: "numeric",
-                                                        minute: "2-digit",
-                                                        hour12: true,
-                                                    })
-                                                    : "--"}
-                                            </td>
-                                            <td className="px-4 py-3 capitalize">
-                                                {item?.transaction_type || "--"}
-                                            </td>
-                                            <td className="px-4 py-3">{item?.remarks || "--"}</td>
-                                            <td className="px-4 py-3 text-right">
-                                                {typeof item?.points === "number"
-                                                    ? formatPoints(item.points)
-                                                    : item?.points || "--"}
-                                            </td>
-                                        </tr>
-                                    ))
-                                ) : (
-                                    <tr>
-                                        <td colSpan="4" className="text-center text-gray-500 px-4 py-4">
-                                            No transactions available.
-                                        </td>
-                                    </tr>
-                                )}
-                            </tbody>
-                        </table>
+                    );
+                })}
+            </div>
+            {/* Tabs UI and Refer & Earn Button */}
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mt-10">
+                <div className="relative bg-[#FAFAFA] border border-gray-300 rounded-full flex p-2 w-full">
+                    <div
+                        className="absolute top-1 left-1 h-[90%] bg-[#F9461C] rounded-full transition-all duration-300"
+                        style={{
+                            width: `${100 / tabs.length}%`,
+                            transform: `translateX(${getTabIndex(activeTab) * 100}%)`,
+                        }}
+                    ></div>
+                    {tabs.map((tab) => (
+                        <button
+                            key={tab.key}
+                            onClick={() => handleTabSwitch(tab.key)}
+                            className={`relative z-10 cursor-pointer flex-1 py-2 text-sm sm:text-base rounded-full font-normal transition-colors duration-300 ${
+                                activeTab === tab.key ? "text-white" : "text-black"
+                            }`}
+                        >
+                            {tab.label}
+                        </button>
+                    ))}
+                </div>
+                <button
+                    onClick={() => setShowModal(true)}
+                    className="text-sm font-semibold bg-orange-600 text-white px-4 py-2 rounded-md hover:bg-orange-700 transition-colors whitespace-nowrap"
+                >
+                    REFER & EARN
+                </button>
+            </div>
+            {/* Referral Modal */}
+            {showModal && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 overflow-y-auto">
+                    <div className="bg-white p-6 rounded shadow-md w-full max-w-md relative my-4 max-h-[90vh] overflow-y-auto">
+                        <button
+                            onClick={() => setShowModal(false)}
+                            className="absolute cursor-pointer top-4 right-4 text-gray-500 hover:text-gray-800"
+                        >
+                            <X size={20} />
+                        </button>
+                        <h2 className="text-lg font-semibold mb-4">Refer Someone</h2>
+                        {/* First Name */}
+                        <label htmlFor="referral-first-name" className="block mb-1 font-medium">First Name</label>
+                        <input
+                            id="referral-first-name"
+                            type="text"
+                            placeholder="First Name"
+                            value={newReferral.firstName || ""}
+                            onChange={(e) => {
+                                const value = e.target.value.slice(0, 50);
+                                setNewReferral({ ...newReferral, firstName: value });
+                            }}
+                            onBlur={() => handleBlur("firstName")}
+                            className="w-full mb-4 p-2 border rounded"
+                            maxLength="50"
+                        />
+                        {errors.firstName && <p className="text-sm text-red-500 mb-2">{errors.firstName}</p>}
+                        {/* Last Name */}
+                        <label htmlFor="referral-last-name" className="block mb-1 font-medium">Last Name</label>
+                        <input
+                            id="referral-last-name"
+                            type="text"
+                            placeholder="Last Name"
+                            value={newReferral.lastName || ""}
+                            onChange={(e) => {
+                                const value = e.target.value.slice(0, 50);
+                                setNewReferral({ ...newReferral, lastName: value });
+                            }}
+                            onBlur={() => handleBlur("lastName")}
+                            className="w-full mb-4 p-2 border rounded"
+                            maxLength="50"
+                        />
+                        {errors.lastName && <p className="text-sm text-red-500 mb-2">{errors.lastName}</p>}
+                        {/* Phone */}
+                        <label htmlFor="referral-phone" className="block mb-1 font-medium">Phone Number</label>
+                        <input
+                            id="referral-phone"
+                            type="tel"
+                            placeholder="Phone Number (10 digits starting with 6-9)"
+                            value={newReferral.phone || ""}
+                            onChange={(e) => {
+                                // Only allow digits and limit to 10 characters
+                                const value = e.target.value.replace(/\D/g, '').slice(0, 10);
+                                setNewReferral({ ...newReferral, phone: value });
+                            }}
+                            onBlur={() => handleBlur("phone")}
+                            className="w-full mb-4 p-2 border rounded"
+                            maxLength="10"
+                            pattern="[6-9][0-9]{9}"
+                        />
+                        {errors.phone && <p className="text-sm text-red-500 mb-2">{errors.phone}</p>}
+                        {/* Rating Dropdown */}
+                        <label htmlFor="referral-rating" className="block mb-1 font-medium">Rating</label>
+                        <select
+                            id="referral-rating"
+                            value={newReferral.rating || ""}
+                            onChange={(e) => setNewReferral({ ...newReferral, rating: e.target.value })}
+                            onBlur={() => handleBlur("rating")}
+                            className="w-full mb-4 p-2 border rounded"
+                        >
+                            <option value="">Select Rating</option>
+                            <option value="Hot">Hot</option>
+                            <option value="Warm">Warm</option>
+                            <option value="Cold">Cold</option>
+                        </select>
+                        {errors.rating && <p className="text-sm text-red-500 mb-2">{errors.rating}</p>}
+                        {/* Project Interested Dropdown */}
+                        <label htmlFor="referral-project-interested" className="block mb-1 font-medium">Project Interested</label>
+                        <select
+                            id="referral-project-interested"
+                            value={newReferral.projectInterested || ""}
+                            onChange={(e) => setNewReferral({ ...newReferral, projectInterested: e.target.value })}
+                            onBlur={() => handleBlur("projectInterested")}
+                            className="w-full mb-4 p-2 border rounded"
+                        >
+                            <option value="">Project Interested</option>
+                            <option value="Piramal Aranya">Piramal Aranya</option>
+                            <option value="Piramal Mahalaxmi">Piramal Mahalaxmi</option>
+                            <option value="Piramal Revanta">Piramal Revanta</option>
+                            <option value="Piramal Vaikunth">Piramal Vaikunth</option>
+                        </select>
+                        {errors.projectInterested && <p className="text-sm text-red-500 mb-2">{errors.projectInterested}</p>}
+                        {/* Type of Customer Dropdown */}
+                        <label htmlFor="referral-type-customer" className="block mb-1 font-medium">Type of Customer</label>
+                        <select
+                            id="referral-type-customer"
+                            value={newReferral.typeOfCustomer || ""}
+                            onChange={(e) => setNewReferral({ ...newReferral, typeOfCustomer: e.target.value })}
+                            onBlur={() => handleBlur("typeOfCustomer")}
+                            className="w-full mb-4 p-2 border rounded"
+                        >
+                            <option value="">Type of Customer</option>
+                            <option value="Individual">Individual</option>
+                            <option value="Company">Company</option>
+                        </select>
+                        {errors.typeOfCustomer && <p className="text-sm text-red-500 mb-2">{errors.typeOfCustomer}</p>}
+                        <div className="flex justify-end gap-2">
+                            <button
+                                className="px-4 cursor-pointer py-2 bg-gray-300 text-gray-800 rounded"
+                                onClick={() => setShowModal(false)}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                className="px-4 py-2 cursor-pointer bg-orange-500 text-white rounded"
+                                onClick={async () => {
+                                    setIsSubmitted(true);
+                                    const validationErrors = validateReferral(newReferral);
+                                    if (Object.keys(validationErrors).length > 0) {
+                                        setErrors(validationErrors);
+                                        setTouched({
+                                            firstName: true,
+                                            lastName: true,
+                                            phone: true,
+                                            rating: true,
+                                            projectInterested: true,
+                                            typeOfCustomer: true,
+                                        });
+                                        return;
+                                    }
+                                    try {
+                                        const accessToken = localStorage.getItem("salesforce_access_token");
+                                        let loyaltyId = localStorage.getItem("Loyalty_Member_Unique_Id__c") || "";
+                                        
+                                        // Check if phone number already exists for this user (regardless of project)
+                                        const checkDuplicateQuery = `SELECT Id FROM Lead WHERE Phone = '${newReferral.phone}' AND Loyalty_Member_Unique_Id__c = '${loyaltyId}' LIMIT 1`;
+                                        const checkUrl = `https://piramal-realty--preprd.sandbox.my.salesforce.com/services/data/v64.0/query/?q=${encodeURIComponent(checkDuplicateQuery)}`;
+                                        
+                                        const duplicateCheckResponse = await axios.get(checkUrl, {
+                                            headers: {
+                                                Authorization: `Bearer ${accessToken}`,
+                                                "Content-Type": "application/json",
+                                            },
+                                        });
+                                        
+                                        if (duplicateCheckResponse.data?.records && duplicateCheckResponse.data.records.length > 0) {
+                                            toast.error("Referral already exists.");
+                                            return;
+                                        }
+                                        
+                                        const body = {
+                                            firstName: newReferral.firstName || "",
+                                            lastName: newReferral.lastName || "",
+                                            Phone: newReferral.phone || "",
+                                            Rating: newReferral.rating || "Hot",
+                                            LeadSource: "Lockated-PRL-Loyalty",
+                                            Project_Interested__c: newReferral.projectInterested || "",
+                                            Type_of_Customer__c: newReferral.typeOfCustomer || "Individual",
+                                            Loyalty_Member_Unique_Id__c: loyaltyId || "",
+                                        };
+                                        await axios.post(
+                                            "https://piramal-realty--preprd.sandbox.my.salesforce.com/services/data/v64.0/sobjects/Lead/",
+                                            body,
+                                            {
+                                                headers: {
+                                                    Authorization: `Bearer ${accessToken}`,
+                                                    "Content-Type": "application/json",
+                                                },
+                                            }
+                                        );
+                                        toast.success("Lead created successfully!");
+                                        setShowModal(false);
+                                        // Fetch updated transactions and summary cards after referral
+                                        await fetchTransactions();
+                                        await fetchSummaryCards();
+                                    } catch (err) {
+                                        toast.error("Failed to create lead.");
+                                    }
+                                }}
+                            >
+                                Add Referral
+                            </button>
+                        </div>
                     </div>
-                </>
+                </div>
             )}
-
+            {/* Tab Content */}
+            {activeTab === 'ledger' && (
+                <div className="overflow-x-auto mt-6">
+                    <table className="min-w-full text-sm text-left">
+                        <thead className="bg-red-100 text-gray-600 uppercase text-xs">
+                            <tr>
+                                <th className="px-4 py-3">Date & Time</th>
+                                <th className="px-4 py-3">Transaction Type</th>
+                                <th className="px-4 py-3">Transaction Name</th>
+                                <th className="px-4 py-3 text-right">Earned Points</th>
+                            </tr>
+                        </thead>
+                        <tbody className="text-gray-700">
+                            {loading ? (
+                                <tr>
+                                    <td colSpan="4" className="text-center text-gray-500 px-4 py-4">
+                                        Loading...
+                                    </td>
+                                </tr>
+                            ) : transactions.length > 0 ? (
+                                [...transactions].map((item, index) => (
+                                    <tr key={index}>
+                                        <td className="px-4 py-3">
+                                            {item?.created_at
+                                                ? new Date(item.created_at).toLocaleString("en-US", {
+                                                    year: "numeric",
+                                                    month: "short",
+                                                    day: "numeric",
+                                                    hour: "numeric",
+                                                    minute: "2-digit",
+                                                    hour12: true,
+                                                })
+                                                : "--"}
+                                        </td>
+                                        <td className="px-4 py-3 capitalize">
+                                            {item?.transaction_type || "--"}
+                                        </td>
+                                        <td className="px-4 py-3">{item?.remarks || "--"}</td>
+                                        <td className="px-4 py-3 text-right">
+                                            {typeof item?.points === "number"
+                                                ? formatPoints(item.points)
+                                                : item?.points || "--"}
+                                        </td>
+                                    </tr>
+                                ))
+                            ) : (
+                                <tr>
+                                    <td colSpan="4" className="text-center text-gray-500 px-4 py-4">
+                                        No transactions available.
+                                    </td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+            )}
             {activeTab === 'referrals' && (
                 <div className="mt-8">
                     <h3 className="text-xl font-semibold mb-4">Referral List</h3>
