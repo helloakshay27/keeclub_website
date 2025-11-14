@@ -72,6 +72,7 @@ const LoginPage = () => {
       let accessToken = localStorage.getItem("salesforce_access_token");
       let instanceUrl = localStorage.getItem("salesforce_instance_url");
 
+      // Use instanceUrl from localStorage for all Salesforce API calls
       if (!accessToken || !instanceUrl) {
         const tokenData = await getAccessToken();
         if (!tokenData?.access_token || !tokenData?.instance_url) {
@@ -148,6 +149,7 @@ const LoginPage = () => {
       let accessToken = localStorage.getItem("salesforce_access_token");
       let instanceUrl = localStorage.getItem("salesforce_instance_url");
 
+      // Use instanceUrl from localStorage for all Salesforce API calls
       if (!accessToken || !instanceUrl) {
         const tokenData = await getAccessToken();
         if (!tokenData?.access_token || !tokenData?.instance_url) {

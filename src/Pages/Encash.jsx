@@ -68,21 +68,29 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                                 // 2. Call Salesforce Debit API for encash
                                 const loyaltyMemberId = localStorage.getItem('Id');
                                 const accessToken = localStorage.getItem('salesforce_access_token');
-                                if (loyaltyMemberId && accessToken) {
-                                    await fetch('https://piramal-realty--preprd.sandbox.my.salesforce.com/services/data/v64.0/sobjects/Loyalty_Transaction__c/', {
-                                        method: 'POST',
-                                        headers: {
-                                            'Content-Type': 'application/json',
-                                            'Authorization': `Bearer ${accessToken}`
-                                        },
-                                        body: JSON.stringify({
-                                            Category__c: "Encash",
-                                            Loyalty_Member__c: loyaltyMemberId,
-                                            Loyalty_Points__c: req.points_to_encash,
-                                            Transaction_Type__c: "Debit"
-                                        })
-                                    });
+                                const instanceUrl = localStorage.getItem('salesforce_instance_url');
+                                // Find the correct SAP_SalesOrder_Code__c for the selected referral
+                                let encashedUniqueCode = "";
+                                if (req.referral_name) {
+                                    const opp = opportunityOptions.find(o => o.AccountNameText__c === req.referral_name);
+                                    if (opp && opp.SAP_SalesOrder_Code__c) {
+                                        encashedUniqueCode = opp.SAP_SalesOrder_Code__c;
+                                    }
                                 }
+                                await fetch(`${instanceUrl}/services/data/v64.0/sobjects/Loyalty_Transaction__c/`, {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'Authorization': `Bearer ${accessToken}`
+                                    },
+                                    body: JSON.stringify({
+                                        Category__c: "Encash",
+                                        Loyalty_Member__c: loyaltyMemberId,
+                                        Loyalty_Points__c: req.points_to_encash,
+                                        Transaction_Type__c: "Debit",
+                                        Encashed_Unique_Code__c: encashedUniqueCode
+                                    })
+                                });
                             } catch (err) {
                                 // Optionally handle/log error
                             }
@@ -238,7 +246,8 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
             try {
                 const loyaltyId = localStorage.getItem("Loyalty_Member_Unique_Id__c") || "";
                 const accessToken = localStorage.getItem("salesforce_access_token");
-                const url = `https://piramal-realty--preprd.sandbox.my.salesforce.com/services/data/v64.0/query/?q=SELECT+Id,AccountNameText__c,Agreement_Value__c,Project_Finalized__r.Onboarding_Referral_Percentage__c,Apartment_Finalized__r.Name,Project_Finalized__r.Name,Tower_Finalized__r.Name,SAP_SalesOrder_Code__c+FROM+Opportunity+WHERE+StageName+=+'WC+/+Onboarding+done'+AND+Loyalty_Member_Unique_Id__c='${loyaltyId}'`;
+                const instanceUrl = localStorage.getItem("salesforce_instance_url");
+                const url = `${instanceUrl}/services/data/v64.0/query/?q=SELECT+Id,AccountNameText__c,Agreement_Value__c,Project_Finalized__r.Onboarding_Referral_Percentage__c,Apartment_Finalized__r.Name,Project_Finalized__r.Name,Tower_Finalized__r.Name,SAP_SalesOrder_Code__c+FROM+Opportunity+WHERE+StageName+=+'WC+/+Onboarding+done'+AND+Loyalty_Member_Unique_Id__c='${loyaltyId}'`;
                 const res = await fetch(url, {
                     headers: {
                         Authorization: `Bearer ${accessToken}`,

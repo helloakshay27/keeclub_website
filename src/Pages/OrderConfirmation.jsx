@@ -209,13 +209,14 @@ const OrderConfirmation = () => {
 
             // Call Salesforce Debit API
             const accessToken = localStorage.getItem('salesforce_access_token');
+            const instanceUrl = localStorage.getItem('salesforce_instance_url');
             const debitBody = {
                 Loyalty_Member__c: loyaltyMemberId,
                 Transaction_Type__c: 'Debit',
                 Loyalty_Points__c: pointsToDebit,
                 Category__c: 'Purchase'
             };
-            const debitUrl = 'https://piramal-realty--preprd.sandbox.my.salesforce.com/services/data/v64.0/sobjects/Loyalty_Transaction__c/';
+            const debitUrl = `${instanceUrl}/services/data/v64.0/sobjects/Loyalty_Transaction__c/`;
             await fetch(debitUrl, {
                 method: 'POST',
                 headers: {
