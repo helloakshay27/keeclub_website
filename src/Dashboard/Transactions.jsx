@@ -558,7 +558,9 @@ const Transactions = () => {
                             </button>
                             <button
                                 className="px-4 py-2 cursor-pointer bg-orange-500 text-white rounded"
+                                disabled={isSubmitted} // Prevent multiple submissions
                                 onClick={async () => {
+                                    if (isSubmitted) return; // Prevent double submit
                                     setIsSubmitted(true);
                                     const validationErrors = validateReferral(newReferral);
                                     if (Object.keys(validationErrors).length > 0) {
@@ -571,28 +573,31 @@ const Transactions = () => {
                                             projectInterested: true,
                                             typeOfCustomer: true,
                                         });
+                                        setIsSubmitted(false); // Allow retry after validation error
                                         return;
                                     }
                                     try {
                                         const accessToken = localStorage.getItem("salesforce_access_token");
                                         let loyaltyId = localStorage.getItem("Loyalty_Member_Unique_Id__c") || "";
-                                        
+                                        const instanceUrl = localStorage.getItem("salesforce_instance_url");
+
                                         // Check if phone number already exists for this user (regardless of project)
                                         const checkDuplicateQuery = `SELECT Id FROM Lead WHERE Phone = '${newReferral.phone}' AND Loyalty_Member_Unique_Id__c = '${loyaltyId}' LIMIT 1`;
-                                        const checkUrl = `https://piramal-realty--preprd.sandbox.my.salesforce.com/services/data/v64.0/query/?q=${encodeURIComponent(checkDuplicateQuery)}`;
-                                        
+                                        const checkUrl = `${instanceUrl}/services/data/v64.0/query/?q=${encodeURIComponent(checkDuplicateQuery)}`;
+
                                         const duplicateCheckResponse = await axios.get(checkUrl, {
                                             headers: {
                                                 Authorization: `Bearer ${accessToken}`,
                                                 "Content-Type": "application/json",
                                             },
                                         });
-                                        
+
                                         if (duplicateCheckResponse.data?.records && duplicateCheckResponse.data.records.length > 0) {
                                             toast.error("Referral already exists.");
+                                            setIsSubmitted(false);
                                             return;
                                         }
-                                        
+
                                         const body = {
                                             firstName: newReferral.firstName || "",
                                             lastName: newReferral.lastName || "",
@@ -604,7 +609,7 @@ const Transactions = () => {
                                             Loyalty_Member_Unique_Id__c: loyaltyId || "",
                                         };
                                         await axios.post(
-                                            "https://piramal-realty--preprd.sandbox.my.salesforce.com/services/data/v64.0/sobjects/Lead/",
+                                            `${instanceUrl}/services/data/v64.0/sobjects/Lead/`,
                                             body,
                                             {
                                                 headers: {
@@ -620,6 +625,8 @@ const Transactions = () => {
                                         await fetchSummaryCards();
                                     } catch (err) {
                                         toast.error("Failed to create lead.");
+                                    } finally {
+                                        setIsSubmitted(false); // Reset for next attempt
                                     }
                                 }}
                             >
