@@ -266,6 +266,13 @@ const LoginPage = () => {
           // Set login timestamp for 24hr auto-logout
           localStorage.setItem("loginTimestamp", Date.now().toString());
 
+          // Ensure authToken is present and not 'null'
+          if (!localStorage.getItem("authToken") || localStorage.getItem("authToken") === "null") {
+            toast.error("Authentication token missing. Please login again.");
+            setLoading(false);
+            return;
+          }
+
           // Small delay to ensure localStorage is set before navigation
           setTimeout(() => {
             navigate(`/dashboard/transactions/${loyaltyId}`);
