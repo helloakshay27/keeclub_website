@@ -711,7 +711,7 @@ const Transactions = () => {
                                     </tr>
                                 </thead>
                                 <tbody className="text-gray-700">
-                                    {referralRecords.map((rec, idx) => (
+                                    {[...referralRecords].reverse().map((rec, idx) => (
                                         <tr key={idx}>
                                             <td className="px-4 py-3">{rec.name || '--'}</td>
                                             <td className="px-4 py-3">{rec.recordType || '--'}</td>
