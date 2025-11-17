@@ -286,7 +286,7 @@ const Transactions = () => {
                 console.log("🔍 Request is_payment_deducted:", req?.is_payment_deducted);
                 console.log("🔍 Request points_to_encash:", req?.points_to_encash);
                 console.log("🔍 Request sap_sales_order_code:", req?.sap_sales_order_code);
-                console.log("🔍 Request AccountNameText__c:", req?.AccountNameText__c);
+                console.log("🔍 Request referral_name:", req?.referral_name);
                 
                 // Check if request has required properties
                 if (!req || !req.id) {
@@ -294,7 +294,10 @@ const Transactions = () => {
                     continue;
                 }
                 
-                // if (req.status === "completed" && req.is_payment_deducted === false) {
+                // Check the proper condition
+                if (req.status === "completed" && req.is_payment_deducted === false) {
+                    console.log("✅ Request meets criteria - processing payment deduction");
+                    
                     try {
                         console.log("🔄 Starting payment deduction update for request:", req.id);
                         
@@ -330,6 +333,7 @@ const Transactions = () => {
                         
                         console.log("🔍 Looking for SAP code in original request:", req.sap_sales_order_code);
                         console.log("🔍 Looking for SAP code in update response:", updateData?.encash_request?.sap_sales_order_code);
+                        console.log("🔍 Looking for referral_name in original request:", req.referral_name);
                         console.log("🔍 Looking for referral_name in update response:", updateData?.encash_request?.referral_name);
                         console.log("🔍 Current opportunityOptions state:", opportunityOptions);
                         console.log("🔍 opportunityOptions length:", opportunityOptions.length);
@@ -344,23 +348,44 @@ const Transactions = () => {
                             encashedUniqueCode = updateData.encash_request.sap_sales_order_code;
                             console.log("✅ SAP code found in update response:", encashedUniqueCode);
                         }
-                        // Third: Find by referral name in opportunity options (with current state)
-                        else if (updateData?.encash_request?.referral_name && opportunityOptions.length > 0) {
-                            const referralName = updateData.encash_request.referral_name;
-                            console.log("🔍 Searching for referral name:", referralName);
+                        // Third: Find by referral name from original request in opportunity options
+                        else if (req.referral_name && opportunityOptions.length > 0) {
+                            const referralName = req.referral_name;
+                            console.log("🔍 Searching for referral name from original request:", referralName);
                             
-                            const opp = opportunityOptions.find(o => o.AccountNameText__c === referralName);
+                            const opp = opportunityOptions.find(o => {
+                                console.log("🔍 Comparing:", o.AccountNameText__c, "with", referralName);
+                                return o.AccountNameText__c === referralName;
+                            });
                             console.log("🔍 Found opportunity match:", opp);
                             
                             if (opp && opp.SAP_SalesOrder_Code__c) {
                                 encashedUniqueCode = opp.SAP_SalesOrder_Code__c;
-                                console.log("✅ SAP_SalesOrder_Code__c found from opportunity:", encashedUniqueCode);
+                                console.log("✅ SAP_SalesOrder_Code__c found from opportunity (original req):", encashedUniqueCode);
                             } else {
-                                console.log("❌ No SAP_SalesOrder_Code__c found for opportunity:", opp);
+                                console.log("❌ No SAP_SalesOrder_Code__c found for opportunity (original req):", opp);
                             }
                         }
-                        // Fourth: If no opportunities in state, try to fetch them dynamically
-                        else if (updateData?.encash_request?.referral_name && opportunityOptions.length === 0) {
+                        // Fourth: Find by referral name from update response in opportunity options
+                        else if (updateData?.encash_request?.referral_name && opportunityOptions.length > 0) {
+                            const referralName = updateData.encash_request.referral_name;
+                            console.log("🔍 Searching for referral name from update response:", referralName);
+                            
+                            const opp = opportunityOptions.find(o => {
+                                console.log("🔍 Comparing:", o.AccountNameText__c, "with", referralName);
+                                return o.AccountNameText__c === referralName;
+                            });
+                            console.log("🔍 Found opportunity match:", opp);
+                            
+                            if (opp && opp.SAP_SalesOrder_Code__c) {
+                                encashedUniqueCode = opp.SAP_SalesOrder_Code__c;
+                                console.log("✅ SAP_SalesOrder_Code__c found from opportunity (update response):", encashedUniqueCode);
+                            } else {
+                                console.log("❌ No SAP_SalesOrder_Code__c found for opportunity (update response):", opp);
+                            }
+                        }
+                        // Fifth: If no opportunities in state, try to fetch them dynamically
+                        else if ((req.referral_name || updateData?.encash_request?.referral_name) && opportunityOptions.length === 0) {
                             console.log("🔄 No opportunities in state, fetching dynamically...");
                             try {
                                 const loyaltyId = localStorage.getItem("Loyalty_Member_Unique_Id__c") || "";
@@ -376,8 +401,13 @@ const Transactions = () => {
                                 console.log("🔍 Dynamically fetched opportunities:", oppData?.records || []);
                                 
                                 if (oppData?.records?.length > 0) {
-                                    const referralName = updateData.encash_request.referral_name;
-                                    const opp = oppData.records.find(o => o.AccountNameText__c === referralName);
+                                    const referralName = req.referral_name || updateData?.encash_request?.referral_name;
+                                    console.log("🔍 Looking for referral name in dynamic fetch:", referralName);
+                                    
+                                    const opp = oppData.records.find(o => {
+                                        console.log("🔍 Dynamic comparing:", o.AccountNameText__c, "with", referralName);
+                                        return o.AccountNameText__c === referralName;
+                                    });
                                     
                                     if (opp && opp.SAP_SalesOrder_Code__c) {
                                         encashedUniqueCode = opp.SAP_SalesOrder_Code__c;
@@ -392,14 +422,16 @@ const Transactions = () => {
                             console.log("❌ No SAP code found - all methods exhausted");
                             console.log("Request SAP:", req.sap_sales_order_code);
                             console.log("Update response SAP:", updateData?.encash_request?.sap_sales_order_code);
-                            console.log("Referral name:", updateData?.encash_request?.referral_name);
+                            console.log("Original req referral name:", req.referral_name);
+                            console.log("Update response referral name:", updateData?.encash_request?.referral_name);
                             console.log("Opportunities available:", opportunityOptions.length);
                         }
                         
                         console.log("🔍 Final encashedUniqueCode:", encashedUniqueCode);
                         console.log("🔍 encashedUniqueCode is empty:", encashedUniqueCode === "");
                         
-                        if (loyaltyMemberId && accessToken && instanceUrl) {
+                        // Only proceed with Salesforce API call if we have all required data and SAP code is not empty
+                        if (loyaltyMemberId && accessToken && instanceUrl && encashedUniqueCode && encashedUniqueCode.trim() !== "") {
                             const payload = {
                                 Category__c: "Encash",
                                 Loyalty_Member__c: loyaltyMemberId,
@@ -420,15 +452,26 @@ const Transactions = () => {
                             
                             const salesforceResult = await salesforceResponse.json();
                             console.log("📥 Salesforce response:", salesforceResult);
+                            
+                            // Refresh summary cards and transactions after successful update
+                            await fetchSummaryCards();
+                            await fetchTransactions();
+                        } else {
+                            console.log("❌ Skipping Salesforce API call - missing data or empty SAP code");
+                            console.log("loyaltyMemberId:", loyaltyMemberId);
+                            console.log("accessToken exists:", !!accessToken);
+                            console.log("instanceUrl:", instanceUrl);
+                            console.log("encashedUniqueCode:", encashedUniqueCode);
                         }
-                        // Refresh summary cards and transactions after update
-                        await fetchSummaryCards();
-                        await fetchTransactions();
                     } catch (err) {
                         console.error("❌ Error processing individual request:", err);
                         console.error("❌ Failed request:", req);
                     }
-                // }
+                } else {
+                    console.log("❌ Request does not meet criteria:");
+                    console.log("Status:", req.status, "(expected: completed)");
+                    console.log("is_payment_deducted:", req.is_payment_deducted, "(expected: false)");
+                }
             }
         } catch (err) {
             console.error("❌ Error in fetchAndHandleEncashRequests:", err);
