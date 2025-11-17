@@ -259,26 +259,33 @@ const Transactions = () => {
                         const loyaltyMemberId = localStorage.getItem('Id');
                         const accessToken = localStorage.getItem('salesforce_access_token');
                         const instanceUrl = localStorage.getItem('salesforce_instance_url');
-                        // Find the correct SAP_SalesOrder_Code__c for the selected referral_name from global opportunityOptions
+                        
+                        // Get SAP Sales Order Code from encash request
                         let encashedUniqueCode = "";
+                        
+                        console.log("🔍 Looking for SAP code in request:", req.sap_sales_order_code);
                         console.log("🔍 Looking for referral_name:", req.referral_name);
                         console.log("🔍 Available opportunityOptionsGlobal:", opportunityOptionsGlobal);
                         console.log("🔍 opportunityOptionsGlobal length:", opportunityOptionsGlobal.length);
                         
-                        if (req.referral_name && opportunityOptionsGlobal.length > 0) {
+                        // First try to get SAP code directly from encash request
+                        if (req.sap_sales_order_code) {
+                            encashedUniqueCode = req.sap_sales_order_code;
+                            console.log("✅ SAP code found in encash request:", encashedUniqueCode);
+                        }
+                        // Fallback: find by referral name in opportunity options
+                        else if (req.referral_name && opportunityOptionsGlobal.length > 0) {
                             const opp = opportunityOptionsGlobal.find(o => o.AccountNameText__c === req.referral_name);
                             console.log("🔍 Found opportunity match:", opp);
                             
                             if (opp && opp.SAP_SalesOrder_Code__c) {
                                 encashedUniqueCode = opp.SAP_SalesOrder_Code__c;
-                                console.log("✅ SAP_SalesOrder_Code__c found:", encashedUniqueCode);
+                                console.log("✅ SAP_SalesOrder_Code__c found from opportunity:", encashedUniqueCode);
                             } else {
                                 console.log("❌ No SAP_SalesOrder_Code__c found for opportunity:", opp);
                             }
                         } else {
-                            console.log("❌ No referral_name or empty opportunityOptionsGlobal");
-                            console.log("referral_name:", req.referral_name);
-                            console.log("opportunityOptionsGlobal.length:", opportunityOptionsGlobal.length);
+                            console.log("❌ No SAP code found in request and no referral_name or empty opportunityOptionsGlobal");
                         }
                         
                         console.log("🔍 Final encashedUniqueCode:", encashedUniqueCode);
@@ -290,7 +297,7 @@ const Transactions = () => {
                                 Loyalty_Member__c: loyaltyMemberId,
                                 Loyalty_Points__c: req.points_to_encash,
                                 Transaction_Type__c: "Debit",
-                                Encashed_Unique_Code__c: encashedUniqueCode // Always pass correct SAP_SalesOrder_Code__c
+                                Encashed_Unique_Code__c: encashedUniqueCode
                             };
                             console.log("📤 Salesforce Debit API payload:", payload);
                             

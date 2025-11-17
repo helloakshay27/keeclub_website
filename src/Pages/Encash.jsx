@@ -239,6 +239,7 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
 
     const [opportunityOptions, setOpportunityOptions] = useState([]);
     const [selectedOpportunity, setSelectedOpportunity] = useState(null);
+    const [selectedSAPCode, setSelectedSAPCode] = useState(''); // Add state for SAP code
 
     // Fetch opportunity dropdown data
     useEffect(() => {
@@ -269,6 +270,10 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
             const agreementValue = Number(selectedOpportunity.Agreement_Value__c) || 0;
             const brokerage = Number(selectedOpportunity.Project_Finalized__r?.Onboarding_Referral_Percentage__c) || 0;
             const calculatedPoints = Math.round((agreementValue * brokerage) / 100);
+            
+            // Set the SAP code for display
+            setSelectedSAPCode(selectedOpportunity.SAP_SalesOrder_Code__c || '');
+            
             setFormData(prev => ({
                 ...prev,
                 pointsToEncash: calculatedPoints ? calculatedPoints.toString() : '',
@@ -277,6 +282,8 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                     ? (calculatedPoints - Math.round(calculatedPoints * 0.02)).toString()
                     : ''
             }));
+        } else {
+            setSelectedSAPCode(''); // Reset SAP code when no opportunity selected
         }
     }, [selectedOpportunity]);
 
@@ -334,7 +341,8 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                     referral_name: selectedOpportunity?.AccountNameText__c || "",
                     booking_unit: selectedOpportunity?.Apartment_Finalized__r?.Name || "",
                     application_value: selectedOpportunity?.Agreement_Value__c || "",
-                    email: formData.email // Pass email in payload
+                    sap_sales_order_code: selectedOpportunity?.SAP_SalesOrder_Code__c || "", // Add SAP code to request
+                    email: formData.email
                 }
             };
 
@@ -552,6 +560,12 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                                     </option>
                                 ))}
                             </select>
+                            {/* Display SAP Sales Order Code when opportunity is selected */}
+                            {selectedSAPCode && (
+                                <p className="mt-2 text-sm text-blue-600 font-medium">
+                                    <span className="font-semibold">SAP Sales Order Code:</span> {selectedSAPCode}
+                                </p>
+                            )}
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">Booking Unit</label>
