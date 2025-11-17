@@ -252,10 +252,10 @@ const Transactions = () => {
             if (!res.ok) return;
             const data = await res.json();
             console.log("🔍 Encash requests data:", data);
-            console.log(req.AccountNameText__c,req);
+            console.log(req.AccountNameText__c,req, updateData);
             
             for (const req of Array.isArray(data) ? data : []) {
-                if (req.status === "completed" && req.is_payment_deducted === false) {
+                // if (req.status === "completed" && req.is_payment_deducted === false) {
                     try {
                         // 1. Call local PUT API to update payment deducted
                         const updateResponse = await fetch(`${BASE_URL}update_payment_deducted.json?id=${req.id}&is_payment_deducted=true`, {
@@ -379,7 +379,7 @@ const Transactions = () => {
                     } catch (err) {
                         console.error("❌ Error in fetchAndHandleEncashRequests:", err);
                     }
-                }
+                // }
             }
         } catch (err) {
             console.error("❌ Error fetching encash requests:", err);
