@@ -44,6 +44,56 @@ const OrderConfirmation = () => {
     // Handle address update via PUT API (all fields editable)
     const handleUpdateAddress = async () => {
         if (!editAddress) return;
+
+        // Validate required fields
+        const requiredFields = ['address', 'city', 'state', 'pin_code', 'name', 'phone'];
+        const missingFields = [];
+        
+        // Check each required field and collect missing ones with user-friendly names
+        const fieldNames = {
+            address: 'Address Line 1',
+            city: 'City',
+            state: 'State', 
+            pin_code: 'Pin Code',
+            name: 'Name',
+            phone: 'Phone'
+        };
+        
+        requiredFields.forEach(field => {
+            const fieldValue = field === 'address' ? editAddress.address : editAddress[field];
+            if (!fieldValue || fieldValue.trim() === '') {
+                missingFields.push(fieldNames[field]);
+            }
+        });
+        
+        if (missingFields.length > 0) {
+            toast.error(`Please fill in the following required fields: ${missingFields.join(', ')}`);
+            return;
+        }
+
+        // Validate email format if provided
+        if (editAddress.email && editAddress.email.trim() !== '') {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(editAddress.email)) {
+                toast.error('Please enter a valid email address');
+                return;
+            }
+        }
+
+        // Validate phone number (10 digits)
+        const phoneRegex = /^\d{10}$/;
+        if (!phoneRegex.test(editAddress.phone)) {
+            toast.error('Please enter a valid 10-digit phone number');
+            return;
+        }
+
+        // Validate pin code (6 digits)
+        const pinCodeRegex = /^\d{6}$/;
+        if (!pinCodeRegex.test(editAddress.pin_code)) {
+            toast.error('Please enter a valid 6-digit pin code');
+            return;
+        }
+
         setEditLoading(true);
         try {
             const authToken = localStorage.getItem('authToken');
@@ -384,14 +434,14 @@ const OrderConfirmation = () => {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                                 <input
                                     type="text"
-                                    placeholder="Name"
+                                    placeholder="Enter Name *"
                                     value={editAddress.name}
                                     onChange={e => setEditAddress({ ...editAddress, name: e.target.value })}
                                     className="border rounded px-3 py-2 w-full"
                                 />
                                 <input
                                     type="text"
-                                    placeholder="Phone"
+                                    placeholder="Enter Phone *"
                                     value={editAddress.phone}
                                     onChange={e => setEditAddress({ ...editAddress, phone: e.target.value })}
                                     className="border rounded px-3 py-2 w-full"
@@ -405,10 +455,11 @@ const OrderConfirmation = () => {
                                 />
                                 <input
                                     type="text"
-                                    placeholder="Address (Line 1)"
+                                    placeholder="Address (Line 1) *"
                                     value={editAddress.address}
                                     onChange={e => setEditAddress({ ...editAddress, address: e.target.value })}
                                     className="border rounded px-3 py-2 w-full"
+                                    required
                                 />
                                 <input
                                     type="text"
@@ -467,6 +518,7 @@ const OrderConfirmation = () => {
                                 <label className="flex items-center">
                                     <input
                                         type="radio"
+                                        
                                         name="addressTypeEdit"
                                         value="Home"
                                         checked={editAddress.type === 'Home' || editAddress.type === 'home'}
