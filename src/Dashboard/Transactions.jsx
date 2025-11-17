@@ -252,9 +252,9 @@ const Transactions = () => {
             if (!res.ok) return;
             const data = await res.json();
             console.log("🔍 Encash requests data:", data);
-            console.log(req.AccountNameText__c,req, updateData);
             
             for (const req of Array.isArray(data) ? data : []) {
+                console.log(req.AccountNameText__c,req, updateData);
                 // if (req.status === "completed" && req.is_payment_deducted === false) {
                     try {
                         // 1. Call local PUT API to update payment deducted
