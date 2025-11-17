@@ -71,6 +71,7 @@ const Transactions = () => {
     const [activeTab, setActiveTab] = useState('ledger'); // 'ledger' or 'referrals'
     const [referralRecords, setReferralRecords] = useState([]);
     const [referralLoading, setReferralLoading] = useState(false);
+    const [opportunityOptions, setOpportunityOptions] = useState([]); // Add this state
 
     // Get loyalty member data from localStorage and state
     const [summaryCards, setSummaryCards] = useState([
@@ -200,15 +201,22 @@ const Transactions = () => {
         }
     };
 
-    // Store opportunityOptions globally for access in fetchAndHandleEncashRequests
-    let opportunityOptionsGlobal = [];
+    // Fetch opportunity options and store in state
     useEffect(() => {
         const fetchOpportunities = async () => {
             try {
                 const loyaltyId = localStorage.getItem("Loyalty_Member_Unique_Id__c") || "";
                 const accessToken = localStorage.getItem("salesforce_access_token");
                 const instanceUrl = localStorage.getItem("salesforce_instance_url");
+                
+                if (!loyaltyId || !accessToken || !instanceUrl) {
+                    console.log("❌ Missing required data for opportunities fetch");
+                    return;
+                }
+
                 const url = `${instanceUrl}/services/data/v64.0/query/?q=SELECT+Id,AccountNameText__c,Agreement_Value__c,Project_Finalized__r.Onboarding_Referral_Percentage__c,Apartment_Finalized__r.Name,Project_Finalized__r.Name,Tower_Finalized__r.Name,SAP_SalesOrder_Code__c+FROM+Opportunity+WHERE+StageName+=+'WC+/+Onboarding+done'+AND+Loyalty_Member_Unique_Id__c='${loyaltyId}'`;
+                console.log("🔄 Fetching opportunities from:", url);
+                
                 const res = await fetch(url, {
                     headers: {
                         Authorization: `Bearer ${accessToken}`,
@@ -216,11 +224,11 @@ const Transactions = () => {
                     },
                 });
                 const data = await res.json();
+                console.log("✅ Opportunities fetched:", data?.records || []);
                 setOpportunityOptions(data?.records || []);
-                opportunityOptionsGlobal = data?.records || [];
             } catch (err) {
+                console.error("❌ Error fetching opportunities:", err);
                 setOpportunityOptions([]);
-                opportunityOptionsGlobal = [];
             }
         };
         fetchOpportunities();
@@ -231,6 +239,9 @@ const Transactions = () => {
         try {
             const authToken = localStorage.getItem('authToken');
             if (!authToken) return;
+            
+            console.log("🔄 Starting fetchAndHandleEncashRequests...");
+            
             const res = await fetch(`${BASE_URL}encash_requests.json`, {
                 method: 'GET',
                 headers: {
@@ -241,11 +252,13 @@ const Transactions = () => {
             if (!res.ok) return;
             const data = await res.json();
             console.log("🔍 Encash requests data:", data);
+            console.log(req.AccountNameText__c,req);
+            
             for (const req of Array.isArray(data) ? data : []) {
                 if (req.status === "completed" && req.is_payment_deducted === false) {
                     try {
                         // 1. Call local PUT API to update payment deducted
-                        await fetch(`${BASE_URL}update_payment_deducted.json?id=${req.id}&is_payment_deducted=true`, {
+                        const updateResponse = await fetch(`${BASE_URL}update_payment_deducted.json?id=${req.id}&is_payment_deducted=true`, {
                             method: 'PUT',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -255,27 +268,40 @@ const Transactions = () => {
                                 'Origin': window.location.origin,
                             }
                         });
+                        
+                        const updateData = await updateResponse.json();
+                        console.log("📤 Update payment response:", updateData);
+                        
                         // 2. Call Salesforce Debit API for encash
                         const loyaltyMemberId = localStorage.getItem('Id');
                         const accessToken = localStorage.getItem('salesforce_access_token');
                         const instanceUrl = localStorage.getItem('salesforce_instance_url');
                         
-                        // Get SAP Sales Order Code from encash request
+                        // Get SAP Sales Order Code from multiple sources
                         let encashedUniqueCode = "";
                         
-                        console.log("🔍 Looking for SAP code in request:", req.sap_sales_order_code);
-                        console.log("🔍 Looking for referral_name:", req.referral_name);
-                        console.log("🔍 Available opportunityOptionsGlobal:", opportunityOptionsGlobal);
-                        console.log("🔍 opportunityOptionsGlobal length:", opportunityOptionsGlobal.length);
+                        console.log("🔍 Looking for SAP code in original request:", req.sap_sales_order_code);
+                        console.log("🔍 Looking for SAP code in update response:", updateData?.encash_request?.sap_sales_order_code);
+                        console.log("🔍 Looking for referral_name in update response:", updateData?.encash_request?.referral_name);
+                        console.log("🔍 Current opportunityOptions state:", opportunityOptions);
+                        console.log("🔍 opportunityOptions length:", opportunityOptions.length);
                         
-                        // First try to get SAP code directly from encash request
+                        // First: Try to get SAP code directly from original encash request
                         if (req.sap_sales_order_code) {
                             encashedUniqueCode = req.sap_sales_order_code;
-                            console.log("✅ SAP code found in encash request:", encashedUniqueCode);
+                            console.log("✅ SAP code found in original request:", encashedUniqueCode);
                         }
-                        // Fallback: find by referral name in opportunity options
-                        else if (req.referral_name && opportunityOptionsGlobal.length > 0) {
-                            const opp = opportunityOptionsGlobal.find(o => o.AccountNameText__c === req.referral_name);
+                        // Second: Try to get SAP code from update response
+                        else if (updateData?.encash_request?.sap_sales_order_code) {
+                            encashedUniqueCode = updateData.encash_request.sap_sales_order_code;
+                            console.log("✅ SAP code found in update response:", encashedUniqueCode);
+                        }
+                        // Third: Find by referral name in opportunity options (with current state)
+                        else if (updateData?.encash_request?.referral_name && opportunityOptions.length > 0) {
+                            const referralName = updateData.encash_request.referral_name;
+                            console.log("🔍 Searching for referral name:", referralName);
+                            
+                            const opp = opportunityOptions.find(o => o.AccountNameText__c === referralName);
                             console.log("🔍 Found opportunity match:", opp);
                             
                             if (opp && opp.SAP_SalesOrder_Code__c) {
@@ -284,8 +310,42 @@ const Transactions = () => {
                             } else {
                                 console.log("❌ No SAP_SalesOrder_Code__c found for opportunity:", opp);
                             }
-                        } else {
-                            console.log("❌ No SAP code found in request and no referral_name or empty opportunityOptionsGlobal");
+                        }
+                        // Fourth: If no opportunities in state, try to fetch them dynamically
+                        else if (updateData?.encash_request?.referral_name && opportunityOptions.length === 0) {
+                            console.log("🔄 No opportunities in state, fetching dynamically...");
+                            try {
+                                const loyaltyId = localStorage.getItem("Loyalty_Member_Unique_Id__c") || "";
+                                const url = `${instanceUrl}/services/data/v64.0/query/?q=SELECT+Id,AccountNameText__c,SAP_SalesOrder_Code__c+FROM+Opportunity+WHERE+StageName+=+'WC+/+Onboarding+done'+AND+Loyalty_Member_Unique_Id__c='${loyaltyId}'`;
+                                
+                                const oppRes = await fetch(url, {
+                                    headers: {
+                                        Authorization: `Bearer ${accessToken}`,
+                                        "Content-Type": "application/json",
+                                    },
+                                });
+                                const oppData = await oppRes.json();
+                                console.log("🔍 Dynamically fetched opportunities:", oppData?.records || []);
+                                
+                                if (oppData?.records?.length > 0) {
+                                    const referralName = updateData.encash_request.referral_name;
+                                    const opp = oppData.records.find(o => o.AccountNameText__c === referralName);
+                                    
+                                    if (opp && opp.SAP_SalesOrder_Code__c) {
+                                        encashedUniqueCode = opp.SAP_SalesOrder_Code__c;
+                                        console.log("✅ SAP code found via dynamic fetch:", encashedUniqueCode);
+                                    }
+                                }
+                            } catch (fetchError) {
+                                console.error("❌ Error in dynamic fetch:", fetchError);
+                            }
+                        }
+                        else {
+                            console.log("❌ No SAP code found - all methods exhausted");
+                            console.log("Request SAP:", req.sap_sales_order_code);
+                            console.log("Update response SAP:", updateData?.encash_request?.sap_sales_order_code);
+                            console.log("Referral name:", updateData?.encash_request?.referral_name);
+                            console.log("Opportunities available:", opportunityOptions.length);
                         }
                         
                         console.log("🔍 Final encashedUniqueCode:", encashedUniqueCode);
@@ -301,7 +361,7 @@ const Transactions = () => {
                             };
                             console.log("📤 Salesforce Debit API payload:", payload);
                             
-                            await fetch(`${instanceUrl}/services/data/v64.0/sobjects/Loyalty_Transaction__c/`, {
+                            const salesforceResponse = await fetch(`${instanceUrl}/services/data/v64.0/sobjects/Loyalty_Transaction__c/`, {
                                 method: 'POST',
                                 headers: {
                                     'Content-Type': 'application/json',
@@ -309,6 +369,9 @@ const Transactions = () => {
                                 },
                                 body: JSON.stringify(payload)
                             });
+                            
+                            const salesforceResult = await salesforceResponse.json();
+                            console.log("📥 Salesforce response:", salesforceResult);
                         }
                         // Refresh summary cards and transactions after update
                         await fetchSummaryCards();

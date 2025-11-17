@@ -326,6 +326,11 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
         try {
             setLoading(true);
 
+            // Get SAP Sales Order Code for logging
+            const sapCode = selectedOpportunity?.SAP_SalesOrder_Code__c || "";
+            console.log("🔍 SAP code being submitted:", sapCode);
+            console.log("🔍 Selected opportunity:", selectedOpportunity);
+
             // Build request body as per API spec, include selected opportunity fields
             const encashRequestBody = {
                 encash_request: {
@@ -341,10 +346,12 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                     referral_name: selectedOpportunity?.AccountNameText__c || "",
                     booking_unit: selectedOpportunity?.Apartment_Finalized__r?.Name || "",
                     application_value: selectedOpportunity?.Agreement_Value__c || "",
-                    sap_sales_order_code: selectedOpportunity?.SAP_SalesOrder_Code__c || "", // Add SAP code to request
+                    sap_sales_order_code: sapCode, // Ensure SAP code is included
                     email: formData.email
                 }
             };
+
+            console.log("📤 Complete encash request payload:", encashRequestBody);
 
             const authToken = localStorage.getItem('authToken');
             const res = await fetch(`${BASE_URL}encash_requests.json`, {
@@ -359,6 +366,8 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                 body: JSON.stringify(encashRequestBody)
             });
             const response = await res.json();
+
+            console.log("📥 Encash request response:", response);
 
             if (res.ok || res.status === 201) {
                 setSuccess(true);
