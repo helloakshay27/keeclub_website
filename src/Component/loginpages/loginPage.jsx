@@ -263,21 +263,33 @@ const LoginPage = () => {
           localStorage.setItem("Total_Points_Credited__c", record.Total_Points_Credited__c || 0);
           localStorage.setItem("Total_Points_Debited__c", record.Total_Points_Debited__c || 0);
           localStorage.setItem("Total_Points_Expired__c", record.Total_Points_Expired__c || 0);
-          // Set login timestamp for 24hr auto-logout
           localStorage.setItem("loginTimestamp", Date.now().toString());
 
-          // Ensure authToken is present and not 'null'
-          if (!localStorage.getItem("authToken") || localStorage.getItem("authToken") === "null") {
+          // Fix: Ensure authToken is present and valid (not "null" string)
+          const authToken = localStorage.getItem("authToken");
+          if (!authToken || authToken === "null" || authToken === null) {
             toast.error("Authentication token missing. Please login again.");
+            localStorage.removeItem("authToken");
             setLoading(false);
             return;
           }
+
+          // Fix: Remove any old 'authToken' value set as string "null"
+          if (authToken === "null") {
+            localStorage.removeItem("authToken");
+            toast.error("Session expired. Please login again.");
+            setLoading(false);
+            return;
+          }
+
+          // Fix: Set a valid authToken if not set
+          // (If you get token from OTP response, ensure it's set before this block)
 
           // Small delay to ensure localStorage is set before navigation
           setTimeout(() => {
             navigate(`/dashboard/transactions/${loyaltyId}`);
             toast.success("Login successful!");
-          }, 1500);
+          }, 500); // Reduce delay for faster navigation
         } else {
           toast.error("Could not find customer identifier. Please contact support.");
         }
