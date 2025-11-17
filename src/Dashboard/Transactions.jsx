@@ -238,9 +238,14 @@ const Transactions = () => {
     const fetchAndHandleEncashRequests = async () => {
         try {
             const authToken = localStorage.getItem('authToken');
-            if (!authToken) return;
+            if (!authToken) {
+                console.log("❌ No authToken found");
+                return;
+            }
             
             console.log("🔄 Starting fetchAndHandleEncashRequests...");
+            console.log("🔍 Auth token exists:", !!authToken);
+            console.log("🔍 BASE_URL:", BASE_URL);
             
             const res = await fetch(`${BASE_URL}encash_requests.json`, {
                 method: 'GET',
@@ -249,14 +254,50 @@ const Transactions = () => {
                     'Authorization': `Bearer ${authToken}`
                 }
             });
-            if (!res.ok) return;
-            const data = await res.json();
-            console.log("🔍 Encash requests data:", data);
             
-            for (const req of Array.isArray(data) ? data : []) {
-                console.log(req.AccountNameText__c,req, updateData, data);
+            console.log("🔍 Response status:", res.status);
+            console.log("🔍 Response ok:", res.ok);
+            
+            if (!res.ok) {
+                console.log("❌ Response not ok, status:", res.status);
+                return;
+            }
+            
+            const data = await res.json();
+            console.log("🔍 Raw response data:", data);
+            console.log("🔍 Data type:", typeof data);
+            console.log("🔍 Is data an array:", Array.isArray(data));
+            console.log("🔍 Data length:", Array.isArray(data) ? data.length : 'Not an array');
+            
+            const requestsArray = Array.isArray(data) ? data : [];
+            console.log("🔍 Requests array length:", requestsArray.length);
+            
+            if (requestsArray.length === 0) {
+                console.log("❌ No encash requests found");
+                return;
+            }
+            
+            for (let i = 0; i < requestsArray.length; i++) {
+                const req = requestsArray[i];
+                console.log(`🔍 Processing request ${i + 1}/${requestsArray.length}:`);
+                console.log("🔍 Request object:", req);
+                console.log("🔍 Request ID:", req?.id);
+                console.log("🔍 Request status:", req?.status);
+                console.log("🔍 Request is_payment_deducted:", req?.is_payment_deducted);
+                console.log("🔍 Request points_to_encash:", req?.points_to_encash);
+                console.log("🔍 Request sap_sales_order_code:", req?.sap_sales_order_code);
+                console.log("🔍 Request AccountNameText__c:", req?.AccountNameText__c);
+                
+                // Check if request has required properties
+                if (!req || !req.id) {
+                    console.log("❌ Invalid request object, skipping:", req);
+                    continue;
+                }
+                
                 // if (req.status === "completed" && req.is_payment_deducted === false) {
                     try {
+                        console.log("🔄 Starting payment deduction update for request:", req.id);
+                        
                         // 1. Call local PUT API to update payment deducted
                         const updateResponse = await fetch(`${BASE_URL}update_payment_deducted.json?id=${req.id}&is_payment_deducted=true`, {
                             method: 'PUT',
@@ -268,6 +309,13 @@ const Transactions = () => {
                                 'Origin': window.location.origin,
                             }
                         });
+                        
+                        console.log("📤 Update response status:", updateResponse.status);
+                        
+                        if (!updateResponse.ok) {
+                            console.log("❌ Update failed with status:", updateResponse.status);
+                            continue;
+                        }
                         
                         const updateData = await updateResponse.json();
                         console.log("📤 Update payment response:", updateData);
@@ -377,12 +425,14 @@ const Transactions = () => {
                         await fetchSummaryCards();
                         await fetchTransactions();
                     } catch (err) {
-                        console.error("❌ Error in fetchAndHandleEncashRequests:", err);
+                        console.error("❌ Error processing individual request:", err);
+                        console.error("❌ Failed request:", req);
                     }
                 // }
             }
         } catch (err) {
-            console.error("❌ Error fetching encash requests:", err);
+            console.error("❌ Error in fetchAndHandleEncashRequests:", err);
+            console.error("❌ Error stack:", err.stack);
         }
     };
 
