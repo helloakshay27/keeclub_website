@@ -240,6 +240,7 @@ const Transactions = () => {
             });
             if (!res.ok) return;
             const data = await res.json();
+            console.log("🔍 Encash requests data:", data);
             for (const req of Array.isArray(data) ? data : []) {
                 if (req.status === "completed" && req.is_payment_deducted === false) {
                     try {
@@ -260,38 +261,58 @@ const Transactions = () => {
                         const instanceUrl = localStorage.getItem('salesforce_instance_url');
                         // Find the correct SAP_SalesOrder_Code__c for the selected referral_name from global opportunityOptions
                         let encashedUniqueCode = "";
+                        console.log("🔍 Looking for referral_name:", req.referral_name);
+                        console.log("🔍 Available opportunityOptionsGlobal:", opportunityOptionsGlobal);
+                        console.log("🔍 opportunityOptionsGlobal length:", opportunityOptionsGlobal.length);
+                        
                         if (req.referral_name && opportunityOptionsGlobal.length > 0) {
                             const opp = opportunityOptionsGlobal.find(o => o.AccountNameText__c === req.referral_name);
+                            console.log("🔍 Found opportunity match:", opp);
+                            
                             if (opp && opp.SAP_SalesOrder_Code__c) {
                                 encashedUniqueCode = opp.SAP_SalesOrder_Code__c;
+                                console.log("✅ SAP_SalesOrder_Code__c found:", encashedUniqueCode);
+                            } else {
+                                console.log("❌ No SAP_SalesOrder_Code__c found for opportunity:", opp);
                             }
+                        } else {
+                            console.log("❌ No referral_name or empty opportunityOptionsGlobal");
+                            console.log("referral_name:", req.referral_name);
+                            console.log("opportunityOptionsGlobal.length:", opportunityOptionsGlobal.length);
                         }
+                        
+                        console.log("🔍 Final encashedUniqueCode:", encashedUniqueCode);
+                        console.log("🔍 encashedUniqueCode is empty:", encashedUniqueCode === "");
+                        
                         if (loyaltyMemberId && accessToken && instanceUrl) {
+                            const payload = {
+                                Category__c: "Encash",
+                                Loyalty_Member__c: loyaltyMemberId,
+                                Loyalty_Points__c: req.points_to_encash,
+                                Transaction_Type__c: "Debit",
+                                Encashed_Unique_Code__c: encashedUniqueCode // Always pass correct SAP_SalesOrder_Code__c
+                            };
+                            console.log("📤 Salesforce Debit API payload:", payload);
+                            
                             await fetch(`${instanceUrl}/services/data/v64.0/sobjects/Loyalty_Transaction__c/`, {
                                 method: 'POST',
                                 headers: {
                                     'Content-Type': 'application/json',
                                     'Authorization': `Bearer ${accessToken}`
                                 },
-                                body: JSON.stringify({
-                                    Category__c: "Encash",
-                                    Loyalty_Member__c: loyaltyMemberId,
-                                    Loyalty_Points__c: req.points_to_encash,
-                                    Transaction_Type__c: "Debit",
-                                    Encashed_Unique_Code__c: encashedUniqueCode // Always pass correct SAP_SalesOrder_Code__c
-                                })
+                                body: JSON.stringify(payload)
                             });
                         }
                         // Refresh summary cards and transactions after update
                         await fetchSummaryCards();
                         await fetchTransactions();
                     } catch (err) {
-                        // Optionally handle/log error
+                        console.error("❌ Error in fetchAndHandleEncashRequests:", err);
                     }
                 }
             }
         } catch (err) {
-            // fail silently
+            console.error("❌ Error fetching encash requests:", err);
         }
     };
 
