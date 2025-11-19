@@ -538,15 +538,6 @@ const OrderConfirmation = () => {
                                     />
                                     Work
                                 </label>
-                                <label className="flex items-center">
-                                    <input
-                                        type="checkbox"
-                                        checked={editAddress.set_as_default || false}
-                                        onChange={e => setEditAddress({ ...editAddress, set_as_default: e.target.checked })}
-                                        className="ml-2 mr-1"
-                                    />
-                                    Set as default
-                                </label>
                             </div>
                             <div className="flex justify-end mt-6 space-x-3">
                                 <button

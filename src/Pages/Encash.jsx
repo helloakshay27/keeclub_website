@@ -69,28 +69,48 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                                 const loyaltyMemberId = localStorage.getItem('Id');
                                 const accessToken = localStorage.getItem('salesforce_access_token');
                                 const instanceUrl = localStorage.getItem('salesforce_instance_url');
-                                // Find the correct SAP_SalesOrder_Code__c for the selected referral
+                                
+                                // Use SAP code only if referral names match exactly
                                 let encashedUniqueCode = "";
-                                if (req.referral_name) {
+                                if (req.referral_name && req.sap_sales_order_code) {
+                                    // Find matching opportunity by AccountNameText__c
+                                    const matchingOpp = opportunityOptions.find(o => o.AccountNameText__c === req.referral_name);
+                                    if (matchingOpp) {
+                                        // Only use the SAP code from request if names match exactly
+                                        encashedUniqueCode = req.sap_sales_order_code;
+                                        console.log("✅ Using SAP code from request for matching referral:", encashedUniqueCode);
+                                    } else {
+                                        console.log("❌ No matching referral found for:", req.referral_name);
+                                    }
+                                } else if (req.referral_name) {
+                                    // Fallback: get SAP code from filtered opportunities if exact match found
                                     const opp = opportunityOptions.find(o => o.AccountNameText__c === req.referral_name);
                                     if (opp && opp.SAP_SalesOrder_Code__c) {
                                         encashedUniqueCode = opp.SAP_SalesOrder_Code__c;
+                                        console.log("✅ Using SAP code from opportunity for exact match:", encashedUniqueCode);
                                     }
                                 }
-                                await fetch(`${instanceUrl}/services/data/v64.0/sobjects/Loyalty_Transaction__c/`, {
-                                    method: 'POST',
-                                    headers: {
-                                        'Content-Type': 'application/json',
-                                        'Authorization': `Bearer ${accessToken}`
-                                    },
-                                    body: JSON.stringify({
-                                        Category__c: "Encash",
-                                        Loyalty_Member__c: loyaltyMemberId,
-                                        Loyalty_Points__c: req.points_to_encash,
-                                        Transaction_Type__c: "Debit",
-                                        Encashed_Unique_Code__c: encashedUniqueCode
-                                    })
-                                });
+                                
+                                // Only proceed if we have a valid SAP code and exact referral match
+                                if (encashedUniqueCode && encashedUniqueCode.trim() !== "") {
+                                    await fetch(`${instanceUrl}/services/data/v64.0/sobjects/Loyalty_Transaction__c/`, {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                            'Authorization': `Bearer ${accessToken}`
+                                        },
+                                        body: JSON.stringify({
+                                            Category__c: "Encash",
+                                            Loyalty_Member__c: loyaltyMemberId,
+                                            Loyalty_Points__c: req.points_to_encash,
+                                            Transaction_Type__c: "Debit",
+                                            Encashed_Unique_Code__c: encashedUniqueCode
+                                        })
+                                    });
+                                    console.log("✅ Salesforce debit transaction created with SAP code:", encashedUniqueCode);
+                                } else {
+                                    console.log("❌ Skipping Salesforce transaction - no valid SAP code or referral match");
+                                }
                             } catch (err) {
                                 // Optionally handle/log error
                             }
@@ -631,12 +651,12 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                             {/* Third Row: Points to Encash (full width) */}
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    Points want to encash
+                                    Points Accumulated to Encash
                                 </label>
                                 <input
-                                    type="number"
+                                    type="text"
                                     placeholder="Points"
-                                    value={formData.pointsToEncash || "0"}
+                                    value={formData.pointsToEncash ? Number(formData.pointsToEncash).toLocaleString('en-IN') : "0"}
                                     disabled
                                     className="w-full border border-gray-300 rounded-lg px-4 py-3 bg-gray-100"
                                 />

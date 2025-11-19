@@ -214,7 +214,8 @@ const Transactions = () => {
                     return;
                 }
 
-                const url = `${instanceUrl}/services/data/v64.0/query/?q=SELECT+Id,AccountNameText__c,Agreement_Value__c,Project_Finalized__r.Onboarding_Referral_Percentage__c,Apartment_Finalized__r.Name,Project_Finalized__r.Name,Tower_Finalized__r.Name,SAP_SalesOrder_Code__c+FROM+Opportunity+WHERE+StageName+=+'WC+/+Onboarding+done'+AND+Loyalty_Member_Unique_Id__c='${loyaltyId}'`;
+                // Updated query to include isEncashed__c filter to match Encash page
+                const url = `${instanceUrl}/services/data/v64.0/query/?q=SELECT+Id,AccountNameText__c,Agreement_Value__c,Project_Finalized__r.Onboarding_Referral_Percentage__c,Apartment_Finalized__r.Name,Project_Finalized__r.Name,Tower_Finalized__r.Name,SAP_SalesOrder_Code__c,isEncashed__c+FROM+Opportunity+WHERE+StageName+=+'WC+/+Onboarding+done'+AND+Loyalty_Member_Unique_Id__c='${loyaltyId}'+AND+isEncashed__c+=false`;
                 console.log("🔄 Fetching opportunities from:", url);
                 
                 const res = await fetch(url, {
@@ -338,17 +339,23 @@ const Transactions = () => {
                         console.log("🔍 Current opportunityOptions state:", opportunityOptions);
                         console.log("🔍 opportunityOptions length:", opportunityOptions.length);
                         
-                        // First: Try to get SAP code directly from original encash request
-                        if (req.sap_sales_order_code) {
-                            encashedUniqueCode = req.sap_sales_order_code;
-                            console.log("✅ SAP code found in original request:", encashedUniqueCode);
+                        // First: Check if referral name matches exactly in opportunities and use SAP code from request
+                        if (req.referral_name && req.sap_sales_order_code && opportunityOptions.length > 0) {
+                            const matchingOpp = opportunityOptions.find(o => o.AccountNameText__c === req.referral_name);
+                            if (matchingOpp) {
+                                encashedUniqueCode = req.sap_sales_order_code;
+                                console.log("✅ SAP code from request with exact referral match:", encashedUniqueCode);
+                            }
                         }
-                        // Second: Try to get SAP code from update response
-                        else if (updateData?.encash_request?.sap_sales_order_code) {
-                            encashedUniqueCode = updateData.encash_request.sap_sales_order_code;
-                            console.log("✅ SAP code found in update response:", encashedUniqueCode);
+                        // Second: Check if referral name matches exactly in opportunities and use SAP code from update response
+                        else if (updateData?.encash_request?.referral_name && updateData?.encash_request?.sap_sales_order_code && opportunityOptions.length > 0) {
+                            const matchingOpp = opportunityOptions.find(o => o.AccountNameText__c === updateData.encash_request.referral_name);
+                            if (matchingOpp) {
+                                encashedUniqueCode = updateData.encash_request.sap_sales_order_code;
+                                console.log("✅ SAP code from update response with exact referral match:", encashedUniqueCode);
+                            }
                         }
-                        // Third: Find by referral name from original request in opportunity options
+                        // Third: Find by referral name from original request in opportunity options and use opportunity SAP code
                         else if (req.referral_name && opportunityOptions.length > 0) {
                             const referralName = req.referral_name;
                             console.log("🔍 Searching for referral name from original request:", referralName);
@@ -366,7 +373,7 @@ const Transactions = () => {
                                 console.log("❌ No SAP_SalesOrder_Code__c found for opportunity (original req):", opp);
                             }
                         }
-                        // Fourth: Find by referral name from update response in opportunity options
+                        // Fourth: Find by referral name from update response in opportunity options and use opportunity SAP code
                         else if (updateData?.encash_request?.referral_name && opportunityOptions.length > 0) {
                             const referralName = updateData.encash_request.referral_name;
                             console.log("🔍 Searching for referral name from update response:", referralName);
@@ -384,12 +391,13 @@ const Transactions = () => {
                                 console.log("❌ No SAP_SalesOrder_Code__c found for opportunity (update response):", opp);
                             }
                         }
-                        // Fifth: If no opportunities in state, try to fetch them dynamically
+                        // Fifth: If no opportunities in state, try to fetch them dynamically and match exactly
                         else if ((req.referral_name || updateData?.encash_request?.referral_name) && opportunityOptions.length === 0) {
                             console.log("🔄 No opportunities in state, fetching dynamically...");
                             try {
                                 const loyaltyId = localStorage.getItem("Loyalty_Member_Unique_Id__c") || "";
-                                const url = `${instanceUrl}/services/data/v64.0/query/?q=SELECT+Id,AccountNameText__c,SAP_SalesOrder_Code__c+FROM+Opportunity+WHERE+StageName+=+'WC+/+Onboarding+done'+AND+Loyalty_Member_Unique_Id__c='${loyaltyId}'`;
+                                // Updated dynamic fetch to include isEncashed__c filter to avoid duplicates
+                                const url = `${instanceUrl}/services/data/v64.0/query/?q=SELECT+Id,AccountNameText__c,SAP_SalesOrder_Code__c+FROM+Opportunity+WHERE+StageName+=+'WC+/+Onboarding+done'+AND+Loyalty_Member_Unique_Id__c='${loyaltyId}'+AND+isEncashed__c+=false`;
                                 
                                 const oppRes = await fetch(url, {
                                     headers: {
@@ -398,7 +406,7 @@ const Transactions = () => {
                                     },
                                 });
                                 const oppData = await oppRes.json();
-                                console.log("🔍 Dynamically fetched opportunities:", oppData?.records || []);
+                                console.log("🔍 Dynamically fetched opportunities (filtered):", oppData?.records || []);
                                 
                                 if (oppData?.records?.length > 0) {
                                     const referralName = req.referral_name || updateData?.encash_request?.referral_name;
@@ -410,8 +418,15 @@ const Transactions = () => {
                                     });
                                     
                                     if (opp && opp.SAP_SalesOrder_Code__c) {
-                                        encashedUniqueCode = opp.SAP_SalesOrder_Code__c;
-                                        console.log("✅ SAP code found via dynamic fetch:", encashedUniqueCode);
+                                        // Prioritize SAP code from request if available and referral matches
+                                        if ((req.sap_sales_order_code && req.referral_name === referralName) || 
+                                            (updateData?.encash_request?.sap_sales_order_code && updateData?.encash_request?.referral_name === referralName)) {
+                                            encashedUniqueCode = req.sap_sales_order_code || updateData?.encash_request?.sap_sales_order_code;
+                                            console.log("✅ Using SAP code from request with dynamic match:", encashedUniqueCode);
+                                        } else {
+                                            encashedUniqueCode = opp.SAP_SalesOrder_Code__c;
+                                            console.log("✅ SAP code found via dynamic fetch (filtered):", encashedUniqueCode);
+                                        }
                                     }
                                 }
                             } catch (fetchError) {
