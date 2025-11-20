@@ -205,7 +205,20 @@ const OrderConfirmation = () => {
                     phone: selectedAddress.mobile,
                     email: selectedAddress.email,
                     address: `${selectedAddress.address}, ${selectedAddress.city}, ${selectedAddress.state} - ${selectedAddress.pinCode}`,
-                    fullDetails: selectedAddress
+                    fullDetails: {
+                        contact_person: selectedAddress.contactPerson,
+                        mobile: selectedAddress.mobile,
+                        email: selectedAddress.email,
+                        address: selectedAddress.address,
+                        address_line_two: selectedAddress.addressLineTwo, // Map correctly
+                        address_line_three: selectedAddress.addressLineThree, // Map correctly
+                        city: selectedAddress.city,
+                        state: selectedAddress.state,
+                        pin_code: selectedAddress.pinCode,
+                        country: selectedAddress.country || 'India',
+                        address_type: selectedAddress.addressType || 'home',
+                        telephone_number: selectedAddress.telephoneNumber
+                    }
                 });
             }
             // If we have addressFromAPI (newly created from POST response), use it
