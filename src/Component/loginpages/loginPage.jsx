@@ -298,10 +298,12 @@ const LoginPage = () => {
       }
 
     } catch (err) {
-      toast.error(
-        err.response?.data?.[0]?.message ||
-        "An error occurred while querying Salesforce."
-      );
+      // Prefer error from response, fallback to generic message
+      const apiError =
+        err?.response?.data?.error ||
+        err?.response?.data?.[0]?.message ||
+        "Something went wrong. Try again later.";
+      toast.error(apiError);
     } finally {
       setLoading(false);
     }
