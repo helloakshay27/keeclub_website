@@ -10,7 +10,7 @@ const OrderConfirmation = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { product, selectedAddress, addressForm, addressFromAPI, pointCode, addressId } = location.state || {};
-    
+
     const [deliveryAddress, setDeliveryAddress] = useState(null);
     const [isEditingAddress, setIsEditingAddress] = useState(false);
     const [loading, setLoading] = useState(true);
@@ -19,12 +19,12 @@ const OrderConfirmation = () => {
     const [editAddress, setEditAddress] = useState(null);
     const [editLoading, setEditLoading] = useState(false);
     // Open edit modal with current address
-    
+
     const handleEditAddress = () => {
-        
+
         // Handle both old format and new POST API response format
         const addressData = deliveryAddress.fullDetails || deliveryAddress;
-        
+
         setEditAddress({
             id: deliveryAddress.id || addressData.id,
             name: addressData.contact_person || deliveryAddress.name || '',
@@ -51,24 +51,24 @@ const OrderConfirmation = () => {
         // Validate required fields
         const requiredFields = ['address', 'city', 'state', 'pin_code', 'name', 'phone'];
         const missingFields = [];
-        
+
         // Check each required field and collect missing ones with user-friendly names
         const fieldNames = {
             address: 'Address Line 1',
             city: 'City',
-            state: 'State', 
+            state: 'State',
             pin_code: 'Pin Code',
             name: 'Name',
             phone: 'Phone'
         };
-        
+
         requiredFields.forEach(field => {
             const fieldValue = field === 'address' ? editAddress.address : editAddress[field];
             if (!fieldValue || fieldValue.trim() === '') {
                 missingFields.push(fieldNames[field]);
             }
         });
-        
+
         if (missingFields.length > 0) {
             toast.error(`Please fill in the following required fields: ${missingFields.join(', ')}`);
             return;
@@ -118,8 +118,8 @@ const OrderConfirmation = () => {
                     address_type: (editAddress.type || 'home').toLowerCase(),
                 }
             };
-            
-            
+
+
             const response = await fetch(`https://piramal-loyalty-dev.lockated.com/user_addresses/${addressId}.json`, {
                 method: 'PUT',
                 headers: {
@@ -129,10 +129,10 @@ const OrderConfirmation = () => {
                 body: JSON.stringify(payload)
             });
             const data = await response.json();
-            
+
             if (response.ok) {
                 toast.success('Address updated successfully!');
-                
+
                 // Use the direct response data (not nested in .address)
                 // Build address string properly filtering empty values
                 const addressParts = [
@@ -143,7 +143,7 @@ const OrderConfirmation = () => {
                     data.state
                 ].filter(part => part && part.trim() !== '');
                 const addressString = addressParts.join(', ') + (data.pin_code ? ` - ${data.pin_code}` : '');
-                
+
                 // Update delivery address with the PUT response data
                 setDeliveryAddress({
                     id: data.id,
@@ -182,21 +182,21 @@ const OrderConfirmation = () => {
     // Check authentication and initialize address data on component mount
     useEffect(() => {
         const authToken = localStorage.getItem('authToken');
-        
+
         // Check if user is properly authenticated
         if (!authToken || authToken === 'null') {
             toast.error('Please login to access this page');
             navigate('/login');
             return;
         }
-        
+
         initializeAddressData();
     }, [navigate]);
 
     const initializeAddressData = async () => {
         try {
             setLoading(true);
-            
+
             // If we have selectedAddress (from existing addresses), use it
             if (selectedAddress) {
                 setDeliveryAddress({
@@ -258,7 +258,7 @@ const OrderConfirmation = () => {
             // Fallback: fetch addresses from API
             else {
                 const response = await promotionAPI.getUserAddresses();
-                
+
                 if (response.success && response.data.length > 0) {
                     const defaultAddress = response.data.find(addr => addr.isDefault) || response.data[0];
                     setDeliveryAddress({
@@ -370,7 +370,7 @@ const OrderConfirmation = () => {
             <div className="min-h-screen flex items-center justify-center">
                 <div className="text-center">
                     <h2 className="text-2xl font-semibold mb-4">No product selected</h2>
-                    <button 
+                    <button
                         onClick={() => navigate('/promotions')}
                         className="bg-[#fa4615] text-white px-6 py-2 rounded hover:bg-[#e03d12]"
                     >
@@ -402,18 +402,18 @@ const OrderConfirmation = () => {
                     <p className="text-gray-600 mb-4">{error || 'No delivery address found'}</p>
                     <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
                         <p className="text-sm text-yellow-800">
-                            <strong>Note:</strong> Please ensure you have a valid address saved. 
+                            <strong>Note:</strong> Please ensure you have a valid address saved.
                             The address ID is required for order creation.
                         </p>
                     </div>
                     <div className="space-x-4">
-                        <button 
+                        <button
                             onClick={() => navigate('/redeem-points', { state: { product } })}
                             className="bg-[#fa4615] text-white px-6 py-2 rounded hover:bg-[#e03d12]"
                         >
                             Add Address
                         </button>
-                        <button 
+                        <button
                             onClick={() => navigate('/promotions')}
                             className="bg-gray-500 text-white px-6 py-2 rounded hover:bg-gray-600"
                         >
@@ -437,8 +437,8 @@ const OrderConfirmation = () => {
                                 <h2 className="text-2xl font-semibold mb-6">Order Summary</h2>
                                 <div className="flex items-center gap-6">
                                     <div className="w-32 h-32 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden border border-gray-200">
-                                        <img 
-                                            src={product.images?.[0] || product.image || product.primary_image} 
+                                        <img
+                                            src={product.images?.[0] || product.image || product.primary_image}
                                             alt={product.name}
                                             className="w-full h-full object-cover"
                                         />
@@ -474,142 +474,142 @@ const OrderConfirmation = () => {
                                         <Edit size={20} />
                                     </button>
                                 </div>
-            {/* Edit Address Modal */}
-            {showEditModal && (
-                <Modal onClose={() => setShowEditModal(false)}>
-                    <div className="bg-white p-8 rounded-lg w-full max-w-2xl">
-                        <h2 className="text-2xl font-semibold mb-6">Edit Delivery Address</h2>
-                        <form onSubmit={e => { e.preventDefault(); handleUpdateAddress(); }}>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                                <input
-                                    type="text"
-                                    placeholder="Enter Name *"
-                                    value={editAddress.name}
-                                    onChange={e => setEditAddress({ ...editAddress, name: e.target.value })}
-                                    className="border rounded px-3 py-2 w-full"
-                                />
-                                <input
-                                    type="text"
-                                    placeholder="Enter Phone *"
-                                    value={editAddress.phone}
-                                    onChange={e => setEditAddress({ ...editAddress, phone: e.target.value })}
-                                    className="border rounded px-3 py-2 w-full"
-                                />
-                                <input
-                                    type="email"
-                                    placeholder="Email"
-                                    value={editAddress.email}
-                                    onChange={e => setEditAddress({ ...editAddress, email: e.target.value })}
-                                    className="border rounded px-3 py-2 w-full"
-                                />
-                                <input
-                                    type="text"
-                                    placeholder="Address (Line 1) *"
-                                    value={editAddress.address}
-                                    onChange={e => setEditAddress({ ...editAddress, address: e.target.value })}
-                                    className="border rounded px-3 py-2 w-full"
-                                    required
-                                />
-                                <input
-                                    type="text"
-                                    placeholder="Address Line 2"
-                                    value={editAddress.address_line_two || ''}
-                                    onChange={e => setEditAddress({ ...editAddress, address_line_two: e.target.value })}
-                                    className="border rounded px-3 py-2 w-full"
-                                />
-                                <input
-                                    type="text"
-                                    placeholder="Address Line 3"
-                                    value={editAddress.address_line_three || ''}
-                                    onChange={e => setEditAddress({ ...editAddress, address_line_three: e.target.value })}
-                                    className="border rounded px-3 py-2 w-full"
-                                />
-                                <input
-                                    type="text"
-                                    placeholder="City *"
-                                    value={editAddress.city || ''}
-                                    onChange={e => setEditAddress({ ...editAddress, city: e.target.value })}
-                                    className="border rounded px-3 py-2 w-full"
-                                    required
-                                />
-                                <input
-                                    type="text"
-                                    placeholder="State *"
-                                    value={editAddress.state || ''}
-                                    onChange={e => setEditAddress({ ...editAddress, state: e.target.value })}
-                                    className="border rounded px-3 py-2 w-full"
-                                    required
-                                />
-                                <input
-                                    type="text"
-                                    placeholder="Pin Code *"
-                                    value={editAddress.pin_code || ''}
-                                    onChange={e => setEditAddress({ ...editAddress, pin_code: e.target.value })}
-                                    className="border rounded px-3 py-2 w-full"
-                                    required
-                                />
-                                <input
-                                    type="text"
-                                    placeholder="Country"
-                                    value={editAddress.country || 'India'}
-                                    onChange={e => setEditAddress({ ...editAddress, country: e.target.value })}
-                                    className="border rounded px-3 py-2 w-full"
-                                />
-                                <input
-                                    type="text"
-                                    placeholder="Telephone Number"
-                                    value={editAddress.telephone_number || ''}
-                                    onChange={e => setEditAddress({ ...editAddress, telephone_number: e.target.value })}
-                                    className="border rounded px-3 py-2 w-full"
-                                />
-                            </div>
-                            <div className="flex flex-wrap items-center gap-4 mb-4">
-                                <label className="flex items-center">
-                                    <input
-                                        type="radio"
-                                        
-                                        name="addressTypeEdit"
-                                        value="Home"
-                                        checked={editAddress.type === 'Home' || editAddress.type === 'home'}
-                                        onChange={e => setEditAddress({ ...editAddress, type: e.target.value })}
-                                        className="mr-2"
-                                    />
-                                    Home
-                                </label>
-                                <label className="flex items-center">
-                                    <input
-                                        type="radio"
-                                        name="addressTypeEdit"
-                                        value="Work"
-                                        checked={editAddress.type === 'Work' || editAddress.type === 'work'}
-                                        onChange={e => setEditAddress({ ...editAddress, type: e.target.value })}
-                                        className="mr-2"
-                                    />
-                                    Work
-                                </label>
-                            </div>
-                            <div className="flex justify-end mt-6 space-x-3">
-                                <button
-                                    type="button"
-                                    onClick={() => setShowEditModal(false)}
-                                    className="px-6 py-2 rounded bg-gray-200 text-gray-700 hover:bg-gray-300"
-                                    disabled={editLoading}
-                                >
-                                    Cancel
-                                </button>
-                                <button
-                                    type="submit"
-                                    className={`px-6 py-2 rounded bg-[#fa4615] text-white font-semibold hover:bg-[#e03d12] ${editLoading ? 'opacity-60 cursor-not-allowed' : ''}`}
-                                    disabled={editLoading}
-                                >
-                                    {editLoading ? 'Saving...' : 'Save Changes'}
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </Modal>
-            )}
-                                
+                                {/* Edit Address Modal */}
+                                {showEditModal && (
+                                    <Modal onClose={() => setShowEditModal(false)}>
+                                        <div className="bg-white p-8 rounded-lg w-full max-w-2xl">
+                                            <h2 className="text-2xl font-semibold mb-6">Edit Delivery Address</h2>
+                                            <form onSubmit={e => { e.preventDefault(); handleUpdateAddress(); }}>
+                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                                    <input
+                                                        type="text"
+                                                        placeholder="Enter Name *"
+                                                        value={editAddress.name}
+                                                        onChange={e => setEditAddress({ ...editAddress, name: e.target.value })}
+                                                        className="border rounded px-3 py-2 w-full"
+                                                    />
+                                                    <input
+                                                        type="text"
+                                                        placeholder="Enter Phone *"
+                                                        value={editAddress.phone}
+                                                        onChange={e => setEditAddress({ ...editAddress, phone: e.target.value })}
+                                                        className="border rounded px-3 py-2 w-full"
+                                                    />
+                                                    <input
+                                                        type="email"
+                                                        placeholder="Email"
+                                                        value={editAddress.email}
+                                                        onChange={e => setEditAddress({ ...editAddress, email: e.target.value })}
+                                                        className="border rounded px-3 py-2 w-full"
+                                                    />
+                                                    <input
+                                                        type="text"
+                                                        placeholder="Address (Line 1) *"
+                                                        value={editAddress.address}
+                                                        onChange={e => setEditAddress({ ...editAddress, address: e.target.value })}
+                                                        className="border rounded px-3 py-2 w-full"
+                                                        required
+                                                    />
+                                                    <input
+                                                        type="text"
+                                                        placeholder="Address Line 2"
+                                                        value={editAddress.address_line_two || ''}
+                                                        onChange={e => setEditAddress({ ...editAddress, address_line_two: e.target.value })}
+                                                        className="border rounded px-3 py-2 w-full"
+                                                    />
+                                                    <input
+                                                        type="text"
+                                                        placeholder="Address Line 3"
+                                                        value={editAddress.address_line_three || ''}
+                                                        onChange={e => setEditAddress({ ...editAddress, address_line_three: e.target.value })}
+                                                        className="border rounded px-3 py-2 w-full"
+                                                    />
+                                                    <input
+                                                        type="text"
+                                                        placeholder="City *"
+                                                        value={editAddress.city || ''}
+                                                        onChange={e => setEditAddress({ ...editAddress, city: e.target.value })}
+                                                        className="border rounded px-3 py-2 w-full"
+                                                        required
+                                                    />
+                                                    <input
+                                                        type="text"
+                                                        placeholder="State *"
+                                                        value={editAddress.state || ''}
+                                                        onChange={e => setEditAddress({ ...editAddress, state: e.target.value })}
+                                                        className="border rounded px-3 py-2 w-full"
+                                                        required
+                                                    />
+                                                    <input
+                                                        type="text"
+                                                        placeholder="Pin Code *"
+                                                        value={editAddress.pin_code || ''}
+                                                        onChange={e => setEditAddress({ ...editAddress, pin_code: e.target.value })}
+                                                        className="border rounded px-3 py-2 w-full"
+                                                        required
+                                                    />
+                                                    <input
+                                                        type="text"
+                                                        placeholder="Country"
+                                                        value={editAddress.country || 'India'}
+                                                        onChange={e => setEditAddress({ ...editAddress, country: e.target.value })}
+                                                        className="border rounded px-3 py-2 w-full"
+                                                    />
+                                                    <input
+                                                        type="text"
+                                                        placeholder="Telephone Number"
+                                                        value={editAddress.telephone_number || ''}
+                                                        onChange={e => setEditAddress({ ...editAddress, telephone_number: e.target.value })}
+                                                        className="border rounded px-3 py-2 w-full"
+                                                    />
+                                                </div>
+                                                <div className="flex flex-wrap items-center gap-4 mb-4">
+                                                    <label className="flex items-center">
+                                                        <input
+                                                            type="radio"
+
+                                                            name="addressTypeEdit"
+                                                            value="Home"
+                                                            checked={editAddress.type === 'Home' || editAddress.type === 'home'}
+                                                            onChange={e => setEditAddress({ ...editAddress, type: e.target.value })}
+                                                            className="mr-2"
+                                                        />
+                                                        Home
+                                                    </label>
+                                                    <label className="flex items-center">
+                                                        <input
+                                                            type="radio"
+                                                            name="addressTypeEdit"
+                                                            value="Work"
+                                                            checked={editAddress.type === 'Work' || editAddress.type === 'work'}
+                                                            onChange={e => setEditAddress({ ...editAddress, type: e.target.value })}
+                                                            className="mr-2"
+                                                        />
+                                                        Work
+                                                    </label>
+                                                </div>
+                                                <div className="flex justify-end mt-6 space-x-3">
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setShowEditModal(false)}
+                                                        className="px-6 py-2 rounded bg-gray-200 text-gray-700 hover:bg-gray-300"
+                                                        disabled={editLoading}
+                                                    >
+                                                        Cancel
+                                                    </button>
+                                                    <button
+                                                        type="submit"
+                                                        className={`px-6 py-2 rounded bg-[#fa4615] text-white font-semibold hover:bg-[#e03d12] ${editLoading ? 'opacity-60 cursor-not-allowed' : ''}`}
+                                                        disabled={editLoading}
+                                                    >
+                                                        {editLoading ? 'Saving...' : 'Save Changes'}
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </Modal>
+                                )}
+
                                 {isEditingAddress ? (
                                     <div className="border rounded-lg p-4 space-y-4">
                                         <div className="grid md:grid-cols-2 gap-4">
@@ -617,42 +617,42 @@ const OrderConfirmation = () => {
                                                 type="text"
                                                 placeholder="Name"
                                                 value={deliveryAddress.name}
-                                                onChange={(e) => setDeliveryAddress({...deliveryAddress, name: e.target.value})}
+                                                onChange={(e) => setDeliveryAddress({ ...deliveryAddress, name: e.target.value })}
                                                 className="border rounded px-3 py-2"
                                             />
                                             <input
                                                 type="text"
                                                 placeholder="Phone"
                                                 value={deliveryAddress.phone}
-                                                onChange={(e) => setDeliveryAddress({...deliveryAddress, phone: e.target.value})}
+                                                onChange={(e) => setDeliveryAddress({ ...deliveryAddress, phone: e.target.value })}
                                                 className="border rounded px-3 py-2"
                                             />
                                         </div>
                                         <textarea
                                             placeholder="Full Address"
                                             value={deliveryAddress.address}
-                                            onChange={(e) => setDeliveryAddress({...deliveryAddress, address: e.target.value})}
+                                            onChange={(e) => setDeliveryAddress({ ...deliveryAddress, address: e.target.value })}
                                             className="w-full border rounded px-3 py-2 h-20"
                                         />
                                         <div className="flex space-x-4">
                                             <label className="flex items-center">
-                                                <input 
-                                                    type="radio" 
-                                                    name="addressType" 
+                                                <input
+                                                    type="radio"
+                                                    name="addressType"
                                                     value="home"
                                                     checked={deliveryAddress.type === 'home'}
-                                                    onChange={(e) => setDeliveryAddress({...deliveryAddress, type: e.target.value})}
+                                                    onChange={(e) => setDeliveryAddress({ ...deliveryAddress, type: e.target.value })}
                                                     className="mr-2"
                                                 />
                                                 Home (All day delivery)
                                             </label>
                                             <label className="flex items-center">
-                                                <input 
-                                                    type="radio" 
-                                                    name="addressType" 
+                                                <input
+                                                    type="radio"
+                                                    name="addressType"
                                                     value="work"
                                                     checked={deliveryAddress.type === 'work'}
-                                                    onChange={(e) => setDeliveryAddress({...deliveryAddress, type: e.target.value})}
+                                                    onChange={(e) => setDeliveryAddress({ ...deliveryAddress, type: e.target.value })}
                                                     className="mr-2"
                                                 />
                                                 Work (delivery between 10 am to 5pm)
@@ -691,9 +691,9 @@ const OrderConfirmation = () => {
                                                         deliveryAddress.fullDetails.state,
                                                     ]
                                                         .filter(part => part && part.trim() !== '')
-                                                        .join(', ') + 
-                                                    (deliveryAddress.fullDetails.pin_code 
-                                                        ? ` - ${deliveryAddress.fullDetails.pin_code}` 
+                                                        .join(', ') +
+                                                    (deliveryAddress.fullDetails.pin_code
+                                                        ? ` - ${deliveryAddress.fullDetails.pin_code}`
                                                         : '')
                                                     : deliveryAddress.address}
                                             </span>
@@ -702,8 +702,8 @@ const OrderConfirmation = () => {
                                 )}
                             </div>
                             <div className="flex align-items-end">
-                                <p style={{fontSize: '16px', fontWeight: '500', color: '#f9461c'}} > Note:</p>
-                                <span style={{fontSize: '14px', color: '#555', marginLeft: '4px', marginTop:'2px'}}>Estimated delivery timeline is 30–60 days from the order date. Delays may occur due to logistics or product availability.</span>
+                                <p style={{ fontSize: '16px', fontWeight: '500', color: '#f9461c' }} > Note:</p>
+                                <span style={{ fontSize: '14px', color: '#555', marginLeft: '4px', marginTop: '2px' }}>Estimated delivery timeline is 30–60 days from the order date. Delays may occur due to logistics or product availability.</span>
                             </div>
                         </div>
 
@@ -785,21 +785,20 @@ const OrderConfirmation = () => {
                         <button
                             onClick={handleConfirmOrder}
                             disabled={loading}
-                            className={`px-16 py-4 rounded-lg text-lg font-semibold transition-colors ${
-                                loading 
-                                    ? 'bg-gray-400 cursor-not-allowed' 
+                            className={`px-16 py-4 rounded-lg text-lg font-semibold transition-colors ${loading
+                                    ? 'bg-gray-400 cursor-not-allowed'
                                     : 'bg-[#24293c] hover:bg-[#1a1f2e]'
-                            } text-white`}
+                                } text-white`}
                         >
                             {loading ? 'Processing Order...' : 'Confirm Order'}
                         </button>
-                        
+
                         {/* Order Summary Info */}
                         <div className="mt-6 text-sm text-gray-600">
                             <p>By confirming, you agree to redeem {(product.loyalty_points_required || product.points || 0).toLocaleString('en-IN')} points for this product.</p>
                             <p>Estimated delivery: 30-60 business days</p>
                         </div>
-                        
+
                         {/* Debug Info for Development */}
                         {/* <div className="mt-4 p-3 bg-gray-50 rounded text-xs text-gray-500">
                             <p><strong>Debug Info:</strong></p>
