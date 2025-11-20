@@ -43,6 +43,21 @@ const OrderConfirmation = () => {
             type: (addressData.address_type === 'default' ? 'home' : addressData.address_type) || deliveryAddress.type || 'home',
             set_as_default: addressData['is_default?'] || addressData.set_as_default || false
         });
+        console.log("🔍 Edit address data being set:", {
+            id: deliveryAddress.id || addressData.id,
+            name: addressData.contact_person || deliveryAddress.name || '',
+            phone: addressData.mobile || deliveryAddress.phone || '',
+            email: addressData.email || deliveryAddress.email || '',
+            address: addressData.address || addressData.fullAddress || '',
+            address_line_two: addressData.address_line_two || '',
+            address_line_three: addressData.address_line_three || '',
+            city: addressData.city || '',
+            state: addressData.state || '',
+            pin_code: addressData.pin_code || addressData.pinCode || '',
+            country: addressData.country || 'India',
+            telephone_number: addressData.telephone_number || '',
+            type: (addressData.address_type === 'default' ? 'home' : addressData.address_type) || deliveryAddress.type || 'home'
+        });
         setShowEditModal(true);
     };
 
@@ -135,30 +150,42 @@ const OrderConfirmation = () => {
             
             console.log("📥 Address update response:", data);
             
-            if (response.ok && data.success !== false) {
+            if (response.ok) {
                 toast.success('Address updated successfully!');
                 
-                // Handle both response formats (direct data or nested in .address)
-                const addressData = data.address || data;
-                
+                // Use the direct response data (not nested in .address)
                 // Build address string properly filtering empty values
                 const addressParts = [
-                    addressData.address,
-                    addressData.address_line_two,
-                    addressData.address_line_three,
-                    addressData.city,
-                    addressData.state
+                    data.address,
+                    data.address_line_two,
+                    data.address_line_three,
+                    data.city,
+                    data.state
                 ].filter(part => part && part.trim() !== '');
-                const addressString = addressParts.join(', ') + (addressData.pin_code ? ` - ${addressData.pin_code}` : '');
+                const addressString = addressParts.join(', ') + (data.pin_code ? ` - ${data.pin_code}` : '');
                 
+                // Update delivery address with the PUT response data
                 setDeliveryAddress({
-                    id: addressData.id,
-                    name: addressData.contact_person,
-                    type: addressData.address_type || 'home',
-                    phone: addressData.mobile,
-                    email: addressData.email,
+                    id: data.id,
+                    name: data.contact_person,
+                    type: data.address_type || 'home',
+                    phone: data.mobile,
+                    email: data.email,
                     address: addressString,
-                    fullDetails: addressData
+                    fullDetails: {
+                        contact_person: data.contact_person,
+                        mobile: data.mobile,
+                        email: data.email,
+                        address: data.address,
+                        address_line_two: data.address_line_two,
+                        address_line_three: data.address_line_three,
+                        city: data.city,
+                        state: data.state,
+                        pin_code: data.pin_code,
+                        country: data.country,
+                        address_type: data.address_type,
+                        telephone_number: data.telephone_number
+                    }
                 });
                 setShowEditModal(false);
             } else {
