@@ -881,7 +881,7 @@ const Transactions = () => {
                                 <th className="px-4 py-3">Date & Time</th>
                                 <th className="px-4 py-3">Transaction Type</th>
                                 <th className="px-4 py-3">Category</th>
-                                <th className="px-4 py-3">Transaction Name</th>
+                                <th className="px-4 py-3">Transaction ID</th>
                                 <th className="px-4 py-3 text-right">Earned Points</th>
                             </tr>
                         </thead>
@@ -911,7 +911,9 @@ const Transactions = () => {
                                             {item?.transaction_type || "--"}
                                         </td>
                                         <td className="px-4 py-3 capitalize">
-                                            {item?.category || "--"}
+                                            {(item?.transaction_type === "Credit" && Number(item?.points) === 200)
+                                                ? "Referred"
+                                                : (item?.category || "--")}
                                         </td>
                                         <td className="px-4 py-3">{item?.remarks || "--"}</td>
                                         <td className="px-4 py-3 text-right">
