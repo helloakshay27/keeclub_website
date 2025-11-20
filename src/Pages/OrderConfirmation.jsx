@@ -9,7 +9,7 @@ import promotionAPI from '../services/promotionAPI';
 const OrderConfirmation = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    const { product, selectedAddress, addressForm, pointCode, addressId } = location.state || {};
+    const { product, selectedAddress, addressForm, addressFromAPI, pointCode, addressId } = location.state || {};
     
     const [deliveryAddress, setDeliveryAddress] = useState(null);
     const [isEditingAddress, setIsEditingAddress] = useState(false);
@@ -22,21 +22,26 @@ const OrderConfirmation = () => {
     console.log("deliveryAddress:--",deliveryAddress);
     
     const handleEditAddress = () => {
+        console.log("🔍 Current deliveryAddress for editing:", deliveryAddress);
+        
+        // Handle both old format and new POST API response format
+        const addressData = deliveryAddress.fullDetails || deliveryAddress;
+        
         setEditAddress({
-            id: deliveryAddress.id,
-            name: deliveryAddress.fullDetails?.contact_person || deliveryAddress.name || '',
-            phone: deliveryAddress.fullDetails?.mobile || deliveryAddress.phone || '',
-            email: deliveryAddress.fullDetails?.email || deliveryAddress.email || '',
-            address: deliveryAddress.fullDetails?.address || '',
-            address_line_two: deliveryAddress.fullDetails?.address_line_two || '',
-            address_line_three: deliveryAddress.fullDetails?.address_line_three || '',
-            city: deliveryAddress.fullDetails?.city || '',
-            state: deliveryAddress.fullDetails?.state || '',
-            pin_code: deliveryAddress.fullDetails?.pin_code || '',
-            country: deliveryAddress.fullDetails?.country || 'India',
-            telephone_number: deliveryAddress.fullDetails?.telephone_number || '',
-            type: deliveryAddress.fullDetails?.address_type || deliveryAddress.type || 'home',
-            set_as_default: deliveryAddress.fullDetails?.set_as_default || false
+            id: deliveryAddress.id || addressData.id,
+            name: addressData.contact_person || deliveryAddress.name || '',
+            phone: addressData.mobile || deliveryAddress.phone || '',
+            email: addressData.email || deliveryAddress.email || '',
+            address: addressData.address || addressData.fullAddress || '',
+            address_line_two: addressData.address_line_two || '',
+            address_line_three: addressData.address_line_three || '',
+            city: addressData.city || '',
+            state: addressData.state || '',
+            pin_code: addressData.pin_code || addressData.pinCode || '',
+            country: addressData.country || 'India',
+            telephone_number: addressData.telephone_number || '',
+            type: (addressData.address_type === 'default' ? 'home' : addressData.address_type) || deliveryAddress.type || 'home',
+            set_as_default: addressData['is_default?'] || addressData.set_as_default || false
         });
         setShowEditModal(true);
     };
@@ -115,6 +120,9 @@ const OrderConfirmation = () => {
                     address_type: (editAddress.type || 'home').toLowerCase(),
                 }
             };
+            
+            console.log("📤 Updating address with payload:", payload);
+            
             const response = await fetch(`https://piramal-loyalty-dev.lockated.com/user_addresses/${addressId}.json`, {
                 method: 'PUT',
                 headers: {
@@ -124,32 +132,40 @@ const OrderConfirmation = () => {
                 body: JSON.stringify(payload)
             });
             const data = await response.json();
+            
+            console.log("📥 Address update response:", data);
+            
             if (response.ok && data.success !== false) {
                 toast.success('Address updated successfully!');
-                // Use the API response for delivery address card with proper filtering
+                
+                // Handle both response formats (direct data or nested in .address)
+                const addressData = data.address || data;
+                
+                // Build address string properly filtering empty values
                 const addressParts = [
-                    data.address,
-                    data.address_line_two,
-                    data.address_line_three,
-                    data.city,
-                    data.state
+                    addressData.address,
+                    addressData.address_line_two,
+                    addressData.address_line_three,
+                    addressData.city,
+                    addressData.state
                 ].filter(part => part && part.trim() !== '');
-                const addressString = addressParts.join(', ') + (data.pin_code ? ` - ${data.pin_code}` : '');
+                const addressString = addressParts.join(', ') + (addressData.pin_code ? ` - ${addressData.pin_code}` : '');
                 
                 setDeliveryAddress({
-                    id: data.id,
-                    name: data.contact_person,
-                    type: data.address_type || 'home',
-                    phone: data.mobile,
-                    email: data.email,
+                    id: addressData.id,
+                    name: addressData.contact_person,
+                    type: addressData.address_type || 'home',
+                    phone: addressData.mobile,
+                    email: addressData.email,
                     address: addressString,
-                    fullDetails: data
+                    fullDetails: addressData
                 });
                 setShowEditModal(false);
             } else {
                 toast.error(data.message || 'Failed to update address.');
             }
         } catch (err) {
+            console.error("❌ Error updating address:", err);
             toast.error('Error updating address.');
         } finally {
             setEditLoading(false);
@@ -189,7 +205,30 @@ const OrderConfirmation = () => {
                 });
                 console.log('✅ Using existing selected address:', selectedAddress);
             }
-            // If we have addressForm (newly created), use it
+            // If we have addressFromAPI (newly created from POST response), use it
+            else if (addressFromAPI) {
+                // Build address string from POST API response format
+                const addressParts = [
+                    addressFromAPI.address,
+                    addressFromAPI.address_line_two,
+                    addressFromAPI.address_line_three,
+                    addressFromAPI.city,
+                    addressFromAPI.state
+                ].filter(part => part && part.trim() !== '');
+                const addressString = addressParts.join(', ') + (addressFromAPI.pin_code ? ` - ${addressFromAPI.pin_code}` : '');
+
+                setDeliveryAddress({
+                    id: addressFromAPI.id,
+                    name: addressFromAPI.contact_person,
+                    type: addressFromAPI.address_type === 'default' ? 'home' : addressFromAPI.address_type,
+                    phone: addressFromAPI.mobile,
+                    email: addressFromAPI.email,
+                    address: addressString,
+                    fullDetails: addressFromAPI
+                });
+                console.log('✅ Using address from POST API response:', addressFromAPI);
+            }
+            // If we have addressForm (fallback), use it
             else if (addressForm) {
                 setDeliveryAddress({
                     id: addressId,
@@ -198,9 +237,21 @@ const OrderConfirmation = () => {
                     phone: addressForm.contactNumber,
                     email: addressForm.email,
                     address: `${addressForm.fullAddress}, ${addressForm.city}, ${addressForm.state} - ${addressForm.pinCode}`,
-                    fullDetails: addressForm
+                    fullDetails: {
+                        contact_person: addressForm.name,
+                        mobile: addressForm.contactNumber,
+                        email: addressForm.email,
+                        address: addressForm.fullAddress,
+                        address_line_two: addressForm.addressLineTwo || '',
+                        address_line_three: addressForm.addressLineThree || '',
+                        city: addressForm.city,
+                        state: addressForm.state,
+                        pin_code: addressForm.pinCode,
+                        country: 'India',
+                        address_type: addressForm.addressType || 'home'
+                    }
                 });
-                console.log('✅ Using newly created address:', addressForm);
+                console.log('✅ Using form address data:', addressForm);
             }
             // Fallback: fetch addresses from API
             else {
@@ -590,8 +641,8 @@ const OrderConfirmation = () => {
                                                 <input 
                                                     type="radio" 
                                                     name="addressType" 
-                                                    value="Home"
-                                                    checked={deliveryAddress.type === 'Home'}
+                                                    value="home"
+                                                    checked={deliveryAddress.type === 'home'}
                                                     onChange={(e) => setDeliveryAddress({...deliveryAddress, type: e.target.value})}
                                                     className="mr-2"
                                                 />
@@ -601,8 +652,8 @@ const OrderConfirmation = () => {
                                                 <input 
                                                     type="radio" 
                                                     name="addressType" 
-                                                    value="Work"
-                                                    checked={deliveryAddress.type === 'Work'}
+                                                    value="work"
+                                                    checked={deliveryAddress.type === 'work'}
                                                     onChange={(e) => setDeliveryAddress({...deliveryAddress, type: e.target.value})}
                                                     className="mr-2"
                                                 />
@@ -636,15 +687,15 @@ const OrderConfirmation = () => {
                                                 {deliveryAddress.fullDetails
                                                     ? [
                                                         deliveryAddress.fullDetails.address,
-                                                        deliveryAddress.fullDetails.addressLineTwo || deliveryAddress.fullDetails.address_line_two,
-                                                        deliveryAddress.fullDetails.addressLineThree || deliveryAddress.fullDetails.address_line_three,
+                                                        deliveryAddress.fullDetails.address_line_two,
+                                                        deliveryAddress.fullDetails.address_line_three,
                                                         deliveryAddress.fullDetails.city,
                                                         deliveryAddress.fullDetails.state,
                                                     ]
                                                         .filter(part => part && part.trim() !== '')
                                                         .join(', ') + 
-                                                    (deliveryAddress.fullDetails.pinCode || deliveryAddress.fullDetails.pin_code 
-                                                        ? ` - ${deliveryAddress.fullDetails.pinCode || deliveryAddress.fullDetails.pin_code}` 
+                                                    (deliveryAddress.fullDetails.pin_code 
+                                                        ? ` - ${deliveryAddress.fullDetails.pin_code}` 
                                                         : '')
                                                     : deliveryAddress.address}
                                             </span>

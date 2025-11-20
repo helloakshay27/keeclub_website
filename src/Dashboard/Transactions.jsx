@@ -129,7 +129,8 @@ const Transactions = () => {
         setLoading(true);
         try {
             const instanceUrl = localStorage.getItem("salesforce_instance_url");
-            const query = `SELECT Id, Name, Loyalty_Points__c, Loyalty_Member__c, Transaction_Type__c, CreatedDate FROM Loyalty_Transaction__c WHERE Loyalty_Member__r.Phone_Mobile_Number__c = '${mobile}' ORDER BY CreatedDate DESC LIMIT 2000`;
+            // Updated query to include Category__c field
+            const query = `SELECT Id, Name, Loyalty_Points__c, Loyalty_Member__c, Transaction_Type__c, Category__c, CreatedDate FROM Loyalty_Transaction__c WHERE Loyalty_Member__r.Phone_Mobile_Number__c = '${mobile}' ORDER BY CreatedDate DESC LIMIT 2000`;
             const url = `${instanceUrl}/services/data/v64.0/query/?q=${encodeURIComponent(query)}`;
             const res = await axios.get(url, {
                 headers: {
@@ -163,13 +164,14 @@ const Transactions = () => {
                 });
                 records = refetch.data?.records || [];
             }
-            // Map to UI format
+            // Map to UI format with Category included
             setTransactions(
                 records.map((item) => ({
                     created_at: item.CreatedDate,
                     transaction_type: item.Transaction_Type__c,
                     remarks: item.Name,
                     points: item.Loyalty_Points__c,
+                    category: item.Category__c // Add category field
                 }))
             );
         } catch (err) {
@@ -878,6 +880,7 @@ const Transactions = () => {
                             <tr>
                                 <th className="px-4 py-3">Date & Time</th>
                                 <th className="px-4 py-3">Transaction Type</th>
+                                <th className="px-4 py-3">Category</th>
                                 <th className="px-4 py-3">Transaction Name</th>
                                 <th className="px-4 py-3 text-right">Earned Points</th>
                             </tr>
@@ -885,7 +888,7 @@ const Transactions = () => {
                         <tbody className="text-gray-700">
                             {loading ? (
                                 <tr>
-                                    <td colSpan="4" className="text-center text-gray-500 px-4 py-4">
+                                    <td colSpan="5" className="text-center text-gray-500 px-4 py-4">
                                         Loading...
                                     </td>
                                 </tr>
@@ -907,6 +910,9 @@ const Transactions = () => {
                                         <td className="px-4 py-3 capitalize">
                                             {item?.transaction_type || "--"}
                                         </td>
+                                        <td className="px-4 py-3 capitalize">
+                                            {item?.category || "--"}
+                                        </td>
                                         <td className="px-4 py-3">{item?.remarks || "--"}</td>
                                         <td className="px-4 py-3 text-right">
                                             {typeof item?.points === "number"
@@ -917,7 +923,7 @@ const Transactions = () => {
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan="4" className="text-center text-gray-500 px-4 py-4">
+                                    <td colSpan="5" className="text-center text-gray-500 px-4 py-4">
                                         No transactions available.
                                     </td>
                                 </tr>

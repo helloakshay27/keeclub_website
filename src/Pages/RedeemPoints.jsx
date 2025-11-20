@@ -117,16 +117,20 @@ const RedeemPoints = () => {
             const addressResponse = await promotionAPI.createAddress(addressForm);
             
             if (addressResponse.success) {
-                console.log('✅ Address created successfully');
+                console.log('✅ Address created successfully:', addressResponse.data);
                 toast.success('Address saved successfully! Redirecting to order confirmation...');
                 
-                // Navigate to order confirmation with address details
+                // Handle both response formats - use the address data from the response
+                const createdAddress = addressResponse.data.address || addressResponse.data;
+                
+                // Navigate to order confirmation with the actual API response address data
                 navigate('/order-confirmation', {
                     state: {
                         product: product,
-                        addressForm: addressForm,
+                        addressForm: null, // Don't pass form data, use API response instead
+                        addressFromAPI: createdAddress, // Pass the actual API response
                         pointCode: pointCode,
-                        addressId: addressResponse.data.id
+                        addressId: createdAddress.id
                     }
                 });
             } else {
@@ -327,7 +331,7 @@ const RedeemPoints = () => {
                                             placeholder="Enter State"
                                         />
                                     </div>
-                                    <div>
+                                    {/* <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">Landmark</label>
                                         <input
                                             type="text"
@@ -336,7 +340,7 @@ const RedeemPoints = () => {
                                             onChange={(e) => handleInputChange('landmark', e.target.value)}
                                             className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#fa4615]"
                                         />
-                                    </div>
+                                    </div> */}
                                 </div>
 
                                 {/* Address Type */}
