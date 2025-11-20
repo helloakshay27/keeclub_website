@@ -509,7 +509,7 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
             <form onSubmit={handleSubmit} className="bg-white rounded-lg border border-gray-200 p-8">
                 {/* Opportunity Dropdown */}
                 <div className="mb-8">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
                         <div>
                             <label className="block mb-2 font-medium text-gray-700">
                                 Name of the Referred Person <span className="text-red-500">*</span>
