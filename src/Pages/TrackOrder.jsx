@@ -378,7 +378,15 @@ const TrackOrder = () => {
                                         <p className="font-medium text-gray-800">
                                             Delivery Address
                                         </p>
-                                        <p>{orderData.shippingAddress.address}</p>
+                                        <p>
+                                            {[
+                                                orderData.shippingAddress.address,
+                                                orderData.shippingAddress.address_line_two,
+                                                orderData.shippingAddress.address_line_three
+                                            ]
+                                                .filter(part => part && part.trim() !== '')
+                                                .join(', ')}
+                                        </p>
                                         <p>{orderData.shippingAddress.city}, {orderData.shippingAddress.state}</p>
                                         <p>PIN: {orderData.shippingAddress.pinCode}</p>
                                     </>
