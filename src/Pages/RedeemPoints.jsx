@@ -34,25 +34,21 @@ const RedeemPoints = () => {
         
         // Check if user is properly authenticated
         if (!authToken || authToken === 'null') {
-            console.log('🔐 User not authenticated, redirecting to login');
             toast.error('Please login to access this page');
             navigate('/login');
             return;
         }
         
-        console.log('🔐 User authenticated, proceeding to fetch addresses');
         fetchUserAddresses();
     }, [navigate]);
 
     const fetchUserAddresses = async () => {
         setAddressLoading(true);
         try {
-            console.log('🔄 Fetching user addresses...');
             const response = await promotionAPI.getUserAddresses();
             
             if (response.success && response.data.length > 0) {
                 setExistingAddresses(response.data);
-                console.log('✅ Addresses loaded:', response.data);
                 
                 // If addresses exist, skip to order confirmation
                 const defaultAddress = response.data.find(addr => addr.isDefault) || response.data[0];
@@ -70,7 +66,6 @@ const RedeemPoints = () => {
             } else {
                 // No addresses found, show address form
                 setShowAddressForm(true);
-                console.log('📝 No addresses found, showing address form');
             }
         } catch (error) {
             console.error('❌ Error fetching addresses:', error);
@@ -113,11 +108,9 @@ const RedeemPoints = () => {
             setLoading(true);
             
             // Create address via API
-            console.log('🏠 Creating address...');
             const addressResponse = await promotionAPI.createAddress(addressForm);
             
             if (addressResponse.success) {
-                console.log('✅ Address created successfully:', addressResponse.data);
                 toast.success('Address saved successfully! Redirecting to order confirmation...');
                 
                 // Handle both response formats - use the address data from the response

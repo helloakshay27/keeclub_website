@@ -78,7 +78,6 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                                     if (matchingOpp) {
                                         // Only use the SAP code from request if names match exactly
                                         encashedUniqueCode = req.sap_sales_order_code;
-                                        console.log("✅ Using SAP code from request for matching referral:", encashedUniqueCode);
                                     } else {
                                         console.log("❌ No matching referral found for:", req.referral_name);
                                     }
@@ -87,7 +86,6 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                                     const opp = opportunityOptions.find(o => o.AccountNameText__c === req.referral_name);
                                     if (opp && opp.SAP_SalesOrder_Code__c) {
                                         encashedUniqueCode = opp.SAP_SalesOrder_Code__c;
-                                        console.log("✅ Using SAP code from opportunity for exact match:", encashedUniqueCode);
                                     }
                                 }
                                 
@@ -107,9 +105,8 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                                             Encashed_Unique_Code__c: encashedUniqueCode
                                         })
                                     });
-                                    console.log("✅ Salesforce debit transaction created with SAP code:", encashedUniqueCode);
                                 } else {
-                                    console.log("❌ Skipping Salesforce transaction - no valid SAP code or referral match");
+                                    // console.log("❌ Skipping Salesforce transaction - no valid SAP code or referral match");
                                 }
                             } catch (err) {
                                 // Optionally handle/log error
@@ -272,7 +269,6 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                 // Updated query to include isEncashed__c filter as per Postman request
                 const url = `${instanceUrl}/services/data/v64.0/query/?q=SELECT+Id,AccountNameText__c,Agreement_Value__c,Project_Finalized__r.Onboarding_Referral_Percentage__c,Apartment_Finalized__r.Name,Project_Finalized__r.Name,Tower_Finalized__r.Name,SAP_SalesOrder_Code__c,isEncashed__c+FROM+Opportunity+WHERE+StageName+=+'WC+/+Onboarding+done'+AND+Loyalty_Member_Unique_Id__c='${loyaltyId}'+AND+isEncashed__c+=false`;
                 
-                console.log("🔄 Fetching opportunities with query:", url);
                 
                 const res = await fetch(url, {
                     headers: {
@@ -282,12 +278,8 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                 });
                 const data = await res.json();
                 
-                console.log("✅ Opportunities API response:", data);
-                console.log("✅ Filtered opportunities (isEncashed=false):", data?.records || []);
-                
                 setOpportunityOptions(data?.records || []);
             } catch (err) {
-                console.error("❌ Error fetching opportunities:", err);
                 setOpportunityOptions([]);
             }
         };
@@ -358,8 +350,6 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
 
             // Get SAP Sales Order Code for logging
             const sapCode = selectedOpportunity?.SAP_SalesOrder_Code__c || "";
-            console.log("🔍 SAP code being submitted:", sapCode);
-            console.log("🔍 Selected opportunity:", selectedOpportunity);
 
             // Build request body as per API spec, include selected opportunity fields
             const encashRequestBody = {
@@ -381,7 +371,6 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                 }
             };
 
-            console.log("📤 Complete encash request payload:", encashRequestBody);
 
             const authToken = localStorage.getItem('authToken');
             const res = await fetch(`${BASE_URL}encash_requests.json`, {
@@ -396,8 +385,6 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                 body: JSON.stringify(encashRequestBody)
             });
             const response = await res.json();
-
-            console.log("📥 Encash request response:", response);
 
             if (res.ok || res.status === 201) {
                 setSuccess(true);
@@ -424,13 +411,6 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                 toast.error(response.message || 'Failed to submit encash request. Please try again.');
             }
         } catch (error) {
-            console.error('Error submitting encash request:', error);
-            console.error('Error details:', {
-                message: error.message,
-                stack: error.stack,
-                name: error.name
-            });
-
             // More detailed error message
             let errorMessage = 'An error occurred while submitting your request.';
             if (error.message) {
@@ -443,55 +423,6 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
             toast.error(errorMessage);
         } finally {
             setLoading(false);
-        }
-    };
-
-    // Test function to debug API connection
-    const testAPIConnection = async () => {
-        console.log('Testing API connection...');
-        console.log('Base URL:', 'https://piramal-loyalty-dev.lockated.com/');
-        console.log('Auth Token:', localStorage.getItem('authToken'));
-        console.log('Member Data:', memberData);
-
-        try {
-            const testPayload = {
-                encash_request: {
-                    points_to_encash: 1000,
-                    facilitation_fee: 20,
-                    amount_payable: 980,
-                    account_number: "test123",
-                    ifsc_code: "TEST0000123",
-                    branch_name: "Test Branch",
-                    person_name: "Test User",
-                    terms_accepted: true
-                }
-            };
-
-            console.log('Test payload:', testPayload);
-
-            const response = await fetch('https://piramal-loyalty-dev.lockated.com/encash_requests.json', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('authToken')}`
-                },
-                body: JSON.stringify(testPayload)
-            });
-
-            console.log('Response status:', response.status);
-            console.log('Response headers:', response.headers);
-
-            const data = await response.json();
-            console.log('Response data:', data);
-
-            if (response.ok) {
-                toast.success(`Test API call successful! Status: ${response.status}. Check console for details.`);
-            } else {
-                toast.error(`Test API call failed! Status: ${response.status}. Check console for details.`);
-            }
-        } catch (error) {
-            console.error('Test API error:', error);
-            toast.error(`Test API failed: ${error.message}`);
         }
     };
 

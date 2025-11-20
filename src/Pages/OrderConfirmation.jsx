@@ -19,10 +19,8 @@ const OrderConfirmation = () => {
     const [editAddress, setEditAddress] = useState(null);
     const [editLoading, setEditLoading] = useState(false);
     // Open edit modal with current address
-    console.log("deliveryAddress:--",deliveryAddress);
     
     const handleEditAddress = () => {
-        console.log("🔍 Current deliveryAddress for editing:", deliveryAddress);
         
         // Handle both old format and new POST API response format
         const addressData = deliveryAddress.fullDetails || deliveryAddress;
@@ -42,21 +40,6 @@ const OrderConfirmation = () => {
             telephone_number: addressData.telephone_number || '',
             type: (addressData.address_type === 'default' ? 'home' : addressData.address_type) || deliveryAddress.type || 'home',
             set_as_default: addressData['is_default?'] || addressData.set_as_default || false
-        });
-        console.log("🔍 Edit address data being set:", {
-            id: deliveryAddress.id || addressData.id,
-            name: addressData.contact_person || deliveryAddress.name || '',
-            phone: addressData.mobile || deliveryAddress.phone || '',
-            email: addressData.email || deliveryAddress.email || '',
-            address: addressData.address || addressData.fullAddress || '',
-            address_line_two: addressData.address_line_two || '',
-            address_line_three: addressData.address_line_three || '',
-            city: addressData.city || '',
-            state: addressData.state || '',
-            pin_code: addressData.pin_code || addressData.pinCode || '',
-            country: addressData.country || 'India',
-            telephone_number: addressData.telephone_number || '',
-            type: (addressData.address_type === 'default' ? 'home' : addressData.address_type) || deliveryAddress.type || 'home'
         });
         setShowEditModal(true);
     };
@@ -136,7 +119,6 @@ const OrderConfirmation = () => {
                 }
             };
             
-            console.log("📤 Updating address with payload:", payload);
             
             const response = await fetch(`https://piramal-loyalty-dev.lockated.com/user_addresses/${addressId}.json`, {
                 method: 'PUT',
@@ -147,8 +129,6 @@ const OrderConfirmation = () => {
                 body: JSON.stringify(payload)
             });
             const data = await response.json();
-            
-            console.log("📥 Address update response:", data);
             
             if (response.ok) {
                 toast.success('Address updated successfully!');
@@ -205,13 +185,11 @@ const OrderConfirmation = () => {
         
         // Check if user is properly authenticated
         if (!authToken || authToken === 'null') {
-            console.log('🔐 User not authenticated, redirecting to login');
             toast.error('Please login to access this page');
             navigate('/login');
             return;
         }
         
-        console.log('🔐 User authenticated, proceeding to initialize address data');
         initializeAddressData();
     }, [navigate]);
 
@@ -230,7 +208,6 @@ const OrderConfirmation = () => {
                     address: `${selectedAddress.address}, ${selectedAddress.city}, ${selectedAddress.state} - ${selectedAddress.pinCode}`,
                     fullDetails: selectedAddress
                 });
-                console.log('✅ Using existing selected address:', selectedAddress);
             }
             // If we have addressFromAPI (newly created from POST response), use it
             else if (addressFromAPI) {
@@ -253,7 +230,6 @@ const OrderConfirmation = () => {
                     address: addressString,
                     fullDetails: addressFromAPI
                 });
-                console.log('✅ Using address from POST API response:', addressFromAPI);
             }
             // If we have addressForm (fallback), use it
             else if (addressForm) {
@@ -278,11 +254,9 @@ const OrderConfirmation = () => {
                         address_type: addressForm.addressType || 'home'
                     }
                 });
-                console.log('✅ Using form address data:', addressForm);
             }
             // Fallback: fetch addresses from API
             else {
-                console.log('🔄 No address provided, fetching from API...');
                 const response = await promotionAPI.getUserAddresses();
                 
                 if (response.success && response.data.length > 0) {
@@ -296,7 +270,6 @@ const OrderConfirmation = () => {
                         address: `${defaultAddress.address}, ${defaultAddress.city}, ${defaultAddress.state} - ${defaultAddress.pinCode}`,
                         fullDetails: defaultAddress
                     });
-                    console.log('✅ Fetched address from API:', defaultAddress);
                 } else {
                     setError('No delivery address found. Please add an address.');
                 }
@@ -362,11 +335,9 @@ const OrderConfirmation = () => {
                 product: product,
                 deliveryAddress: deliveryAddress
             };
-            console.log('📦 Creating order with data:', orderData);
             toast.info('Creating your order...');
             const response = await promotionAPI.createOrder(orderData);
             if (response.success) {
-                console.log('✅ Order created successfully:', response.data);
                 toast.success(`Order #${response.data.order_number} created successfully!`);
                 // Navigate to order success with real order details
                 navigate('/order-success', {
