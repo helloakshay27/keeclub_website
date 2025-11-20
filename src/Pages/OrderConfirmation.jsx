@@ -21,7 +21,6 @@ const OrderConfirmation = () => {
     // Open edit modal with current address
 
     const handleEditAddress = () => {
-
         // Handle both old format and new POST API response format
         const addressData = deliveryAddress.fullDetails || deliveryAddress;
 
@@ -31,8 +30,8 @@ const OrderConfirmation = () => {
             phone: addressData.mobile || deliveryAddress.phone || '',
             email: addressData.email || deliveryAddress.email || '',
             address: addressData.address || addressData.fullAddress || '',
-            address_line_two: addressData.address_line_two || '',
-            address_line_three: addressData.address_line_three || '',
+            address_line_two: addressData.address_line_two || deliveryAddress.address_line_two || '', // ensure binding
+            address_line_three: addressData.address_line_three || deliveryAddress.address_line_three || '', // ensure binding
             city: addressData.city || '',
             state: addressData.state || '',
             pin_code: addressData.pin_code || addressData.pinCode || '',
