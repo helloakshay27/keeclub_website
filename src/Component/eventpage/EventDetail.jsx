@@ -56,7 +56,7 @@ const EventDetail = () => {
               {/* 1:1 Square Images */}
               {images1by1.length > 0 && (
                 <div>
-                  <h3 className="text-sm font-medium text-gray-600 mb-2">Square Images (1:1)</h3>
+                  {/* <h3 className="text-sm font-medium text-gray-600 mb-2">Square Images (1:1)</h3> */}
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                     {images1by1.map((img, i) => (
                       <div key={`1by1-${i}`} className="aspect-square rounded-lg overflow-hidden shadow-md">
@@ -74,7 +74,7 @@ const EventDetail = () => {
               {/* 9:16 Portrait Images */}
               {images9by16.length > 0 && (
                 <div>
-                  <h3 className="text-sm font-medium text-gray-600 mb-2">Portrait Images (9:16)</h3>
+                  {/* <h3 className="text-sm font-medium text-gray-600 mb-2">Portrait Images (9:16)</h3> */}
                   <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
                     {images9by16.map((img, i) => (
                       <div key={`9by16-${i}`} className="aspect-[9/16] rounded-lg overflow-hidden shadow-md">
@@ -92,7 +92,7 @@ const EventDetail = () => {
               {/* 16:9 Wide Images */}
               {images16by9.length > 0 && (
                 <div>
-                  <h3 className="text-sm font-medium text-gray-600 mb-2">Wide Images (16:9)</h3>
+                  {/* <h3 className="text-sm font-medium text-gray-600 mb-2">Wide Images (16:9)</h3> */}
                   <div className="space-y-3">
                     {images16by9.map((img, i) => (
                       <div key={`16by9-${i}`} className="aspect-video rounded-lg overflow-hidden shadow-md">
