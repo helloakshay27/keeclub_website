@@ -531,11 +531,11 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                                 ))}
                             </select>
                             {/* Display SAP Sales Order Code when opportunity is selected */}
-                            {selectedSAPCode && (
+                            {/* {selectedSAPCode && (
                                 <p className="mt-2 text-sm text-blue-600 font-medium">
                                     <span className="font-semibold">SAP Sales Order Code:</span> {selectedSAPCode}
                                 </p>
-                            )}
+                            )} */}
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">Booking Unit</label>
