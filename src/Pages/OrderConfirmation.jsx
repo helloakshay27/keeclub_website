@@ -680,7 +680,10 @@ const OrderConfirmation = () => {
                                             </div>
                                         )}
                                         <div className="flex items-start ml-7">
+                                            {console.log("delivery :---",deliveryAddress.fullDetails)}
+                                            
                                             <span className="text-gray-700 text-sm leading-relaxed">
+                                                {/* Show address, address_line_two, address_line_three, city, state, pin_code */}
                                                 {deliveryAddress.fullDetails
                                                     ? [
                                                         deliveryAddress.fullDetails.address,
