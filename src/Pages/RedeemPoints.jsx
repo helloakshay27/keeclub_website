@@ -16,7 +16,7 @@ const RedeemPoints = () => {
     const [selectedAddressId, setSelectedAddressId] = useState(null);
     const [addressForm, setAddressForm] = useState({
         name: '',
-        contactNumber: '',
+        contactNumber: '', // Initialize empty, will be set in useEffect
         pinCode: '',
         city: '',
         state: 'Select State',
@@ -37,6 +37,15 @@ const RedeemPoints = () => {
             toast.error('Please login to access this page');
             navigate('/login');
             return;
+        }
+        
+        // Set phone number from localStorage
+        const salesforceMobile = localStorage.getItem('salesforce_mobile');
+        if (salesforceMobile) {
+            setAddressForm(prev => ({
+                ...prev,
+                contactNumber: salesforceMobile
+            }));
         }
         
         fetchUserAddresses();
@@ -232,7 +241,8 @@ const RedeemPoints = () => {
                                             placeholder="Phone"
                                             value={addressForm.contactNumber}
                                             onChange={(e) => handleInputChange('contactNumber', e.target.value)}
-                                            className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#fa4615]"
+                                            disabled={true} // Disable the phone input
+                                            className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#fa4615] bg-gray-100 cursor-not-allowed"
                                         />
                                     </div>
                                 </div>
