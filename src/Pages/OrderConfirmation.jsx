@@ -5,6 +5,7 @@ import { toast } from 'react-toastify';
 
 import Modal from '../Component/Modal';
 import promotionAPI from '../services/promotionAPI';
+import { BASE_URL } from '../Confi/baseurl';
 
 const OrderConfirmation = () => {
     const navigate = useNavigate();
@@ -198,7 +199,7 @@ const OrderConfirmation = () => {
             const authToken = localStorage.getItem('authToken');
             if (!authToken) return null;
 
-            const response = await fetch('https://piramal-loyalty-dev.lockated.com/user_addresses.json', {
+            const response = await fetch(`${BASE_URL}/user_addresses.json`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
