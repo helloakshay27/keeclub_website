@@ -192,12 +192,78 @@ const OrderConfirmation = () => {
         initializeAddressData();
     }, [navigate]);
 
+    // Add function to fetch latest address from API
+    const fetchLatestAddressFromAPI = async () => {
+        try {
+            const authToken = localStorage.getItem('authToken');
+            if (!authToken) return null;
+
+            const response = await fetch('https://piramal-loyalty-dev.lockated.com/user_addresses.json', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`
+                }
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                if (data.addresses && data.addresses.length > 0) {
+                    // Return the first address (or default address if available)
+                    const defaultAddress = data.addresses.find(addr => addr.address_type === 'default') || data.addresses[0];
+                    return defaultAddress;
+                }
+            }
+            return null;
+        } catch (error) {
+            console.error('❌ Error fetching latest address:', error);
+            return null;
+        }
+    };
+
     const initializeAddressData = async () => {
         try {
             setLoading(true);
 
-            // If we have selectedAddress (from existing addresses), use it
-            if (selectedAddress) {
+            // Always try to fetch the latest address from API first
+            const latestAddress = await fetchLatestAddressFromAPI();
+            
+            if (latestAddress) {
+                // Use the latest address from API
+                const addressParts = [
+                    latestAddress.address,
+                    latestAddress.address_line_two,
+                    latestAddress.address_line_three,
+                    latestAddress.city,
+                    latestAddress.state
+                ].filter(part => part && part.trim() !== '');
+                const addressString = addressParts.join(', ') + (latestAddress.pin_code ? ` - ${latestAddress.pin_code}` : '');
+
+                setDeliveryAddress({
+                    id: latestAddress.id,
+                    name: latestAddress.contact_person,
+                    type: latestAddress.address_type === 'default' ? 'home' : latestAddress.address_type,
+                    phone: latestAddress.mobile,
+                    email: latestAddress.email,
+                    address: addressString,
+                    fullDetails: {
+                        contact_person: latestAddress.contact_person,
+                        mobile: latestAddress.mobile,
+                        email: latestAddress.email,
+                        address: latestAddress.address,
+                        address_line_two: latestAddress.address_line_two,
+                        address_line_three: latestAddress.address_line_three,
+                        city: latestAddress.city,
+                        state: latestAddress.state,
+                        pin_code: latestAddress.pin_code,
+                        country: latestAddress.country,
+                        address_type: latestAddress.address_type,
+                        telephone_number: latestAddress.telephone_number
+                    }
+                });
+            }
+            // Fallback to existing logic if API fails or returns no data
+            else if (selectedAddress) {
                 setDeliveryAddress({
                     id: selectedAddress.id,
                     name: selectedAddress.contactPerson,
