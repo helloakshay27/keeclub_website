@@ -122,7 +122,7 @@ const RedeemPoints = () => {
             if (addressResponse.success) {
                 toast.success('Address saved successfully! Redirecting to order confirmation...');
                 
-                // Handle both response formats - use the address data from the response
+                // Extract address data from the new response format
                 const createdAddress = addressResponse.data.address || addressResponse.data;
                 
                 // Navigate to order confirmation with the actual API response address data

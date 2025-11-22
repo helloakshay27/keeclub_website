@@ -210,8 +210,8 @@ const OrderConfirmation = () => {
                         mobile: selectedAddress.mobile,
                         email: selectedAddress.email,
                         address: selectedAddress.address,
-                        address_line_two: selectedAddress.addressLineTwo, // Map correctly
-                        address_line_three: selectedAddress.addressLineThree, // Map correctly
+                        address_line_two: selectedAddress.addressLineTwo,
+                        address_line_three: selectedAddress.addressLineThree,
                         city: selectedAddress.city,
                         state: selectedAddress.state,
                         pin_code: selectedAddress.pinCode,
@@ -240,7 +240,20 @@ const OrderConfirmation = () => {
                     phone: addressFromAPI.mobile,
                     email: addressFromAPI.email,
                     address: addressString,
-                    fullDetails: addressFromAPI
+                    fullDetails: {
+                        contact_person: addressFromAPI.contact_person,
+                        mobile: addressFromAPI.mobile,
+                        email: addressFromAPI.email,
+                        address: addressFromAPI.address,
+                        address_line_two: addressFromAPI.address_line_two,
+                        address_line_three: addressFromAPI.address_line_three,
+                        city: addressFromAPI.city,
+                        state: addressFromAPI.state,
+                        pin_code: addressFromAPI.pin_code,
+                        country: addressFromAPI.country,
+                        address_type: addressFromAPI.address_type,
+                        telephone_number: addressFromAPI.telephone_number
+                    }
                 });
             }
             // If we have addressForm (fallback), use it
