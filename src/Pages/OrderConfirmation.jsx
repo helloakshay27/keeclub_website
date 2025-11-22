@@ -5,7 +5,7 @@ import { toast } from 'react-toastify';
 
 import Modal from '../Component/Modal';
 import promotionAPI from '../services/promotionAPI';
-import { BASE_URL } from '../Confi/baseurl';
+import BASE_URL from '../Confi/baseurl';
 
 const OrderConfirmation = () => {
     const navigate = useNavigate();
