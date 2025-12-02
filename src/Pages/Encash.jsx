@@ -25,7 +25,7 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
     const [validationErrors, setValidationErrors] = useState({});
 
     // track pending encash amount from backend
-    const [pendingEncashAmount, setPendingEncashAmount] = useState(null);
+    const [pendingEncashAmount, setPendingEncashAmount] = useState(0); // Change to 0 instead of null
     const PENDING_URL_BASE = BASE_URL;
 
     const BalancePoints = localStorage.getItem('Loyalty_Balance__c') || 0;
@@ -127,6 +127,7 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
         // fetchPendingEncashAmount(); // (uncomment if you want to fetch on mount)
     }, []);
 
+    // Add function to fetch pending encash amount on component mount
     const fetchPendingEncashAmount = async () => {
         try {
             const authToken = localStorage.getItem('authToken');
@@ -142,7 +143,6 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
             const data = await res.json();
             if (data && typeof data.total_pending_encash_amount !== 'undefined') {
                 setPendingEncashAmount(Number(data.total_pending_encash_amount));
-                toast.info(`Pending encash amount: ${Number(data.total_pending_encash_amount).toLocaleString('en-IN')}`);
             }
         } catch (err) {
             // fail silently
@@ -168,10 +168,11 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
         };
 
         checkAuthentication();
+        fetchPendingEncashAmount(); // Fetch pending encash amount on mount
     }, [navigate]);
 
     // Use currentPoints from memberData prop or localStorage
-    const currentPoints = memberData?.current_loyalty_points || Number(localStorage.getItem('Loyalty_Balance__c')) || 0;
+    const currentPoints = Number(localStorage.getItem('Loyalty_Balance__c')) || 0;
 
     const handleInputChange = (field, value) => {
         let processedValue = value;
@@ -453,7 +454,7 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                                 style={{ width: 24, height: 24, display: 'inline-block' }}
                             />
                             <span className="text-xl font-bold text-gray-800">
-                                {currentPoints.toLocaleString('en-IN')} Balance Point
+                                {(currentPoints - pendingEncashAmount).toLocaleString('en-IN')} Balance Point
                             </span>
                         </div>
                     )}

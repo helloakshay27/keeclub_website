@@ -19,6 +19,8 @@ const OrderConfirmation = () => {
     const [showEditModal, setShowEditModal] = useState(false);
     const [editAddress, setEditAddress] = useState(null);
     const [editLoading, setEditLoading] = useState(false);
+    const [pendingEncashAmount, setPendingEncashAmount] = useState(0); // Add state for pending encash
+
     // Open edit modal with current address
 
     const handleEditAddress = () => {
@@ -179,6 +181,31 @@ const OrderConfirmation = () => {
         }
     };
 
+    // Add function to fetch pending encash amount
+    const fetchPendingEncashAmount = async () => {
+        try {
+            const authToken = localStorage.getItem('authToken');
+            if (!authToken) return;
+            
+            const response = await fetch(`${BASE_URL}pending_encash_amount`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`
+                }
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                if (data && typeof data.total_pending_encash_amount !== 'undefined') {
+                    setPendingEncashAmount(Number(data.total_pending_encash_amount));
+                }
+            }
+        } catch (err) {
+            console.error('❌ Error fetching pending encash amount:', err);
+        }
+    };
+
     // Check authentication and initialize address data on component mount
     useEffect(() => {
         const authToken = localStorage.getItem('authToken');
@@ -191,6 +218,7 @@ const OrderConfirmation = () => {
         }
 
         initializeAddressData();
+        fetchPendingEncashAmount(); // Fetch pending encash amount
     }, [navigate]);
 
     // Add function to fetch latest address from API
@@ -833,7 +861,11 @@ const OrderConfirmation = () => {
                                                 className="mr-1"
                                                 style={{ width: 24, height: 24, display: 'inline-block' }}
                                             />
-                                            {(localStorage.getItem('Loyalty_Balance__c') || 0).toLocaleString('en-IN')}
+                                            {(() => {
+                                                const loyaltyBalance = Number(localStorage.getItem('Loyalty_Balance__c') || 0);
+                                                const availablePoints = loyaltyBalance - pendingEncashAmount;
+                                                return availablePoints.toLocaleString('en-IN');
+                                            })()}
                                         </span>
                                     </div>
                                     {product.originalPrice && product.originalPrice > (product.currentPrice || 0) && (
