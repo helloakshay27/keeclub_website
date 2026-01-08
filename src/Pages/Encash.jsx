@@ -180,6 +180,7 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
 
         // Validation for Person Name
         if (field === 'personName') {
+            // Only allow alphabets and spaces, max 50 chars
             processedValue = value.replace(/[^a-zA-Z\s]/g, '').slice(0, 50);
             if (processedValue !== value && value.length > 0) {
                 newErrors.personName = "Invalid name. Enter valid name as per bank account.";
@@ -190,6 +191,7 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
 
         // Validation for Branch Name
         if (field === 'branchName') {
+            // Only allow alphabets and spaces, max 50 chars
             processedValue = value.replace(/[^a-zA-Z\s]/g, '').slice(0, 50);
             if (processedValue !== value && value.length > 0) {
                 newErrors.branchName = "Enter valid branch name.";
@@ -198,33 +200,14 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
             }
         }
 
-        // Validation for Account Number (numeric only, 9-18 digits)
+        // Validation for Account Number (numeric only)
         if (field === 'accountNumber' || field === 'confirmAccountNumber') {
             processedValue = value.replace(/[^0-9]/g, '');
-            if (processedValue && (processedValue.length < 9 || processedValue.length > 18)) {
-                newErrors[field] = "Account number must be 9-18 digits. Example: 123456789";
-            } else {
-                delete newErrors[field];
-            }
         }
 
-        // Validation for IFSC Code (exactly 11 alphanumeric, starts with 4 letters, then 0, then 6 digits/letters)
+        // Validation for IFSC Code (alphanumeric only)
         if (field === 'ifscCode') {
             processedValue = value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
-            if (processedValue && !/^([A-Z]{4}0[A-Z0-9]{6})$/.test(processedValue)) {
-                newErrors.ifscCode = "Invalid IFSC code. Example: HDFC0001234";
-            } else {
-                delete newErrors.ifscCode;
-            }
-        }
-
-        // Validation for Email
-        if (field === 'email') {
-            if (processedValue && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(processedValue)) {
-                newErrors.email = "Invalid email address. Example: user@example.com";
-            } else {
-                delete newErrors.email;
-            }
         }
 
         setValidationErrors(newErrors);
@@ -654,15 +637,12 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                                     </label>
                                     <input
                                         type="text"
-                                        placeholder="Enter bank account no. (e.g. 123456789)"
+                                        placeholder="Enter bank account no."
                                         value={formData.accountNumber}
                                         onChange={(e) => handleInputChange('accountNumber', e.target.value)}
                                         className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                                         required
                                     />
-                                    {validationErrors.accountNumber && (
-                                        <p className="text-sm text-red-500 mt-1">{validationErrors.accountNumber}</p>
-                                    )}
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -670,7 +650,7 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                                     </label>
                                     <input
                                         type="text"
-                                        placeholder="Confirm bank account no. (e.g. 123456789)"
+                                        placeholder="Confirm bank account no."
                                         value={formData.confirmAccountNumber}
                                         onChange={(e) => handleInputChange('confirmAccountNumber', e.target.value)}
                                         className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
@@ -678,9 +658,6 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                                     />
                                     {!isAccountNumberMatched && formData.confirmAccountNumber && (
                                         <p className="text-sm text-red-500 mt-1">Account numbers do not match.</p>
-                                    )}
-                                    {validationErrors.confirmAccountNumber && (
-                                        <p className="text-sm text-red-500 mt-1">{validationErrors.confirmAccountNumber}</p>
                                     )}
                                 </div>
                             </div>
@@ -690,16 +667,14 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                                 </label>
                                 <input
                                     type="text"
-                                    placeholder="Enter IFSC code (e.g. HDFC0001234)"
+                                    placeholder="Enter IFSC code (alphanumeric)"
                                     value={formData.ifscCode}
                                     onChange={(e) => handleInputChange('ifscCode', e.target.value)}
                                     className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                                     required
+                                    pattern="[A-Z0-9]{11}"
                                     maxLength="11"
                                 />
-                                {validationErrors.ifscCode && (
-                                    <p className="text-sm text-red-500 mt-1">{validationErrors.ifscCode}</p>
-                                )}
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -778,20 +753,17 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                                         <div className="flex items-center space-x-4 mb-2">
                                             <h4 className="text-lg font-semibold text-gray-800">
                                                 Request #{req.id}
-                                            <div>
-                                                <label className="block text-sm font-medium text-gray-700 mb-2">Email <span className="text-red-500">*</span></label>
-                                                <input
-                                                    type="email"
-                                                    className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                                                    placeholder="Enter your email (e.g. user@example.com)"
-                                                    value={formData.email}
-                                                    onChange={e => handleInputChange('email', e.target.value)}
-                                                    required
-                                                />
-                                                {validationErrors.email && (
-                                                    <p className="text-sm text-red-500 mt-1">{validationErrors.email}</p>
-                                                )}
-                                            </div>
+                                            </h4>
+                                            <span className={`px-3 py-1 rounded-full text-xs font-medium capitalize ${req.status === 'completed' ? 'bg-green-100 text-green-800' : req.status === 'rejected' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800'}`}>{req.status || '--'}</span>
+                                        </div>
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2 text-sm text-gray-700 mb-2">
+                                            <div className="flex"><span className="font-medium w-32 inline-block">Date</span><span className="">{req.created_at ? new Date(req.created_at).toLocaleString('en-IN') : '--'}</span></div>
+                                            <div className="flex"><span className="font-medium w-32 inline-block">Points</span><span className="">{req.points_to_encash?.toLocaleString('en-IN') || '--'}</span></div>
+                                            <div className="flex"><span className="font-medium w-32 inline-block">Amount</span><span className="">₹{req.amount_payable?.toLocaleString('en-IN') || '--'}</span></div>
+                                            <div className="flex"><span className="font-medium w-32 inline-block">Branch</span><span className="">{req.branch_name || '--'}</span></div>
+                                            <div className="flex"><span className="font-medium w-32 inline-block">IFSC</span><span className="">{req.ifsc_code || '--'}</span></div>
+                                            <div className="flex"><span className="font-medium w-32 inline-block">User Name</span><span className="">{req.person_name || '--'}</span></div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
