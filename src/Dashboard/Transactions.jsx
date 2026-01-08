@@ -60,6 +60,56 @@ const formatPoints = (points) => {
 };
 
 const Transactions = () => {
+    // Orders state (optional, if you want to display orders)
+    const [orders, setOrders] = useState([]);
+        // Fetch orders from backend and handle cancelled orders
+        const fetchOrdersAndHandleCancelled = async () => {
+            try {
+                const authToken = localStorage.getItem('authToken');
+                // Use BASE_URL from config
+                const res = await fetch(`${BASE_URL}orders.json`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+                if (!res.ok) return;
+                const data = await res.json();
+                const ordersArray = Array.isArray(data.orders) ? data.orders : [];
+                setOrders(ordersArray);
+                // Check for cancelled orders and credit back points
+                for (let i = 0; i < ordersArray.length; i++) {
+                    const order = ordersArray[i];
+                    if (order.status === 'cancelled') {
+                        // Prepare Salesforce POST body
+                        const loyaltyMemberId = localStorage.getItem('Id');
+                        const accessToken = localStorage.getItem('salesforce_access_token');
+                        const instanceUrl = localStorage.getItem('salesforce_instance_url');
+                        if (!loyaltyMemberId || !accessToken || !instanceUrl) continue;
+                        // Use total_amount as points (parse as int)
+                        const points = parseInt(order.total_amount, 10) || 0;
+                        if (points > 0) {
+                            await fetch(`${instanceUrl}/services/data/v64.0/sobjects/Loyalty_Transaction__c/`, {
+                                method: 'POST',
+                                headers: {
+                                    'Authorization': `Bearer ${accessToken}`,
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({
+                                    Loyalty_Member__c: loyaltyMemberId,
+                                    Transaction_Type__c: 'credit',
+                                    Loyalty_Points__c: points,
+                                    Category__c: 'Purchase'
+                                })
+                            });
+                        }
+                    }
+                }
+            } catch (err) {
+                // fail silently
+            }
+        };
     const [transactions, setTransactions] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
@@ -456,9 +506,10 @@ const Transactions = () => {
         }
     }, [mobile, accessToken, loyaltyMemberId]);
 
-    // Always call fetchAndHandleEncashRequests on dashboard mount (page hit)
+    // Always call fetchAndHandleEncashRequests and fetchOrdersAndHandleCancelled on dashboard mount (page hit)
     useEffect(() => {
         fetchAndHandleEncashRequests();
+        fetchOrdersAndHandleCancelled();
     }, []);
 
     // Additional useEffect to fetch data when component mounts for newly logged in users
