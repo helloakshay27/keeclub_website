@@ -75,7 +75,7 @@ const Transactions = () => {
 
     // Get loyalty member data from localStorage and state
     const [summaryCards, setSummaryCards] = useState([
-        { title: "Points", value: 0 },
+        { title: "Earned Points", value: 0 },
         { title: "Redeemed Points", value: 0 },
         { title: "Expired Points", value: 0 },
         { title: "Balance Points", value: 0 },

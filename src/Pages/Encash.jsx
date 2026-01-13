@@ -605,6 +605,27 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                                     required
                                 />
                             </div>
+                            {/* Fifth Row: Aadhar and PAN Document Upload */}
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">Aadhar Document (PDF/JPG/PNG)</label>
+                                    <input
+                                        type="file"
+                                        accept=".pdf,.jpg,.jpeg,.png"
+                                        className="w-full border border-gray-300 rounded-lg px-4 py-2"
+                                        name="aadharDocument"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">PAN Document (PDF/JPG/PNG)</label>
+                                    <input
+                                        type="file"
+                                        accept=".pdf,.jpg,.jpeg,.png"
+                                        className="w-full border border-gray-300 rounded-lg px-4 py-2"
+                                        name="panDocument"
+                                    />
+                                </div>
+                            </div>
                         </div>
                     )}
                 </div>

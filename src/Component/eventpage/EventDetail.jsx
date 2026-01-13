@@ -1,5 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, X, ChevronLeft, ChevronRight } from "lucide-react";
+import { useState } from "react";
 import useApiFetch from "../../hooks/useApiFetch";
 import BASE_URL from "../../Confi/baseurl";
 
@@ -8,6 +9,9 @@ const EventDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { data } = useApiFetch(`${BASE_URL}events/${id}.json`, token);
+  
+  const [selectedImageIndex, setSelectedImageIndex] = useState(null);
+  const [allImages, setAllImages] = useState([]);
 
   const event = data && data.id;
   
@@ -26,6 +30,42 @@ const EventDetail = () => {
 
   const hasAnyImages = images1by1.length > 0 || images3by2.length > 0 || images9by16.length > 0 || images16by9.length > 0 || fallbackImages.length > 0;
 
+  // Combine all images into a single array for preview navigation
+  const combineAllImages = () => {
+    const combined = [];
+    images1by1.forEach(img => combined.push(img?.document_url));
+    images9by16.forEach(img => combined.push(img?.document_url));
+    images16by9.forEach(img => combined.push(img?.document_url));
+    if (fallbackImages.length > 0 && (images1by1.length === 0 && images3by2.length === 0 && images9by16.length === 0 && images16by9.length === 0)) {
+      fallbackImages.forEach(img => combined.push(img?.document_url));
+    }
+    return combined.filter(Boolean);
+  };
+
+  const openImagePreview = (imageUrl) => {
+    const allImgs = combineAllImages();
+    setAllImages(allImgs);
+    const index = allImgs.indexOf(imageUrl);
+    setSelectedImageIndex(index !== -1 ? index : 0);
+  };
+
+  const closeImagePreview = () => {
+    setSelectedImageIndex(null);
+    setAllImages([]);
+  };
+
+  const goToNextImage = () => {
+    if (selectedImageIndex !== null && allImages.length > 0) {
+      setSelectedImageIndex((prev) => (prev + 1) % allImages.length);
+    }
+  };
+
+  const goToPrevImage = () => {
+    if (selectedImageIndex !== null && allImages.length > 0) {
+      setSelectedImageIndex((prev) => (prev - 1 + allImages.length) % allImages.length);
+    }
+  };
+
   if (!event)
     return (
       <div className="text-center py-10 text-red-500">Event not found</div>
@@ -34,6 +74,66 @@ const EventDetail = () => {
 
   return (
     <div className="px-4 py-4 sm:py-6 md:py-10 max-w-7xl md:mt-20 mx-auto">
+      {/* Image Preview Modal */}
+      {selectedImageIndex !== null && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-95 z-50 flex items-center justify-center transition-opacity duration-300"
+          onClick={closeImagePreview}
+        >
+          {/* Close Button */}
+          <button
+            onClick={closeImagePreview}
+            className="absolute top-4 right-4 text-white hover:text-gray-300 transition-colors z-10"
+          >
+            <X size={32} />
+          </button>
+
+          {/* Previous Button */}
+          {allImages.length > 1 && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                goToPrevImage();
+              }}
+              className="absolute left-4 text-white hover:text-gray-300 transition-colors z-10"
+            >
+              <ChevronLeft size={48} />
+            </button>
+          )}
+
+          {/* Image Container */}
+          <div 
+            className="relative max-w-7xl max-h-[90vh] px-16"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <img
+              src={allImages[selectedImageIndex]}
+              alt="Preview"
+              className="max-w-full max-h-[90vh] object-contain mx-auto transition-transform duration-300 ease-in-out"
+            />
+            {/* Image Counter */}
+            {allImages.length > 1 && (
+              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black bg-opacity-60 text-white px-4 py-2 rounded-full">
+                {selectedImageIndex + 1} / {allImages.length}
+              </div>
+            )}
+          </div>
+
+          {/* Next Button */}
+          {allImages.length > 1 && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                goToNextImage();
+              }}
+              className="absolute right-4 text-white hover:text-gray-300 transition-colors z-10"
+            >
+              <ChevronRight size={48} />
+            </button>
+          )}
+        </div>
+      )}
+
       <div className="flex items-center gap-2 text-orange-600 font-semibold text-base sm:text-lg mb-6 sm:mb-10 flex-wrap">
         <button
           onClick={() => navigate(-1)}
@@ -58,7 +158,11 @@ const EventDetail = () => {
                 <div>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                     {images1by1.map((img, i) => (
-                      <div key={`1by1-${i}`} className="aspect-square rounded-lg overflow-hidden shadow-md">
+                      <div 
+                        key={`1by1-${i}`} 
+                        className="aspect-square rounded-lg overflow-hidden shadow-md cursor-pointer hover:opacity-90 transition-opacity"
+                        onClick={() => openImagePreview(img?.document_url)}
+                      >
                         <img
                           src={img?.document_url}
                           alt={`Square Image ${i + 1}`}
@@ -75,7 +179,11 @@ const EventDetail = () => {
                 <div>
                   <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
                     {images9by16.map((img, i) => (
-                      <div key={`9by16-${i}`} className="aspect-[9/16] rounded-lg overflow-hidden shadow-md">
+                      <div 
+                        key={`9by16-${i}`} 
+                        className="aspect-[9/16] rounded-lg overflow-hidden shadow-md cursor-pointer hover:opacity-90 transition-opacity"
+                        onClick={() => openImagePreview(img?.document_url)}
+                      >
                         <img
                           src={img?.document_url}
                           alt={`Portrait Image ${i + 1}`}
@@ -92,7 +200,11 @@ const EventDetail = () => {
                 <div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {images16by9.map((img, i) => (
-                      <div key={`16by9-${i}`} className="aspect-video rounded-lg overflow-hidden shadow-md">
+                      <div 
+                        key={`16by9-${i}`} 
+                        className="aspect-video rounded-lg overflow-hidden shadow-md cursor-pointer hover:opacity-90 transition-opacity"
+                        onClick={() => openImagePreview(img?.document_url)}
+                      >
                         <img
                           src={img?.document_url}
                           alt={`Wide Image ${i + 1}`}
@@ -108,7 +220,11 @@ const EventDetail = () => {
               {fallbackImages.length > 0 && (images1by1.length === 0 && images3by2.length === 0 && images9by16.length === 0 && images16by9.length === 0) && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
                   {fallbackImages.map((img, i) => (
-                    <div key={`fallback-${i}`} className="rounded-lg overflow-hidden shadow-md">
+                    <div 
+                      key={`fallback-${i}`} 
+                      className="rounded-lg overflow-hidden shadow-md cursor-pointer hover:opacity-90 transition-opacity"
+                      onClick={() => openImagePreview(img?.document_url)}
+                    >
                       <img
                         src={img?.document_url}
                         alt={`Event ${i + 1}`}

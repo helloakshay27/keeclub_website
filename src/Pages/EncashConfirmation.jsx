@@ -18,7 +18,7 @@ const EncashConfirmation = () => {
             <div className="min-h-screen flex items-center justify-center">
                 <div className="text-center">
                     <h1 className="text-xl font-semibold text-gray-800 mb-4">Encash request not found</h1>
-                    <button 
+                    <button
                         onClick={() => {
                             const loyaltyId = getLoyaltyId();
                             if (loyaltyId) {
@@ -94,7 +94,11 @@ const EncashConfirmation = () => {
                         <p><strong>Branch Name:</strong> {encashRequest.branch_name}</p>
                         <p><strong>IFSC Code:</strong> {encashRequest.ifsc_code}</p>
                         <p><strong>Person Name:</strong> {encashRequest.person_name}</p>
-                        <p><strong>Status:</strong> {encashRequest.status}</p>
+                        <p ><strong>Status:</strong>
+                            <span style={{ textTransform: 'capitalize' }}>
+                                {encashRequest.status}
+                            </span>
+                        </p>
                     </div>
                 </div>
                 <div className="mt-8 text-center">
