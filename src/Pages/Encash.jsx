@@ -18,6 +18,7 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
         agreeToTerms: false,
         email: '' // Add email field
     });
+    const [isEmailLocked, setIsEmailLocked] = useState(true);
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
     const [encashRequests, setEncashRequests] = useState([]);
@@ -170,6 +171,15 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
         checkAuthentication();
         fetchPendingEncashAmount(); // Fetch pending encash amount on mount
     }, [navigate]);
+
+    // Prefill email from localStorage (saved during login) and lock it by default
+    useEffect(() => {
+        const emailFromStorage = localStorage.getItem('user_email');
+        if (emailFromStorage) {
+            setFormData(prev => ({ ...prev, email: emailFromStorage }));
+            setIsEmailLocked(true);
+        }
+    }, []);
 
     // Use currentPoints from memberData prop or localStorage
     const currentPoints = Number(localStorage.getItem('Loyalty_Balance__c')) || 0;
@@ -390,6 +400,7 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
             if (res.ok || res.status === 201) {
                 setSuccess(true);
                 toast.success('Encash request submitted successfully! You will receive confirmation shortly.');
+                const lockedEmail = formData.email;
                 setFormData({
                     pointsToEncash: '',
                     facilitationFees: '',
@@ -400,7 +411,7 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                     branchName: '',
                     personName: '',
                     agreeToTerms: false,
-                    email: '' // Reset email field
+                    email: lockedEmail // Preserve fetched email after submission
                 });
                 if (typeof setSelectedRedemptionTab === 'function') {
                     setSelectedRedemptionTab('My Encash Requests');
@@ -602,8 +613,18 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                                     placeholder="Enter your email"
                                     value={formData.email}
                                     onChange={e => handleInputChange('email', e.target.value)}
+                                    disabled={isEmailLocked && !!formData.email}
                                     required
                                 />
+                                {formData.email && (
+                                    <button
+                                        type="button"
+                                        className="mt-2 text-sm font-medium text-orange-600 hover:text-orange-700"
+                                        onClick={() => setIsEmailLocked(prev => !prev)}
+                                    >
+                                        {isEmailLocked ? 'Edit email' : 'Lock email'}
+                                    </button>
+                                )}
                             </div>
                             {/* Fifth Row: Aadhar and PAN Document Upload */}
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">

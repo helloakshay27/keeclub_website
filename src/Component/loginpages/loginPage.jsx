@@ -145,6 +145,12 @@ const LoginPage = () => {
       const sapData = otpVerifyResponse.data?.sap_data;
       const validationRecords = sapData?.records || [];
 
+      // Save email from validation data to localStorage
+      const emailFromValidation = validationRecords[0]?.Email__c;
+      if (emailFromValidation) {
+        localStorage.setItem('user_email', emailFromValidation);
+      }
+
       // Proceed with Salesforce login logic (SOQL query)
       let accessToken = localStorage.getItem("salesforce_access_token");
       let instanceUrl = localStorage.getItem("salesforce_instance_url");
