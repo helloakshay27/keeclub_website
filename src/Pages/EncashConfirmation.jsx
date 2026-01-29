@@ -88,7 +88,7 @@ const EncashConfirmation = () => {
                     <div className="space-y-2 text-gray-700">
                         <p><strong>Request ID:</strong> {encashRequest.id}</p>
                         <p><strong>Points to Encash:</strong> {encashRequest.points_to_encash?.toLocaleString()}</p>
-                        <p><strong>Facilitation Fee:</strong> ₹{encashRequest.facilitation_fee?.toLocaleString()}</p>
+                        {/* <p><strong>Facilitation Fee:</strong> ₹{encashRequest.facilitation_fee?.toLocaleString()}</p> */}
                         <p><strong>Amount Payable:</strong> ₹{encashRequest.amount_payable?.toLocaleString()}</p>
                         <p><strong>Account Number:</strong> {encashRequest.account_number}</p>
                         <p><strong>Branch Name:</strong> {encashRequest.branch_name}</p>
