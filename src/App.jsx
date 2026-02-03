@@ -160,6 +160,10 @@ useEffect(() => {
     matchPath(route.path, location.pathname)
   );
 
+  // Debug logging for route matching
+  console.log('Current pathname:', location.pathname);
+  console.log('Matched route:', matchedRoute);
+
   const isTransparent = matchedRoute?.transparent ?? false;
   const hideLayout = matchedRoute?.hideLayout || location.pathname.startsWith('/dashboard');
 
