@@ -44,6 +44,7 @@ import LoginPage from './Component/loginpages/loginPage';
 import TransactionStatus from './Pages/TransactionStatus';
 import Transactions from './Dashboard/Transactions';
 import EncashConfirmation from './Pages/EncashConfirmation';
+import EncashDetails from './Pages/EncashDetails';
 
 const routeConfigs = [
   { path: '/', element: <Home />, transparent: true },
@@ -65,6 +66,7 @@ const routeConfigs = [
   { path: '/track-order/:orderId', element: <TrackOrder />, transparent: false },
   { path: '/hotels-redemption', element: <HotelsRedemption />, transparent: false },
   { path: '/encash-confirmation', element: <EncashConfirmation />, transparent: false },
+  { path: '/encash-details/:id', element: <EncashDetails />, transparent: false },
 
   { path: '/login', element: <LoginPage />, transparent: true, hideLayout: true },
   { path: '/register', element: <Register />, transparent: true, hideLayout: true },

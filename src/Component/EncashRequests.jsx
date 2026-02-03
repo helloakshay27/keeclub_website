@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 import BASE_URL from "../Confi/baseurl";
 
 const EncashRequests = ({ memberData }) => {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchRequests = async () => {
@@ -71,6 +73,14 @@ const EncashRequests = ({ memberData }) => {
                     <div className="flex"><span className="font-medium w-32 inline-block">IFSC</span><span className="">{req.ifsc_code || '--'}</span></div>
                     <div className="flex"><span className="font-medium w-32 inline-block">User Name</span><span className="">{req.person_name || '--'}</span></div>
                   </div>
+                </div>
+                <div className="flex items-center">
+                  <button
+                    onClick={() => navigate(`/encash-details/${req.id}`)}
+                    className="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg font-medium transition-colors text-sm"
+                  >
+                    View Details
+                  </button>
                 </div>
               </div>
             </div>

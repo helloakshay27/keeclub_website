@@ -24,12 +24,65 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
     const [encashRequests, setEncashRequests] = useState([]);
     const [encashLoading, setEncashLoading] = useState(false);
     const [validationErrors, setValidationErrors] = useState({});
+    const [documents, setDocuments] = useState({
+        aadhar: null,
+        pan: null,
+        cheque: null
+    });
 
     // track pending encash amount from backend
     const [pendingEncashAmount, setPendingEncashAmount] = useState(0); // Change to 0 instead of null
     const PENDING_URL_BASE = BASE_URL;
 
     const BalancePoints = localStorage.getItem('Loyalty_Balance__c') || 0;
+
+    // Convert file to base64
+    const fileToBase64 = (file) => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = (error) => reject(error);
+        });
+    };
+
+    // Handle document upload
+    const handleDocumentUpload = async (e, docType) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        // Validate file type
+        const validTypes = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png'];
+        if (!validTypes.includes(file.type)) {
+            toast.error('Please upload a valid file (PDF, JPG, or PNG)');
+            e.target.value = '';
+            return;
+        }
+
+        // Validate file size (5MB max)
+        if (file.size > 5 * 1024 * 1024) {
+            toast.error('File size must be less than 5MB');
+            e.target.value = '';
+            return;
+        }
+
+        try {
+            const base64String = await fileToBase64(file);
+            setDocuments(prev => ({
+                ...prev,
+                [docType]: {
+                    filename: file.name,
+                    content_type: file.type,
+                    content: base64String
+                }
+            }));
+            toast.success(`${docType.toUpperCase()} document uploaded successfully`);
+        } catch (error) {
+            toast.error('Failed to process document');
+            console.error('File conversion error:', error);
+        }
+    };
+
     // Fetch encash requests on mount
     useEffect(() => {
         const fetchEncashRequests = async () => {
@@ -261,7 +314,10 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
             emailRegex.test(formData.email) &&
             formData.agreeToTerms &&
             Object.keys(validationErrors).length === 0 &&
-            isAccountNumberMatched
+            isAccountNumberMatched &&
+            documents.aadhar &&
+            documents.pan &&
+            documents.cheque
         );
     };
 
@@ -362,6 +418,33 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
             // Get SAP Sales Order Code for logging
             const sapCode = selectedOpportunity?.SAP_SalesOrder_Code__c || "";
 
+            // Build attachments array
+            const attachments = [];
+            if (documents.aadhar) {
+                attachments.push({
+                    relation: "KYC_Aadhar",
+                    filename: documents.aadhar.filename,
+                    content_type: documents.aadhar.content_type,
+                    content: documents.aadhar.content
+                });
+            }
+            if (documents.pan) {
+                attachments.push({
+                    relation: "KYC_PAN",
+                    filename: documents.pan.filename,
+                    content_type: documents.pan.content_type,
+                    content: documents.pan.content
+                });
+            }
+            if (documents.cheque) {
+                attachments.push({
+                    relation: "KYC_Cheque",
+                    filename: documents.cheque.filename,
+                    content_type: documents.cheque.content_type,
+                    content: documents.cheque.content
+                });
+            }
+
             // Build request body as per API spec, include selected opportunity fields
             const encashRequestBody = {
                 encash_request: {
@@ -378,7 +461,8 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                     booking_unit: selectedOpportunity?.Apartment_Finalized__r?.Name || "",
                     application_value: selectedOpportunity?.Agreement_Value__c || "",
                     sap_sales_order_code: sapCode, // Ensure SAP code is included
-                    email: formData.email
+                    email: formData.email,
+                    attachments: attachments
                 }
             };
 
@@ -413,6 +497,12 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                     agreeToTerms: false,
                     email: lockedEmail // Preserve fetched email after submission
                 });
+                setDocuments({
+                    aadhar: null,
+                    pan: null,
+                    cheque: null
+                });
+                setSelectedOpportunity(null);
                 if (typeof setSelectedRedemptionTab === 'function') {
                     setSelectedRedemptionTab('My Encash Requests');
                 }
@@ -626,25 +716,67 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                                     </button>
                                 )}
                             </div>
-                            {/* Fifth Row: Aadhar and PAN Document Upload */}
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            {/* Fifth Row: Aadhar, PAN and Cheque Document Upload */}
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">Aadhar Document (PDF/JPG/PNG)</label>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                                        Aadhar Document <span className="text-red-500">*</span>
+                                    </label>
                                     <input
                                         type="file"
                                         accept=".pdf,.jpg,.jpeg,.png"
                                         className="w-full border border-gray-300 rounded-lg px-4 py-2"
-                                        name="aadharDocument"
+                                        onChange={(e) => handleDocumentUpload(e, 'aadhar')}
+                                        required
                                     />
+                                    {documents.aadhar && (
+                                        <p className="text-xs text-green-600 mt-1 flex items-center">
+                                            <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                            </svg>
+                                            {documents.aadhar.filename}
+                                        </p>
+                                    )}
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">PAN Document (PDF/JPG/PNG)</label>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                                        PAN Document <span className="text-red-500">*</span>
+                                    </label>
                                     <input
                                         type="file"
                                         accept=".pdf,.jpg,.jpeg,.png"
                                         className="w-full border border-gray-300 rounded-lg px-4 py-2"
-                                        name="panDocument"
+                                        onChange={(e) => handleDocumentUpload(e, 'pan')}
+                                        required
                                     />
+                                    {documents.pan && (
+                                        <p className="text-xs text-green-600 mt-1 flex items-center">
+                                            <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                            </svg>
+                                            {documents.pan.filename}
+                                        </p>
+                                    )}
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                                        Cancelled Cheque <span className="text-red-500">*</span>
+                                    </label>
+                                    <input
+                                        type="file"
+                                        accept=".pdf,.jpg,.jpeg,.png"
+                                        className="w-full border border-gray-300 rounded-lg px-4 py-2"
+                                        onChange={(e) => handleDocumentUpload(e, 'cheque')}
+                                        required
+                                    />
+                                    {documents.cheque && (
+                                        <p className="text-xs text-green-600 mt-1 flex items-center">
+                                            <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                            </svg>
+                                            {documents.cheque.filename}
+                                        </p>
+                                    )}
                                 </div>
                             </div>
                         </div>
@@ -806,6 +938,14 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                                             <div className="flex"><span className="font-medium w-32 inline-block">IFSC</span><span className="">{req.ifsc_code || '--'}</span></div>
                                             <div className="flex"><span className="font-medium w-32 inline-block">User Name</span><span className="">{req.person_name || '--'}</span></div>
                                         </div>
+                                    </div>
+                                    <div className="flex items-center">
+                                        <button
+                                            onClick={() => navigate(`/encash-details/${req.id}`)}
+                                            className="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg font-medium transition-colors text-sm"
+                                        >
+                                            View Details
+                                        </button>
                                     </div>
                                 </div>
                             </div>
