@@ -23,7 +23,7 @@ const EncashDetails = () => {
                 }
 
                 const response = await fetch(
-                    `${BASE_URL}encash_requests/${id}/encashment_detail.json?is_admin=true`,
+                    `${BASE_URL}encash_requests/${id}.json`,
                     {
                         method: 'GET',
                         headers: {
