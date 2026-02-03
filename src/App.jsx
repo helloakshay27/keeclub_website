@@ -76,7 +76,6 @@ const routeConfigs = [
   { path: '/refer-now', element: <ReferNow />, transparent: false },
 
   { path: '/blog/:id', element: <BlogDetailPage />, transparent: true },
-  { path: '*', element: <PageNotFound />, transparent: true, hideLayout: true },
 ];
 
 function App() {
