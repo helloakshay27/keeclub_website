@@ -278,15 +278,15 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
         setFormData(prev => {
             const updated = { ...prev, [field]: processedValue };
 
-            // Auto-calculate facilitation fees and amount payable
-            if (field === 'pointsToEncash' && processedValue) {
-                const points = parseInt(processedValue) || 0;
-                const fees = Math.round(points * 0.02); // 2% facilitation fee
-                const amount = points - fees;
-
-                updated.facilitationFees = fees.toString();
-                updated.amountPayable = amount.toString();
-            }
+            // Auto-calculate facilitation fees and amount payable (commented as per request)
+            // if (field === 'pointsToEncash' && processedValue) {
+            //     const points = parseInt(processedValue) || 0;
+            //     const fees = Math.round(points * 0.02); // 2% facilitation fee
+            //     const amount = points - fees;
+            //
+            //     updated.facilitationFees = fees.toString();
+            //     updated.amountPayable = amount.toString();
+            // }
 
             return updated;
         });
@@ -359,17 +359,24 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
             const agreementValue = Number(selectedOpportunity.Agreement_Value__c) || 0;
             const brokerage = Number(selectedOpportunity.Project_Finalized__r?.Onboarding_Referral_Percentage__c) || 0;
             const calculatedPoints = Math.round((agreementValue * brokerage) / 100);
-            
+
             // Set the SAP code for display
             setSelectedSAPCode(selectedOpportunity.SAP_SalesOrder_Code__c || '');
-            
+
+            // Auto-calculate facilitation fees and amount payable (commented as per request)
+            // setFormData(prev => ({
+            //     ...prev,
+            //     pointsToEncash: calculatedPoints ? calculatedPoints.toString() : '',
+            //     facilitationFees: calculatedPoints ? Math.round(calculatedPoints * 0.02).toString() : '',
+            //     amountPayable: calculatedPoints
+            //         ? (calculatedPoints - Math.round(calculatedPoints * 0.02)).toString()
+            //         : ''
+            // }));
+
             setFormData(prev => ({
                 ...prev,
-                pointsToEncash: calculatedPoints ? calculatedPoints.toString() : '',
-                facilitationFees: calculatedPoints ? Math.round(calculatedPoints * 0.02).toString() : '',
-                amountPayable: calculatedPoints
-                    ? (calculatedPoints - Math.round(calculatedPoints * 0.02)).toString()
-                    : ''
+                pointsToEncash: calculatedPoints ? calculatedPoints.toString() : ''
+                // facilitationFees and amountPayable must be entered manually
             }));
         } else {
             setSelectedSAPCode(''); // Reset SAP code when no opportunity selected
