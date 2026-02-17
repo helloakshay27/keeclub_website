@@ -115,7 +115,7 @@ const Transactions = () => {
         } catch (err) {
             // fallback to 0s
             setSummaryCards([
-                { title: "Points", value: 0 },
+                { title: "Earned Points", value: 0 },
                 { title: "Redeemed Points", value: 0 },
                 { title: "Expired Points", value: 0 },
                 { title: "Balance Points", value: 0 },

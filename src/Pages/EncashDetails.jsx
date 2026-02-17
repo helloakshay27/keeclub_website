@@ -15,7 +15,7 @@ const EncashDetails = () => {
             try {
                 setLoading(true);
                 const authToken = localStorage.getItem('authToken');
-                
+
                 if (!authToken) {
                     toast.error('Please login to view details');
                     navigate('/login');
@@ -114,7 +114,7 @@ const EncashDetails = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8" style={{ marginTop: '100px'}}>
+        <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8" style={{ marginTop: '100px' }}>
             <div className="max-w-5xl mx-auto">
                 {/* Header */}
                 <div className="mb-6">
@@ -343,8 +343,8 @@ const EncashDetails = () => {
                                 </div>
                                 <div className="flex pb-3">
                                     <span className="text-gray-600 font-medium w-32">Payment Status:</span>
-                                    <span className={`text-sm font-medium ${encashDetails.is_payment_deducted ? 'text-green-600' : 'text-yellow-600'}`}>
-                                        {encashDetails.is_payment_deducted ? 'Deducted' : 'Pending'}
+                                    <span className={`text-sm font-medium ${encashDetails.is_payment_deducted ? (encashDetails.status === 'rejected' ? 'text-red-600' : 'text-green-600') : 'text-yellow-600'}`}>
+                                        {encashDetails.is_payment_deducted ? (encashDetails.status === 'rejected' ? 'Rejected' : 'Deducted') : 'Pending'}
                                     </span>
                                 </div>
                             </div>

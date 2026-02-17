@@ -12,6 +12,7 @@ const EventDetail = () => {
   
   const [selectedImageIndex, setSelectedImageIndex] = useState(null);
   const [allImages, setAllImages] = useState([]);
+  const [isZoomed, setIsZoomed] = useState(false);
 
   const event = data && data.id;
   
@@ -52,6 +53,12 @@ const EventDetail = () => {
   const closeImagePreview = () => {
     setSelectedImageIndex(null);
     setAllImages([]);
+    setIsZoomed(false);
+  };
+
+  const toggleZoom = (e) => {
+    e.stopPropagation();
+    setIsZoomed(!isZoomed);
   };
 
   const goToNextImage = () => {
@@ -103,13 +110,15 @@ const EventDetail = () => {
 
           {/* Image Container */}
           <div 
-            className="relative max-w-7xl max-h-[90vh] px-16"
+            className="relative max-w-full max-h-full px-4"
             onClick={(e) => e.stopPropagation()}
           >
             <img
               src={allImages[selectedImageIndex]}
               alt="Preview"
-              className="max-w-full max-h-[90vh] object-contain mx-auto transition-transform duration-300 ease-in-out"
+              className={`max-w-[90vw] max-h-[90vh] object-contain mx-auto transition-transform duration-300 ease-in-out cursor-zoom-in ${isZoomed ? 'cursor-zoom-out scale-150' : 'scale-100'}`}
+              onClick={toggleZoom}
+              style={isZoomed ? { width: 'auto', height: 'auto', maxWidth: 'none', maxHeight: 'none' } : {}}
             />
             {/* Image Counter */}
             {allImages.length > 1 && (
@@ -117,6 +126,10 @@ const EventDetail = () => {
                 {selectedImageIndex + 1} / {allImages.length}
               </div>
             )}
+            {/* Zoom Indicator */}
+            <div className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-black bg-opacity-60 text-white px-3 py-1 rounded-full text-sm">
+              {isZoomed ? 'Click to zoom out' : 'Click to zoom in'}
+            </div>
           </div>
 
           {/* Next Button */}
