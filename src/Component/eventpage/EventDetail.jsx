@@ -110,15 +110,15 @@ const EventDetail = () => {
 
           {/* Image Container */}
           <div 
-            className="relative max-w-full max-h-full px-4"
+            className="relative w-full h-full px-4 flex items-center justify-center"
             onClick={(e) => e.stopPropagation()}
           >
             <img
               src={allImages[selectedImageIndex]}
               alt="Preview"
-              className={`max-w-[90vw] max-h-[90vh] object-contain mx-auto transition-transform duration-300 ease-in-out cursor-zoom-in ${isZoomed ? 'cursor-zoom-out scale-150' : 'scale-100'}`}
+              className={`w-[90vw] h-auto max-h-[90vh] object-contain mx-auto transition-transform duration-300 ease-in-out cursor-zoom-in ${isZoomed ? 'cursor-zoom-out scale-150' : 'scale-100'}`}
               onClick={toggleZoom}
-              style={isZoomed ? { width: 'auto', height: 'auto', maxWidth: 'none', maxHeight: 'none' } : {}}
+              style={isZoomed ? { width: 'auto', height: 'auto', maxWidth: 'none', maxHeight: 'none' } : undefined}
             />
             {/* Image Counter */}
             {allImages.length > 1 && (
