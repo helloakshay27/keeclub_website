@@ -157,13 +157,7 @@ const EncashDetails = () => {
                                         {encashDetails.points_to_encash?.toLocaleString('en-IN') || '0'}
                                     </p>
                                 </div>
-                                <div className="bg-blue-50 rounded-lg p-4">
-                                    <p className="text-sm text-gray-600 mb-1">Facilitation Fee</p>
-                                    <p className="text-2xl font-bold text-blue-600">
-                                        ₹{encashDetails.facilitation_fee?.toLocaleString('en-IN') || '0'}
-                                    </p>
-                                </div>
-                                <div className="bg-green-50 rounded-lg p-4 sm:col-span-2">
+                                <div className="bg-green-50 rounded-lg p-4">
                                     <p className="text-sm text-gray-600 mb-1">Amount Payable</p>
                                     <p className="text-3xl font-bold text-green-600">
                                         ₹{encashDetails.amount_payable?.toLocaleString('en-IN') || '0'}
@@ -344,7 +338,7 @@ const EncashDetails = () => {
                                 <div className="flex pb-3">
                                     <span className="text-gray-600 font-medium w-32">Payment Status:</span>
                                     {/* Show Rejected when badge indicates rejected (uses same mapping as getStatusBadgeClass) */}
-                                    <span className={`text-sm font-medium ${getStatusBadgeClass(encashDetails.status).includes('red-800') ? 'text-red-600' : (encashDetails.is_payment_deducted ? 'text-green-600' : 'text-yellow-600')}`}>
+                                    <span className={`text-sm font-medium pt-2 ${getStatusBadgeClass(encashDetails.status).includes('red-800') ? 'text-red-600' : (encashDetails.is_payment_deducted ? 'text-green-600' : 'text-yellow-600')}`}>
                                         {getStatusBadgeClass(encashDetails.status).includes('red-800') ? 'Rejected' : (encashDetails.is_payment_deducted ? 'Deducted' : 'Pending')}
                                     </span>
                                 </div>
