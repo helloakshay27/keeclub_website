@@ -338,7 +338,7 @@ const EncashDetails = () => {
                                 <div className="flex pb-3">
                                     <span className="text-gray-600 font-medium w-32">Payment Status:</span>
                                     {/* Show Rejected when badge indicates rejected (uses same mapping as getStatusBadgeClass) */}
-                                    <span className={`text-sm font-medium pt-2 ${getStatusBadgeClass(encashDetails.status).includes('red-800') ? 'text-red-600' : (encashDetails.is_payment_deducted ? 'text-green-600' : 'text-yellow-600')}`}>
+                                    <span className={`text-sm font-medium pt-0.5 ${getStatusBadgeClass(encashDetails.status).includes('red-800') ? 'text-red-600' : (encashDetails.is_payment_deducted ? 'text-green-600' : 'text-yellow-600')}`}>
                                         {getStatusBadgeClass(encashDetails.status).includes('red-800') ? 'Rejected' : (encashDetails.is_payment_deducted ? 'Deducted' : 'Pending')}
                                     </span>
                                 </div>
