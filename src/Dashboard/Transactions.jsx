@@ -139,31 +139,6 @@ const Transactions = () => {
                 },
             });
             let records = res.data?.records || [];
-            // If no transactions, create a default credit entry and refetch
-            if (records.length === 0 && loyaltyMemberId) {
-                await axios.post(
-                    `${instanceUrl}/services/data/v64.0/sobjects/Loyalty_Transaction__c/`,
-                    {
-                        Loyalty_Member__c: loyaltyMemberId,
-                        Transaction_Type__c: "Credit",
-                        Loyalty_Points__c: 10000,
-                    },
-                    {
-                        headers: {
-                            Authorization: `Bearer ${accessToken}`,
-                            "Content-Type": "application/json",
-                        },
-                    }
-                );
-                // Refetch after creation
-                const refetch = await axios.get(url, {
-                    headers: {
-                        Authorization: `Bearer ${accessToken}`,
-                        "Content-Type": "application/json",
-                    },
-                });
-                records = refetch.data?.records || [];
-            }
             // Map to UI format with Category included
             setTransactions(
                 records.map((item) => ({
