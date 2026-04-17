@@ -242,6 +242,8 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
         if (emailFromStorage) {
             setFormData(prev => ({ ...prev, email: emailFromStorage }));
             setIsEmailLocked(true);
+        } else {
+            setIsEmailLocked(false);
         }
     }, []);
 
@@ -369,14 +371,14 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
         if (selectedOpportunity) {
             const agreementValue = Number(selectedOpportunity.Agreement_Value__c) || 0;
             const brokerage = Number(selectedOpportunity.Project_Finalized__r?.Onboarding_Referral_Percentage__c) || 0;
-            const calculatedPoints = Math.round((agreementValue * brokerage) / 100);
+            const calculatedPoints = parseFloat(((agreementValue * brokerage) / 100).toFixed(2));
 
             // Set the SAP code for display
             setSelectedSAPCode(selectedOpportunity.SAP_SalesOrder_Code__c || '');
 
             setFormData(prev => ({
                 ...prev,
-                pointsToEncash: calculatedPoints ? Math.round(calculatedPoints).toString() : ''
+                pointsToEncash: calculatedPoints ? calculatedPoints.toString() : ''
                 // facilitationFees and amountPayable must be entered manually
             }));
         } else {
@@ -456,7 +458,7 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
             // Build request body as per API spec, include selected opportunity fields
             const encashRequestBody = {
                 encash_request: {
-                    points_to_encash: Math.round(Number(formData.pointsToEncash)),
+                    points_to_encash: Number(formData.pointsToEncash),
                     facilitation_fee: Number(formData.facilitationFees),
                     amount_payable: Number(formData.amountPayable),
                     account_number: formData.accountNumber,
@@ -697,7 +699,7 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                                 <input
                                     type="text"
                                     placeholder="Points"
-                                    value={formData.pointsToEncash ? Math.round(Number(formData.pointsToEncash)).toLocaleString('en-IN') : "0"}
+                                    value={formData.pointsToEncash ? Number(formData.pointsToEncash).toLocaleString('en-IN', { minimumFractionDigits: 0, maximumFractionDigits: 2 }) : "0"}
                                     disabled
                                     className="w-full border border-gray-300 rounded-lg px-4 py-3 bg-gray-100"
                                 />
@@ -919,11 +921,11 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                     </label>
                 </div>
                 {/* Submit Button */}
-                {Math.round(Number(formData.pointsToEncash)) > Number(localStorage.getItem('Loyalty_Balance__c') || 0) && (
+                {Number(formData.pointsToEncash) > Number(localStorage.getItem('Loyalty_Balance__c') || 0) && (
                     <div className="mb-6 p-4 bg-red-50 border border-red-400 rounded text-red-700 font-semibold">
                         Insufficient points!<br />
                         <span>
-                            Points to Encash: <strong>{Math.round(Number(formData.pointsToEncash)).toLocaleString('en-IN')}</strong>
+                            Points to Encash: <strong>{Number(formData.pointsToEncash).toLocaleString('en-IN', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}</strong>
                         </span>
                         <br />
                         <span>
