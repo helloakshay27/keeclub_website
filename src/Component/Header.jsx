@@ -204,7 +204,7 @@ const Header = ({ isTransparent }) => {
             <h2 className="text-lg font-semibold mb-4 text-center">Profile Menu</h2>
             {/* Menu Options */}
             <div className="space-y-2 mb-6">
-              <Link 
+              {/* <Link 
                 to="/orders" 
                 className="flex items-center px-4 py-3 rounded-lg hover:bg-gray-100 transition-colors"
                 onClick={() => setShowModal(false)}
@@ -214,7 +214,7 @@ const Header = ({ isTransparent }) => {
                   <div className="font-medium">My Orders</div>
                   <div className="text-sm text-gray-500">Track and manage orders</div>
                 </div>
-              </Link>
+              </Link> */}
               <Link 
                 to={`/dashboard/transactions/${id}`} 
                 className="flex items-center px-4 py-3 rounded-lg hover:bg-gray-100 transition-colors"
