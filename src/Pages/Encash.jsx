@@ -20,6 +20,9 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
     });
     const [isEmailLocked, setIsEmailLocked] = useState(true);
     const emailInputRef = useRef(null);
+    const aadharInputRef = useRef(null);
+    const panInputRef = useRef(null);
+    const chequeInputRef = useRef(null);
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
     const [encashRequests, setEncashRequests] = useState([]);
@@ -82,6 +85,13 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
             toast.error('Failed to process document');
             console.error('File conversion error:', error);
         }
+    };
+
+    // Remove uploaded document
+    const removeDocument = (docType) => {
+        setDocuments(prev => ({ ...prev, [docType]: null }));
+        const refMap = { aadhar: aadharInputRef, pan: panInputRef, cheque: chequeInputRef };
+        if (refMap[docType]?.current) refMap[docType].current.value = '';
     };
 
     // Fetch encash requests on mount
@@ -446,7 +456,7 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
             // Build request body as per API spec, include selected opportunity fields
             const encashRequestBody = {
                 encash_request: {
-                    points_to_encash: Number(formData.pointsToEncash),
+                    points_to_encash: Math.round(Number(formData.pointsToEncash)),
                     facilitation_fee: Number(formData.facilitationFees),
                     amount_payable: Number(formData.amountPayable),
                     account_number: formData.accountNumber,
@@ -665,7 +675,7 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                                     <input
                                         type="text"
                                         className="w-full border border-gray-300 rounded-lg px-4 py-3 bg-gray-100"
-                                        value={selectedOpportunity.Agreement_Value__c ? selectedOpportunity.Agreement_Value__c.toLocaleString('en-IN') : "N/A"}
+                                        value={selectedOpportunity.Agreement_Value__c ? Math.round(Number(selectedOpportunity.Agreement_Value__c)).toLocaleString('en-IN') : "N/A"}
                                         disabled
                                     />
                                 </div>
@@ -735,19 +745,22 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                                         Aadhar Document <span className="text-red-500">*</span>
                                     </label>
                                     <input
+                                        ref={aadharInputRef}
                                         type="file"
                                         accept=".pdf,.jpg,.jpeg,.png"
-                                        className="w-full border border-gray-300 rounded-lg px-4 py-2"
+                                        className="hidden"
                                         onChange={(e) => handleDocumentUpload(e, 'aadhar')}
-                                        required
                                     />
-                                    {documents.aadhar && (
-                                        <p className="text-xs text-green-600 mt-1 flex items-center">
-                                            <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                    {documents.aadhar ? (
+                                        <div className="flex items-center gap-2 border border-green-300 bg-green-50 rounded-lg px-4 py-2">
+                                            <svg className="w-4 h-4 text-green-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                                                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                                             </svg>
-                                            {documents.aadhar.filename}
-                                        </p>
+                                            <span className="text-xs text-green-700 truncate flex-1">{documents.aadhar.filename}</span>
+                                            <button type="button" onClick={() => removeDocument('aadhar')} className="text-red-500 hover:text-red-700 cursor-pointer text-xs font-medium">Remove</button>
+                                        </div>
+                                    ) : (
+                                        <button type="button" onClick={() => aadharInputRef.current?.click()} className="w-full border border-gray-300 rounded-lg px-4 py-2 text-left text-gray-500 hover:border-orange-400 cursor-pointer">Choose file</button>
                                     )}
                                 </div>
                                 <div>
@@ -755,19 +768,22 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                                         PAN Document <span className="text-red-500">*</span>
                                     </label>
                                     <input
+                                        ref={panInputRef}
                                         type="file"
                                         accept=".pdf,.jpg,.jpeg,.png"
-                                        className="w-full border border-gray-300 rounded-lg px-4 py-2"
+                                        className="hidden"
                                         onChange={(e) => handleDocumentUpload(e, 'pan')}
-                                        required
                                     />
-                                    {documents.pan && (
-                                        <p className="text-xs text-green-600 mt-1 flex items-center">
-                                            <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                    {documents.pan ? (
+                                        <div className="flex items-center gap-2 border border-green-300 bg-green-50 rounded-lg px-4 py-2">
+                                            <svg className="w-4 h-4 text-green-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                                                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                                             </svg>
-                                            {documents.pan.filename}
-                                        </p>
+                                            <span className="text-xs text-green-700 truncate flex-1">{documents.pan.filename}</span>
+                                            <button type="button" onClick={() => removeDocument('pan')} className="text-red-500 hover:text-red-700 cursor-pointer text-xs font-medium">Remove</button>
+                                        </div>
+                                    ) : (
+                                        <button type="button" onClick={() => panInputRef.current?.click()} className="w-full border border-gray-300 rounded-lg px-4 py-2 text-left text-gray-500 hover:border-orange-400 cursor-pointer">Choose file</button>
                                     )}
                                 </div>
                                 <div>
@@ -775,19 +791,22 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                                         Cancelled Cheque <span className="text-red-500">*</span>
                                     </label>
                                     <input
+                                        ref={chequeInputRef}
                                         type="file"
                                         accept=".pdf,.jpg,.jpeg,.png"
-                                        className="w-full border border-gray-300 rounded-lg px-4 py-2"
+                                        className="hidden"
                                         onChange={(e) => handleDocumentUpload(e, 'cheque')}
-                                        required
                                     />
-                                    {documents.cheque && (
-                                        <p className="text-xs text-green-600 mt-1 flex items-center">
-                                            <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                    {documents.cheque ? (
+                                        <div className="flex items-center gap-2 border border-green-300 bg-green-50 rounded-lg px-4 py-2">
+                                            <svg className="w-4 h-4 text-green-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                                                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                                             </svg>
-                                            {documents.cheque.filename}
-                                        </p>
+                                            <span className="text-xs text-green-700 truncate flex-1">{documents.cheque.filename}</span>
+                                            <button type="button" onClick={() => removeDocument('cheque')} className="text-red-500 hover:text-red-700 cursor-pointer text-xs font-medium">Remove</button>
+                                        </div>
+                                    ) : (
+                                        <button type="button" onClick={() => chequeInputRef.current?.click()} className="w-full border border-gray-300 rounded-lg px-4 py-2 text-left text-gray-500 hover:border-orange-400 cursor-pointer">Choose file</button>
                                     )}
                                 </div>
                             </div>
@@ -900,11 +919,11 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                     </label>
                 </div>
                 {/* Submit Button */}
-                {Number(formData.pointsToEncash) > Number(localStorage.getItem('Loyalty_Balance__c') || 0) && (
+                {Math.round(Number(formData.pointsToEncash)) > Number(localStorage.getItem('Loyalty_Balance__c') || 0) && (
                     <div className="mb-6 p-4 bg-red-50 border border-red-400 rounded text-red-700 font-semibold">
                         Insufficient points!<br />
                         <span>
-                            Points to Encash: <strong>{Number(formData.pointsToEncash).toLocaleString('en-IN')}</strong>
+                            Points to Encash: <strong>{Math.round(Number(formData.pointsToEncash)).toLocaleString('en-IN')}</strong>
                         </span>
                         <br />
                         <span>
