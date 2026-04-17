@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import promotionAPI from '../services/promotionAPI';
 import { toast } from 'react-toastify';
@@ -19,6 +19,7 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
         email: '' // Add email field
     });
     const [isEmailLocked, setIsEmailLocked] = useState(true);
+    const emailInputRef = useRef(null);
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
     const [encashRequests, setEncashRequests] = useState([]);
@@ -363,19 +364,9 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
             // Set the SAP code for display
             setSelectedSAPCode(selectedOpportunity.SAP_SalesOrder_Code__c || '');
 
-            // Auto-calculate facilitation fees and amount payable (commented as per request)
-            // setFormData(prev => ({
-            //     ...prev,
-            //     pointsToEncash: calculatedPoints ? calculatedPoints.toString() : '',
-            //     facilitationFees: calculatedPoints ? Math.round(calculatedPoints * 0.02).toString() : '',
-            //     amountPayable: calculatedPoints
-            //         ? (calculatedPoints - Math.round(calculatedPoints * 0.02)).toString()
-            //         : ''
-            // }));
-
             setFormData(prev => ({
                 ...prev,
-                pointsToEncash: calculatedPoints ? calculatedPoints.toString() : ''
+                pointsToEncash: calculatedPoints ? Math.round(calculatedPoints).toString() : ''
                 // facilitationFees and amountPayable must be entered manually
             }));
         } else {
@@ -670,7 +661,7 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                             {/* Second Row: Agreement Value and Brokerage Percentage */}
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">Agreement Value</label>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">Agreement Value <span className="text-red-500">*</span></label>
                                     <input
                                         type="text"
                                         className="w-full border border-gray-300 rounded-lg px-4 py-3 bg-gray-100"
@@ -679,7 +670,7 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">Brokerage Percentage</label>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">Brokerage Percentage <span className="text-red-500">*</span></label>
                                     <input
                                         type="text"
                                         className="w-full border border-gray-300 rounded-lg px-4 py-3 bg-gray-100"
@@ -696,7 +687,7 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                                 <input
                                     type="text"
                                     placeholder="Points"
-                                    value={formData.pointsToEncash ? Number(formData.pointsToEncash).toLocaleString('en-IN') : "0"}
+                                    value={formData.pointsToEncash ? Math.round(Number(formData.pointsToEncash)).toLocaleString('en-IN') : "0"}
                                     disabled
                                     className="w-full border border-gray-300 rounded-lg px-4 py-3 bg-gray-100"
                                 />
@@ -705,8 +696,9 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">Email <span className="text-red-500">*</span></label>
                                 <input
+                                    ref={emailInputRef}
                                     type="email"
-                                    className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                                    className={`w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 ${isEmailLocked && formData.email ? 'bg-gray-100 cursor-not-allowed' : ''}`}
                                     placeholder="Enter your email"
                                     value={formData.email}
                                     onChange={e => handleInputChange('email', e.target.value)}
@@ -716,10 +708,23 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                                 {formData.email && (
                                     <button
                                         type="button"
-                                        className="mt-2 text-sm font-medium text-orange-600 hover:text-orange-700"
-                                        onClick={() => setIsEmailLocked(prev => !prev)}
+                                        className="mt-2 text-sm font-medium cursor-pointer text-orange-600 hover:text-orange-700 flex items-center gap-1"
+                                        onClick={() => {
+                                            setIsEmailLocked(prev => {
+                                                const newVal = !prev;
+                                                if (!newVal) {
+                                                    // Unlocking: focus the input after React re-renders
+                                                    setTimeout(() => emailInputRef.current?.focus(), 0);
+                                                }
+                                                return newVal;
+                                            });
+                                        }}
                                     >
-                                        {isEmailLocked ? 'Edit email' : 'Lock email'}
+                                        {isEmailLocked ? (
+                                            <><svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z" /></svg> Edit email</>
+                                        ) : (
+                                            <><svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" /></svg> Lock email</>
+                                        )}
                                     </button>
                                 )}
                             </div>
