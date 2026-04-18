@@ -35,6 +35,7 @@ const EventDetail = () => {
   const combineAllImages = () => {
     const combined = [];
     images1by1.forEach(img => combined.push(img?.document_url));
+    images3by2.forEach(img => combined.push(img?.document_url));
     images9by16.forEach(img => combined.push(img?.document_url));
     images16by9.forEach(img => combined.push(img?.document_url));
     if (fallbackImages.length > 0 && (images1by1.length === 0 && images3by2.length === 0 && images9by16.length === 0 && images16by9.length === 0)) {
@@ -173,13 +174,34 @@ const EventDetail = () => {
                     {images1by1.map((img, i) => (
                       <div 
                         key={`1by1-${i}`} 
-                        className="aspect-square rounded-lg overflow-hidden shadow-md cursor-pointer hover:opacity-90 transition-opacity"
+                        className="aspect-square rounded-lg overflow-hidden shadow-md cursor-pointer hover:opacity-90 transition-opacity bg-gray-50"
                         onClick={() => openImagePreview(img?.document_url)}
                       >
                         <img
                           src={img?.document_url}
                           alt={`Square Image ${i + 1}`}
-                          className="w-full h-full object-cover"
+                          className="w-full h-full object-contain"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* 3:2 Images */}
+              {images3by2.length > 0 && (
+                <div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {images3by2.map((img, i) => (
+                      <div
+                        key={`3by2-${i}`}
+                        className="aspect-[3/2] rounded-lg overflow-hidden shadow-md cursor-pointer hover:opacity-90 transition-opacity bg-gray-50"
+                        onClick={() => openImagePreview(img?.document_url)}
+                      >
+                        <img
+                          src={img?.document_url}
+                          alt={`3:2 Image ${i + 1}`}
+                          className="w-full h-full object-contain"
                         />
                       </div>
                     ))}
@@ -194,13 +216,13 @@ const EventDetail = () => {
                     {images9by16.map((img, i) => (
                       <div 
                         key={`9by16-${i}`} 
-                        className="aspect-[9/16] rounded-lg overflow-hidden shadow-md cursor-pointer hover:opacity-90 transition-opacity"
+                        className="aspect-[9/16] rounded-lg overflow-hidden shadow-md cursor-pointer hover:opacity-90 transition-opacity bg-gray-50"
                         onClick={() => openImagePreview(img?.document_url)}
                       >
                         <img
                           src={img?.document_url}
                           alt={`Portrait Image ${i + 1}`}
-                          className="w-full h-full object-cover"
+                          className="w-full h-full object-contain"
                         />
                       </div>
                     ))}
@@ -215,13 +237,13 @@ const EventDetail = () => {
                     {images16by9.map((img, i) => (
                       <div 
                         key={`16by9-${i}`} 
-                        className="aspect-video rounded-lg overflow-hidden shadow-md cursor-pointer hover:opacity-90 transition-opacity"
+                        className="aspect-video rounded-lg overflow-hidden shadow-md cursor-pointer hover:opacity-90 transition-opacity bg-gray-50"
                         onClick={() => openImagePreview(img?.document_url)}
                       >
                         <img
                           src={img?.document_url}
                           alt={`Wide Image ${i + 1}`}
-                          className="w-full h-full object-cover"
+                          className="w-full h-full object-contain"
                         />
                       </div>
                     ))}
