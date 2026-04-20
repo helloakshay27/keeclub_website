@@ -17,6 +17,7 @@ const EventDetail = () => {
   const event = data && data.id;
   
   // Process different aspect ratio images
+  const eventAttachments = Array.isArray(data?.event_attachments) ? data.event_attachments : [];
   const images1by1 = Array.isArray(data?.event_images_1_by_1) ? data.event_images_1_by_1 : [];
   const images3by2 = Array.isArray(data?.event_images_3_by_2) ? data.event_images_3_by_2 : [];
   const images9by16 = Array.isArray(data?.event_images_9_by_16) ? data.event_images_9_by_16 : [];
@@ -29,25 +30,38 @@ const EventDetail = () => {
       ? [data.attachfile]
       : [];
 
-  const hasAnyImages = images1by1.length > 0 || images3by2.length > 0 || images9by16.length > 0 || images16by9.length > 0 || fallbackImages.length > 0;
+  const hasAnyImages = eventAttachments.length > 0 || images1by1.length > 0 || images3by2.length > 0 || images9by16.length > 0 || images16by9.length > 0 || fallbackImages.length > 0;
 
   // Combine all images into a single array for preview navigation
   const combineAllImages = () => {
     const combined = [];
+    eventAttachments.forEach(img => combined.push(img?.document_url));
     images1by1.forEach(img => combined.push(img?.document_url));
     images3by2.forEach(img => combined.push(img?.document_url));
-    images9by16.forEach(img => combined.push(img?.document_url));
     images16by9.forEach(img => combined.push(img?.document_url));
-    if (fallbackImages.length > 0 && (images1by1.length === 0 && images3by2.length === 0 && images9by16.length === 0 && images16by9.length === 0)) {
+    images9by16.forEach(img => combined.push(img?.document_url));
+    if (fallbackImages.length > 0 && combined.length === 0) {
       fallbackImages.forEach(img => combined.push(img?.document_url));
     }
     return combined.filter(Boolean);
   };
 
+  const allItems = combineAllImages();
+  const [carouselIndex, setCarouselIndex] = useState(0);
+
+  const nextCarousel = (e) => {
+    e?.stopPropagation();
+    setCarouselIndex((prev) => (prev + 1) % allItems.length);
+  };
+
+  const prevCarousel = (e) => {
+    e?.stopPropagation();
+    setCarouselIndex((prev) => (prev - 1 + allItems.length) % allItems.length);
+  };
+
   const openImagePreview = (imageUrl) => {
-    const allImgs = combineAllImages();
-    setAllImages(allImgs);
-    const index = allImgs.indexOf(imageUrl);
+    setAllImages(allItems);
+    const index = allItems.indexOf(imageUrl);
     setSelectedImageIndex(index !== -1 ? index : 0);
   };
 
@@ -167,108 +181,48 @@ const EventDetail = () => {
           
           {hasAnyImages ? (
             <div className="space-y-6">
-              {/* 1:1 Square Images */}
-              {images1by1.length > 0 && (
-                <div>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                    {images1by1.map((img, i) => (
-                      <div 
-                        key={`1by1-${i}`} 
-                        className="aspect-square rounded-lg overflow-hidden shadow-md cursor-pointer hover:opacity-90 transition-opacity bg-gray-50"
-                        onClick={() => openImagePreview(img?.document_url)}
-                      >
-                        <img
-                          src={img?.document_url}
-                          alt={`Square Image ${i + 1}`}
-                          className="w-full h-full object-contain"
-                        />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* 3:2 Images */}
-              {images3by2.length > 0 && (
-                <div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {images3by2.map((img, i) => (
-                      <div
-                        key={`3by2-${i}`}
-                        className="aspect-[3/2] rounded-lg overflow-hidden shadow-md cursor-pointer hover:opacity-90 transition-opacity bg-gray-50"
-                        onClick={() => openImagePreview(img?.document_url)}
-                      >
-                        <img
-                          src={img?.document_url}
-                          alt={`3:2 Image ${i + 1}`}
-                          className="w-full h-full object-contain"
-                        />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* 9:16 Portrait Images */}
-              {images9by16.length > 0 && (
-                <div>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-                    {images9by16.map((img, i) => (
-                      <div 
-                        key={`9by16-${i}`} 
-                        className="aspect-[9/16] rounded-lg overflow-hidden shadow-md cursor-pointer hover:opacity-90 transition-opacity bg-gray-50"
-                        onClick={() => openImagePreview(img?.document_url)}
-                      >
-                        <img
-                          src={img?.document_url}
-                          alt={`Portrait Image ${i + 1}`}
-                          className="w-full h-full object-contain"
-                        />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* 16:9 Wide Images */}
-              {images16by9.length > 0 && (
-                <div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {images16by9.map((img, i) => (
-                      <div 
-                        key={`16by9-${i}`} 
-                        className="aspect-video rounded-lg overflow-hidden shadow-md cursor-pointer hover:opacity-90 transition-opacity bg-gray-50"
-                        onClick={() => openImagePreview(img?.document_url)}
-                      >
-                        <img
-                          src={img?.document_url}
-                          alt={`Wide Image ${i + 1}`}
-                          className="w-full h-full object-contain"
-                        />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Fallback Images */}
-              {fallbackImages.length > 0 && (images1by1.length === 0 && images3by2.length === 0 && images9by16.length === 0 && images16by9.length === 0) && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-                  {fallbackImages.map((img, i) => (
-                    <div 
-                      key={`fallback-${i}`} 
-                      className="rounded-lg overflow-hidden shadow-md cursor-pointer hover:opacity-90 transition-opacity"
-                      onClick={() => openImagePreview(img?.document_url)}
+              {/* Main Carousel View */}
+              <div className="relative group rounded-xl overflow-hidden shadow-lg bg-gray-100 aspect-video flex items-center justify-center">
+                <img
+                  src={allItems[carouselIndex]}
+                  alt="Event Main"
+                  className="w-full h-full object-contain cursor-pointer"
+                  onClick={() => openImagePreview(allItems[carouselIndex])}
+                />
+                
+                {allItems.length > 1 && (
+                  <>
+                    <button 
+                      onClick={prevCarousel}
+                      className="absolute left-2 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/80 text-orange-600 hover:bg-white shadow-md transition-all opacity-0 group-hover:opacity-100 cursor-pointer"
                     >
-                      <img
-                        src={img?.document_url}
-                        alt={`Event ${i + 1}`}
-                        className="w-full h-auto max-h-[300px] object-cover"
-                      />
+                      <ChevronLeft size={24} />
+                    </button>
+                    <button 
+                      onClick={nextCarousel}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/80 text-orange-600 hover:bg-white shadow-md transition-all opacity-0 group-hover:opacity-100 cursor-pointer"
+                    >
+                      <ChevronRight size={24} />
+                    </button>
+                    <div className="absolute bottom-4 right-4 bg-black/60 text-white px-3 py-1 rounded-full text-xs font-semibold">
+                      {carouselIndex + 1} / {allItems.length}
                     </div>
-                  ))}
-                </div>
-              )}
+                  </>
+                )}
+              </div>
+
+              {/* Thumbnails list */}
+              <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+                {allItems.map((img, i) => (
+                  <div 
+                    key={i}
+                    onClick={() => setCarouselIndex(i)}
+                    className={`flex-shrink-0 w-20 h-20 rounded-md overflow-hidden cursor-pointer border-2 transition-all ${carouselIndex === i ? 'border-orange-600 scale-105' : 'border-transparent opacity-60'}`}
+                  >
+                    <img src={img} className="w-full h-full object-cover" alt={`Thumb ${i}`} />
+                  </div>
+                ))}
+              </div>
             </div>
           ) : (
             <div className="bg-gray-100 rounded-lg p-8 text-center">
