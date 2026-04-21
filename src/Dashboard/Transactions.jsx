@@ -521,12 +521,7 @@ const Transactions = () => {
             {/* Summary Cards */}
             <div className="flex flex-col sm:flex-row gap-4 mb-8">
                 {summaryCards.map((item, index) => {
-                    let value = item.value;
-                    if (item.title === "Balance Points") {
-                        // Remove commas for calculation, then format again
-                        let numericValue = Number(String(value).replace(/,/g, '')) || 0;
-                        value = numericValue - pendingEncashAmount;
-                    }
+                    const value = item.value;
                     // Ensure value always has two decimal places
                     const displayValue = typeof value === "number"
                         ? value.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })
