@@ -216,7 +216,12 @@ const Event = () => {
                     ) : (
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                             {filteredEvents.map((event, index) => {
-                                // Get fallback image from any event_images_* array
+                                const eventAttachmentImg =
+                                    Array.isArray(event.event_attachments) &&
+                                    event.event_attachments.find((attachment) => attachment?.document_url)
+                                        ?.document_url;
+
+                                // Backward-compatible fallback for older image fields
                                 let fallbackImg = null;
                                 const imgSources = [
                                     event.event_images_1_by_1,
@@ -225,13 +230,16 @@ const Event = () => {
                                     event.event_images_16_by_9
                                 ];
                                 for (const arr of imgSources) {
-                                    if (Array.isArray(arr) && arr.length > 0 && arr[0].document_url) {
+                                    if (Array.isArray(arr) && arr.length > 0 && arr[0]?.document_url) {
                                         fallbackImg = arr[0].document_url;
                                         break;
                                     }
                                 }
+
                                 const imgUrl =
+                                    eventAttachmentImg ||
                                     event.attachfile?.document_url ||
+                                    event.document_url ||
                                     fallbackImg ||
                                     "https://via.placeholder.com/400x300?text=No+Image";
                                 return (
