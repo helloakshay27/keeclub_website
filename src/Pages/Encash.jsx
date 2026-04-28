@@ -154,27 +154,49 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                                     }
                                 }
                                 
-                                // Only proceed if we have a valid SAP code and exact referral match
-                                if (encashedUniqueCode && encashedUniqueCode.trim() !== "") {
+                                // PATCH existing SFDC record or fallback to POST
+                                const sfTxId = req.sfdc_transaction_record_id;
+                                if (sfTxId) {
+                                    await fetch(`${instanceUrl}/services/data/v64.0/sobjects/Loyalty_Transaction__c/${sfTxId}`, {
+                                        method: 'PATCH',
+                                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${accessToken}` },
+                                        body: JSON.stringify({ Transaction_Status__c: "Completed" })
+                                    });
+                                } else if (encashedUniqueCode && encashedUniqueCode.trim() !== "") {
                                     await fetch(`${instanceUrl}/services/data/v64.0/sobjects/Loyalty_Transaction__c/`, {
                                         method: 'POST',
-                                        headers: {
-                                            'Content-Type': 'application/json',
-                                            'Authorization': `Bearer ${accessToken}`
-                                        },
+                                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${accessToken}` },
                                         body: JSON.stringify({
                                             Category__c: "Encash",
                                             Loyalty_Member__c: loyaltyMemberId,
                                             Loyalty_Points__c: req.points_to_encash,
                                             Transaction_Type__c: "Debit",
-                                            Encashed_Unique_Code__c: encashedUniqueCode
+                                            Encashed_Unique_Code__c: encashedUniqueCode,
+                                            Transaction_Status__c: "Completed"
                                         })
                                     });
                                 } else {
-                                    console.log("❌ Skipping Salesforce transaction - no valid SAP code or referral match");
+                                    console.log("❌ Skipping Salesforce transaction - no SFDC record ID or SAP code");
                                 }
                             } catch (err) {
                                 // Optionally handle/log error
+                            }
+                        }
+                        // Handle rejected encash requests
+                        if (req.status === "rejected" && req.sfdc_transaction_record_id && !localStorage.getItem(`sfdc_rejected_synced_${req.id}`)) {
+                            const rejInstanceUrl = localStorage.getItem('salesforce_instance_url');
+                            const rejAccessToken = localStorage.getItem('salesforce_access_token');
+                            if (rejAccessToken && rejInstanceUrl) {
+                                try {
+                                    await fetch(`${rejInstanceUrl}/services/data/v64.0/sobjects/Loyalty_Transaction__c/${req.sfdc_transaction_record_id}`, {
+                                        method: 'PATCH',
+                                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${rejAccessToken}` },
+                                        body: JSON.stringify({ Transaction_Status__c: "Rejected" })
+                                    });
+                                    localStorage.setItem(`sfdc_rejected_synced_${req.id}`, 'true');
+                                } catch (err) {
+                                    console.error('Failed to update rejected status in SFDC:', err);
+                                }
                             }
                         }
                     }
@@ -518,6 +540,40 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                     setSelectedRedemptionTab('My Encash Requests');
                 }
                 await fetchPendingEncashAmount();
+                // Push to SFDC with Pending status on encash creation
+                const sfAccessToken = localStorage.getItem('salesforce_access_token');
+                const sfInstanceUrl = localStorage.getItem('salesforce_instance_url');
+                const sfLoyaltyMemberId = localStorage.getItem('Id');
+                const sfSapCode = selectedOpportunity?.SAP_SalesOrder_Code__c || "";
+                const localRequestId = response?.id || response?.encash_request?.id;
+                if (sfAccessToken && sfInstanceUrl && sfLoyaltyMemberId && sfSapCode && localRequestId) {
+                    try {
+                        const sfRes = await fetch(`${sfInstanceUrl}/services/data/v64.0/sobjects/Loyalty_Transaction__c/`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${sfAccessToken}` },
+                            body: JSON.stringify({
+                                Loyalty_Member__c: sfLoyaltyMemberId,
+                                Transaction_Type__c: "Debit",
+                                Loyalty_Points__c: Number(formData.pointsToEncash),
+                                Category__c: "Encash",
+                                Encashed_Unique_Code__c: sfSapCode,
+                                Transaction_Status__c: "Pending"
+                            })
+                        });
+                        const sfData = await sfRes.json();
+                        if (sfData.id) {
+                            // Save SFDC transaction record ID back to Rails backend
+                            const authToken = localStorage.getItem('authToken');
+                            await fetch(`${BASE_URL}encash_requests/${localRequestId}.json`, {
+                                method: 'PATCH',
+                                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
+                                body: JSON.stringify({ encash_request: { sfdc_transaction_record_id: sfData.id } })
+                            });
+                        }
+                    } catch (sfErr) {
+                        console.error('Failed to push encash to SFDC:', sfErr);
+                    }
+                }
                 // Navigate to Encash Confirmation page with encash request details
                 navigate('/encash-confirmation', { state: { encashRequest: response } });
             } else {

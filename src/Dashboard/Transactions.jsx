@@ -358,36 +358,60 @@ const Transactions = () => {
                         }
                         
                         
-                        // Only proceed with Salesforce API call if we have all required data and SAP code is not empty
-                        if (loyaltyMemberId && accessToken && instanceUrl && encashedUniqueCode && encashedUniqueCode.trim() !== "") {
+                        // PATCH existing SFDC record or fallback to POST
+                        const sfTxId = req.sfdc_transaction_record_id;
+                        if (sfTxId && accessToken && instanceUrl) {
+                            await fetch(`${instanceUrl}/services/data/v64.0/sobjects/Loyalty_Transaction__c/${sfTxId}`, {
+                                method: 'PATCH',
+                                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${accessToken}` },
+                                body: JSON.stringify({ Transaction_Status__c: "Completed" })
+                            });
+                            await fetchSummaryCards();
+                            await fetchTransactions();
+                        } else if (loyaltyMemberId && accessToken && instanceUrl && encashedUniqueCode && encashedUniqueCode.trim() !== "") {
                             const payload = {
                                 Category__c: "Encash",
                                 Loyalty_Member__c: loyaltyMemberId,
                                 Loyalty_Points__c: req.points_to_encash,
                                 Transaction_Type__c: "Debit",
-                                Encashed_Unique_Code__c: encashedUniqueCode
+                                Encashed_Unique_Code__c: encashedUniqueCode,
+                                Transaction_Status__c: "Completed"
                             };
-                            
+
                             const salesforceResponse = await fetch(`${instanceUrl}/services/data/v64.0/sobjects/Loyalty_Transaction__c/`, {
                                 method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                    'Authorization': `Bearer ${accessToken}`
-                                },
+                                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${accessToken}` },
                                 body: JSON.stringify(payload)
                             });
-                            
+
                             const salesforceResult = await salesforceResponse.json();
-                            
+
                             // Refresh summary cards and transactions after successful update
                             await fetchSummaryCards();
                             await fetchTransactions();
-                        } 
+                        }
                     } catch (err) {
                         console.error("❌ Error processing individual request:", err);
                         console.error("❌ Failed request:", req);
                     }
-                } 
+                }
+                // Handle rejected encash requests
+                if (req.status === "rejected" && req.sfdc_transaction_record_id && !localStorage.getItem(`sfdc_rejected_synced_${req.id}`)) {
+                    const rejInstanceUrl = localStorage.getItem('salesforce_instance_url');
+                    const rejAccessToken = localStorage.getItem('salesforce_access_token');
+                    if (rejAccessToken && rejInstanceUrl) {
+                        try {
+                            await fetch(`${rejInstanceUrl}/services/data/v64.0/sobjects/Loyalty_Transaction__c/${req.sfdc_transaction_record_id}`, {
+                                method: 'PATCH',
+                                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${rejAccessToken}` },
+                                body: JSON.stringify({ Transaction_Status__c: "Rejected" })
+                            });
+                            localStorage.setItem(`sfdc_rejected_synced_${req.id}`, 'true');
+                        } catch (rejErr) {
+                            console.error('Failed to update rejected status in SFDC:', rejErr);
+                        }
+                    }
+                }
             }
         } catch (err) {
             console.error("❌ Error in fetchAndHandleEncashRequests:", err);
