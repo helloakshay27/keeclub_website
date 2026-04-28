@@ -192,7 +192,8 @@ const Transactions = () => {
                 }
 
                 // Updated query to include isEncashed__c filter to match Encash page
-                const url = `${instanceUrl}/services/data/v64.0/query/?q=SELECT+Id,AccountNameText__c,Agreement_Value__c,Project_Finalized__r.Onboarding_Referral_Percentage__c,Apartment_Finalized__r.Name,Project_Finalized__r.Name,Tower_Finalized__r.Name,SAP_SalesOrder_Code__c,isEncashed__c+FROM+Opportunity+WHERE+StageName+=+'WC+/+Onboarding+done'+AND+Loyalty_Member_Unique_Id__c='${loyaltyId}'+AND+isEncashed__c+=false`;
+                const url = `${instanceUrl}/services/data/v64.0/query/?q=SELECT+Id,AccountNameText__c,Agreement_Value__c,Project_Finalized__r.Onboarding_Referral_Percentage__c,Apartment_Finalized__r.Name,Project_Finalized__r.Name,Tower_Finalized__r.Name,SAP_SalesOrder_Code__c,isEncashed__c+FROM+Opportunity+WHERE+StageName+=+'WC+/+Onboarding+done'+AND+Loyalty_Member_Unique_Id__c+='${loyaltyId}'+AND+Encashment_Status__c =null+AND+Registration_Done__c+=true`;
+                // const url = `${instanceUrl}/services/data/v64.0/query/?q=SELECT+Id,AccountNameText__c,Agreement_Value__c,Project_Finalized__r.Onboarding_Referral_Percentage__c,Apartment_Finalized__r.Name,Project_Finalized__r.Name,Tower_Finalized__r.Name,SAP_SalesOrder_Code__c,isEncashed__c+FROM+Opportunity+WHERE+StageName+=+'WC+/+Onboarding+done'+AND+Loyalty_Member_Unique_Id__c='${loyaltyId}'+AND+isEncashed__c+=false`;
                 
                 const res = await fetch(url, {
                     headers: {
@@ -323,7 +324,8 @@ const Transactions = () => {
                             try {
                                 const loyaltyId = localStorage.getItem("Loyalty_Member_Unique_Id__c") || "";
                                 // Updated dynamic fetch to include isEncashed__c filter to avoid duplicates
-                                const url = `${instanceUrl}/services/data/v64.0/query/?q=SELECT+Id,AccountNameText__c,SAP_SalesOrder_Code__c+FROM+Opportunity+WHERE+StageName+=+'WC+/+Onboarding+done'+AND+Loyalty_Member_Unique_Id__c='${loyaltyId}'+AND+isEncashed__c+=false`;
+                                const url = `${instanceUrl}/services/data/v64.0/query/?q=SELECT+Id,AccountNameText__c,SAP_SalesOrder_Code__c+FROM+Opportunity+WHERE+StageName+=+'WC+/+Onboarding+done'+AND+Loyalty_Member_Unique_Id__c='${loyaltyId}'+AND+Encashment_Status__c =null+AND+Registration_Done__c+=true`;
+                                // const url = `${instanceUrl}/services/data/v64.0/query/?q=SELECT+Id,AccountNameText__c,SAP_SalesOrder_Code__c+FROM+Opportunity+WHERE+StageName+=+'WC+/+Onboarding+done'+AND+Loyalty_Member_Unique_Id__c='${loyaltyId}'+AND+isEncashed__c+=false`;
                                 
                                 const oppRes = await fetch(url, {
                                     headers: {
