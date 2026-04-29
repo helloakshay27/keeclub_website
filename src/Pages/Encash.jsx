@@ -190,7 +190,9 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
 
     const pendingEncashPoints = encashRequests.reduce((sum, req) => {
         const status = String(req?.status || '').toLowerCase();
-        const isPendingLike = status && status !== 'completed' && status !== 'rejected';
+        // Only subtract points for requests that are explicitly pending/processing.
+        // Some APIs return old records with missing/blank status; we should NOT treat those as pending.
+        const isPendingLike = status === 'pending' || status === 'processing' || status === 'in_progress';
         if (!isPendingLike) return sum;
         return sum + (Number(req?.points_to_encash) || 0);
     }, 0);
