@@ -188,6 +188,15 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
     // Use currentPoints from memberData prop or localStorage
     const currentPoints = Number(localStorage.getItem('Loyalty_Balance__c')) || 0;
 
+    const pendingEncashPoints = encashRequests.reduce((sum, req) => {
+        const status = String(req?.status || '').toLowerCase();
+        const isPendingLike = status && status !== 'completed' && status !== 'rejected';
+        if (!isPendingLike) return sum;
+        return sum + (Number(req?.points_to_encash) || 0);
+    }, 0);
+
+    const availableBalancePoints = Math.max(0, currentPoints - pendingEncashPoints);
+
     const handleInputChange = (field, value) => {
         let processedValue = value;
         let newErrors = { ...validationErrors };
@@ -538,7 +547,7 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                                 style={{ width: 24, height: 24, display: 'inline-block' }}
                             />
                             <span className="text-xl font-bold text-gray-800">
-                                {(currentPoints - pendingEncashAmount).toLocaleString('en-IN')} Balance Point
+                                {availableBalancePoints.toLocaleString('en-IN')} Balance Point
                             </span>
                         </div>
                     )}
