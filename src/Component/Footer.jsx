@@ -85,7 +85,7 @@ const Footer = () => {
       </footer>
 
       {showPolicyModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
           <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[85vh] overflow-hidden">
             <div className="flex items-center justify-between border-b px-6 py-4">
               <h3 className="text-lg font-semibold text-gray-800">
