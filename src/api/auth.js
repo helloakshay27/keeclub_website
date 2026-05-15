@@ -25,14 +25,14 @@ export async function getAccessToken() {
   const baseUrl = env.VITE_API_BASE_URL;
   const clientId = env.VITE_CLIENT_ID;
   const clientSecret = env.VITE_CLIENT_SECRET;
-  const refreshToken = env.VITE_REFRESH_TOKEN;
+  // const refreshToken = env.VITE_REFRESH_TOKEN;
 
-  if (!baseUrl || !clientId || !clientSecret || !refreshToken) {
+  if (!baseUrl || !clientId || !clientSecret) {
     console.error("Missing required environment variables for Salesforce authentication.", {
       VITE_API_BASE_URL: baseUrl,
       VITE_CLIENT_ID: clientId,
       VITE_CLIENT_SECRET: clientSecret,
-      VITE_REFRESH_TOKEN: refreshToken,
+      // VITE_REFRESH_TOKEN: refreshToken,
     });
     throw new Error("One or more Salesforce environment variables are missing. Please check your deployment environment settings or src/env.prod.js.");
   }
@@ -40,10 +40,10 @@ export async function getAccessToken() {
   const url = `${baseUrl}/services/oauth2/token`;
   console.log("🔗 Salesforce token URL:", url);
   const body = new URLSearchParams({
-    grant_type: "refresh_token",
+    grant_type: "client_credentials",
     client_id: clientId,
     client_secret: clientSecret,
-    refresh_token: refreshToken,
+    // refresh_token: refreshToken,
   });
   try {
     const response = await fetch(url, {
