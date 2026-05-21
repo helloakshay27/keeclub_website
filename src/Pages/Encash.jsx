@@ -295,8 +295,7 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                 const accessToken = localStorage.getItem("salesforce_access_token");
                 const instanceUrl = localStorage.getItem("salesforce_instance_url");
                 
-                // Updated query to include isEncashed__c filter as per Postman request
-                const url = `${instanceUrl}/services/data/v64.0/query/?q=SELECT+Id,AccountNameText__c,Agreement_Value__c,Project_Finalized__r.Onboarding_Referral_Percentage__c,Apartment_Finalized__r.Name,Project_Finalized__r.Name,Tower_Finalized__r.Name,SAP_SalesOrder_Code__c,isEncashed__c+FROM+Opportunity+WHERE+StageName+=+'WC+/+Onboarding+done'+AND+Loyalty_Member_Unique_Id__c='${loyaltyId}'+AND+Encashment_Status__c =null+AND+Registration_Done__c+=true`;
+                const url = `${instanceUrl}/services/data/v64.0/query/?q=SELECT+Id,AccountNameText__c,Agreement_Value__c,Project_Finalized__r.Onboarding_Referral_Percentage__c,Apartment_Finalized__r.Name,Project_Finalized__r.Name,Tower_Finalized__r.Name,SAP_SalesOrder_Code__c+FROM+Opportunity+WHERE+StageName+=+'WC+/+Onboarding+done'+AND+Loyalty_Member_Unique_Id__c='${loyaltyId}'+AND+Encashment_Status__c =null+AND+Registration_Done__c+=true`;
                 // const url = `${instanceUrl}/services/data/v64.0/query/?q=SELECT+Id,AccountNameText__c,Agreement_Value__c,Project_Finalized__r.Onboarding_Referral_Percentage__c,Apartment_Finalized__r.Name,Project_Finalized__r.Name,Tower_Finalized__r.Name,SAP_SalesOrder_Code__c,isEncashed__c+FROM+Opportunity+WHERE+StageName+=+'WC+/+Onboarding+done'+AND+Loyalty_Member_Unique_Id__c='${loyaltyId}'+AND+isEncashed__c+=false`;
                 
                 

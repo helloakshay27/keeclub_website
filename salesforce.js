@@ -8,7 +8,7 @@ const getNewToken = async () => {
     params.append('grant_type', 'refresh_token');
     params.append('client_id', import.meta.env.VITE_CLIENT_ID);
     params.append('client_secret', import.meta.env.VITE_CLIENT_SECRET);
-    params.append('refresh_token', import.meta.env.VITE_REFRESH_TOKEN);
+    // params.append('refresh_token', import.meta.env.VITE_REFRESH_TOKEN);
 
     try {
         const response = await axios.post(tokenUrl, params, {
