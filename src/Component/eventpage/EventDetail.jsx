@@ -273,10 +273,7 @@ const EventDetail = () => {
                   <div className="font-medium">{data?.id || 'N/A'}</div>
                 </div>
 
-                <div>
-                  <span className="text-gray-500">Event Description:</span>
-                  <div className="font-medium">{data?.description || 'N/A'}</div>
-                </div>
+
 
                 <div>
                   <span className="text-gray-500">Event Type:</span>
@@ -335,6 +332,10 @@ const EventDetail = () => {
                     </div>
                   </div>
                 )}
+                <div>
+                  <span className="text-gray-500">Event Description:</span>
+                  <div className="font-medium">{data?.description || 'N/A'}</div>
+                </div>
 
                 {/* {data?.interested !== undefined && (
                   <div className="col-span-2">
