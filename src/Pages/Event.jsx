@@ -83,7 +83,7 @@ const Event = () => {
 
     // Get upcoming and past events from the data
     // const upcomingEvents = data?.upcomming_events || [];
-    const pastEvents = data?.past_events || [];
+    const pastEvents = data?.events || [];
 
     // Determine which events to show based on selected tab
     const currentEvents = pastEvents; // selectedEventTab === "upcoming" ? upcomingEvents : pastEvents
