@@ -173,7 +173,7 @@ const Event = () => {
                 </div> */}
 
                 <h2 className="text-center text-xl sm:text-3xl font-bold text-orange-600 mb-3 uppercase">
-                    Past Events
+                    Events
                 </h2>
                 <hr className="border-t-2 border-orange-600 w-[200px] mx-auto mb-6" />
                 <p className="text-center text-sm sm:text-lg md:text-xl lg:text-2xl font-extralight">
