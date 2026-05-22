@@ -9,12 +9,12 @@ const Event = () => {
     const categories = ["Entertainment", "Lifestyle"];
     // Use array for multiple selected categories
     const [selectedCategories, setSelectedCategories] = useState(categories);
-    
+
     // Add event type tab state
     const [selectedEventTab, setSelectedEventTab] = useState("past");
     const eventTabs = [
         // { key: "upcoming", label: "Upcoming Events" },
-        { key: "past", label: "Past Events" }
+        { key: "past", label: " Events" }
     ];
 
     const highlightRef = useRef(null);
@@ -84,7 +84,7 @@ const Event = () => {
     // Get upcoming and past events from the data
     // const upcomingEvents = data?.upcomming_events || [];
     const pastEvents = data?.past_events || [];
-    
+
     // Determine which events to show based on selected tab
     const currentEvents = pastEvents; // selectedEventTab === "upcoming" ? upcomingEvents : pastEvents
 
@@ -93,12 +93,12 @@ const Event = () => {
         selectedCategories.length === 0
             ? currentEvents
             : currentEvents.filter(
-                  (event) =>
-                      event.event_type &&
-                      selectedCategories.some(
-                          (cat) => event.event_type.toLowerCase() === cat.toLowerCase()
-                      )
-              );
+                (event) =>
+                    event.event_type &&
+                    selectedCategories.some(
+                        (cat) => event.event_type.toLowerCase() === cat.toLowerCase()
+                    )
+            );
 
     const formatDate = (dateString) => {
         const dateObj = new Date(dateString);
@@ -206,7 +206,7 @@ const Event = () => {
 
                 {/* Event Cards */}
                 <div className="max-w-7xl mx-auto px-2 sm:px-4">
-                    {console.log("filteredEvents:-",filteredEvents)
+                    {console.log("filteredEvents:-", filteredEvents)
                     }
                     {/* Event Cards Grid */}
                     {filteredEvents.length === 0 ? (

@@ -9,20 +9,20 @@ const EventDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { data } = useApiFetch(`${BASE_URL}events/${id}.json`, token);
-  
+
   const [selectedImageIndex, setSelectedImageIndex] = useState(null);
   const [allImages, setAllImages] = useState([]);
   const [isZoomed, setIsZoomed] = useState(false);
 
   const event = data && data.id;
-  
+
   // Process different aspect ratio images
   const eventAttachments = Array.isArray(data?.event_attachments) ? data.event_attachments : [];
   const images1by1 = Array.isArray(data?.event_images_1_by_1) ? data.event_images_1_by_1 : [];
   const images3by2 = Array.isArray(data?.event_images_3_by_2) ? data.event_images_3_by_2 : [];
   const images9by16 = Array.isArray(data?.event_images_9_by_16) ? data.event_images_9_by_16 : [];
   const images16by9 = Array.isArray(data?.event_images_16_by_9) ? data.event_images_16_by_9 : [];
-  
+
   // Fallback to original logic for backward compatibility
   const fallbackImages = Array.isArray(data?.event_images) && data.event_images.length > 0
     ? data.event_images
@@ -98,7 +98,7 @@ const EventDetail = () => {
     <div className="px-4 py-4 sm:py-6 md:py-10 max-w-7xl md:mt-20 mx-auto">
       {/* Image Preview Modal */}
       {selectedImageIndex !== null && (
-        <div 
+        <div
           className="fixed inset-0 bg-black bg-opacity-95 z-50 flex items-center justify-center transition-opacity duration-300"
           onClick={closeImagePreview}
         >
@@ -124,7 +124,7 @@ const EventDetail = () => {
           )}
 
           {/* Image Container */}
-          <div 
+          <div
             className="relative w-full h-full px-4 flex items-center justify-center"
             onClick={(e) => e.stopPropagation()}
           >
@@ -178,7 +178,7 @@ const EventDetail = () => {
           <h2 className="text-base sm:text-xl font-semibold mb-4">
             Event Pictures
           </h2>
-          
+
           {hasAnyImages ? (
             <div className="space-y-6">
               {/* Main Carousel View */}
@@ -189,16 +189,16 @@ const EventDetail = () => {
                   className="w-full h-full object-contain cursor-pointer"
                   onClick={() => openImagePreview(allItems[carouselIndex])}
                 />
-                
+
                 {allItems.length > 1 && (
                   <>
-                    <button 
+                    <button
                       onClick={prevCarousel}
                       className="absolute left-2 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/80 text-orange-600 hover:bg-white shadow-md transition-all opacity-0 group-hover:opacity-100 cursor-pointer"
                     >
                       <ChevronLeft size={24} />
                     </button>
-                    <button 
+                    <button
                       onClick={nextCarousel}
                       className="absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/80 text-orange-600 hover:bg-white shadow-md transition-all opacity-0 group-hover:opacity-100 cursor-pointer"
                     >
@@ -214,7 +214,7 @@ const EventDetail = () => {
               {/* Thumbnails list */}
               <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
                 {allItems.map((img, i) => (
-                  <div 
+                  <div
                     key={i}
                     onClick={() => setCarouselIndex(i)}
                     className={`flex-shrink-0 w-20 h-20 rounded-md overflow-hidden cursor-pointer border-2 transition-all ${carouselIndex === i ? 'border-orange-600 scale-105' : 'border-transparent opacity-60'}`}
@@ -229,7 +229,7 @@ const EventDetail = () => {
               <span className="text-gray-500">No images available for this event</span>
             </div>
           )}
-          
+
           {/* Map Section */}
           {/* {data?.project_name && (
             <div className="mt-6">
@@ -244,7 +244,7 @@ const EventDetail = () => {
         <div>
           <div className="bg-white rounded-lg border border-gray-200 p-6">
             <h1 className="text-2xl font-bold text-gray-900 mb-4">Event</h1>
-            
+
             <div className="space-y-4">
               <div className="flex items-start gap-2">
                 <span className="text-sm text-gray-600 font-medium">
@@ -272,7 +272,12 @@ const EventDetail = () => {
                   <span className="text-gray-500">Event ID:</span>
                   <div className="font-medium">{data?.id || 'N/A'}</div>
                 </div>
-                
+
+                <div>
+                  <span className="text-gray-500">Event Description:</span>
+                  <div className="font-medium">{data?.description || 'N/A'}</div>
+                </div>
+
                 <div>
                   <span className="text-gray-500">Event Type:</span>
                   <div className="font-medium">{data?.event_type || 'Entertainment'}</div>
@@ -280,18 +285,18 @@ const EventDetail = () => {
                 <div>
                   <span className="text-gray-500">Duration:</span>
                   <div className="font-medium">
-                    {data?.from_time && data?.to_time ? 
+                    {data?.from_time && data?.to_time ?
                       (() => {
                         const from = new Date(data.from_time);
                         const to = new Date(data.to_time);
                         const diffHours = Math.round((to - from) / (1000 * 60 * 60));
                         return diffHours > 24 ? `${Math.round(diffHours / 24)} days` : `${diffHours} hours`;
-                      })() 
+                      })()
                       : '2 hours'
                     }
                   </div>
                 </div>
-                
+
                 <div>
                   <span className="text-gray-500">Event At:</span>
                   <div className="font-medium">{data?.event_at || 'Mumbai'}</div>
@@ -306,7 +311,7 @@ const EventDetail = () => {
                     }) : '12 PM'}
                   </div>
                 </div>
-                
+
                 <div className="col-span-2">
                   <span className="text-gray-500">Event From:</span>
                   <div className="font-medium">
