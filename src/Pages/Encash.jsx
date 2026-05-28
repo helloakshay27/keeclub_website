@@ -294,11 +294,11 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                 const loyaltyId = localStorage.getItem("Loyalty_Member_Unique_Id__c") || "";
                 const accessToken = localStorage.getItem("salesforce_access_token");
                 const instanceUrl = localStorage.getItem("salesforce_instance_url");
-                
+
                 const url = `${instanceUrl}/services/data/v64.0/query/?q=SELECT+Id,AccountNameText__c,Agreement_Value__c,Project_Finalized__r.Onboarding_Referral_Percentage__c,Apartment_Finalized__r.Name,Project_Finalized__r.Name,Tower_Finalized__r.Name,SAP_SalesOrder_Code__c+FROM+Opportunity+WHERE+StageName+=+'WC+/+Onboarding+done'+AND+Loyalty_Member_Unique_Id__c='${loyaltyId}'+AND+Encashment_Status__c =null+AND+Registration_Done__c+=true`;
                 // const url = `${instanceUrl}/services/data/v64.0/query/?q=SELECT+Id,AccountNameText__c,Agreement_Value__c,Project_Finalized__r.Onboarding_Referral_Percentage__c,Apartment_Finalized__r.Name,Project_Finalized__r.Name,Tower_Finalized__r.Name,SAP_SalesOrder_Code__c,isEncashed__c+FROM+Opportunity+WHERE+StageName+=+'WC+/+Onboarding+done'+AND+Loyalty_Member_Unique_Id__c='${loyaltyId}'+AND+isEncashed__c+=false`;
-                
-                
+
+
                 const res = await fetch(url, {
                     headers: {
                         Authorization: `Bearer ${accessToken}`,
@@ -306,7 +306,7 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                     },
                 });
                 const data = await res.json();
-                
+
                 setOpportunityOptions(data?.records || []);
             } catch (err) {
                 setOpportunityOptions([]);
@@ -952,7 +952,7 @@ const Encash = ({ memberData, setSelectedRedemptionTab }) => {
                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2 text-sm text-gray-700 mb-2">
                                             <div className="flex"><span className="font-medium w-32 inline-block">Date</span><span className="">{req.created_at ? new Date(req.created_at).toLocaleString('en-IN') : '--'}</span></div>
                                             <div className="flex"><span className="font-medium w-32 inline-block">Points</span><span className="">{req.points_to_encash?.toLocaleString('en-IN') || '--'}</span></div>
-                                            <div className="flex"><span className="font-medium w-32 inline-block">Amount</span><span className="">₹{req.amount_payable?.toLocaleString('en-IN') || '--'}</span></div>
+                                            {/* <div className="flex"><span className="font-medium w-32 inline-block">Amount</span><span className="">₹{req.amount_payable?.toLocaleString('en-IN') || '--'}</span></div> */}
                                             <div className="flex"><span className="font-medium w-32 inline-block">Branch</span><span className="">{req.branch_name || '--'}</span></div>
                                             <div className="flex"><span className="font-medium w-32 inline-block">IFSC</span><span className="">{req.ifsc_code || '--'}</span></div>
                                             <div className="flex"><span className="font-medium w-32 inline-block">User Name</span><span className="">{req.person_name || '--'}</span></div>

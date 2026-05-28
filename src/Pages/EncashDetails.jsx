@@ -157,12 +157,12 @@ const EncashDetails = () => {
                                         {encashDetails.points_to_encash?.toLocaleString('en-IN') || '0'}
                                     </p>
                                 </div>
-                                <div className="bg-green-50 rounded-lg p-4">
+                                {/* <div className="bg-green-50 rounded-lg p-4">
                                     <p className="text-sm text-gray-600 mb-1">Amount Payable</p>
                                     <p className="text-3xl font-bold text-green-600">
                                         ₹{encashDetails.amount_payable?.toLocaleString('en-IN') || '0'}
                                     </p>
-                                </div>
+                                </div> */}
                             </div>
                         </div>
 

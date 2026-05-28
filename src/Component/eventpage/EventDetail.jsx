@@ -332,9 +332,9 @@ const EventDetail = () => {
                     </div>
                   </div>
                 )}
-                <div>
+                <div className="col-span-2">
                   <span className="text-gray-500">Event Description:</span>
-                  <div className="font-medium">{data?.description || 'N/A'}</div>
+                  <div className="font-medium leading-relaxed whitespace-pre-line mt-1">{data?.description || 'N/A'}</div>
                 </div>
 
                 {/* {data?.interested !== undefined && (
